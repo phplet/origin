@@ -1,0 +1,110 @@
+<?php if (!empty($clstd_method_tactic['data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+		$clstd_method_tactic['fields'] = isset($clstd_method_tactic['fields']) ? $clstd_method_tactic['fields'] : array();
+		$clstd_method_tactic['data'] = isset($clstd_method_tactic['data']) ? $clstd_method_tactic['data'] : array();
+	?>
+
+    <?php if (isset($clstd_method_tactic['flash_data']['data']) && count($clstd_method_tactic['flash_data']['data'])) {?>
+            <br/>
+            <?php
+                $flash_titles = array();
+                //flash_data
+                $flash_data = array();
+                foreach ($clstd_method_tactic['flash_data']['field'] as $name)
+                {
+                    $tmp_arr = array();
+                    foreach ($clstd_method_tactic['flash_data']['data'] as $mt_name=>$item)
+                    {
+                        $tmp_arr[] = isset($item[$name]) ? floatval($item[$name]) : 0;
+                        $flash_titles[] = $mt_name;
+                    }
+                    $flash_data[] = array(
+                                            'name'  => $name,
+                                            'data'  => $tmp_arr,
+                                );
+                }
+                $clstd_method_tactic['flash_data']['data'] = $flash_data;
+                $flash_titles = array_unique($flash_titles);
+            ?>
+
+            <div id="flash_container_clstd_mt_<?=$t_subject_id?>"  class="cls_row indent_25"></div>
+
+            <script type="text/javascript">
+                $(function () {
+                   //方法策略柱状图1
+                   $('#flash_container_clstd_mt_<?=$t_subject_id?>').highcharts({
+                   chart: {
+                       type: 'column',
+                       height: '400'
+                   },
+                   title: {
+                       text: '  方法策略柱状图'
+                   },
+                   xAxis: {
+                       categories: eval("("+'<?php echo json_encode($flash_titles); ?>'+")"),
+                       labels: {
+                            rotation : -45,//坐标旋转角度 为0：表示横放置
+                            align : 'right'
+                            /* style: {
+                                fontSize: '13px',
+                                fontFamily: 'Verdana, sans-serif'
+                            } */
+                        }   
+                   },
+                   yAxis: {
+                        title: {
+                            text: ''
+                        }
+                    },  
+                   plotOptions : {
+                       column : {
+                            //pointWidth: 2,    //柱子的大小(会影响到柱子的大小)
+                           pointPadding: 0  //柱子之间的间隔(会影响到柱子的大小)
+                       }
+                    
+                   },
+                   legend: {
+                       layout: 'vertical',
+                       align: 'right',
+                       verticalAlign: 'middle',
+                       borderWidth: 0
+                   },
+                   colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+                   series: eval("("+'<?php echo json_encode($clstd_method_tactic['flash_data']['data']); ?>'+")")
+                   /*
+                   series: [{
+                       name: '我-总体1',
+                       data: [4, -3, 3]
+                   }, {
+                       name: '我-总体2',
+                       data: [2, 4, 1.5]
+                   }]*/
+                   });
+               });
+            </script>
+        <?php } ?>
+        <?php if (count($clstd_method_tactic['data'])) {?>
+           <table class="mb10 cls_row table_header indent_25" id="table_clstd_mt_c">
+                <tr>
+                    <th width="25%">方法策略</th>
+                    <?php foreach ($clstd_method_tactic['fields'] as $val) {?>
+                    <th width="25%"><?=$val?></th>
+                    <?php }?>
+                </tr>
+            </table>
+            
+            <?php $auto_key  = 0;?>
+            <?php foreach ($clstd_method_tactic['data'] as $key => $item) {?>
+                <?php $auto_key++;?>
+                <table class=" cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clstd_mt_c"<?php }?>>
+                    <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                        <th width="25%"><?=$key?></th>
+                        <?php foreach ($item as $k => $val) {?>
+                        <td width="25%" <?if ($k == 0 && $val != end($item)) {?>style="color:<?=$val > end($item) ? 'green' : 'red'?>"<?php }?>><?=$val?></td>
+                        <?php }?>
+                    </tr>
+                </table>
+            <?php } ?>
+        <?php } ?>
+<?php } ?>

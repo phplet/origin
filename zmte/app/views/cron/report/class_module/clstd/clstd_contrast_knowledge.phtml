@@ -1,0 +1,62 @@
+<?php if ($clstd_contrast_knowledge['contrast_knowledge']) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php $contrast_knowledge = $clstd_contrast_knowledge['contrast_knowledge'];?>
+    <?php $tr_name = array('相同知识模块', '本班本次考试', '本班上次考试');?>
+    
+    <?php foreach ($contrast_knowledge as $keys => $item) {?>
+        <?php foreach ($item as $key => $value) {?>
+        <?php $width = 80 / count($value)?>
+        <? if ($key !== 2) { ?><table class="cls_row cls_table indent_25 <?php if($key === 0){ echo 'table_header';} ?>"><? } ?>
+               	<tr>
+               	    <th width="20%"><?php echo $tr_name[$key];?></th>
+               	    <?php foreach ($value as $k => $val) {?>
+               	        <?php if ($key > 0) {?>
+        		   		 <td width="<?=$width?>%" <?php if ($key == 1 && $val != $item[2][$k]) {?>style="position:relative"<?php }?>>
+        		   		 <?php echo $val;?>
+        		   		 <?php if ($key == 1 && is_numeric($val) && $val != $item[2][$k]) {?>
+        		   		     <div class="<?php if ($val > $item[2][$k]){?>cls_sort cls_up<?php } elseif ($val < $item[2][$k]) {?>cls_sort cls_down<?php }?>"></div>
+        		   		 <?php }?>
+        		   		 </td>
+        		   		 <?php } else {?>
+        		   		 <th width="<?=$width?>%"><?php echo $val;?></th>
+        		   		 <?php }?>
+        		   	<?php }?>
+               	</tr>
+                <? if ($key !== 1) { ?></table><? } ?>
+        <?php }?>
+        <?php if (!$keys) {?><p class="cls_row">&nbsp;</p><?php }?>
+    <?php }?>
+    
+    <p class="mokuai-text cls_row font12" style="padding-left:25px">注：表中数据为该知识点下的所有试题的实际得分和期望得分的比值。若该比值小于1则说明在该知识点上的实际得分小于期望得分，若比值大于1则说明在该知识点上的实际得分高于期望得分。</p>
+    
+    <?php
+        $clstd_knowledge = array(); 
+        if (isset($clstd_contrast_knowledge['new_knowledge']))
+        {
+            $clstd_knowledge = $clstd_contrast_knowledge['new_knowledge'];
+        }
+    ?>
+    <?php if (!empty($clstd_knowledge['data'])) {?>
+        <table class="mb10 cls_row table_header indent_25" id="table_contrast_clstd_k_c">
+            <tr>
+                <th width="25%">新知识模块</th>
+                <?php foreach ($clstd_knowledge['fields'] as $val) {?>
+                <th width="25%"><?=$val?></th>
+                <?php }?>
+            </tr>
+        </table>
+    
+        <?php $auto_key  = 0;?>
+        <?php foreach ($clstd_knowledge['data'] as $key => $item) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_contrast_clstd_k_c"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="25%"><?=$key?></th>
+                    <?php foreach ($item as $k => $val) {?>
+                    <td width="25%" <?if ($k == 0 && $val != end($item)) {?>style="color:<?=$val > end($item) ? 'green' : 'red'?>"<?php }?>><?=$val?></td>
+                    <?php }?>
+                 </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+<?php }?>

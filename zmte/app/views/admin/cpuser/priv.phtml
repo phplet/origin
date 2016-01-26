@@ -1,0 +1,77 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_cpuser_info" method="POST" action="<?=site_url('admin/cpuser/priv/'.$user['admin_id'])?>">
+  <div class="space">
+    <div class="subtitle">权限设置</div>
+    <table class="maintable" border="" cellspacing="0" cellpadding="0">
+    <?php foreach($roles as $group): ?>
+    <?php $is_group_question = $group['code'] == 'group_question';?>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+           <?=$group['label']?>  <input type="checkbox" id="all_<?=$group['code']?>" onclick="allchecked('priv[<?=$group['code']?>][]', '', this);"/> <label for="all_<?=$group['code']?>">全选/取消</label>
+        </td>
+      </tr>      
+      <tr>
+        <td class="altbg1">
+        <table border="0">
+        <?php $per_nums = 8;?>
+        <?php $auto_count = 0;?>
+        <?php foreach($group['priv'] as $v): ?>
+        <?php $auto_count++;?>
+        <?php if (($auto_count-1) % $per_nums == 0) {?>
+        <tr>
+        <?php } ?>
+        	<td width="120px" style="border:0px;">
+         		<input type="checkbox" name="priv[<?=$group['code']?>][]" value="<?=$v['code']?>" id="<?=$v['code']?>" <?php if(in_array($v['code'], $user['privs'])) echo 'checked';?>/><label for="<?=$v['code']?>"><?=$v['label']?></label>
+        	</td>
+        <?php if (($auto_count) % $per_nums == 0) {?>
+        </tr>
+        <?php }?>
+        <?php endforeach; ?>
+        </table>
+        </td>        
+      </tr>      
+      
+      <?php if ($is_group_question) {?>
+      <!-- 题库读写权限 -->
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;<?php echo $is_group_question ? 'background:#eee;' : '';?>">
+        	题库读写权限
+        </td>
+      </tr>      
+      <tr>
+        <td style="padding:5px 10% 5px 10%;<?php echo $is_group_question ? 'background:#FAFAFA;' : '';?>">
+        	<?php 
+        		$u_action_type = $user['action_type'];
+        		$r_action_type = isset($u_action_type['question']) && isset($u_action_type['question']['r']) ? $u_action_type['question']['r'] : '1';
+        		$w_action_type = isset($u_action_type['question']) && isset($u_action_type['question']['w']) ? $u_action_type['question']['w'] : '1';
+			?>
+        	<div style="float:left;width:40%;">
+	        	读权限：
+	        	<?php foreach ($action_type as $k=>$v) {?>
+	        	<input type="radio" value="<?php echo $k;?>" name="r_action_type" id="r_action_type_<?php echo $k;?>" <?php echo $k == $r_action_type ? 'checked="checked"' : '';?>><label for="r_action_type_<?php echo $k;?>"><?php echo $v;?></label>
+	        	<?php } ?>
+        	</div>
+        	
+        	<div style="float:left;width:40%;">
+        	写权限：
+        	<?php foreach ($action_type as $k=>$v) {?>
+        	<input type="radio" value="<?php echo $k;?>" name="w_action_type" id="w_action_type_<?php echo $k;?>" <?php echo $k == $w_action_type ? 'checked="checked"' : '';?>><label for="w_action_type_<?php echo $k;?>"><?php echo $v;?></label>
+        	<?php } ?>
+        	</div>
+        </td>
+      </tr>
+      <?php } ?>
+      
+    <?php endforeach; ?>
+    </table>
+    
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交修改 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="reset" name="" value=" 重置 " class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

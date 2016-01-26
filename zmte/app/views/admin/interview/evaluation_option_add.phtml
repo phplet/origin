@@ -1,0 +1,52 @@
+<?php $this->load->view('common/header'); ?>
+
+<script type="text/javascript">
+  $(function(){
+    $('#option_info').submit(function(){
+      var val = $("#option_score").val();
+      if (val == '' || val <= 0 || val > 10000 || parseInt(val) != val) {
+        alert("请输入[1，10000]的整数！");
+        return false;
+      };
+    });
+  });
+</script>
+
+<div id="body">   
+  <form id="option_info" name="Frm_info" method="POST" action="<?=site_url('admin/evaluation_option/add_save')?>">
+  <div class="space">
+    <div class="subtitle">添加评分项</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">标题</td>        
+        <td>
+            <textarea name="title" id="" cols="60" rows="5"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">总分</td>        
+        <td>
+            <input type="text" id="option_score" name="score" class="txtbox" value="">
+            <p style="color:red;">请输入[1，10000]的整数</p>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">状态</td>        
+        <td>
+            <input type="radio" id="radio_able" name="status" value="1" checked="checked">
+            <label for="radio_able">启用</label>
+            <input type="radio" id="radio_unable" name="status" value="0">
+            <label for="radio_unable">禁用</label>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<?php $this->load->view('common/footer');?>

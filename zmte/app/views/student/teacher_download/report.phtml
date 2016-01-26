@@ -1,0 +1,53 @@
+<?php $this->load->view('common/header');?>
+
+<div id="body">
+  <form method="post" name="search_form" action="<?=site_url('student/teacher_download/report_deal')?>" enctype="multipart/form-data">
+    <div class="space">
+        <div class="subtitle">导入考生数据</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">请选择考试期次</td>
+                <td>
+                    <select name="exam_id" id="exam_id">
+                        <?php if (!empty($exams)): ?>
+                            <?php foreach ($exams as $key => $value): ?>
+                                <option value="<?php echo $value['exam_id'] ?>">
+                                    <?php echo $value['exam_name'] ?>
+                                </option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <option value="0">--暂无考试期次--</option>
+                        <?php endif ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">请选择文件</td>
+                <td>
+                    <input type="file" name="file" class="txtbox" />
+                    <?php if (isset($error)): ?><span style="color:red;display: inline-block;"><?php echo $error; ?></span><?php endif ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">上传说明</td>
+                <td style="padding:10px;">
+                    <p>1.支持Excel 2003、Excel 2007、Excel 2010、Excel 2013 版本</p>
+                    <p>2.最大文件上传尺寸为10Mb</p>
+                    <p>3.导入时如果当前行发生错误，将跳过当前行继续</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">导入模板下载</td>
+                <td>
+                    <a href="<?php echo base_url('file/template.xls'); ?>">点击下载</a>
+                </td>
+            </tr>        
+        </table>
+        <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

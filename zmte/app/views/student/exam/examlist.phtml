@@ -1,0 +1,265 @@
+<? $this->load->view('common/exam_header'); ?>
+<style type="text/css">
+.cls_pc_tab_header {
+    display:table;
+    width:900px;
+    margin:0px auto 5px auto;
+}
+
+.cls_pc_tab {
+    display:table-cell;
+    <? /* width:<?=(100/count($pclist))?>%; */ ?>
+    width:300px;
+    text-align:center;
+    color:black;
+    height:40px;
+    background-image:url(<?=site_url('images/exam/pc_tab.png')?>);
+}
+
+.cls_pc_tab_sel {
+    color:white;
+    background-image:url(<?=site_url('images/exam/pc_tab_sel.png')?>);
+}
+
+.cls_pc_tab a {
+    font-size:1.8em;
+    letter-spacing:10px;
+    color:black;
+    text-decoration:none;
+}
+
+.cls_pc_tab_sel a {
+   color:black;
+}
+
+.cls_exam_page {
+    display:table;
+    width:1000px;
+    height:400px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.cls_exam_page_left {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_center {
+    width:800px;
+    display:table-cell;
+}
+
+.cls_exam_page_right {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_center ul {
+    list-style:none;    
+    padding:0 10px 0 10px;
+}
+
+.cls_exam_page_center ul li {
+    height:34px
+}
+
+.cls_exam_page_left ul {
+    list-style:none;    
+    text-align:center;
+    padding:0;
+}
+
+.cls_exam_page_left ul li {
+    font-size:1.0em;
+    height:30px;
+    background-image:url(<?=site_url('images/exam/grade.png')?>);
+}
+
+.cls_exam_page_left ul li .cls_sep {
+    height:6px;
+}
+
+.cls_exam_page_left ul li:hover {
+    cursor:pointer;
+}
+
+.cls_exam_page_left ul li.cls_current {
+    background-image:url(<?=site_url('images/exam/grade_sel.png')?>);
+    color:white;
+}
+
+.cls_exam_page_right ul {
+    list-style:none;    
+    text-align:center;
+    padding:0;
+}
+
+.cls_exam_page_right ul li {
+    font-size:1.0em;
+    height:30px;
+    background-image:url(<?=site_url('images/exam/subject.png')?>);
+}
+
+.cls_exam_page_right ul li .cls_sep {
+    height:5px;
+}
+
+.cls_exam_page_right ul li:hover {
+    cursor:pointer;
+}
+
+.cls_exam_page_right ul li.cls_current {
+    background-image:url(<?=site_url('images/exam/subject_sel.png')?>);
+    color:white;
+}
+
+.cls_exam_item {
+    display:table;
+    width:100%;
+    padding:7px 0px 0px 4px;
+}
+
+.cls_exam_item_name {
+    display:table-cell;
+    width:30%;
+    font-size:1.0em;
+}
+
+.cls_exam_item_place {
+    display:table-cell;
+    width:22%;
+    font-size:0.9em;
+}
+
+.cls_exam_item_period {
+    display:table-cell;
+    width:18%;
+    font-size:0.9em;
+}
+
+.cls_exam_item_class {
+    display:table-cell;
+    width:7%;
+    font-size:0.9em;
+}
+
+.cls_exam_item_gradesubject {
+    display:table-cell;
+    width:15%;
+    font-size:0.9em;
+}
+
+.cls_exam_item_action {
+    display:table-cell;
+    width:8%;
+    font-size:0.9em;
+}
+.cls_pagetip {
+    border-bottom:1px dashed gray;
+    padding:4px;
+}
+</style>
+<? if ($uinfo['uid']) { ?>
+<div class="cls_pagetip">
+帐号余额: <?=$student['account']?><?=C('virtual_currency')['fullname']?> &nbsp; &nbsp; &nbsp; &nbsp;
+<? if (C('paycharge_enable')) { ?>
+<a target="_blank" href="<?=site_url('student/profile/pay')?>" style="color:red;text-decoration:underline">立即充值</a>
+<? } ?>
+
+<a style="float:right" href="<?=site_url('student/exam/examresult')?>">查看历史成绩</a>
+</div>
+<? } ?>
+
+<div class="cls_pc_tab_header">
+<? foreach ($pclist as $val) { ?>
+  <div class="cls_pc_tab <? if ($pc_id == $val['pc_id']) echo('cls_pc_tab_sel'); ?>">
+   <? if (in_array(trim($val['pc_name']), array('模拟测试', '对比测评'))) { ?>
+   <a href="javascript:void(0)"><?=$val['pc_name']?></a>
+   <? } else { ?>
+   <a href="<?=site_url('student/exam/examlist/' . $val['pc_id'])?>"><?=$val['pc_name']?></a>
+   <? } ?>
+  </div>
+<? } ?>
+</div>
+
+<div class="cls_exam_page">
+  <div class="cls_exam_page_left">
+     <ul>
+     <li onclick="location.href='<?=site_url("student/exam/examlist/$pc_id?grade_id=&subject_id=$subject_id")?>'" <? if ($grade_id == 0) echo('class="cls_current"'); ?>><div class="cls_sep"></div>全部</li>
+      <? $grades = C('grades'); foreach ($examlist_gradelist as $i) { ?>
+      <li onclick="location.href='<?=site_url("student/exam/examlist/$pc_id?grade_id=$i&subject_id=$subject_id")?>'" <? if ($grade_id == $i) echo('class="cls_current"'); ?>><div class="cls_sep"></div><?=$grades[$i]?></li>
+      <? } ?>
+     </ul>
+  </div>
+   <div class="cls_exam_page_center">
+     <ul>
+      <li style="background-color:#caeeff">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name"><b>测评名称</b></div>
+          <div class="cls_exam_item_place"><b>考试场次</b></div>
+          <div class="cls_exam_item_period"><b>考试时间</b></div>
+          <div class="cls_exam_item_class"><b>类型</b></div>
+          <div class="cls_exam_item_gradesubject"><b>年级学科</b></div>
+          <div class="cls_exam_item_action"><b>状态</b></div>
+        </div>
+      </li>
+
+      <? foreach ($examlist as $i => $val) { ?>
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name"><? Func::echo_s($val['p_name']); ?></div>
+          <div class="cls_exam_item_place"><? Func::echo_s($val['place_name']); ?></div>
+          <div class="cls_exam_item_period"><? if ($val['exam_isfree'] == 1) echo('任意时间'); 
+    else echo(date('Y-m-d H:i', $val['place_start_time'])); ?></div>
+          <div class="cls_exam_item_class"><?=$val['class_name']?></div>
+          <div class="cls_exam_item_gradesubject"><?=$grades[$val['grade_id']]?><?=$subject[$val['subject_id']]?></div>
+          <div class="cls_exam_item_action">
+
+            <? if ($uinfo['uid']) { ?>
+            <? if ($val['epstu_uid']) { ?>
+                <? if (in_array($val['exam_pid'], $exam_pid_published) 
+                    && ($val['exam_isfree'] == 0 || 
+                        ($val['exam_isfree'] == 1 
+                            && isset($free_exam_list[$val['place_id']]) 
+                            && $free_exam_list[$val['place_id']]['sfe_report_status'] == 2))) { ?>
+            <a href="<?=site_url("student/exam/examresult")?>">查看成绩</a>
+                <? } else { ?>
+            <a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url("student/exam/product_prefixcheck")?>/<?=$val['exam_pid']?>/<?=$val['p_id']?>/<?=$val['place_id']?>/1')">进入考场</a>
+                <? } ?>
+            <? } else { ?>
+
+            <a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url("student/exam/examplace")?>/<?=$val["exam_pid"]?>/<?=$val["p_id"]?>/<?/*=$val['place_id']*/?>');fnShowDialog('<?=site_url('student/exam/product_notice')?>/<?=$val['exam_pid']?>/<?=$val['p_id']?>');">马上报名</a>
+            <? } ?>
+            <? } else { ?>
+            <a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url("student/exam/examplace")?>/<?=$val["exam_pid"]?>/<?=$val["p_id"]?>/<?/*=$val['place_id']*/?>')">马上报名</a>
+            <? } ?>
+          </div>
+        </div>
+      </li>
+      <? } ?>
+      <? for ($i = count($examlist); $i < 10; $i++) { ?>
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name">&nbsp;</div>
+          <div class="cls_exam_item_place">&nbsp;</div>
+          <div class="cls_exam_item_period">&nbsp;</div>
+          <div class="cls_exam_item_class">&nbsp;</div>
+          <div class="cls_exam_item_gradesubject">&nbsp;</div>
+          <div class="cls_exam_item_action">&nbsp;</div>
+        </div>
+      </li>
+      <? } ?>
+      <li><? $this->load->view('common/paginator', Fn::paginator($examlist_count));?></li>
+     </ul>
+   </div>
+   <div class="cls_exam_page_right">
+     <ul>
+      <li onclick="location.href='<?=site_url("/student/exam/examlist/$pc_id?grade_id=$grade_id&subject_id=")?>'" <? if ($subject_id == 0) echo('class="cls_current"'); ?>><div class="cls_sep"></div>全部</li>
+      <? $subjects = C('subject'); foreach ($examlist_subjectlist as $item) {$key_id = $item['subject_id'];  ?>
+      <li  <? if (true) { ?> onclick="location.href='<?=site_url("student/exam/examlist/$pc_id?grade_id=$grade_id&subject_id=$key_id")?>'" <? } else { ?> style="cursor:default;background-image:url(<?=site_url('images/exam/subject_disable.png')?>)" <? } if ($subject_id == $key_id) echo('class="cls_current"'); ?>><div class="cls_sep"></div><?=$subjects[$key_id]?></li>
+      <? } ?>
+     </ul>
+   </div>
+</div>
+<? $this->load->view('common/exam_footer'); ?>

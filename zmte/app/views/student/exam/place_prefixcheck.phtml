@@ -1,0 +1,57 @@
+<div id="id_register_exam_place_prefixcheck_dlg" style="width:600px">
+<script type="text/javascript">
+$(function(){
+<? if (empty($student)) { ?>
+    setTimeout(function(){
+        fnCloseDialog('id_register_exam_place_prefixcheck_dlg');
+        fnShowDialog('<?=site_url('student/index/logindiv')?>');
+    }, 1500);
+<? } else { ?>
+<?   if ($student && !$show_check) { ?>
+<?      if ($start_test) { ?>
+    setTimeout(function(){
+        window.location.href = '<?=C('exam_host_name')?>/exam/index/index/exam_id/<?=$exam_id?><?php if ($place_id) {?>/place_id/<?=$place_id?><?php }?>';
+    }, 1500);
+<?      } else { ?>
+    setTimeout(function(){
+        location.reload();
+    }, 1500);
+<?      } ?>
+<? } else if ($_GET['refresh']) {  $hide_title = true; } ?>
+<? } ?>
+});
+</script>
+<? if (!$hide_title) { ?>
+    <div class="cls_title">产品前置检查<? if ($student) { ?><span style='color:red'>(<?=Func::echo_s($product_info['exam_name'])?>)</span><? } ?></div>
+<? } ?>
+  <div class="space" style="margin:5px;">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+<? if ($hide_title) { ?>
+    <tr><td><b>产品前置检查<? if ($student) { ?><span style='color:red'>(<?=Func::echo_s($product_info['exam_name'])?>)</span><? } ?></b></td></tr>
+    <tr><td><hr/></td></tr>
+<? } ?>
+       <? if (empty($student)) { ?>
+          <tr><td>您还没有登录，请先登录</td></tr>
+       <? } else { ?>
+       <?   if ($show_check) { ?>
+       <tr><td>同学你好，为保证该测试的测评报告的全面准确性，需要你完善如下信息：</td></tr>
+         <?     foreach ($prefixinfo_check as $k => $v) { ?>
+         <?     if (!$v) { ?><tr><td><a href="<?=site_url('student/profile/' . str_replace(array('base', 'score', 'practice', 'selfwish', 'parentwish'), array('base', 'awards', 'practice', 'wish', 'pwish'), $k))?>" target="_blank"><?=$product_prefixinfo[$k]?></a></td></tr><? }?>
+         <?     } ?>
+       <?   } else { ?>
+       <tr><td>产品前置检查已通过</td></tr>
+       <?   } ?>
+        <? if ($start_test) { ?>
+       <tr><td><hr/></td></tr>
+       <tr><td><a id="id_a_enterexamplace" href="<?=C('exam_host_name')?>/exam/index/index/exam_id/<?=$exam_id?><?php if ($place_id) {?>/place_id/<?=$place_id?><?php }?>" target="_blank">进入考场</a>
+                <? if ($product_info['exam_isfree'] == 0) { ?>
+               <br/><span style="color:red">注意：该考场为固定时间考试，需在开考前半小时内方可登录考场</span></td></tr>
+                <? } ?>
+        <? } ?>
+       <? } ?>
+    </table>
+  </div>
+  <div class="cls_dialog_buttons">
+  <button type="button" onclick="fnCloseDialog('id_register_exam_place_prefixcheck_dlg');<? if ($hide_title) echo('location.reload();'); ?>">关闭</button>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/school/updateclass')?>">
+  <input type="hidden" name="schcls_schid" value="<?=$schcls_schid?>" />
+  <input type="hidden" name="schcls_id" value="<?=$schcls_id?>" />
+  <div class="space">
+    <div class="subtitle"><?if ($schcls_id > 0) {?>编辑<?} else {?>新增<?php }?>班级</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">班级名称</td>        
+        <td>
+            <input type="text" id="schcls_name" name="schcls_name" class="txtbox" value="<?=$class['schcls_name']?>">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

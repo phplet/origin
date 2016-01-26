@@ -1,0 +1,61 @@
+<? $this->load->view('common/header');?>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('cteacher_setctinfo', false); 
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">查看培训教师(ID:<?=$ct_info['ct_id']?>)
+      <div class="cls_toolbar">
+<? if ($bPrivEdit) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/cteacher/setctinfo/' . $ct_info['ct_id'])?>'">编辑</button>
+<? } ?>
+        <button type="button" onclick="location.href='<?=site_url('admin/cteacher/ctlist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <div id="id_ct_form">
+    <table class="maintable" id="id_ct_table" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">教师名称</td>
+        <td width="35%"><? Func::echo_s($ct_info['ct_name']); ?></td>
+        <td class="altbg1" width="15%">联系方式</td>
+        <td width="35%"><? Func::echo_s($ct_info['ct_contact']); ?></td>
+      </tr>
+      <tr>
+        <td class="altbg1">年级</td>
+        <td colspan="3"><? foreach ($cteacher_gradeid as $v) { ?>
+                        &nbsp;<?=$grade_map[$v['ctg_gradeid']]?> 
+                        <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">学科</td>
+        <td colspan="3"><? foreach ($cteacher_subjectid as $v) { ?>
+                        &nbsp;<?=$subject_map[$v['cts_subjectid']]?> 
+                        <? } ?>
+        </td>
+      </tr>
+        <tr>
+           <td class="altbg1">状态</td>
+           <td colspan="3"><? if ($ct_info['ct_flag'] > 1) echo('待审'); else if ($ct_info['ct_flag'] == '0') echo('禁用'); else if ($ct_info['ct_flag'] == 1) echo('启用'); else if ($ct_info['ct_flag'] == -1) echo('已删'); ?></td>
+        </tr>
+        <tr>
+           <td class="altbg1">关联课程</td>
+           <td colspan="3">
+               <div id="id_cc_list">
+<? if ($cteacher_cclist) foreach ($cteacher_cclist as $cc_item) { ?>
+<label>&nbsp;<input disabled="disabled" type="checkbox" name="cct_ccid_str" class="cls_field ccid_<?=$cc_item['cc_id']?>" value="<?=$cc_item['cc_id']?>" checked="checked"/><? Func::echo_s($cc_item['ti_name']); ?> <? Func::echo_s($cc_item['cors_name']); ?>  <? if ($cc_item['tc_name']) Func::echo_s('(校区:'.$cc_item['tc_name'].')'); else echo('(ID:' . $cc_item['cc_id'] . ')'); ?></label>
+<? } ?>
+</div>
+           </td>
+        </tr>
+        <tr>
+          <td class="altbg1">简介</td>
+          <td colspan="3"><? Func::echo_s($ct_info['ct_memo'], true); ?></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,68 @@
+<?php echo $this->load->view('common/header');?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<style>
+table th{
+    text-align:right;
+	font-size:14px;
+	width: 10%;
+}
+.cls_footer {
+	margin: 0 auto;
+	width: 100%;
+}
+.cls_footer_pos {
+	width: auto;
+}
+.cls_title{
+	font-size:30px;
+	color:#000;
+	text-align:center;
+}
+</style>
+</head>
+<body>
+<div class="cls_body cls_login">
+	<?php echo $this->load->view('common/copyright_system_name.phtml');?>
+    <div class="cls_content" style="padding-top:90px;">
+    	<div class="cls_time clearfix">
+	        <p class="cls_title">考试科目： <?php echo $grades[$current_exam['grade_id']] . trim($current_exam['subject_name']);?></p>
+        </div>
+        <div class="cls_login_containt clearfix">
+            <div class="cls_login_main fl_l">
+                <div class="cls_login_title">考生登录</div>
+                    <ul class="cls_login_form">
+                        <li class="cls_login_form_item clearfix">
+                            <label class="fl_l" for="id_xwb_ticket">登录帐号:</label>
+                            <input type="text" class="fl_l w-200 login_account" placeholder="Email/准考证号/身份证号" name="exam_ticket" id="txt_exam_ticket"/>
+                        </li>
+                        <li class="cls_login_form_item clearfix"><label class="fl_l" for="id_xwb_password">登录密码:</label>
+                            <input type="password"  class="fl_l w-200 login_pwd" placeholder="请输入登录密码" name="password" id="txt_passwd"/>
+                        </li>
+                    </ul>
+                    <div class="cls_login_button clearfix">
+                        <span class="cls_login_btn_block"></span><input class="cls_login_btn cls_button" type="button" name="submit" id="btn_login" value="登录系统">
+                        <a style="margin-left:12px;" href="<?=C('student_host_name')?>/student/index/forget" target="_blank">找回密码</a>
+                        <a style="margin-left:12px;" href="<?=C('student_host_name')?>/student/register/index" target="_blank">免费注册</a>
+                    </div>
+            </div>
+            <div class="cls_msg clearfix fl_l">
+                <span class="cls_form_lable">[注意事项]:</span>
+                <ul class="cls_form_text cls_form_textear">
+                    <li><em><?php echo $current_exam['introduce'];?></em></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php echo $this->load->view('common/copyright');?>
+
+</body>
+<?php static_global('js/third_party/fullscreen.js');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+<?php static_js(array('login.js'));?>
+<script type="text/javascript">
+	var check_login_url = '<?php echo site_url('demo/index/check_login/');?>';		
+</script>
+</html>

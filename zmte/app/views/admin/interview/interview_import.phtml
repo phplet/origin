@@ -1,0 +1,55 @@
+<?php $this->load->view('common/header');?>
+
+<div id="body">
+  <form method="post" name="search_form" action="<?=site_url('admin/interview_result/save')?>" enctype="multipart/form-data">
+    <div class="space">
+        <div class="subtitle">导入评分结果数据</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">请选择考试期次</td>
+                <td>
+                    <select name="exam_id" id="exam_id">
+                        <?php if (count($exams) >= 1): ?>
+                            <?php foreach ($exams as $key => $value): ?>
+                                <option value="<?php echo $value['exam_id'] ?>" <?php if($value['exam_id'] == $exam_id){echo 'selected="selected"';} ?> ><?php echo $value['exam_name'] ?></option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <option>--暂无考试期次--</option>
+                        <?php endif ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">请选择文件</td>
+                <td>
+                    <input type="file" name="file" class="txtbox" />
+                    <?php if (isset($error)): ?><span style="color:red;display: inline-block;"><?php echo $error; ?></span><?php endif ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">上传说明</td>
+                <td style="padding:10px;">
+                    <p>1.支持Excel 2003、Excel 2007、Excel 2010、Excel 2013 版本</p>
+                    <p>2.最大文件上传尺寸为10Mb</p>
+                    <p>3.请确保表格中的评分项数量与评分标准中一致</p>
+                    <p>4.表格第一列必须为准考证号，第二列必须为学生姓名，之后为各个评分项，总分可选填</p>
+                    <p>5.准考证号，学生姓名，评分项均不能为空</p>
+                    <p>6.导入时如果当前行发生错误，将跳过当前行继续导入</p>
+                    <p>7.重复导入时，如果已经存在面试结果，将覆盖之前的结果</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">导入模板下载</td>
+                <td>
+                    <a href="<?php echo base_url('file/template.xlsx'); ?>">点击下载</a>
+                </td>
+            </tr>        
+        </table>
+        <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

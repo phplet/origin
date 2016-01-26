@@ -1,0 +1,196 @@
+<?php $this->load->view('common/header');?>
+<?php $this->load->view('common/mathjax');?>
+<?php $this->load->view('common/ueditor_parse');?>
+
+<style>
+  body,td {
+  	margin: 0px;
+  	font: 16px Tahoma,Verdana,sans-serif;
+  	text-align: left;
+  }
+</style>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">试卷预览</div>
+    <form name="Frm_cpuser_info" id="add_form" method="POST"
+		action="<?=site_url('admin/paper/update_s/'.$paper[paper_id])?>" autocomplete="off"
+  >
+
+    <table class="maintable preview_content" border="0" cellspacing="0" cellpadding="0">
+      <?php $question_index = 1;?>
+      <?php
+      $paper['paper_score'] = unserialize($paper['paper_score']);
+
+      foreach($group as $qtype => $list):?>
+      <?php if(empty($list)) continue;?>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+              <span><?=$qtypes[$qtype]?></span>
+              <?php if ($qtype == 0): ?>
+                <span>共<?php echo $total_0; ?>分</span>
+              <?php else: ?>
+                <span>共<?php echo $score[$qtype]['total_score'];  ?>分</span>
+              <?php endif ?>
+            </td>
+        </tr>
+       <?php foreach($list as $list_index => $question):?>
+        <?php if($list_index):?>
+        <tr><td colspan="10" class="altbg2" style="height:5px;padding:0;"></td></tr>
+        <?php endif;?>
+        <tr>
+            <td width="150" valign="top">
+              <?=$question_index++ . '.(<strong>试题ID：' . $question['ques_id'] . '</strong>)';?>
+                <?php if (!in_array($qtype, array(0))): ?>
+                                 分数:
+              <input type="text" name="parent[<?php echo $question['ques_id'];?>][score][]" value=<?php
+
+              echo $paper['paper_score'][parent][$question['ques_id']][score][0]
+                    ? $paper['paper_score'][parent][$question['ques_id']][score][0]:
+                      $score[$qtype]['score'];
+              ?>>
+
+                <input type="hidden" name="parent[<?php echo $question['ques_id'];?>][type][]" value=<?php
+
+              echo $qtype;
+              ?>>
+
+              <?php else:?>
+                     <input type="text" name="parent[<?php echo $question['ques_id'];?>][score][]"
+                     value=<?php echo $paper['paper_score'][parent][$question['ques_id']][score][0]
+                    ? $paper['paper_score'][parent][$question['ques_id']][score][0]:
+                     $question['total_score'];
+                     ?>>
+
+                        <input type="hidden" name="parent[<?php echo $question['ques_id'];?>][type][]" value=<?php
+
+              echo $qtype;
+              ?>>
+
+
+
+              <?php endif;?>
+
+
+              <br/>
+              <?php if ($question['type'] == 0): ?>
+                <span>共<?php echo $question['total_score'];?>分</span>
+              <?php endif; ?>
+            </td>
+            <td>
+              <?=nl2br($question['title'])?>
+              <?php if($question['picture']):?>
+              <br/>
+              <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$question['picture']?>" /></div>
+              <?php endif;?>
+            </td>
+        </tr>
+        <?php if(in_array($qtype,array(0,4,5,6))):?>
+        <tr>
+            <td></td>
+            <td>
+              <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <?php $sub_index = 1;?>
+                <?php foreach($question['children'] as $sub_question):?>
+                <tr>
+                  <td width="150" valign="top">
+                    <?=$sub_index++ . '.(<strong>试题ID:' . $sub_question['ques_id'] . '</strong>)'?>
+                    分数:<input type="text" name="parent[<?php echo $question['ques_id'];?>][children][<?php echo $sub_question['ques_id'];?>][score][]" value="<?php
+                    echo $paper['paper_score'][parent][$question['ques_id']][children][$sub_question['ques_id']][score][0] ? $paper['paper_score'][parent][$question['ques_id']][children][$sub_question['ques_id']][score][0]:$question['children_score'];
+                    ?>">
+
+
+                  </td>
+                  <td>
+                  <?php 
+                    // 将填空位置替换为input
+                    if ($sub_question['type'] == 3) {
+                        echo preg_replace('/（[\s\d|&nbsp;]*）/','<input type="text">',nl2br($sub_question['title']));
+                    } else {
+                        echo nl2br($sub_question['title']);
+                    }
+                  ?>
+                  <?php if($sub_question['picture']):?>
+                  <br/>
+                  <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$sub_question['picture']?>" /></div>
+                  <?php endif;?>
+                  </td>
+                </tr>
+
+                <?php if($sub_question['type'] < 3):?>
+                <tr>
+                  <td>选项</td>
+                  <td>
+                    <?php foreach($sub_question['options'] as $k => $opt):?>
+                    <span style="width:20px">
+                        <?php if(strpos(','.$sub_question['answer'].',', ','.$opt['option_id'].',')!==false):?>
+                        <img src="<?=__HTML_URL__?>images/yes.gif" />
+                        <?php else:?>
+                        &nbsp;&nbsp;&nbsp;
+                        <?php endif;?>
+                    </span>
+                    	<font color="red">（选项ID：<?=$opt['option_id']?>）</font><?=$opt['option_name']?><?php if($opt['picture']):?><img src="<?=__IMG_ROOT_URL__?><?=$opt['picture']?>"/><?php endif;?><hr/>
+                    <?php endforeach;?>
+                  </td>
+                </tr>
+                <?php else:?>
+                <tr>
+                  <td>答案</td>
+                  <td>
+                    <?php foreach($sub_question['answer'] as $k => $v):?>
+                    <?php if(count($sub_question['answer'])>1):?><?=$k+1?>：<?php endif;?><?=$v?> <br/>
+                    <?php endforeach;?>
+                  </td>
+                </tr>
+                <?php endif;?>
+                <?php endforeach;?>
+              </table>
+            </td>
+        </tr>
+        <?php elseif(in_array($qtype, array(1,2,7,14))):?>
+        <tr>
+            <td>选项</td>
+            <td>
+                <?php foreach($question['options'] as $k => $opt):?>
+                <span style="width:20px">
+                    <?php if(strpos(','.$question['answer'].',', ','.$opt['option_id'].',')!==false):?>
+                    <img src="<?=__HTML_URL__?>images/yes.gif" />
+                    <?php else:?>
+                    &nbsp;&nbsp;&nbsp;
+                    <?php endif;?>
+                </span>
+				        <font color="red">（选项ID：<?=$opt['option_id']?>）</font><?=$opt['option_name']?>
+                <?php if($opt['picture']):?>
+                  <img src="<?=__IMG_ROOT_URL__?><?=$opt['picture']?>"/>
+                <?php endif;?>
+                <hr/>
+                <?php endforeach;?>
+            </td>
+        </tr>
+        <?php elseif(in_array($qtype, array(8))):?>
+        <tr>
+            <td>答案</td>
+            <td>
+                <?php foreach($question['children'] as $k => $v):?>
+                  <?php if(count($question['children'])>1):?><?=$k+1?>：<?php endif;?><?=$v['answer']?>
+                <br/>
+                <?php endforeach;?>
+            </td>
+        </tr>
+        <?php else:?>
+        <tr>
+            <td>答案</td>
+            <td>
+                <?php foreach($question['answer'] as $k => $v):?>
+                  <?php if(count($question['answer'])>1):?><?=$k+1?>：<?php endif;?><?=$v?><br/>
+                <?php endforeach;?>
+            </td>
+        </tr>
+        <?php endif;?>
+       <?php endforeach;?>
+      <?php endforeach;?>
+    </table>
+    <input type="submit" name="submit" value="更新试卷分数">
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

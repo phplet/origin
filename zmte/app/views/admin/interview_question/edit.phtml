@@ -1,0 +1,105 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(document).ready(function(){
+    $("#question_form").validate({
+        submitHandler:function(form){
+            form.submit();         
+        },
+        rules: {            
+            'class_id[]': "required",
+            lang:'required',
+            interview_type:'required',
+            content:'required'
+        },
+        messages: {
+            'class_id[]': "请至少选择一个年级段的试题类型",
+            lang:'请选择语言',
+            interview_type:'请选择考点',
+            content:'请填写试题内容'
+        }
+    });
+});
+
+</script>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/interview_question/update')?>" onsubmit="return false;">
+  <?php if($act == 'add'):?>
+  <input type="hidden" name="relate_group" value="<?=$relate_group?>" />
+  <?php else:?>
+  <input type="hidden" name="id" value="<?=$row['id']?>" />
+  <?php endif;?>
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <input type="hidden" name="back_url" value="<?=$back_url?>" />
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>面试试题</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                题目信息
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">年级段/试题类型</td>
+            <td>
+              <?php foreach($periods as $k => $v):?>
+              <?php $class_list = isset($period_class[$k]) ? $period_class[$k] : array(); ?>
+              <div>
+              <?=$v?> ：
+              <?php foreach($class_list as $cid => $class):?>
+                <input type="checkbox" name="class_id[]" value="<?=$k?>-<?=$cid?>" id="period<?=$k?>_class<?=$cid?>" <?=isset($relate_class[$k][$cid])?'checked':''?>/> <label for="period<?=$k?>_class<?=$cid?>"><?=$class['class_name']?></label>
+              <?php endforeach;?>
+              </div>
+              <?php endforeach;?>
+              <label for="class_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">语言</td>
+            <td>
+              <?php foreach($langs as $k => $v):?>
+              <input type="radio" name="lang" value="<?=$k?>" id="lang<?=$k?>" <?php if($k==$row['lang']) echo 'checked';?>/> <label for="lang<?=$k?>"><?=$v?></label>
+              <?php endforeach;?> 
+              <label for="lang" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考点</td>
+            <td>
+              <select name="interview_type">
+              <option value="">=考点=</option>
+              <?php foreach($types as $k => $v):?>
+              <option value="<?=$k?>"<?=$k==$row['interview_type']?' selected':''?>><?=$v['pid']?'　':''?><?=$v['type_name']?></option>
+              <?php endforeach;?> 
+              </select>
+             <label for="interview_type" class="error" style="display:none"></label>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="altbg1">试题内容</td>
+            <td>
+                <textarea id="content" name="content" style="width:500px;height:50px;"><?=$row['content']?></textarea>
+                仅考官可见
+                <label for="content" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">学生题面</td>
+            <td>
+                <textarea name="student_content" style="width:500px;height:50px;"><?=$row['student_content']?></textarea>
+                面试时，学生需要看的内容，无则不填
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

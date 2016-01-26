@@ -1,0 +1,130 @@
+<?php $this->load->view('common/exam_header', array('page_title' => '免费体验', 'header_bg' => site_url('images/exam/header_bg_small.png')));?>
+<? static_css('register/style.css');?>
+<style type="text/css">
+.altbg2, .altbg2-r, .altbg2-bg {
+    background:#7eb8dd !important;
+}
+
+.altbg2-bg {
+    color:black !important;
+}
+
+.altbg1 {
+    background:#9cd5f9 !important;
+}
+
+.cls_xueke1 {
+    font-size:1.4em;
+    text-decoration:underline;
+    font-weight:bold;
+}
+
+
+.cls_xueke_row {
+    display:table;
+    width:100%;
+    margin:0px auto 20px auto;
+    padding-top:10px;
+}
+
+.cls_xueke_col {
+    display:table-cell;
+    width:33%;
+    text-align:center;
+}
+
+.cls_xueke_col h3 {
+    font-size:1.8em;
+    font-weight:bold;
+}
+
+.cls_xueke_col img {
+    margin:2px 0px 2px 0px;
+}
+</style>
+<div id="body" >
+  <div class="space">
+
+<?
+$grade = C('grades');
+$examcfg = C('demo_exam_config', 'app/demo/website.php');
+function fnDemoUrl($grade_id, $subject_id, $subject_name)
+{
+    $g_subject = C('subject');
+
+    $color_arr = array(1 => "#ed2024",
+        2 => "#ff8921",
+        3 => "#e6cc05",
+        4 => "#06b31b",
+        5 => "#3192f3",
+        6 => "#1c67a0",
+        7 => "#8905dc",
+        10 => "#0b7f6d");
+
+    $color = isset($color_arr[$subject_id]) ? $color_arr[$subject_id] : 'black';
+
+    echo <<<EOT
+<a class="cls_xueke1" style="color:{$color}" href="http://demo.new-steps.com:8080/demo/index/login?grade={$grade_id}&subject_id={$subject_id}" target="_blank">{$subject_name}</a>&nbsp;
+EOT;
+}
+?>
+
+<div class="cls_xueke_row">
+    <? for ($i = 12; $i >= 10; $i--) { ?>
+    <div class="cls_xueke_col">
+        <? if (isset($examcfg[$i])) { ?>
+        <h3><?=$grade[$i]?></h3>
+        <img src="<?=site_url("images/exam/grade_$i.jpg")?>" /><br/>
+        <? foreach ($examcfg[$i]['subject_id'] as $subject_id => $subject_name)  fnDemoUrl($i, $subject_id, $subject_name); ?>
+        <? } ?>
+    </div>
+    <? } ?>
+</div>
+
+<hr/>
+
+<div class="cls_xueke_row">
+    <? for ($i = 9; $i >= 7; $i--) { ?>
+    <div class="cls_xueke_col">
+        <? if (isset($examcfg[$i])) { ?>
+        <h3><?=$grade[$i]?></h3>
+        <img src="<?=site_url("images/exam/grade_$i.jpg")?>" /><br/>
+        <? foreach ($examcfg[$i]['subject_id'] as $subject_id => $subject_name) fnDemoUrl($i, $subject_id, $subject_name); ?>
+        <? } ?>
+    </div>
+    <? } ?>
+</div>
+
+<hr/>
+
+<div class="cls_xueke_row">
+    <? for ($i = 6; $i >= 4; $i--) { ?>
+    <div class="cls_xueke_col">
+        <? if (isset($examcfg[$i])) { ?>
+        <h3><?=$grade[$i]?></h3>
+        <img src="<?=site_url("images/exam/grade_$i.jpg")?>" /><br/>
+        <? foreach ($examcfg[$i]['subject_id'] as $subject_id => $subject_name) fnDemoUrl($i, $subject_id, $subject_name); ?>
+        <? } ?>
+    </div>
+    <? } ?>
+</div>
+
+
+<div class="cls_xueke_row">
+    <? for ($i = 3; $i >= 1; $i--) { ?>
+    <div class="cls_xueke_col">
+        <? if (isset($examcfg[$i])) { ?>
+        <h3><?=$grade[$i]?></h3>
+        <img src="<?=site_url("images/exam/grade_$i.jpg")?>" /><br/>
+        <? foreach ($examcfg[$i]['subject_id'] as $subject_id => $subject_name) fnDemoUrl($i, $subject_id, $subject_name); ?>
+        <? } ?>
+    </div>
+    <? } ?>
+</div>
+
+
+<br/>
+<br/>
+  </div>
+</div>
+<?php $this->load->view('common/exam_footer');?>

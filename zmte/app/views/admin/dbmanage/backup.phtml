@@ -1,0 +1,28 @@
+<?php
+/**
+ * 后台管理->数据库备份
+ */
+$this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="#">
+  <div class="space">
+    <div class="subtitle">
+    数据库备份
+    <a class="menu" href="<?=site_url('admin/dbmanage/restore')?>">数据库还原</a>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">是否导出学生数据</td>        
+        <td>
+            <input type="radio" name="is_export_student" value="1">是
+            <input type="radio" name="is_export_student" value="0" checked>否
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value="备份 " class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,194 @@
+<?php echo $this->load->view('common/header', array('render_no_style' => true));?>
+<?php static_css(array('invigilate.css'));?>
+<?php static_global('js/jquery/plugin/autocomplete/jquery.autocomplete.css', 'css');?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/jquery/plugin/my_pagination/page.css', 'css');?>
+<style>
+.manu .disabled {
+	color:#999;
+}
+.manu {
+	padding:0;
+}
+</style>
+<?php 
+	$place = $current_exam['place'][0];
+?>
+<body>
+<div id="id_jk_body" class="cls_jk_body">
+	<!-- header -->
+    <div class="cls_jk_pos">
+        <div class="cls_jk_top">
+            <?php echo $this->load->view('common/copyright_system_name.phtml', array('is_invigilator' => true));?>
+            <div class="cls_jk_uesr">
+                <a href="###" id="btn_reset_invigilate_password" class="cls_jk_password">老师密码重置</a>
+                <span class="cls_jk_name"><?php echo $this->session->userdata('exam_i_uname');?></span>
+                <a class="cls_jk_quit" href="<?php echo site_url('exam/invigilate/logout');?>">[退出系统]</a>
+            </div>
+        </div>
+        <div class="cls_jk_header clearfix">
+            <ul class="cls_jk_info clearfix fl_l">
+            	<li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试期次：</span>
+                	<span class="cls_jk_info_text fl_l"><?php echo $current_exam['exam_name'];?></span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">场次：</span>
+                	<span class="cls_jk_info_text fl_l"><?php echo $place['place_name'];?></span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">科目：</span>
+                	<span class="cls_jk_info_text fl_l">
+                		<?php 
+                			$subjects = array_values($current_exam['subject']);
+							if (count($subjects)) { 
+	                			$tmp_subject = array();
+	                			foreach ($subjects[0] as $subject) {
+									$tmp_subject[] = $subject['subject_name'];
+								}
+	                			echo implode('、', $tmp_subject);
+	                		} else {
+								echo '<font color="red">该考场未分配科目</font>';
+							}
+                		?>
+                	</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考生人数：</span>
+                	<span class="cls_jk_info_text cls_w45 fl_l"><?php echo count($students);?></span>
+                    <span class="cls_jk_info_name cls_w106 fl_l">在线人数：</span>
+                    <span class="cls_jk_info_text cls_w45 fl_l" id="span_onlines" style="position:relative;">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试开始时间：</span>
+                	<span class="cls_jk_info_text fl_l"><?php echo date('Y-m-d H:i:s', $place['start_time']);?></span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试结束时间：</span>
+                	<span class="cls_jk_info_text fl_l"><?php echo date('Y-m-d H:i:s', $place['end_time']);?></span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">已交卷人数：</span>
+                    <span class="cls_jk_info_text  fl_l" id="span_submit" style="position:relative;">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+					<span class="cls_jk_info_name fl_l">学校：</span>
+                	<span class="cls_jk_info_text fl_l" style="width:497px"><?php echo $place['school_name'];?></span>
+				</li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试地点：</span>
+                	<span class="cls_jk_info_text fl_l" style="width:697px"><?php echo $place['address'];?></span>
+                </li>
+                <li>
+                	<div class="cls_countTime fl_l"  style="margin-left:25%;height:34px;">
+						<i class="cls_ico" style="margin-top:2px;"></i>
+						<strong id="id_statusbar_clock" class="cls_countTime_main">正在初始化考试计时器...</strong>
+					</div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 学生行为日志 -->
+        <div class="cls_jk_main clearfix">
+			<div class="cls_jk_side_log clearfix">
+				<span class="cls_jk_side_title fl_l">学生行为日志</span>
+				<a href="###" id="btn_get_all" class="fl_l clearfix cls_get_all">查看全部</a>
+				<a href="###" id="btn_change_student_passwd" style="width:120px;" class="cls_password_reset fl_l clearfix"><i class="cls_ico"></i><span>考生密码重置</span></a>
+				
+				<a href="###" id="btn_out_student" style="width:120px;" class="cls_password_reset fl_l clearfix"><i class="cls_ico"></i><span>踢出/恢复考生</span></a>
+				
+                <?php /*?><a class="cls_get_all fullscreen fl_l"  href="###" id="btn_fullscreen"> 全屏模式</a><?php */?>
+			</div>
+			<div class="cls_jk_select">
+				<form id="search_form">
+	                <label class="fl_l" for="txt_ticket">准考证号:</label>
+	                <input style="width: 120px;" class="fl_l cls_jk_select_number student_account" autocomplete="off" placeholder="准考证号" type="text"  id="txt_ticket"/>
+	                <label class="fl_l" for="txt_uid">学生筛选:</label>
+					<div class="cls_jk_student_input fl_l">
+	                	<input type="text" id="txt_tmp_uid" value="学生筛选" readonly="readonly"/>
+	                	<input type="text" style="display:none;" id="txt_uid" value=""/>
+	                    <s id="id_jk_student_icon" class="cls_jk_student_icon cls_ico"></s>
+	                    <?php echo $this->load->view('invigilate/student_selector.phtml');?>
+					</div>
+					<label class="fl_l" for="select_log_type">事件类型:</label>
+					<select  class="cls_jk_select_type fl_l" name="" id="select_log_type">
+	                    <option value="0" selected="selected">--全部--</option>
+						<?php foreach ($log_types as $key=>$log_type) {?>
+	                    <option value="<?php echo $key;?>"><?php echo $log_type;?></option>
+	                    <?php } ?>
+	                </select>
+	                <span class="cls_jk_select_time fl_l">
+	                      <label for="txt_time_start">时间段:</label>
+	                      <input class="datepicker" type="text" value="<?php  echo date('Y-m-d H:i', $place['student_time_start']);?>" id="txt_time_start" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '<?php echo date('Y-m-d H:i:s', $place['student_time_start']);?>', maxDate: '<?php echo date('Y-m-d H:i', $place['end_time']);?>'});" readonly/> - <input class="datepicker" type="text" value="" placeholder="" id="txt_time_end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '<?php echo date('Y-m-d H:i', $place['student_time_start']);?>', maxDate: '<?php echo date('Y-m-d H:i', $place['end_time']);?>'});" readonly/>
+	                </span>
+	                <input class="cls_jk_btn fl_l" type="button" value="筛选" id="btn_search"/>
+	                <input type="reset" value="重置" style="display:none;" id="btn_reset"/>
+                </form>
+			</div>
+			<div class="cls_jk_list_title clearfix">
+                <span class="cls_jk_list_time">时间&nabla;</span>
+                <span class="cls_jk_list_number">准考证号&nabla;</span>
+                <span class="cls_jk_list_name">学生&nabla;</span>
+                <span class="cls_jk_list_event">事件&nabla;</span>
+                <span class="cls_jk_list_more">该学生所有事件&nabla;</span>
+                
+            </div>
+            <ul id="student_log_box" class="cls_jk_container"></ul>
+		</div>
+    </div>
+    
+    <!-- footer -->
+    <div class="cls_jk_footer">
+        <div class="cls_jk_page_pos clearfix">
+            <div class="cls_jk_page cls_jk_page_left clearfix fl_l" style="position:relative;">
+            	<i class="new" id="pager_tip"></i>
+            	<div id="pager_box"></div>
+            </div>
+            <div class="cls_copyright clearfix fl_l">&copy; <?php echo date('Y');?> <?=C('company_shortname')?><i class="cls_copyright_tm" style="top:-7px;"></i> <span class="cls_copyright_main">保留所有权利</span></div>
+        </div>
+    </div>
+    
+    <!-- 考生的所有事件 -->
+    <div id="id_jk_single" class="cls_jk_single box" style="display:none;">
+        <div class="cls_jk_single_title"><font id="student_log_name"></font> 的行为</div>
+        <ul class="cls_jk_single_list" id="student_log_list"></ul>
+    </div>
+</div>
+
+<!-- 隐藏区域 -->
+<div id="hidden_student_configs" style="display:none;"><?php echo json_encode($students);?></div>
+</body>
+<script>
+	var config_url = {
+			get_logs : '<?php echo site_url('exam/invigilate/ajax_test_logs');?>',
+			load_reset_i_passwd : '<?php echo site_url('exam/invigilate/load_reset_password'); ?>',
+			load_chang_s_pwd : '<?php echo site_url('exam/invigilate/load_chang_s_pwd'); ?>',
+			get_student_logs : '<?php echo site_url('exam/invigilate/student_logs');?>',
+			get_onlines : '<?php echo site_url('exam/invigilate/statics/?data_type=online,submit');?>',
+		    load_out_student : '<?php echo site_url('exam/invigilate/load_out_student'); ?>',
+					
+	};
+	
+	exam_count_down_config = { 
+      		'startT' : '<?php echo date('Y-m-d H:i:s', $place['start_time']);?>',
+      		'startText' : '距离考试开始时间还有 ',
+      		'startCallback':function () {window.location.reload();},
+      		'endT' : '<?php echo date('Y-m-d H:i:s', $place['end_time']);?>',
+                'endText' : '距离考试结束时间还有 ',
+      		//'endCallback':function () {setTimeout(function () {window.location.reload();}, 300000)},
+               // 'eText' : '本场考试已经结束, 5秒后将自动跳转到登录页',
+                'eText' : '本场考试已经结束！',
+      		'currentTime':'<?php echo date('Y-m-d H:i:s');?>'
+		};
+</script>
+<?php echo $this->load->view('common/count_down.phtml');?>	
+<?php static_js(array('front/count_down.js'));?>
+<?php static_global('js/third_party/zebra_dialog.js');?> 
+<?php static_global('js/third_party/fullscreen.js');?> 
+<?php static_global('js/datepicker/wdatepicker.js');?> 
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+<?php static_global('js/jquery/plugin/autocomplete/jquery.autocomplete.js');?>
+<?php static_global('js/jquery/plugin/my_pagination/jquery.myPagination6.0.js');?>
+
+<?php static_js(array('invigilate/main.js'));?>
+	</html>

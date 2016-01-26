@@ -1,0 +1,61 @@
+<?php 
+/**
+ * 后台管理->素质相关管理->职业管理
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/profession/save')?>">
+  <input type="hidden" name="profession_id" value="<?=$profession['profession_id']?>" />
+  <div class="space">
+    <div class="subtitle"><?=$profession['profession_id'] ? '编辑' : '新增'?>职业</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">职业名称</td>        
+        <td>
+            <input type="text" id="profession_name" name="profession_name" class="txtbox" value="<?=$profession['profession_name']?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">新兴职业</td>        
+        <td>
+        <input type="radio" id="profession_emerging_1" name="profession_emerging" value="1" <?=$profession['profession_emerging'] == 1 ? 'checked' : ''?>><label for="profession_emerging_1">是</label>
+        <input type="radio" id="profession_emerging_0" name="profession_emerging" value="0" <?=$profession['profession_emerging'] == 0 ? 'checked' : ''?>><label for="profession_emerging_0">否</label>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">说明</td>        
+        <td>
+            <textarea id="profession_explain" name="profession_explain" class="txtbox"><?=$profession['profession_explain']?></textarea>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	profession_name: "required"
+	    },
+	    messages: {
+	    	profession_name: "请输入职业名称"
+	    }
+	});
+})
+</script>
+
+<?php $this->load->view('common/footer');?>

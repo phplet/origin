@@ -1,0 +1,108 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+var use_history = [];
+$(document).ready(function(){
+    $('.ques_title').find('div').dblclick(function(){
+        $(this).toggleClass('line_18');
+    });
+    $('.use_count').click(function(){
+        var ques_id = $(this).attr('ques_id');
+        var offset = $(this).parent().offset();
+        $('#use_history').css({'top':offset.top+'px','left':offset.left+'px'});
+        if ( typeof(use_history[ques_id]) == 'undefined')
+        {
+            $.post(
+                '<?=site_url('admin/common/interview_history')?>',
+                {ques_id:ques_id},
+                function(data) {
+                    var str = '';
+                    for(var i=0; i<data.length; i++) {
+                        str += data[i]['time']+'['+data[i]['name']+']<br/>';
+                    }
+                    if (!str) str = '暂无记录';                    
+                    use_history[ques_id] = str;                    
+                    $('#use_history').html(use_history[ques_id]).show();
+                },
+                'json'
+            );            
+        } else {
+            $('#use_history').html(use_history[ques_id]).show();
+        }
+    });
+    $('#use_history').mouseout(function(){
+        $(this).hide();
+    });
+
+});
+</script>
+<style>
+#use_history{
+    min-width:300px;
+    min-height:50px;
+    border:#FF9966 1px solid;
+    position:absolute;
+    z-index:100;
+    background:#BBDCF1;
+    display:none;
+    padding: 5px;
+}
+</style>
+<div id="use_history"></div>
+<div id="body">
+  <form name="frm_info" action="<?=site_url('admin/interview_rule_question/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+  <input type="hidden" name="rule_id" value="<?=$rule['rule_id']?>" />
+  <div class="space">
+    <div class="subtitle">
+    <span class="menu" >
+    <a style="color:#f00" href="<?=site_url('admin/interview_rule_question/print_question/'.$rule['rule_id'])?>" target="_blank">打印试题</a>
+    <a style="color:#f00" href="<?=site_url('admin/interview_rule_question/print_question/'.$rule['rule_id'].'/1')?>" target="_blank">打印学生题面</a>    
+    </span>
+    面试题记录管理</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="3%">删？</td>
+        <td>题目</td>
+        <td width="10%">年段</td>
+        <td width="15%">类型</td>
+        <td width="5%">语言</td>
+        <td width="10%">考点</td>
+        <td width="5%">次数</td>
+        <td width="10%">录入时间</td>
+        <td width="10%">最近时间</td>
+        <td width="10%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['rqid']?>" /></td>
+        <td class="ques_title"><div class="line_18"><?=$val['content']?></div></td>
+        <td><?=$val['period_name']?></td> 
+        <td><?=$val['class_name']?></td>
+        <td><?=$val['language']?></td>
+        <td><?=$val['type_name']?></td>        
+        <td><a href="javascript://"  class="use_count" ques_id="<?=$val['id']?>" title="点击显示历史记录"><?=$val['use_count']?></a></td>
+        <td><?=$val['addtime']?></td>
+        <td><?=$val['max_time']?></td>
+        <td>
+            <a href="<?=site_url('admin/interview_question/preview/'.$val['id'])?>" target="_blank">预览</a>
+            <a href="<?=site_url('admin/interview_rule_question/delete/'.$val['rqid'])?>" onclick="return confirm('确定要删除该记录么？');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2">
+            <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+        </td>
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="10">暂无匹配试题！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交删除 " class="btn" /></center>
+  </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><?=$exam["exam_name"]?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<?php static_css('admin.css');?>
+<?php if (isset($load_dialog_css) && $load_dialog_css === true) {?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<style>
+.ZebraDialog .ZebraDialog_Icon {
+        padding-left: 0px;
+}
+.ZebraDialog .ZebraDialog_Body {
+        padding:10px;
+}
+</style>
+
+<?php }?>
+<?php static_global('js/jquery/jquery.js');?>
+<?php static_js('common/common.js');?>
+
+</head>
+<body>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+</script>
+<script>
+function changeImg(obj)
+{
+    obj.each(function(){
+        var max = 600;
+        var width = $(this).width();
+        var height = $(this).height();
+
+        if(width > max)
+        {
+            $(this).css("max-width", max);
+        }
+    });
+}
+
+$(function(){
+    changeImg($('.q_title img'));
+    changeImg($('.q_option img'));
+    changeImg($('.q_child_title img'));
+});
+</script>
+
+<?php static_global('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML');?>
+<?php static_js('admin/exam_paper/changeHtmlScript.js');?>
+
+<style>
+body, html {background-color:#F0F0F0;}
+#body{
+	margin: 0px;
+	padding:0;
+	font-family: SimSun,times new roman;
+	text-align: left;
+	font-size:10.5pt;
+}
+
+.question_index_font {font-family: "Courier New"}
+.question_option_font {font-family: "Courier New"}
+
+.ml15 { margin-left:8mm;}
+.fl   {float:left}
+.clear{clear:left;}
+
+.paper_page {margin:0; padding:0; width:210mm; margin:0 auto; }
+.paper  {width:170mm; background-color:#FFF; padding:0 20mm 0 15mm;}
+
+.paper .paper_title {width:170mm; height:12mm; font-size:19pt; font-weight:700; text-align:center;}
+.paper .paper_info {width:170mm; height:10mm; font-size:12pt; text-align:center;}
+.paper .s_notice {width:170mm; line-height:7mm; margin-bottom:4mm;}
+.paper .s_notice .title { font-size:12pt; font-family:'黑体'; font-weight:700;}
+.paper .s_notice .notice{ width:96%; font-size:10.5pt; font-family:'黑体';  text-indent:2em;}
+
+.paper .subject {width:170mm; line-height:12mm; text-align:center; font-size:16pt; font-weight:700;}
+.paper .page_break {width: 100%; margin:0 padding:0; page-break-before: always; }
+
+.paper .q_group{width:168mm;  min-height:7mm;  line-height:7mm; font-weight:700; padding-top:3mm}
+.paper .q_group0 {width:168mm; min-height:7mm;  line-height:7mm; font-weight:700;}
+
+.paper .q_info {width:168mm; padding-bottom: 2mm; padding-top:2mm; line-height:7mm;}
+.paper .q_info .q_index{display:block ; min-width:4mm; height:7mm; line-height:8mm;}
+.paper .q_info .q_title {width:94%;}
+.paper .q_info .q_title_0,.paper .q_info .q_title_4,.paper .q_info .q_title_5,.paper .q_info .q_title_6,.paper .q_info .q_title_8{width:auto; clear:none; float:left;}
+
+.paper .q_info .q_title_group0 p:first-child{text-indent:2em} 
+
+.paper .q_info .q_option{display:block ; min-height:7mm; max-width:93%}
+
+.paper .q_child_info {width:168mm; line-height:7mm; padding-top:2mm;}
+.paper .q_child_info .q_index{display:block ; min-width:3mm; height:7mm;}
+.paper .q_child_info .q_child_title {width:90%; min-height:7mm; line-height:8mm;}
+
+.q_title .q_title_img{text-align: center;}
+
+    /*完型填空样式*/
+    .cloze_table {
+        width: 100%;
+        border-right: solid 1px #fff;
+        border-top: solid 1px #fff;
+    }
+    .cloze_table tr td {
+        min-width: 10px;
+        border-left: solid 1px #fff;
+        border-bottom: solid 1px #fff;
+        margin: 0px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 3px;
+        padding-right: 0px;
+        font-family: SimSun,times new roman;
+        text-align: left;
+        font-size:10.5pt;
+        word-break:break-all;
+    }
+</style>
+
+<div id="body">
+    <div class="paper_page">
+    <div class="paper">
+        <h1 class="paper_title"><?=$exam['exam_name']?></h1>
+        <div class="paper_info">
+        <?php $diff_time = ($place['end_time'] - $place['start_time'])/60?>
+        <?=$grade[$exam['grade_id']]?>年级&emsp;考试时间<strong><?=date('Y年m月d日 H:i', $place['start_time'])?>--<?=date('H:i', $place['end_time'])?></strong>&emsp;考试时长<strong><?=$diff_time?></strong>分钟&emsp;满分<strong><?=$place['total_score']?></strong>分
+        </div>
+        <div class="s_notice">
+            <h2 class="title">考试须知：</h2>
+            <div class="notice" contenteditable="true">
+            <?=str_replace("\n", "<br/>", $exam['student_notice'])?>
+            </div>
+        </div>
+        
+        <?php foreach ($exam_paper as $key => $paper) {?>
+        
+        <div class="clear"></div>
+        
+        <div <?php if ($key) {?>class="page_break"<?php }?>>
+            <h1 class="subject"><?=$subject[$paper['exam']['subject_id']]?></h1>
+        
+            <?php $g_index = 0; $index = 1;?>
+            
+            <?php foreach ($paper['group'] as $qtype => $list) {?>
+                <div class="clear"></div>
+                <div class="q_group">
+                <?=$group_index[$g_index++]?>、<?=$qtypes[$qtype]?>
+                <?php if ($qtype == 0) {?>
+                                               （本部分共有<?=count($list);?>道题，共<?=$paper['total_0']?>分。）
+                <?php } else {?>
+                                               （本部分共有<?=count($list);?>道题，每题<?=$paper['score'][$qtype]['score'];?>分，共<?=$paper['score'][$qtype]['total_score'];  ?>分<?php if ($qtype == 2) {?>，有错答或不答均不得分<?php }?>）
+                <?php }?>
+                </div>
+                
+                <?php foreach ($list as $item) {?>
+                    <div class="clear"></div>
+                    <div class="q_info">
+                        <h4 class="q_index question_index_font fl"><?=$index++?>.&nbsp;</h4>
+                        <?php if ($qtype == 0) {?>
+                        <div class="q_group0">
+                                                本题满分<?=$item['total_score']?>分，每小题分值相同。
+                        </div>
+                        <?php }?>
+                        <div class="q_title <?php if (in_array($qtype, array(1,2,3,7,9))) {?>fl<?php } else if ($qtype == 0) {?>q_title_group0<?}?>" contenteditable="true">
+                        <?=nl2br($item['title'])?>
+                            <?php if ($item['picture']) {?>
+                                <div class="q_title_img"><img src="<?=__IMG_ROOT_URL__?><?=$item['picture']?>"/></div>
+                            <?php }?>
+                        </div>
+                    <?php if (in_array($qtype, array(1,2,7))) {?>
+                        <?php $option_index = "A"?>
+                        <?php foreach ($item['options'] as $option) {?>
+                        <div class="q_option fl ml15">
+                        <span class="q_option_font"><?=$option_index++?>.&nbsp;</span><?=$option['option_name']?>
+                        <?php if($option['picture']) {?>
+                            <img src="<?=__IMG_ROOT_URL__?><?=$option['picture']?>"/>
+                        <?php }?>
+                        </div>
+                        <?php }?>
+                    <?php } else if (in_array($qtype, array(0,5,6,8))) {?>
+                        <?php $c_index = 1?>
+                        <?php foreach ($item['children'] as $val) {?>
+                            <div class="q_child_info q_title_<?=$val['type']?> question_index_font" contenteditable="true">
+                                <span class="q_index fl q_index_font">(<?=$c_index++?>).&nbsp;</span>
+                                <?php if ($val['title'] || $val['picture']) {?>
+                                <div class="q_child_title fl">
+                                    <?php if ($val['type'] == 2) {?>
+                                    <?=rtrim(nl2br($val['title']), '</p>') . '（不定项）</p>'?>
+                                    <?php } else {?>
+                                    <?=nl2br($val['title'])?>
+                                    <?php }?>
+                                   
+                                    <?php if ($val['picture']) {?>
+                                        <img src="<?=__IMG_ROOT_URL__?><?=$val['picture']?>"/>
+                                    <?php }?>
+                                </div>
+                                <?php } else {?>
+                                    <?=str_repeat("_", 8);?>
+                                <?php }?>
+                            </div>
+                            
+                            <?php if (in_array($val['type'], array(1,2,7))) {?>
+                                <?php $option_index = "A"?>
+                                <?php foreach ($val['options'] as $option) {?>
+                                <div class="q_option fl ml15">
+                                <span class="q_option_font"><?=$option_index++?>.&nbsp;</span><?=$option['option_name']?>
+                                
+                                <?php if ($option['picture']) {?>
+                                    <img src="<?=__IMG_ROOT_URL__?><?=$option['picture']?>"/>
+                                <?php }?>
+                                </div>
+                                <?php }?>
+                                
+                                <div class="clear"></div>
+                            <?php }?>
+                            
+                        <?php }?>
+                    <?php } elseif (in_array($item['type'], array(4))) {?>
+                        <?php $c_index = 1?>
+                        <table class="cloze_table" cellpadding="0" cellspacing="0">
+                            <?php foreach ($item['children'] as $val):?>
+                                <tr>
+                                    <td style="width:30px;">(<?=$c_index++?>)</td>
+                                    <?php if (in_array($val['type'], array(1,2,7))):?>
+                                        <?php $option_index = "A"?>
+                                            <?php foreach ($val['options'] as $option):?>
+                                                <td>
+                                                    <?=$option_index++?>.&nbsp;<?=$option['option_name']?>
+                                                    <?php if ($option['picture']):?>
+                                                        <img src="<?=__IMG_ROOT_URL__?><?=$option['picture']?>"/>
+                                                    <?php endif;?>
+                                                </td>
+                                            <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    <?php }?>
+                    </div>
+                <?php }?>
+               <?php }?>
+               </div>
+               <div class="clear"></div>
+           <?php }?>
+    </div>
+  </div>
+</div>
+</body>
+</html>

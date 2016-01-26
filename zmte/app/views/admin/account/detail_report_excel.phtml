@@ -1,0 +1,26 @@
+<?=$header?>
+<Row ss:AutoFitHeight="0">
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品名称</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品类型</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">交易账号</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品定价</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">交易金额</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">交易时间</Data></Cell>
+</Row>
+<?php
+if ($list) {
+$vc = C('virtual_currency');
+foreach ($list as $k => $v) { ?>
+<Row ss:AutoFitHeight="0">
+   <Cell><Data ss:Type="String"><?=$v['p_name'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['pc_name'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['exam_ticket']?> / <?=$v['fullname']?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['p_price']?> / <?=$v['p_price_pushcourse']?> <?=$vc['fullname']?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=bcsub(0, $v['tr_trade_amount'], 0)?><?=$vc['fullname']?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=date('Y-m-d H:i', $v['tr_createtime'])?></Data></Cell>
+</Row>
+<?php
+}
+}
+?>
+<?=$footer?>

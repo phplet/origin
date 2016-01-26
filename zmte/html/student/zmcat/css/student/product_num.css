@@ -1,0 +1,6 @@
+﻿@charset "utf-8";
+a.reduce{float:left;margin:5px 0 0 0;display:block;width:15px;height:15px;line-height:99em;overflow:hidden; background:url(images/reduce-add.gif) no-repeat; background-position:0 0;}
+a.reduce:hover{float:left;margin:5px 0 0 0;display:block;width:15px;height:15px;line-height:99em;overflow:hidden; background:url(images/reduce-add.gif) no-repeat; background-position:0 -16px;}
+a.add{float:left;margin:5px 0 0 0;display:block;width:15px;height:15px;line-height:99em;overflow:hidden; background:url(images/reduce-add.gif) no-repeat; background-position:-16px 0;}
+a.add:hover{float:left;margin:5px 0 0 0;display:block;width:15px;height:15px;line-height:99em;overflow:hidden; background:url(images/reduce-add.gif) no-repeat; background-position:-16px -16px;}
+.text{float:left;margin:0 5px;display:inline;border:solid 1px #ccc;padding:4px 3px 4px 8px;width:40px;line-height:18px;font-size:14px;color:#990000;font-weight:800;}

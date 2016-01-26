@@ -1,0 +1,8 @@
+<div id="id_register_exam_notice_dlg" style="width:700px;">
+    <div class="cls_title">考前须知(<span style="color:red"><?=Func::echo_s($exam_info['exam_name'])?></span>)</div>
+<? if (trim($p_info['p_notice']) == '') { ?>
+    <div style="margin:5px;min-height:30px;padding:20px;height:400px;overflow:auto"><? Func::echo_s($exam_info['student_notice'], true); ?></div>
+<? } else { ?>
+    <div style="margin:5px;min-height:30px;padding:20px;height:400px;overflow:auto"><?=$p_info['p_notice']?></div>
+<? } ?>
+</div>

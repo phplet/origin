@@ -1,0 +1,135 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'exam'));?>
+<style type="text/css">
+.cls_exam_page {
+    display:table;
+    width:1000px;
+    min-height:400px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.cls_exam_page_left {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_right {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_center {
+    width:800px;
+    display:table-cell;
+}
+
+.cls_exam_page_center ul {
+    list-style:none;    
+    padding:0 10px 0 10px;
+}
+
+.cls_exam_page_center ul li {
+    height:34px
+}
+
+.cls_exam_item {
+    display:table;
+    width:100%;
+    padding:7px 0px 0px 4px;
+}
+
+.cls_exam_item_name {
+    display:table-cell;
+    width:50%;
+    font-size:1.0em;
+}
+
+.cls_exam_item_action {
+    display:table-cell;
+    width:50%;
+    font-size:0.9em;
+}
+.cls_exam_item_error {
+    display:table-cell;
+    width:100%;
+
+}
+.cls_pagetip {
+    padding:4px;
+}
+</style>
+<div class="cls_pagetip">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align:left;">
+                <span class="altbg2-bg">
+        	    <strong>成绩下载</strong>
+        	</span>
+          	<i class="altbg2-r"></i>
+             </td>
+        </tr>
+        <? if ($check_message) { ?>
+        <tr class="altbg1" style="color:black">
+            <td> <?=$check_message['message']?></td>
+        </tr>
+        <? } else { ?>
+        <tr class="altbg1" style="color:black">
+            <td width="50%">&nbsp;考试期次</td>
+            <td width="50%">&nbsp;考试成绩下载</td>
+        </tr>
+        <? if (!is_array($exam_result_list)) $exam_result_list = array(); foreach ($exam_result_list as $i => $val) { ?>
+        <tr style="color:black">
+            <td><? Func::echo_s($val['exam_name']); ?></td>
+            <td><? if (empty($val['list'])) { ?>
+                    暂时没有成绩可供下载查看
+                <? } else { 
+                $bOpenNew = true;
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0') !== false 
+            && strpos($_SERVER['HTTP_USER_AGENT'], 'Touch') !== false)
+        {
+            $bOpenNew = false;
+        }
+?>
+                    <? $app_path = dirname(APPPATH); $uid = StudentModel::studentLoginUID(); foreach ($val['list'] as $v2) { 
+                        $rule_id = $v2['id'];
+                        $subject_id = $v2['subject_id'];
+                        $html_file = file_exists("{$app_path}/cache/html/report/{$rule_id}/{$uid}/{$subject_id}.html");
+                        $pdf_file = file_exists("{$app_path}/cache/zip/report/{$rule_id}/{$uid}.zip");
+?>
+    <? if ($html_file || $pdf_file) { ?>
+    <b><a  <? if ($bOpenNew) { ?>target="_blank"<? } ?> href="/student/index/down_file/<?=$v2['id']?>/<?=$v2['subject_id']?>/egapenolmthweiv"><? if ($v2['subject_id'] == 0) echo('总结'); else echo($v2['subject_name']); ?></a></b><?php if ($pdf_file){?>[<a href="/student/index/down_file/<?=$v2['id']?>/<?=$v2['subject_id']?>/fdpfopiznwod">PDF</a>]<? } }?>
+                    <? } ?>
+                <? } ?>
+            </td>
+        </tr>
+        <? } ?>
+        <? if (!is_array($exam_free_list)) $exam_free_list = array(); $cnt = count($exam_result_list); foreach ($exam_free_list as $i => $exam_pid) { $val0 = $exam_free_map[$exam_pid][0]; ?>   <? /*foreach ($exam_free_map[$exam_pid] as $val) { */ ?>
+        <tr  style="color:black" >        
+            <td><? Func::echo_s($val0['exam_name']); ?></td>
+            <td>
+                <? foreach ($exam_free_map[$exam_pid] as $val) { ?>
+               <? if (empty($val['subject']) || $val['sfe_report_status'] < 2) { ?>
+<? /*暂时没有成绩可供下载查看 */ ?>
+                <? } else { ?>
+                    <?php 
+                        if (in_array(12, $val['subject']) 
+                            && in_array(18, $val['subject'])) 
+                        {
+                            unset($val['subject'][array_search('18', $val['subject'])]);
+                        }
+                   ?>
+                   <? foreach ($val['subject'] as $v2) { ?>
+                   <b><a target="_blank" href="<?=site_url('student/exam/freereport')?>/<?=$val['sfe_uid']?>/<?=$val['sfe_exampid']?>/<?=$val['sfe_placeid']?>/<?=$v2?>"><?=$v2 == 12 ? '技术' : $subject[$v2]?></a></b>
+                    <? } ?>
+                <? } ?>
+                <? } ?>
+
+            </td>
+         </tr>
+        <?}?>   
+
+        <?}?>
+    </table>
+</div>
+<? $this->load->view('common/exam_footer');?>

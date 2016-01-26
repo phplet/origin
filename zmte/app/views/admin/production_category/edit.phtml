@@ -1,0 +1,96 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+<style type="text/css">
+.score_rank_td div{
+    line-height:30px;
+    height:30px;
+    padding-top:6px;
+}
+</style>
+<script type="text/javascript">
+/*========== 每步表单检查 ========*/
+var action = '<?php echo $act;?>';
+function get_form()
+{
+    return document.getElementById('add_form');	
+}
+
+//基本信息
+function check_basic()
+{
+    var form = get_form();
+    if (!form.pc_name.value)
+    {
+        alert('请填写类别名称');
+        form.pc_name.focus();
+        return false;
+    }
+    else
+    {
+        form.submit();
+    }
+}
+</script>
+<div id="body">
+  <form name="Frm_cpuser_info" id="add_form" method="POST" action="<?=site_url('admin/production_category/update')?>" autocomplete="off" multipart/form-data"
+  >
+  <?php if($act=='edit'):?>  
+  <input type="hidden" name="pc_id" value="<?=$pc['pc_id']?>" />
+  <?php endif;?>
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'? '添加新':'修改'?>产品类别(<font color="red">请注意查看带 * 的必填字段 </font>)</div>
+
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+     
+      
+      <tr>
+        <td class="altbg1">类别名称</td>
+        <td>                      
+          <input type="text" id="pc_name" name="pc_name" value="<?php echo $pc['pc_name'];?>" class="txtbox" />
+           <span style="color:#f00">*</span>
+        </td>
+        </tr>
+       <tr>
+        <td class="altbg1">备注描述</td>
+        <td>                      
+          <textarea name="pc_memo" style="width:90%;height:200px"><? Func::echo_s($pc['pc_memo']); ?></textarea>
+        </td>
+        </tr>
+     
+        <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+		     <center>   
+			    <input type="button" name="" value=" 提交 "  onclick="check_basic();" class="btn next_step" /> &nbsp; <input type="button" name="" value=" 返回" onclick="window.history.go(-1);" class="btn next_step" />
+		     
+			  </center> 
+      	</td>
+      </tr>
+    </table>
+    
+
+    
+     
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>
+<?php $this->load->view('student/school_selector');?>

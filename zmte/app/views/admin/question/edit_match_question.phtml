@@ -1,0 +1,115 @@
+<?php $this->load->view('common/header');?>
+
+<script language='javascript'>
+var subject_ids = <?=$question['subject_id']?>;
+</script>
+<script>var paper_diy=0;</script>
+<?php $this->load->view('common/question_js');?>
+
+<script>
+var dirName = "question/<?=$question['ques_id'] ? $question['ques_id'] : microtime(true);?>";
+var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+var is_group = false;
+var group_type_ids = [<?=trim($question['group_type'],',')?>];
+var knowledge_ids = [<?=trim($question['knowledge'],',')?>];
+var knowledge_know_process = eval("("+'<?php echo json_encode($know_processes); ?>'+")");
+
+var ajax_url_group_type = '<?=site_url('admin/common/group_type_all')?>';
+var ajax_url_group_type_select = '<?=site_url('admin/common/group_type_select')?>';
+var ajax_url_group_type_init = '<?=site_url('admin/common/group_type_init')?>';
+var ajax_url_knowledge = '<?=site_url('admin/common/knowledge_all')?>';
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+
+</script>
+
+<script>
+$(document).ready(function(){
+    $('input:radio[name=qtype]').unbind('click').click(function(){
+        toggle_qtype();
+    });
+    toggle_qtype();
+});
+</script>
+<style>
+.height_light {
+    border:1px solid #f00;
+    padding:2px 0 2px 0;
+    margin:2px 0 2px 0;
+}
+.div_option{
+    border-bottom:1px solid #CCCCFF;
+    padding:5px;
+}
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question/update_match_question')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'edit'):?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+  <input type="hidden" name="parent_id" value="<?=$question['parent_id']?>" />  
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'编辑'?>匹配题子题</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                题目信息 [<font class="font_4">选填</font>]
+            </td>
+        </tr>
+        <tr style="display: none;">
+        	<td>
+        		<input type="hidden" name="subject_id" id="subject_id" value="<?php echo $question['subject_id'];?>"/>
+        	</td>
+        </tr>
+          <tr>
+            <td class="altbg1">知识点</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;">
+              <input type="checkbox" name="knowledge_id[]" value="" />
+            </div>
+             <div id="knowledge_list"></div>
+             <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=trim($question['knowledge'],',')?>" />
+             <button id="knowledge_select" class="btn2" type="button">点击选择</button>
+             <font color="red">*</font>
+             <label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="12%">信息提取方式</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="group_type_id[]" value="" /></div>
+             <div id="group_type_list"></div>
+             <input type="hidden" name="group_type_ids" id="group_type_ids" value="<?=trim($question['group_type'],',')?>" />
+             <button id="group_type_select" class="btn2" type="button">点击选择</button><font color="red">*</font>
+             <label for="group_type_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php if ($question['subject_id'] == 3 
+            && in_array($question['type'], array(0, 5, 12))) {?>
+        <tr>
+            <td class="altbg1" width="12%">相对难易度</td>
+            <td>
+             <input type="text" name="difficulty_ratio" id="difficulty_ratio" value="<?=$question['difficulty_ratio'] ? $question['difficulty_ratio'] : 1?>" />
+             <label class="error">*相对难易度即当前子题难易度与题干难易度的比值，取(0,2]区间值。</label>
+            </td>
+        </tr>
+        <?php }?>
+        <tr>
+            <td class="altbg1">答案</td>
+            <td>
+                <textarea id="input_answer" name="input_answer" style="width:300px;height:80px;" required title="请填写匹配题答案"><?=$question['answer']?></textarea>
+                <label for="input_answer" class="error" style="display:none"></label>
+               <span style="display: none;"><input type="radio" name="qtype" value="5" id="qtype5" checked="checked"/></span>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" id="dosubmit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

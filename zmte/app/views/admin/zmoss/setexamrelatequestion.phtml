@@ -1,0 +1,133 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<script>
+$(function(){
+	
+})
+
+function checkExamRelateQuestionForm()
+{
+	var _is_submit = true;
+	var _exam_relate_question = new Array();
+	$('select[name^="erq_relate_data"]').each(function(i){
+		var _ques_id = parseInt($(this).val());
+		if (_ques_id < 1)
+		{
+			alert('试题对应关系不可为空！');
+			$(this).focus();
+			_is_submit = false;
+			return false;
+		}
+		
+		if ($.inArray(_ques_id, _exam_relate_question) > -1)
+		{
+			alert('试题对应关系只能是一对一！');
+			$(this).focus();
+			_is_submit = false;
+			return false;
+		}
+
+		_exam_relate_question[i] = _ques_id;
+	});
+
+	return _is_submit;
+}
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">设置试题对应关系</div>
+    <form action="/admin/zmoss/saveexamrelatequestion" method="post" onsubmit="return checkExamRelateQuestionForm();">
+    <input type="hidden" name="erq_examid" value="<?=$examrelate['er_examid']?>">
+    <input type="hidden" name="erq_zmoss_examid" value="<?=$examrelate['er_zmoss_examid']?>">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="30%">考试试卷列表</td>
+        <td width="50%">
+        <select name="erq_paperid" onchange="location.href='/admin/zmoss/setexamrelatequestion/<?=$examrelate['er_examid']?>/<?=$examrelate['er_zmoss_examid']?>/?er_paperid='+$(this).val();">
+            <?php foreach ($paperlist as $paper_id => $row) {?>
+            <option value="<?=$paper_id?>"><?Func::echo_s($row['paper_name'])?></option>
+            <?php }?>
+        </select>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="30%">考试试卷试题</td>
+        <td width="50%">对应阅卷考试试题</td>
+      </tr>
+      <?php $i = 0;?>
+      <?php foreach ($paperquestion as $row) {?>
+          <?php $ques_id = $row['ques_id']?>
+          <tr>
+            <td>&emsp;<?=$qtype[$row['type']]?> 试题ID：<?if ($row['parent_id'] > 0){?><?=$row['parent_id']?>-><?}?><?=$ques_id?></td>
+            <td>
+            <select name="erq_relate_data[<?=$ques_id?>]">
+                <option value="0">请选择对应试题ID</option>
+                <?php $k = 0?>
+                <?php foreach ($zmossquestion as $item) {?>
+                    <?php if ($item['child']) {?>
+                    <?php foreach ($item['child'] as $val) {?>
+                            <option value="<?=$val['ques_id']?>" 
+                            <?if ($examrelatequestion) {?>
+                                <?if ($examrelatequestion[$ques_id] == $val['ques_id']){?>selected<?php }?>
+                             <?php } else {?>
+                                <?if ($i == $k) {?>selected<?}?>
+                             <?php }?>><?=$item['ques_no']?>（<?=$val['ques_no']?>）. <?Func::echo_s($val['ques_title'])?></option>
+                            <?php $k++;?>
+                    <?php }?>
+                    <?php } else {?>
+                     <option value="<?=$item['ques_id']?>" 
+                            <?if ($examrelatequestion) {?>
+                                <?if ($examrelatequestion[$ques_id] == $item['ques_id']) {?>selected<?php }?>
+                            <?php } else {?>
+                                <?if ($i == $k){?>selected<?}?>
+                            <?php }?>><?=$item['ques_no']?>. <?Func::echo_s($item['ques_title'])?></option>
+                     <?php $k++;?>
+                    <?php }?>
+                <?php }?>
+                </select>
+            </td>
+          </tr>
+          <?php $i++;?>
+      <?php }?>
+      <?php /*?>
+      <?php foreach ($zmossquestion as $item) {?>
+        <?php if ($item['child']) {?>
+            <?php foreach ($item['child'] as $val) {?>
+              <tr>
+                <td>&emsp;<?=$item['ques_no']?>（<?=$val['ques_no']?>）. <?Func::echo_s($val['ques_title'])?></td>
+                <td>
+                <select name="erq_relate_data[<?=$val['ques_id']?>]">
+                <option value="0">请选择对应试题ID</option>
+                <?php foreach ($paperquestion as $ques_id => $row) {?>
+                    <option value="<?=$ques_id?>" <?if ($examrelatequestion[$val['ques_id']] == $ques_id){?>selected<?php }?>><?=$qtype[$row['type']]?> -> <?=$ques_id?></option>
+                <?php }?>
+                </select>
+                </td>
+              </tr>
+            <?php }?>
+        <?php } else {?>
+          <tr>
+            <td>&emsp;<?=$item['ques_no']?>. <?Func::echo_s($item['ques_title'])?></td>
+            <td>
+            <select name="erq_relate_data[<?=$item['ques_id']?>]">
+                <option value="0">请选择对应试题ID</option>
+                <?php foreach ($paperquestion as $ques_id => $row) {?>
+                     <option value="<?=$ques_id?>" <?if ($examrelatequestion[$item['ques_id']] == $ques_id){?>selected<?php }?>><?=$qtype[$row['type']]?>　<?=$ques_id?>　</option>
+                <?php }?>
+                </select>
+            </td>
+          </tr>
+        <?php }?>
+      <?php }?>
+      <?*/?>
+    </table>
+    <?php if (!$examrelate['er_flag']) {?>
+    <center> 
+ <input type="submit" value="确定 " class="btn" />
+  </center> 
+  <?php }?>
+  </form>
+  </div>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

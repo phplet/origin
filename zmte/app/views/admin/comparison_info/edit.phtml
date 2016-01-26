@@ -1,0 +1,745 @@
+<?php $this->load->view('common/header');?>
+
+<?php 
+	static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+						'js/jquery/plugin/validate/messages_zh.js'));
+?>
+<style>
+tr td.td{
+	width: 266px;
+}
+</style>
+
+<script>
+	$(document).ready(function(){
+	    $("#frm_comparison_info").validate({
+	    	debug:true,
+	        submitHandler:function(form){
+		        //检查外部知识点不能为空
+		        var has_error = false,
+		        	msg = [];
+
+	        	//检查一级知识点
+		        $('input.external_knowledge_names').each(function () {
+					var $thiz = $(this);
+						val = $.trim($thiz.val());
+
+					if (!val.length) {
+						msg.push('外部知识点有未填完整信息');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+		        $('input.external_percents').each(function () {
+					var $thiz = $(this);
+						val = parseInt($thiz.val());
+					
+					if (!(val >= 0 && val <= 100) || !is_positive_number(val)) {
+						msg.push('外部知识点 占比必须为[0-100]');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+			    
+				//限制一级知识点占比总和必须等于 100
+				var total_percent = 0;
+				$('input.percents').each(function () {
+					var _percent = parseInt($(this).val()) || 0;
+					if (_percent >= 0) {
+						total_percent += _percent;
+					}
+				});
+				if (total_percent != 100) {
+					msg.push('一级知识点占比总和必须等于 100, 当前总和为：' + total_percent);
+					has_error = true;
+				}
+
+				<?php if ($type_detail['subject_id'] == 3) {?>
+				//限制信息提取方式占比总和必须等于 100
+				var total_percent = 0;
+				$('input.group_type_percents').each(function () {
+					var _percent = parseInt($(this).val()) || 0;
+					if (_percent >= 0) {
+						total_percent += _percent;
+					}
+				});
+				if (total_percent != 100) {
+					msg.push('信息提取方式占比总和必须等于 100, 当前总和为：' + total_percent);
+					has_error = true;
+				}
+
+				//限制知识点和信息提取方式比例总和必须等于 100
+				var total_percent = 0;
+				$('input.extraction_ratio_percents').each(function () {
+					var _percent = parseInt($(this).val()) || 0;
+					if (_percent >= 0) {
+						total_percent += _percent;
+					}
+				});
+				if (total_percent != 100) {
+					msg.push('知识点和信息提取方式比例总和必须等于 100, 当前总和为：' + total_percent);
+					has_error = true;
+				}
+				<?php }?>
+
+				//检查方法策略
+				<?php if (in_array($type_detail['subject_id'], $type_detail['subject_ids'])) {?>
+		        $('input.e_method_tactic_names').each(function () {
+					var $thiz = $(this);
+						val = $.trim($thiz.val());
+
+					if (!val.length) {
+						msg.push('方法策略有未填完整信息');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+		        $('input.e_method_tactic_percents').each(function () {
+					var $thiz = $(this);
+						val = parseInt($thiz.val());
+					
+					if (!(val >= 0 && val <= 100) || !is_positive_number(val)) {
+						msg.push('方法策略 占比必须为[0-100]');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+
+				//限制方法策略占比总和必须等于 100
+				var total_percent = 0;
+				$('input.method_tactic_percents').each(function () {
+					var _percent = parseInt($(this).val()) || 0;
+					if (_percent >= 0) {
+						total_percent += _percent;
+					}
+				});
+				if (total_percent != 100&&$('input.method_tactic_percents').length>0) {
+					msg.push('方法策略占比总和必须等于 100, 当前总和为：' + total_percent);
+					has_error = true;
+				}
+				<?php }?>
+				
+			    //检查题型难易度
+		        $('input.difficulty').each(function () {
+					var $thiz = $(this);
+						val = parseInt($thiz.val());
+					
+					if (!(val >= 0 && val <= 100) || !is_positive_number(val)) {
+						msg.push('难易度 占比必须为[0-100]');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+
+		        <?php if ($type_detail['subject_id'] == 3) {?>
+		        var q_types = [0,1,2,3,4,5,6,7,8,9,11,12,13],
+		        	q_type_names = ['题组', '单选', '不定项', '填空', '完形填空','匹配题', '选词填空', '翻译题', '阅读填空', '连词成句', '作文', '听力', '改错'],
+	        	<? } 
+	        	elseif($type_detail['subject_id'] == 1){?>
+                    var q_types = [0,1,2,3,10,11],
+                    q_type_names = ['题组', '单选', '不定项', '填空', '解答题' , '作文'],
+                <?php }
+	        	
+	        	else { ?>
+	        	var q_types = [0,1,2,3,10],
+    	        	q_type_names = ['题组', '单选', '不定项', '填空', '解答题'],
+	        	<? }?>	   
+	        	q_type_length = q_types.length;   
+	        	  	
+	        	for (var i = 0; i < q_type_length; i++) {
+		        	var k = q_types[i],
+		        		total_percent = 0;
+	        		
+					$('input.difficulty_' + k).each(function () {
+						var _percent = parseInt($(this).val()) || 0;
+						if (_percent >= 0) {
+							total_percent += _percent;
+						}
+					});
+
+					if (parseInt($('input.q_amount_'+k).val()) > 0) {
+						if (total_percent > 100 || total_percent < 100) {
+							msg.push('题型:‘' + q_type_names[i] + '’ 的难易度 占比总和必须等于 100, 当前总和为：' + total_percent);
+							has_error = true;
+						}
+					}
+	        	}
+
+	        	$('input.e_difficulty_name').each(function () {
+					var $thiz = $(this);
+						val = $.trim($thiz.val());
+
+					if (!val.length) {
+						msg.push('题型和难易度 有未填完整信息');
+						$thiz.focus();
+						has_error = true;
+						return false;
+					}
+			    });
+
+			    if (has_error) {
+				  
+				    alert(msg.join('\n'));
+				    return false;
+			    }
+		        
+	            form.submit();
+	        },
+	        rules: {            
+	            cmp_info_year: {
+	            	required : true,
+					range:[1900,<?php echo date('Y');?>],
+					remote:{
+					     url: "<?php echo site_url('admin/comparison_info/ajax_check_year');?>",
+					     type: "post",
+					     //dataType: "json",
+					     data: {
+						     id:'<?php echo $info_detail['cmp_info_id'];?>',
+						     type_id:'<?php echo $type_detail['cmp_type_id'];?>'
+					     },
+					     cache : false
+					}
+		        },
+		        <?php foreach ($knowledge_list as $knowledge_id => $knowledge):?>
+		        'percents[<?php echo $knowledge_id;?>]' : {
+					required : true,
+					range:[0,100]
+			     },
+		        <?php endforeach;?>
+		        <?if ($type_detail['subject_id'] == 3) {?>
+		        <?php foreach ($group_type_list as $gr_id => $gr_name):?>
+		        'group_type_percents[<?php echo $gr_id;?>]' : {
+					required : true,
+					range:[0,100]
+			     },
+		        <?php endforeach;?>
+		        
+		        'extraction_ratio[1]' : {
+					required : true,
+					range:[0,100]
+			     },
+			     'extraction_ratio[2]' : {
+						required : true,
+						range:[0,100]
+				 },
+		        <? }?>
+		        <?php if (count($external_items)) {?>
+		        'external_percents[]' : {
+		        	required : true,
+					range:[0,100]
+			     },
+			     <?php } ?>
+			     <?php if ($type_detail['subject_id'] != 1) {?>
+			     <?php foreach ($method_tactic_list as $method_tactic_id => $method_tactic):?>
+			     'method_tactic_percents[<?php echo $method_tactic_id;?>]' : {
+					required : true,
+					range:[0,100]
+				 },
+		        <?php endforeach;?>
+		        <?php }?>
+	            cmp_info_score: {
+					required : true,
+					range:[0,1000]
+		        },
+		        'knowledge_ids[]' : 'required'<?php if ($type_detail['subject_id'] != 1) {?>,
+		        'method_tactic_ids[]' : 'required'
+			     <? }?>
+	        },
+	        messages: {
+	            cmp_info_year: {
+					required : '请填写考试年份',
+					remote:'该年份已存在, 不能重复添加'
+		        },
+		        cmp_info_score: {
+					required : '请填写考试总分'
+		        },
+		        <?php foreach ($knowledge_list as $knowledge_id => $knowledge):?>
+		        'percents[<?php echo $knowledge_id;?>]' : {
+					required : '请填写百分比[0-100]'
+			    },
+		        <?php endforeach;?>
+		        <?if ($type_detail['subject_id'] == 3) {?>
+		        <?php foreach ($group_type_list as $gr_id => $gr_name):?>
+		        'group_type_percents[<?php echo $gr_id;?>]' : {
+					required : '请填写百分比[0-100]'
+			    },
+		        <?php endforeach;?>
+
+		        'extraction_ratio[1]' : {
+					required : '请填写百分比[0-100]'
+			     },
+			     'extraction_ratio[2]' : {
+					required : '请填写百分比[0-100]'
+				 },
+		        <? }?>
+		        <?php if ($type_detail['subject_id'] != 1) {?>
+		        <?php foreach ($method_tactic_list as $method_tactic_id => $method_tactic):?>
+		        'method_tactic_percents[<?php echo $method_tactic_id;?>]' : {
+					required : '请填写百分比[0-100]'
+			    },
+		        <?php endforeach;?>
+		        <?php }?>
+		        <?php if (count($external_items)) {?>
+		        'external_percents[]' : {
+					required : '请填写百分比[0-100]'
+			    },
+		        <?php } ?>
+		        'knowledge_ids[]' : '请至少选择一个知识点'<?php if (!in_array($type_detail['subject_id'], array(1,3))) {?>,
+		        'method_tactic_ids[]' : '请至少选择一个方法策略'<?php }?>
+	        }
+	    });	
+	});
+
+	/**
+	 * 添加一行(外部知识点)
+	 */
+	function add_item()
+	{
+		var $e_trs = $('tr.e_knowledge_tr'),
+			tr_length = $e_trs.length,
+			auto_key = tr_length;
+
+		var content = [];
+		content.push('<tr class="e_knowledge_tr">');
+		content.push('	<td class="altbg1 td">');
+		content.push('		外部知识点：<input class="external_knowledge_names" type="text" name="external_knowledge_names[]" id="external_knowledge_name_' + auto_key + '" value=""/>');
+		content.push('		<label for="external_knowledge_name_' + auto_key + '" class="error"></label>');
+		content.push('	</td>');
+		content.push('	<td>');
+		content.push('		占比：<input type="text" id="external_percent_' + auto_key + '" name="external_percents[]" class="txtbox5 external_percents percents" value=""/> %');
+		content.push('		<label for="external_percent_' + auto_key + '" class="error"></label>');
+		content.push('		<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>');
+		content.push('	</td>');
+		content.push('</tr>');
+
+		$(content.join('')).insertBefore($('#e_knowledge_tr_add')).find('input').first().focus();
+	}
+
+	/**
+	 * 添加一行(外部方法策略)
+	 */
+	function add_method_tactic_item()
+	{
+		var $e_trs = $('tr.e_method_tactic_tr'),
+			tr_length = $e_trs.length,
+			auto_key = tr_length;
+
+		var content = [];
+		content.push('<tr class="e_method_tactic_tr">');
+		content.push('	<td class="altbg1 td">');
+		content.push('		外部方法策略名称：<input class="e_method_tactic_names" type="text" name="e_method_tactic_names[]" id="e_method_tactic_name_' + auto_key + '" value=""/>');
+		content.push('		<label for="e_method_tactic_name_' + auto_key + '" class="error"></label>');
+		content.push('	</td>');
+		content.push('	<td>');
+		content.push('		占比：<input type="text" id="e_method_tactic_percent_' + auto_key + '" name="e_method_tactic_percents[]" class="txtbox5 e_method_tactic_percents method_tactic_percents" value=""/> %');
+		content.push('		<label for="e_method_tactic_percent_' + auto_key + '" class="error"></label>');
+		content.push('		<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>');
+		content.push('	</td>');
+		content.push('</tr>');
+
+		$(content.join('')).insertBefore($('#e_method_tactic_tr_add')).find('input').first().focus();
+	}
+
+	/**
+	 * 添加一行(外部题型 难易度占比)
+	 */
+	function add_external_difficulty_item()
+	{
+		var $e_trs = $('tr.e_difficulty_tr'),
+			tr_length = $e_trs.length,
+			auto_key = tr_length;
+
+		var content = [];
+		content.push('<tr class="e_difficulty_tr">');
+		content.push('	<td class="altbg1 td">');
+		content.push('		题型名称：<input class="e_difficulty_name" type="text" name="e_difficulty_name[]" id="e_difficulty_name_' + auto_key + '" value=""/>');
+		content.push('		<label for="e_difficulty_name_' + auto_key + '" class="error"></label>');
+		content.push('	</td>');
+		content.push('	<td>');
+		content.push('		题目数量：<input type="text" id="e_question_amount_' + auto_key + '" name="e_question_amount[]" class="txtbox5 question_amount" value=""/> ');
+		content.push('		<label for="e_question_amount_' + auto_key + '" class="error"></label>');
+		content.push('		<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>');
+		content.push('	</td>');
+		content.push('</tr>');
+
+		$(content.join('')).insertBefore($('#e_difficulty_tr_add')).find('input').first().focus();
+	}
+
+	/**
+	 * 删除一行
+	 */
+	function del_item(obj)
+	{
+		$(obj).parent().parent().remove();
+	}
+</script>
+
+<div id="body">
+  <form id="frm_comparison_info" method="POST" action="<?php echo site_url('admin/comparison_info/save');?>" onsubmit="return false;">
+  <input type="hidden" name="act" value="<?php echo $act;?>" />
+  <input type="hidden" name="type_id" value="<?php echo $info_detail['cmp_type_id'];?>" />
+  <input type="hidden" name="id" value="<?php echo $info_detail['cmp_info_id'];?>" />
+  <div class="space">
+    <div class="subtitle"><?php echo $act=='add'?'添加':'编辑'?>对比信息</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+	      <tr>
+	      	  <td class="altbg2" colspan="10" style="text-align:center;">
+				基本信息
+	      	  </td>
+	      </tr>    
+	      <tr>
+	        <td width="16%" class="altbg1 td">所属分类</td>        
+	        <td><?php echo $type_detail['cmp_type_name'];?></td>
+	      </tr>
+	      <tr>
+	        <td class="altbg1 td">考试年级</td>        
+	        <td>        	
+	        	<?php echo $type_detail['grade_name'];?>
+	        </td>
+	      </tr>
+	      <tr>
+	        <td class="altbg1 td">考试类型</td>        
+	        <td>        	
+	        	<?php echo $type_detail['class_name'];?>
+	        </td>
+	      </tr>
+	      <tr>
+	        <td class="altbg1 td">考试学科</td>        
+	        <td>
+	        	<?php echo $type_detail['subject_name'];?>
+	        	<input type="hidden" id="subject_id" name="subject_id" value="<?php echo $type_detail['subject_id']; ?>" />
+	        </td>
+	      </tr>
+	
+	      <tr>
+	        <td class="altbg1 td">考试年份</td>        
+	        <td>
+	        	<input type="text" name="cmp_info_year" id="cmp_info_year" class="txtbox5" value="<?php echo $info_detail['cmp_info_year'];?>" />
+	        	<span class="frm_notice">请输入考试年份：1990-<?php echo date('Y');?></span>
+	        	<label for="cmp_info_year" class="error"></label>
+	        </td>
+	      </tr>
+	      <tr>
+	        <td class="altbg1 td">考试总分</td>
+	        <td>
+	        	<input type="text" name="cmp_info_score" class="txtbox5" value="<?php echo $info_detail['cmp_info_score'];?>" />
+	        	<span class="frm_notice">请输入考试总分</span>
+	        	<label for="cmp_info_score" class="error"></label>
+	        </td>
+	      </tr>
+      </tbody>
+      <tbody>
+      	  <!-- 一级知识点 -->
+	      <tr>
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(一级知识点)<font color="red">*注意：只能填0-100的自然数</font>
+	      	  </td>
+	      </tr>
+	      <?php if ($knowledge_list):?>
+	      <?php foreach ($knowledge_list as $key => $val): ?>
+	      <?php 
+	      	$isset = isset($items[$key]);
+	      	$percent = isset($items[$key]['item_percent']) ? $items[$key]['item_percent'] : '';
+	      ?>
+	      <tr>
+	        <td class="altbg1 td">
+	          <input type="hidden" class="knowledge_ids" key="<?php echo $key;?>" name="knowledge_ids[]" id="knowledge_<?php echo $key;?>" value="<?php echo $key;?>" checked="checked"/>
+	          <?php echo $val['knowledge_name'];?>
+	        </td>
+	        <td>
+	        	<input type="text" id="percents_<?php echo $key;?>" name="percents[<?php echo $key;?>]" class="txtbox5 percents" value="<?php echo $percent;?>"/> %
+	        	<label for="percents_<?php echo $key;?>" class="error"></label>
+	        </td>
+	      </tr>
+	      <?php endforeach; ?>
+	      <?php endif;?>
+	      
+	      <tr style="display: none;">
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(外部一级知识点)<font color="red">*注意：只能填0-100的自然数</font><label for="external_knowledge_ids[]" class="error"></label>
+	      	  </td>
+	      </tr>
+	      <?php if ($external_items):?>
+	      <?php $auto_key = 0;?>
+	      <?php foreach ($external_items as $key => $val): ?>
+	      <?php 
+	      	$percent = $val['item_percent'];
+	      ?>
+	      <tr class="e_knowledge_tr">
+	        <td class="altbg1 td">
+	          	外部知识点：<input type="text" class="external_knowledge_names" name="external_knowledge_names[]" id="external_knowledge_name_<?php echo $key;?>" value="<?php echo $val['external_knowledge_name'];?>"/>
+	          <label for="external_knowledge_name_<?php echo $key;?>" class="error"></label>
+	        </td>
+	        <td>
+	        	占比：<input type="text" id="external_percent_<?php echo $auto_key;?>" name="external_percents[]" class="txtbox5 external_percents percents" value="<?php echo $percent;?>"/> %
+	        	<label for="external_percent_<?php echo $auto_key;?>" class="error"></label>
+	        	<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>
+	        </td>
+	      </tr>
+	      <?php $auto_key++;?>
+	      <?php endforeach; ?>
+	      <?php endif;?>
+	      <tr id="e_knowledge_tr_add">
+	      	  <td colspan="2" style="padding-left:320px;">
+	      	  	  <input type="button" value="添加" name="btn_add"  onclick="add_item()"/>
+	      	  </td>
+	      </tr>	      
+	      <tr>
+	      	  <td class="altbg2" colspan="10">
+	      	  	提示：<br />
+				1、所有知识点的试题百分比(范围：0-100)<br/>
+				2、知识点试题百分比总和必须等于 100
+	      	  </td>
+	      </tr>	 
+	      <tr>
+	      	  <td colspan="2">
+	      	  </td>
+	      </tr>
+	      <?php if ($type_detail['subject_id'] == 3) {?>
+    	      <?php if ($group_type_list):?>
+    	      <!-- 信息提取方式 -->
+    	      <tr>
+    	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+    				对比项(信息提取方式)<font color="red">*注意：只能填0-100的自然数</font>
+    	      	  </td>
+    	      </tr>
+    	      <?php foreach ($group_type_list as $key => $val): ?>
+    	      <?php 
+    	      	$isset = isset($items2[$key]);
+    	      	$percent = isset($items2[$key]['item_percent']) ? $items2[$key]['item_percent'] : '';
+    	      ?>
+    	      <tr>
+    	        <td class="altbg1 td">
+    	          <input type="hidden" class="group_type_ids" key="<?php echo $key;?>" name="group_type_ids[]" id="group_type_<?php echo $key;?>" value="<?php echo $key;?>" checked="checked"/>
+    	          <?php echo $val['group_type_name'];?>
+    	        </td>
+    	        <td>
+    	        	<input type="text" id="group_type_percents_<?php echo $key;?>" name="group_type_percents[<?php echo $key;?>]" class="txtbox5 group_type_percents" value="<?php echo $percent;?>"/> %
+    	        	<label for="group_type_percents_<?php echo $key;?>" class="error"></label>
+    	        </td>
+    	      </tr>
+    	      <?php endforeach; ?>
+    	      <tr>
+    	      	  <td class="altbg2" colspan="10">
+    	      	  	提示：<br />
+    				1、所有信息提取方式的百分比(范围：0-100)<br/>
+    				2、信息提取方式百分比总和必须等于 100
+    	      	  </td>
+    	      </tr>	 
+    	      <tr>
+    	      	  <td colspan="2">
+    	      	  </td>
+    	      </tr>
+    	      <?php endif;?>
+    	      
+    	      <!-- 知识点和信息提取方式比例-->
+    	      <tr>
+    	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+    				对比项(知识点和信息提取方式比例)<font color="red">*注意：只能填0-100的自然数</font>
+    	      	  </td>
+    	      </tr>
+    	      <tr>
+    	        <td class="altbg1 td">
+    	                       知识点
+    	        </td>
+    	        <td>
+    	        	<input type="text" id="extraction_ratio_percents_1" name="extraction_ratio[1]" class="txtbox5 extraction_ratio_percents" value="<?=isset($info_detail['cmp_extraction_ratio'][1]) ? $info_detail['cmp_extraction_ratio'][1] : ''?>"/> %
+    	        	<label for="extraction_ratio_percents_1" class="error"></label>
+    	        </td>
+    	      </tr>
+    	      <tr>
+    	        <td class="altbg1 td">
+    	                       信息提取方式
+    	        </td>
+    	        <td>
+    	        	<input type="text" id="extraction_ratio_percents_2" name="extraction_ratio[2]" class="txtbox5 extraction_ratio_percents" value="<?=isset($info_detail['cmp_extraction_ratio'][2]) ? $info_detail['cmp_extraction_ratio'][2] : ''?>"/> %
+    	        	<label for="extraction_ratio_percents_2" class="error"></label>
+    	        </td>
+    	      </tr>
+    	      <tr>
+    	      	  <td class="altbg2" colspan="10">
+    	      	  	提示：<br />
+    				1、知识点和信息提取方式的百分比(范围：0-100)<br/>
+    				2、知识点和信息提取方式百分比总和必须等于 100
+    	      	  </td>
+    	      </tr>	 
+    	      <tr>
+    	      	  <td colspan="2">
+    	      	  </td>
+    	      </tr>
+    	  <?php }?>
+	      
+	      <?php if (in_array($type_detail['subject_id'], $type_detail['subject_ids'])) {?>
+	      <!-- 方法策略 -->
+	      <tr>
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(方法策略)<font color="red">*注意：只能填0-100的自然数</font><label for="method_tactic_ids[]" class="error"></label>
+	      	  </td>
+	      </tr>
+	      <?php if ($method_tactic_list):?>
+	      <?php foreach ($method_tactic_list as $key => $val): ?>
+	      <?php 
+	      	$isset = isset($item_method_tactics[$key]);
+	      	$percent = isset($item_method_tactics[$key]['percent']) ? $item_method_tactics[$key]['percent'] : '';
+	      ?>
+	      <tr>
+	        <td class="altbg1 td">
+	          <input type="hidden" class="method_tactic_ids" key="<?php echo $key;?>" name="method_tactic_ids[]" id="method_tactic_<?php echo $key;?>" value="<?php echo $key;?>" checked="checked"/>
+	          <?php echo $val['name'];?>
+	        </td>
+	        <td>
+	        	<input type="text" id="method_tactic_percent_<?php echo $key;?>" name="method_tactic_percents[<?php echo $key;?>]" class="txtbox5 method_tactic_percents" value="<?php echo $percent;?>"/> %
+	        	<label for="method_tactic_percent_<?php echo $key;?>" class="error"></label>
+	        </td>
+	      </tr>
+	      <?php endforeach; ?>
+	      <?php endif;?>
+	      
+	      <tr style="display: none;">
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(外部方法策略)<font color="red">*注意：只能填0-100的自然数</font>
+	      	  </td>
+	      </tr>
+	      <?php if ($external_method_tactics):?>
+	      <?php $auto_key = 0;?>
+	      <?php foreach ($external_method_tactics as $key => $val): ?>
+	      <?php 
+	      	$percent = $val['percent'];
+	      ?>
+	      <tr class="e_method_tactic_tr">
+	        <td class="altbg1 td">
+	          	外部方法策略名称：<input type="text" class="e_method_tactic_names" name="e_method_tactic_names[]" id="e_method_tactic_name_<?php echo $key;?>" value="<?php echo $val['name'];?>"/>
+	          <label for="e_method_tactic_name_<?php echo $key;?>" class="error"></label>
+	        </td>
+	        <td>
+	        	占比：<input type="text" id="e_method_tactic_percent_<?php echo $auto_key;?>" name="e_method_tactic_percents[]" class="txtbox5 e_method_tactic_percents method_tactic_percents" value="<?php echo $percent;?>"/> %
+	        	<label for="e_method_tactic_percent_<?php echo $auto_key;?>" class="error"></label>
+	        	<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>
+	        </td>
+	      </tr>
+	      <?php $auto_key++;?>
+	      <?php endforeach; ?>
+	      <?php endif;?>
+	      <tr id="e_method_tactic_tr_add">
+	      	  <td colspan="2" style="padding-left:320px;">
+	      	  	  <input type="button" value="添加" name="btn_add"  onclick="add_method_tactic_item()"/>
+	      	  </td>
+	      </tr>	      
+	      <tr>
+	      	  <td class="altbg2" colspan="10">
+	      	  	提示：<br />
+				1、所有方法策略的百分比(范围：0-100)<br/>
+				2、方法策略百分比总和必须等于 100
+	      	  </td>
+	      </tr>	 
+	      <tr>
+	      	  <td colspan="2">
+	      	  </td>
+	      </tr>	 	 
+	      <?php }?>
+	      <!-- 难易度 -->
+	      <tr>
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(题型和难易度)<font color="red">*注意：只能填0-100的自然数</font>
+	      	  </td>
+	      </tr>
+	      <tr>
+	      	  <td colspan="2">
+	      	  	  <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+		      	  	  <tr>
+		      	  	  <?php if ($type_detail['subject_id'] != 3) {?>
+		      	  	  <?php $r_type = array(4,5,6,7,8,9,12,13);//排除英语有的信息提取方式?>
+		      	  	  <?php foreach ($r_type as $key) unset($q_types[$key])?>
+		      	  	  <?php }?>
+		      	  	   <?php if ($type_detail['subject_id'] != 1&&$type_detail['subject_id'] != 3) {?>
+		      	  	  <?php $r_type = array(11);//排除英语有的信息提取方式?>
+		      	  	  <?php foreach ($r_type as $key) unset($q_types[$key])?>
+		      	  	  <?php }?>
+		      	  	  <?php $count = count($q_types);$i=1;?>
+			  		  <?php foreach($q_types as $q_type=>$name) {?>
+			  		  <?php $percents = isset($item_difficulties[$q_type]) ? $item_difficulties[$q_type]['difficulty_percent'] : '';?>
+			  		  <?php $percents = explode(',', $percents);?>
+					  
+					  <td width="<?=100/5?>%">
+							<table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+								<tbody>
+									<?php $auto_key = 0;?>
+									<?php foreach ($difficulty_types as $difficulty_type=>$dt_name) {?>
+									<tr>
+				                        <?php if ($auto_key == 0) {?><td rowspan="4" width="10"><?php echo $name;?></td><?php } ?>
+				                        <td width="70"><?php echo $dt_name;?>:<input type="text" class="txtbox6 difficulty difficulty_<?php echo $q_type;?>" style="width:50px;" name="difficulty_percent[<?php echo $q_type;?>][<?php echo $difficulty_type?>]" value="<?php echo isset($percents[$difficulty_type]) ? $percents[$difficulty_type] : ($act == 'edit' ? '0' : '');?>">%</td>
+				                    </tr>
+				                    <?php $auto_key++;?>
+				                    <?php } ?>
+			                        <td width="70">题目数量:<input type="text" class="txtbox6 question_amount q_amount_<?php echo $q_type;?>" style="width:50px;" name="question_amount[<?php echo $q_type;?>]" value="<?php echo isset($item_difficulties[$q_type]) ? $item_difficulties[$q_type]['question_amount'] : ($act == 'edit' ? '0' : '');?>"></td>
+				               </tbody>
+							</table>	
+		      	  	  </td>
+		      	  	  
+					  <?php 
+	      if($i%5==0){
+            echo "</tr><tr>";
+            }
+            $i++;
+	      } ?>
+					</tr>
+				</table>
+	      	  </td>
+	      </tr>
+	      
+	      <tr style="display: none;">
+	      	  <td class="altbg2" colspan="2" style="text-align:center;">
+				对比项(外部题型 难易度)<font color="red">*注意：只能填0-100的自然数</font>
+	      	  </td>
+	      </tr>
+	      <?php if ($item_external_difficulties):?>
+	      <?php $auto_key = 0;?>
+	      <?php foreach ($item_external_difficulties as $key => $val): ?>
+	      <?php 
+	      	$question_amount = $val['question_amount'];
+	      ?>
+	      <tr class="e_difficulty_tr">
+	        <td class="altbg1 td">
+	         	题型名称：
+	          <input type="text" class="e_difficulty_name" name="e_difficulty_name[]" id="e_difficulty_name_<?php echo $key;?>" value="<?php echo $val['name'];?>"/>
+	          <label for="e_difficulty_name_<?php echo $key;?>" class="error"></label>
+	        </td>
+	        <td>
+	        	题目数量:
+	        	<input type="text" id="e_question_amount_<?php echo $auto_key;?>" name="e_question_amount[]" class="txtbox5 question_amount" value="<?php echo $question_amount;?>"/> 
+	        	<label for="e_question_amount_<?php echo $auto_key;?>" class="error"></label>
+	        	<input type="button" value="删除" name="btn_del" onclick="del_item(this)"/>
+	        </td>
+	      </tr>
+	      <?php $auto_key++;?>
+	      <?php endforeach; ?>
+	      <?php endif;?>
+	      <tr id="e_difficulty_tr_add">
+	      	  <td colspan="2" style="padding-left:320px;">
+	      	  	  <input type="button" value="添加" name="btn_add"  onclick="add_external_difficulty_item()"/>
+	      	  </td>
+	      </tr>	      
+		  <tr>
+	      	  <td class="altbg2" colspan="10">
+	      	  	提示：<br />
+				1、所有题型的难易度百分比(范围：0-100)<br/>
+				2、每种题型的难易度百分比总和必须等于 100
+	      	  </td>
+	      </tr>  
+      </tbody>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回  " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,177 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnUploadFile()
+{
+    var form = document.getElementById('id_form');
+    if (form.file.value == '')
+    {
+        alert('请选择上传文件');
+        return;
+    }
+    form.submit();
+}
+
+function fnTIRegionChanged(bChecked, iValue)
+{
+    if (iValue == '1')
+    {
+        if (bChecked)
+        {
+        }
+        else
+        {
+            $("#id_form input[name='ti_cityid_required']").get(0).checked = false;
+            $("#id_form input[name='ti_areaid_required']").get(0).checked = false;
+        }
+    }
+    else if (iValue == '2')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='ti_provid_required']").get(0).checked = true;
+        }
+        else
+        {
+            $("#id_form input[name='ti_areaid_required']").get(0).checked = false;
+        }
+
+    }
+    else if (iValue == '3')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='ti_provid_required']").get(0).checked = true;
+            $("#id_form input[name='ti_cityid_required']").get(0).checked = true;
+        }
+        else
+        {
+        }
+    }
+}
+
+function fnTCRegionChanged(bChecked, iValue)
+{
+    if (iValue == '1')
+    {
+        if (bChecked)
+        {
+        }
+        else
+        {
+            $("#id_form input[name='tc_cityid_required']").get(0).checked = false;
+            $("#id_form input[name='tc_areaid_required']").get(0).checked = false;
+        }
+    }
+    else if (iValue == '2')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='tc_provid_required']").get(0).checked = true;
+        }
+        else
+        {
+            $("#id_form input[name='tc_areaid_required']").get(0).checked = false;
+        }
+
+    }
+    else if (iValue == '3')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='tc_provid_required']").get(0).checked = true;
+            $("#id_form input[name='tc_cityid_required']").get(0).checked = true;
+        }
+        else
+        {
+        }
+    }
+}
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">导入培训机构与校区
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnUploadFile()">提交</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/tilist')?>'">返回列表</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/import_titc_excel?dl=1')?>'">下载模板</button>
+      </div>
+    </div>
+    <div id="id_file_form">
+    <form id="id_form" method="POST" action="?" enctype="multipart/form-data">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <? if ($error) { ?><tr><td colspan="2" style="text-align:center;color:red">错误信息: <?=$error?></td></tr><? } ?>
+        <? if ($success) { ?><tr><td colspan="2" style="text-align:center;color:green">成功信息: <?=$success?></td></tr><? } ?>
+      <tr>
+        <td class="altbg1" width="15%">上传文件</td>
+        <td><input type="file" name="file"/><span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1" rowspan="7">必填选项</td>
+        <td>
+<label><input type="checkbox" name="ti_provid_required" value="1" onchange="fnTIRegionChanged(this.checked, this.value)" <? if ($param['ti_provid_required']) echo('checked="checked"'); ?>/>机构省份</label>
+<label><input type="checkbox" name="ti_cityid_required" value="2" onchange="fnTIRegionChanged(this.checked, this.value)" <? if ($param['ti_cityid_required']) echo('checked="checked"'); ?>/>机构城市</label>
+<label><input type="checkbox" name="ti_areaid_required" value="3" onchange="fnTIRegionChanged(this.checked, this.value)" <? if ($param['ti_areaid_required']) echo('checked="checked"'); ?>/>机构区县</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="ti_addr_required" value="1" 
+                     <? if ($param['ti_addr_required']) echo('checked="checked"'); ?>/>机构地址</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="ti_priid_required" value="1" 
+                     <? if ($param['ti_priid_required']) echo('checked="checked"'); ?>/>优先级(若非必填则取默认值"一般")</label>
+        </td>
+      </tr>
+      <tr>
+         <td>
+            <label><input type="checkbox" name="ti_stumax_required" value="1" 
+                     <? if ($param['ti_stumax_required']) echo('checked="checked"'); ?>/>学员人数/年(若非必填则取默认值"0")</label>
+         </td>
+       </tr>
+      <tr>
+        <td>
+<label><input type="checkbox" name="tc_provid_required" value="1" onchange="fnTCRegionChanged(this.checked, this.value)" <? if ($param['tc_provid_required']) echo('checked="checked"'); ?>/>校区省份</label>
+<label><input type="checkbox" name="tc_cityid_required" value="2" onchange="fnTCRegionChanged(this.checked, this.value)" <? if ($param['tc_cityid_required']) echo('checked="checked"'); ?>/>校区城市</label>
+<label><input type="checkbox" name="tc_areaid_required" value="3" onchange="fnTCRegionChanged(this.checked, this.value)" <? if ($param['tc_areaid_required']) echo('checked="checked"'); ?>/>校区区县</label>
+        </td>
+       </tr>
+       <tr>
+         <td>
+            <label><input type="checkbox" name="tc_ctcaddr_required" value="1" 
+                    <? if ($param['tc_ctcaddr_required']) echo('checked="checked"'); ?>/>校区地址</label>
+        </td>
+       </tr>
+       <tr>
+         <td>
+            <label><input type="checkbox" name="tc_ctcphone_required" value="1" 
+                    <? if ($param['tc_ctcphone_required']) echo('checked="checked"'); ?>/>联系电话</label>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">同名机构更新字段<br/>(空字段不更新)</td>
+        <td><label><input type="checkbox" name="same_tiname_update_ti_typeid" value="1" <? if ($param['same_tiname_update_ti_typeid']) echo('checked="checked"'); ?>/>机构类型</label>
+            <label><input type="checkbox" name="same_tiname_update_ti_region" value="1" <? if ($param['same_tiname_update_ti_region']) echo('checked="checked"'); ?>/>机构省份/城市/区县</label>
+            <label><input type="checkbox" name="same_tiname_update_ti_addr" value="1" <? if ($param['same_tiname_update_ti_addr']) echo('checked="checked"'); ?>/>机构地址</label>
+            <label><input type="checkbox" name="same_tiname_update_ti_priid" value="1" <? if ($param['same_tiname_update_ti_priid']) echo('checked="checked"'); ?>/>优先级</label>
+            <label><input type="checkbox" name="same_tiname_update_ti_stumax" value="1" <? if ($param['same_tiname_update_ti_stumax']) echo('checked="checked"'); ?>/>学员人数/年</label>
+            <label><input type="checkbox" name="same_tiname_update_ti_stumax" value="1" <? if ($param['same_tiname_update_ti_stumax']) echo('checked="checked"'); ?>/>网址</label>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">同名校区更新字段<br/>(空字段不更新)</td>
+        <td>
+        <label><input type="checkbox" name="same_tcname_update_tc_region" value="1" <? if ($param['same_tcname_update_tc_region']) echo('checked="checked"'); ?>/>校区省份/城市/区县</label>
+            <label><input type="checkbox" name="same_tcname_update_tc_ctcaddr" value="1" <? if ($param['same_tcname_update_tc_ctcaddr']) echo('checked="checked"'); ?>/>校区地址</label>
+            <label><input type="checkbox" name="same_tcname_update_tc_ctcperson" value="1" <? if ($param['same_tcname_update_tc_ctcperson']) echo('checked="checked"'); ?>/>联系人</label>
+            <label><input type="checkbox" name="same_tcname_update_tc_ctcphone" value="1" <? if ($param['same_tcname_update_tc_ctcphone']) echo('checked="checked"'); ?>/>联系电话</label>
+        </td>
+      </tr>
+    </table>
+     </form>
+    </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

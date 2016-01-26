@@ -1,0 +1,41 @@
+<?php if (isset($tci_group_type['group_type']['internal']) && count($tci_group_type['group_type']['internal'])) {?>
+	<?php 
+		$tci_group_type['group_type'] = isset($tci_group_type['group_type']) ? $tci_group_type['group_type'] : array();
+		$tci_group_type['exams'] = isset($tci_group_type['exams']) ? $tci_group_type['exams'] : array();
+		$tci_group_type['exam_names'] = array_keys($tci_group_type['exams']);
+		
+	?>
+
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <table class="cls_row table_header indent_25" id="table_sci_gt">
+        <tr>
+            <?php $first_th_width = '20';?>
+            <th width="<?php echo $first_th_width;?>%">信息提取方式\考试名称</th>
+            <?php $count_data = count($tci_group_type['exam_names']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($tci_group_type['exam_names']));?>
+            <?php foreach ($tci_group_type['exam_names'] as $exam_name) {?>
+                <th width="<?=$left_p_width?>%"><?php echo $exam_name;?></th>
+            <?php }?>
+        </tr>
+    </table>
+        
+    <?php $gt_internal = isset($tci_group_type['group_type']['internal']) ? $tci_group_type['group_type']['internal'] : array(); ?>
+        
+    <?php if (count($gt_internal)) {?>
+        <!-- 内部信息提取方式 -->
+        <?php $auto_key  = 0;?>
+        <?php foreach ($gt_internal as $gt_name) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_gt"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $gt_name . '(%)';?></th>
+                    <?php foreach ($tci_group_type['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width?>%">
+                            <?php echo isset($tci_group_type['exams'][$exam_name]) && isset($tci_group_type['exams'][$exam_name][$gt_name]) ? round($tci_group_type['exams'][$exam_name][$gt_name]) : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+<?php } ?>

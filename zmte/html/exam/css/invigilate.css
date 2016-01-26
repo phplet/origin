@@ -1,0 +1,807 @@
+/**
+reset
+start
+*/
+body,ul,li,div{
+    padding: 0;
+    margin: 0;
+    font-family:'\5fae\8f6f\96c5\9ed1',"Microsoft YaHei";
+    font-size: 14px;
+    color: #333;
+}
+ul,li{
+    list-style: none;
+}
+/**
+reset
+end
+*/
+input[type="checkbox"],input[type="radio"] {
+    vertical-align: -1px;
+}
+em{
+    font-style:normal;
+}
+body{
+    background-color: #fff;
+}
+.clearfix:after {
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+.clearfix {
+    display:inline-table;
+    zoom: 1;
+}
+
+.fl_l{
+    display: inline-block;
+    float: left;
+}
+.fl_r{
+    display: inline-block;
+    float: right;
+}
+
+.cls_jk_body{
+    display: block;
+    width: 100%;
+    background: url("/source/images/zeming/exam/bg.png") repeat-x top center;
+    overflow: hidden;
+}
+.cls_jk_pos{
+    width: 990px;
+    margin: 0 auto;
+    position: relative;
+}
+.cls_ico{
+	margin: 5px 5px 0 0;
+    background: url("/source/images/zeming/exam/invigilate/ico.png") no-repeat;
+}
+
+.cls_jk_title{
+    font-size: 36px;
+    text-align: center;
+    height: 87px;
+    color: #fff;
+    margin: 0;
+	position: relative;
+}
+
+
+.cls_jk_header{
+    position: relative;
+    margin-top: 0;
+    box-shadow: 1px 3px 5px #dedede;
+    box-shadow: 1px 3px 5px #dedede;
+    width: 950px;
+    border: 1px solid #dedede;
+    padding: 10px 20px;
+    background-color: #fff;
+    z-index: 1000;
+}
+.cls_jk_info{
+    
+}
+.cls_jk_info_item{
+    margin-right: 20px;
+    display: block;
+    line-height: 32px;
+}
+.cls_jk_info_name{
+    width: 106px;
+    text-align: right;
+}
+.cls_jk_info_text{
+    width: 195px;
+    border-bottom: 1px solid #dedede;
+}
+
+.cls_jk_uesr,.cls_jk_uesr a{
+    color: #fff;
+
+}
+.cls_jk_uesr .cls_jk_password{
+    /*text-decoration: none;*/
+    margin-right: 20px;
+    color: orange;
+}
+
+.cls_jk_uesr {
+    position: absolute;
+    top: 20px;
+    right: 0;
+}
+.cls_jk_main{
+    width: 100%;
+    border-top: 2px #7CB2DC solid;
+    margin-top: 15px;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    overflow: auto;
+}
+
+.cls_jk_side_log{
+    width: 970px;
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    background-color: #93bbd1;
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.cls_jk_select{
+    display: block;
+    height: 35px;
+    line-height: 33px;
+    vertical-align: middle;
+    padding: 0 10px;
+    background-color: #D2DFEB;
+
+}
+.cls_jk_select input{
+    padding: 0 5px;
+    height: 18px;
+    line-height: 18px;
+    vertical-align: middle;
+}
+.cls_jk_student{
+    color: #333;
+    text-decoration: none;
+    margin-right: 10px;
+}
+.cls_jk_list_item span,.cls_jk_list_title span{
+    padding: 5px;
+    line-height: 28px;
+    text-align: center;
+    display: inline-block;
+    float: left;
+    border-left: 1px solid #dedede;
+	overflow: hidden;
+}
+.cls_jk_list_item{
+    display: block;
+    font-size: 12px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #dedede;
+}
+.cls_jk_container{
+    overflow: auto;
+    border-right: 1px solid #dedede;
+}
+.cls_jk_container .cls_jk_list_bgc{
+    background-color: #fff;
+}
+.cls_jk_list_title{
+    display: block;
+    font-weight: bold;
+}
+.cls_jk_list_number{
+    width: 126px;
+}
+.cls_jk_list_more{
+    /*width: 135px;*/
+}
+.cls_jk_list_more a{
+    color: royalblue;
+}
+.cls_jk_list_passname{
+    width: 60px;
+}
+.cls_jk_list_name{
+    width: 76px;
+}
+.cls_jk_page_r input{
+    width:50px;
+}
+.cls_jk_list_time,.cls_jk_list_submit{
+    width: 116px;
+}
+.cls_jk_list_event{
+    width: 466px;
+    overflow: hidden;
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+.cls_jk_page{
+    display: block;
+    padding: 5px 10px;
+    height: 28px;
+    line-height: 28px;
+    vertical-align: middle;
+}
+.cls_jk_select_time{
+    /*margin-left: 10px;*/
+}
+.cls_jk_select_time input{
+    width: 92px;
+}
+
+.cls_jk_footer{
+    display: block;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    z-index: 1000;
+    _position: absolute;
+    _bottom: auto;
+    _top: expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,0)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)));
+    background-color: #dcdee0;
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
+    border-color: #ccc #dedede #dedede;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+	
+    -moz-box-shadow:0px 0px 20px #999; -webkit-box-shadow:0px 0px 20px #999; box-shadow:0px 0px 20px #999;
+
+}
+.cls_jk_page_l{
+    margin-right: 20px;
+}
+.cls_jk_page_l a{
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+.cls_jk_page_l a:hover{
+    color: #000;
+}
+.cls_jk_page_pos{
+    display: block;
+    width: 990px;
+    margin: 0 auto;
+}
+.cls_jk_page_left{
+    width: 573px;
+    border-right: 1px #999 solid;
+}
+.cls_copyright{
+    margin:0 10px;
+    width: 375px;
+	position: relative;
+}
+.cls_copyright_main {
+    margin-left: 16px;
+}
+.cls_copyright_tm{
+    font-size: 10px;
+    position: absolute;
+    font-style: normal;
+    font-family:tahoma;
+}
+ .cls_jk_select_number{
+     width: 100px;
+     margin:6px 10px 0 0;
+ }
+.cls_jk_event_text{
+    /*margin:0  5px 0 20px;*/
+}
+.cls_jk_select_time label{
+    margin-left: 5px;
+}
+.cls_jk_student_input input{
+    position: relative;
+    width: 86px;
+    margin-right: 10px;
+    height: 18px;
+    line-height: 18px;
+    vertical-align: middle;
+	margin-top:6px;
+}
+.cls_jk_student_icon{
+    position: absolute;
+    background-position:-26px -27px;
+    width: 20px;
+    height: 15px;
+    margin: -17px 0 0 76px;
+    margin: 9px 0 0 -36px\9;
+    *margin: 9px 0 0 -40px;
+}
+.cls_jk_select_type{
+    margin-top: 6px;
+    margin-top: 8px\9;
+}
+.cls_jk_select label{
+    font-weight: bold;
+    margin-right:5px;
+}
+.cls_jk_student_n{
+    font-weight: bold;
+    margin: 2px 15px 0 0;
+}
+.cls_jk_student_name,.cls_jk_single{
+    display: none;
+    width: 366px;
+    padding: 10px;
+    background: #fff;
+    overflow: hidden;
+    zoom: 1;
+    position: absolute;
+    border: 1px solid #bec2c4;
+    border-right-color: #bec2c4;
+    border-bottom-color: #bec2c4;
+    margin-top: -2px;
+    *margin:20px 0 0 -108px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.3);
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=#808080,direction=135,strength=2)\9;
+}
+.cls_student_name_text{
+    color: #ff3300;
+    margin-left: 5px;
+}
+.cls_jk_student_name_title{
+    color: #666;
+    line-height: 20px;
+    padding: 0 5px 5px;
+	overflow:hidden;
+}
+.cls_jk_tab_nav{
+    display: block;
+    overflow: hidden;
+    zoom: 1;
+    position: relative;
+    z-index: 5;
+    padding: 3px 5px 0;
+    height: 22px;
+}
+.cls_jk_tab_nav li{
+    border: 1px solid #fff;
+    border-bottom: #bec2c4;
+    padding: 0 5px;
+    margin-right: 3px;
+    line-height: 20px;
+    cursor: pointer;
+    background: #fff;
+}
+.cls_jk_tab_nav .cls_jk_selected{
+    border-color: #b3c2c4;
+    border-bottom: 1px solid #fff;
+    background: #fff;
+}
+.cls_jk_tab_content{
+    border-top: 1px solid #bec2c4;
+    margin-top: -1px;
+    padding: 6px 0 6px;
+    line-height: 22px;
+    zoom: 1;
+    position: relative;
+}
+.cls_jk_tab_pannel dl{
+    margin: 0;
+    padding-bottom: 5px;
+}
+.cls_jk_tab_pannel dt {
+    float: left;
+    padding: 3px 0 0 3px;
+    color: #f30;
+    text-indent: 5px;
+    font-family: "Lucida console","consolas","courier new";
+    line-height: 22px;
+    font-size: 14px;
+}
+.cls_jk_tab_pannel dd{
+    margin-left: 15px;
+    overflow: hidden;
+    zoom: 1;
+}
+.cls_jk_tab_pannel dd span {
+    float: left;
+    padding-left: 4px;
+    text-align: center;
+    width: 66px;
+    text-align: left;
+}
+.cls_jk_tab_pannel span a,.cls_jk_tab_pannel  span a:visited {
+    color: #404040;
+    padding: 0 2px;
+    font-size: 12px;
+}
+.cls_jk_left .cls_jk_list_event {
+    width: 50px;
+}
+.cls_jk_list_item a.cls_jk_list_event{
+    padding: 5px;
+    line-height: 28px;
+    text-align: center;
+    display: inline-block;
+    float: left;
+    border-right: 1px solid #dedede;
+    color: royalblue;
+}
+.cls_jk_event{
+    display: block;
+    margin-right: 10px;
+}
+.cls_password_reset{
+    padding-left: 30px;
+    font-size: 12px;
+}
+
+.cls_password_reset span{
+    margin-top: 5px;
+}
+.cls_password_reset i{
+    display: inline-block;
+    float: left;
+    background-position: 0 0;
+    width: 13px;
+    height: 16px;
+}
+.cls_jk_btn{
+    width: 60px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-decoration: none;
+    background-color: #58AAB9;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    -webkit-border-radius: 2px;
+    border-radius: 4px;
+    text-shadow: 1px 2px 2px #3780d4;
+    filter: dropshadow(color=#3780d4, offx=1, offy=2);
+    margin: 10px 0 0 10px;
+    cursor: pointer;
+}
+.cls_countTime{
+    height: 20px;
+    line-height: 30px;
+    vertical-align: middle;
+	padding-left: 20px;
+}
+.cls_countTime i{
+    display: inline-block;
+    float: left;
+    background-position: 0 -25px;
+    width: 20px;
+    height: 20px;
+}
+.cls_countTime_main{
+    color: #f00;
+    padding-left: 5px;
+}
+.cls_allinfor,.cls_password_reset{
+    color: royalblue;
+}
+.cls_allinfor i{
+    display: inline-block;
+    float: left;
+    background-position: -22px 0;
+    width: 13px;
+    height: 16px;
+}
+.cls_jk_infor span{
+    display: block;
+    border-left: 1px solid #7CB2DC;
+}
+.cls_jk_single{
+    display: block;
+    width: auto;
+    padding: 8px 10px;
+    position: absolute;
+    right: 10px;
+    z-index: 3000;
+}
+.cls_jk_single_time{
+    padding-right: 20px;
+}
+.cls_jk_single_title{
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1px solid #dedede;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+.cls_jk_single_item{
+    line-height: 24px;
+    padding: 2px 10px;
+    font-size: 12px;
+    background-color: #dedede;
+}
+.cls_jk_single_bgc{
+    background-color: #fff;
+}
+.cls_jk_single_event{
+    color: #ff3300;
+}
+
+
+/*login start*/
+.cls_imgpng{
+    background-image: url('/source/images/zeming/exam/invigilate/ico.png');
+}
+.cls_login_form_item{
+    padding-bottom: 10px;
+}
+.cls_login_form_item label {
+	width: 110px;
+	text-align: right;
+	vertical-align: text-bottom;
+	height: 30px;
+	line-height: 35px;
+}
+#id_login .cls_login_msg{
+    color: #F00;
+    font-size: 14px;
+    margin: 0;
+
+}
+
+.cls_login_msg_tixing .cls_login_msg_text{
+    padding-left: 20px;
+}
+
+.cls_login_msg_tixing .cls_login_msg_text em{
+    display: block;
+    padding-top: 5px;
+    text-indent: 2em;
+    table-layout:fixed;
+    word-break : break-all;
+    word-wrap : break-word ;
+}
+.cls_login_form_item input{
+    margin-left: 10px;
+}
+
+.cls_login_main{
+    width: 400px;
+    margin: 20px auto 15px;
+    border-right: 2px dotted #dedede;
+    padding: 20px;
+    background-color: #fff;
+}
+.cls_login_title{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+.cls_login_form{
+    padding: 20px 0 0 20px;
+}
+.cls_login_right{
+    color: #0C0;
+}
+.cls_login_error{
+    color: #f00;
+}
+.cls_wait_msg,.cls_login_msg{
+    text-align: center;
+}
+.cls_login_btn{
+    width: 100px;
+    display: block;
+    margin: 10px 0 0 140px;
+    padding: 8px 10px;
+    background-color: #7CB2DC;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    -webkit-border-radius: 2px;
+    border-radius: 4px;
+    text-shadow: 1px 2px 2px #3780d4;
+    filter: dropshadow(color=#3780d4, offx=1, offy=2);
+}
+.forgetpassword{
+    padding-left: 10px;
+}
+.cls_jk_login_info{
+    display: block;
+}
+.cls_jk_login_info .cls_jk_info_item {
+    line-height: 32px;
+}
+.cls_msg{
+    padding-top: 10px;
+    margin: 30px 0 0 20px;
+}
+.cls_form_lable{
+    width: 70px;
+    font-weight: bold;
+    color: #333;
+}
+.cls_form_textear{
+    width: 450px;
+    line-height: 22px;
+    font-size: 14px;
+    color: #333;
+    margin: 10px 0 0 0;
+}
+.cls_form_textear li em {
+    color: #ff6501;
+}
+/*login end*/
+
+
+
+/***extend by qfb***/
+.cls_jk_list_time, .cls_jk_list_submit {
+	width: 140px;
+}
+.cls_jk_info_item {
+	margin-right: 0px;
+}
+.cls_jk_info_name {
+	font-weight:bold;
+}
+.cls_jk_student_icon {
+}
+
+#btn_search {
+	height: 23px;
+	line-height: 23px;
+	margin: 6px 0 0 5px;
+}
+#btn_search:hover {
+	border:1px solid #eee;	
+}
+
+.cls_jk_tab_pannel span a.current {
+	border: 1px dotted #333;
+}
+
+.cls_allinfor, .cls_password_reset, .cls_get_all {
+	color: blue;
+	font-size:12px;
+}
+.cls_get_all{padding-left:10px;}
+.cls_jk_select_time input {
+	width: 105px;
+}
+.cls_jk_container .cls_jk_list_bgc.no_record {
+	text-align: center;line-height:30px;border-left: 1px solid #dedede;
+}
+
+input.datepicker {
+	background: url("/source/images/zeming/exam/invigilate/date.png") no-repeat right #fff;	
+	width: 115px;
+	font-size: 12px;
+	padding: 0;
+	cursor:pointer;
+}
+.cls_jk_single { 
+	width: 390px;
+	height: 400px;
+	overflow: auto;
+}
+.cls_copyright {
+	margin-top:0;
+}
+input,textarea{-webkit-transition:border linear 0.2s,box-shadow linear 0.2s;-moz-transition:border linear 0.2s,box-shadow linear 0.2s;-ms-transition:border linear 0.2s,box-shadow linear 0.2s;-o-transition:border linear 0.2s,box-shadow linear 0.2s;transition:border linear 0.2s,box-shadow linear 0.2s;-webkit-box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1);-moz-box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1);box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1);}
+input:focus,textarea:focus{outline:0;border-color:rgba(82, 168, 236, 0.8);-webkit-box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1),0 0 8px rgba(82, 168, 236, 0.6);-moz-box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1),0 0 8px rgba(82, 168, 236, 0.6);box-shadow:inset 0 1px 3px rgba(0, 0, 0, 0.1),0 0 8px rgba(82, 168, 236, 0.6);}
+input, textarea, select, .uneditable-input {
+	border: 1px solid #ccc;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+
+.cls_login_btn.disabled {
+	background-color: #ccc;
+	color: #666;
+	cursor: default;
+	text-shadow:none;
+	filter: none;
+}
+
+input.w-200{
+	width: 240px;
+	height: 30px;
+	line-height: 30px;
+	padding-left:24px;
+}
+.login_account, .login_pwd {
+	background: url(/source/images/zeming/exam/invigilate/icon_login.png) no-repeat left;
+}
+.login_account {
+	background-position: 3px 9px;
+}
+.login_pwd {
+	background-position: 3px -19px;
+}
+.cls_countTime i {
+	background: url(/source/images/zeming/exam/clock_new.png) no-repeat left;
+	display: inline-block;
+	background-position: 0 0px;
+	width: 40px;
+	height: 40px;
+}
+.cls_countTime {
+	line-height: 46px;
+}
+
+i.new{
+	width: 23px;
+	height: 21px;
+	position: absolute;
+	bottom: 22px;
+	left: 125px;
+	cursor:pointer;
+	background: url(/source/images/zeming/exam/invigilate/new.gif) no-repeat left;
+	display: none;
+}
+
+.cls_jk_container li.shake_red{
+	border-bottom: 1px dotted #999;
+	background: #EAF5F5;
+	
+	box-shadow: 1px 3px 5px #dedede;
+    box-shadow: 1px 3px 5px #dedede;
+}
+.cls_jk_list_more a.hover{
+    border:1px dotted #333;
+	box-shadow: 1px 3px 5px #dedede;
+    box-shadow: 1px 3px 5px #dedede;
+}
+
+.cls_jk_select{
+    padding: 0 3px;
+}
+
+/*锟�?锟斤拷证*/
+.form_data p input[type=text], .form_data p input[type=password]{
+	border:1px solid #ccc;
+	height:26px;
+	line-height:26px;
+	padding-left:2px;
+	width:180px;
+	-moz-box-shadow:3px 1px 7px #ccc; 
+	-webkit-box-shadow:3px 1px 7px #ccc; 
+	box-shadow:3px 1px 7px #ccc;
+}
+.form_data p input[type=button]{
+	border: 1px solid #ccc;
+	padding: 9px;
+	cursor: pointer;
+	background: #eee;
+}
+.form_data p input[type=button]:hover{
+	border:1px solid #84BBD4;
+	background: #ddd;
+}
+.form_data p {
+	line-height:30px;
+	height:30px;
+	padding:3px;
+}
+.form_data p.tool_bar{
+	text-align: center;
+	margin-right: 64px;
+}
+.form_data span.f_label{
+	width:150px;
+	font-weight:bold;
+	display:inline-block;
+}
+.form_data input.error:focus {
+	border:1px solid red;
+}
+.form_data .error {
+	color: red;
+	padding-left:5px;
+}
+.form_data .success {
+	padding-left:5px;
+	color: green;
+}
+
+
+
+.cls_jk_info_item .cls_w106{
+    width: 106px;
+}
+.cls_jk_info_item .cls_w45{
+    width: 45px;
+}

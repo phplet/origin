@@ -1,0 +1,48 @@
+<?php
+/**
+ * 试题模板（不定项）
+ */
+?>
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+<div class="cls_budingxiang" id="question_change_box_<?php echo $etp_id; ?>">
+    <div class="cls_pagetitle"  <?php echo $is_single ? 'style="display: none;margin:0;"' : '';?>>二、不定项选择题（从下列各题的备选答案中选出一个正确答案。答案选错或未选者，该题不得分。每小题<font id="q_score_<?php echo $etp_id;?>_2">--</font>分，共<?php echo count($question_list);?>题）</div>
+    <div class="cls_question_list question_box">
+<?php } ?>
+
+    	<?php foreach ($question_list as $question) {?>
+    	<?php 
+			$title = nl2br($question['title']);
+			$question_id = $question['ques_id'];
+			$etr_id = $question['etr_id'];
+			$answer = $question['answer'];
+			$answer = is_array($answer) ? $answer : array(); 
+		?>
+		<div class="cls_question_item <?php echo !count($answer) ? 'undo' : 'q_done';?> question_item" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>">
+			<div class="h4 cls_ques_question">
+				第 <font id="q_index_<?php echo $etp_id;?>_<?php echo $question_id;?>"><?php echo auto_count();?></font> 题、[<?php echo $qtype_name;?>] <?php echo $title;?>
+				<?php if($question['picture']):?><br/><img src="<?=__IMG_ROOT_URL__?><?=$question['picture']?>"/><?php endif;?>
+			</div>
+		    <ul class="cls_ques_answer">
+		    	<?php $opt_auto_key = 0;?>
+		    	<?php foreach($question['options'] as $k => $opt) {?>
+		    	<?php $opt_auto_key++;?>
+				<?php $option_id = $opt['option_id'];?>
+				<?php $option_name = $opt['option_name'];?>
+				
+				<li class="question_option" type="checkbox" question_id="<?php echo $question_id;?>" etp_id="<?php echo $etp_id; ?>" >
+				    <input type="checkbox" <?php echo in_array($option_id, $answer) ? 'checked="checked"' : '';?> etr_id="<?php echo $etr_id;?>" value="<?php echo $option_id;?>" name="answer_<?php echo $question_id;?>[]" class="q_sub_option type_2" id="q_option_<?php echo $option_id;?>"/>
+					<label for="q_option_<?php echo $option_id;?>">
+						<?php echo format_numeric_to_letter($opt_auto_key);?>.<?=$option_name?>
+						<?php if($opt['picture']):?><br/><img src="<?=__IMG_ROOT_URL__?><?=$opt['picture']?>"/><?php endif;?>
+					</label>
+				</li>
+				<?php } ?>
+		    </ul>
+		    <div class="cls_question_tip"><input type="checkbox" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  class="question_mark" id="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>"><label for="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>">标记本题<em>（一般用于模棱两可的题） </em></label></div>
+		</div>
+		<?php } ?>
+		
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+    </div>
+</div>
+<?php } ?>

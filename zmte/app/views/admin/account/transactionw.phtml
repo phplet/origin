@@ -1,0 +1,123 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+    $vc = C('virtual_currency');
+?>
+
+<style>
+.score_rank_td div{
+	line-height:30px;
+	height:30px;
+	padding-top:6px;
+}
+</style><?php static_global(array('js/datepicker/wdatepicker.js','js/jquery/plugin/blockUi.js'));?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+
+<div id="body">
+ 
+  <div class="space">
+    <div class="subtitle">统计数据</div>
+    <form method="get" name="search_form" action="<?=site_url('/admin/account/transactionw/')?>">
+    <div class="space">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+               <td class="altbg1">交易明细</td>
+               <td>
+                  <input type="text" id="begin_time" name="begin_time" class="txtbox3" value="<?=$search['begin_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});"> -
+                  <input type="text" id="end_time" name="end_time" class="txtbox3" value="<?=$search['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});">
+                  <input type="submit" value=" 开始统计 " class="btn" /> </td>
+         <td></td>
+         <td></td>
+         <td width="15%"><a href=<?php echo site_url('/admin/account/report/?begin_time='.$search['begin_time'].'&end_time='.$search['end_time']);?> target="_blank">导出报表</a>&nbsp;&nbsp;&nbsp;<a href=<?php echo site_url('/admin/account/detail_report/?begin_time='.$search['begin_time'].'&end_time='.$search['end_time']);?> target="_blank">导出明细表</a></td>
+            </tr>  
+        </table>
+
+    </div>
+  </form>
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+
+    
+            <tr>
+        <td colspan="4" class="altbg2" style="text-align: center;">
+      
+          <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+
+        <td width="10%">产品ID</td>
+    
+        <td width="20%">产品名称</td>
+      
+        <td width="20%">产品类型</td>
+        <td width="10%">交易次数</td>
+         <td width="15%">产品定价</td>
+           <td width="15%">交易额</td>
+           <td width="20%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+      
+        <td><?=$val['p_id']?></td>        
+        <td><?=$val['p_name']?></td>
+        <td><?=$val['pc_name']?></td> 
+       <td><?=$val['tr_num']?></td>
+       <td><?=$val['p_price']?> / <?=$val['p_price_pushcourse']?> <?=$vc['fullname']?> </td>
+      
+       <td><?=bcsub(0, $val['tr_sum'], 0)?><?=$vc['fullname']?></td>
+       <td><a href=<?php echo site_url('/admin/account/transactiond/?begin_time='.$search['begin_time'].'&end_time='.$search['end_time'].'&p_id='.$val['p_id']);?>>查看数据</a></td> 
+      </tr>
+
+      <?php endforeach; ?>
+      <tr class="altbg1">
+
+
+        <td colspan="7" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="7">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+      
+      </td>
+      </tr>
+      
+      
+      
+      
+     <tr>
+      	<td colspan="6">
+      		 <!-- 下一步 -->
+		     <center> 
+			    <input type="button" name="" value=" 返回 " onclick="window.history.go(-1)" class="btn next_step" />
+			  </center> 
+      	</td>
+      </tr>
+    </table>
+
+
+    
+     
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+   
+</div>
+
+<?php $this->load->view('common/footer');?>
+

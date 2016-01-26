@@ -1,0 +1,99 @@
+<?php
+/**
+ * 后台管理->素质相关管理->职业管理
+ */
+$this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('profession_ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/profession/remove')?>" method="GET" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle">
+    <?php if ($priv_edit) {?>
+    <a class="menu" href="<?=site_url('admin/profession/edit')?>">添加</a>
+    <?php }?>
+    <?php if ($priv_import) {?>
+    <a class="menu" href="<?=site_url('admin/profession/import')?>">导入</a>
+    <?php }?>
+    <a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">查询</a> 
+            职业管理
+   </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="2%">删?</td>
+        <td width="8%">ID</td>
+        <td width="15%">职业名称</td>
+        <td width="10%">新兴职业</td>
+        <td width="50%">说明</td>
+        <td width="10%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="profession_ids[]" value="<?=$val['profession_id']?>"></td>
+        <td><?=$val['profession_id']?></td>
+        <td><?=$val['profession_name']?></td>
+        <td><?=$val['profession_emerging'] ? '是' : '否'?></td>
+        <td><?=$val['profession_explain']?></td>
+        <td>
+          <?php if ($priv_edit) {?>
+          <a href="<?=site_url('admin/profession/edit/'.$val['profession_id'])?>">编辑</a>
+          <?php } ?>
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url('admin/profession/remove/'.$val['profession_id'])?>" onclick="return confirm('确定要删除么？');"><?php if ($val['profession_flag'] == -1) {?>彻底<?php }?>删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('profession_ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right">
+          <?=$pagination?>
+        </td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <?php if ($priv_delete) {?>
+    <center><input type="submit" value=" 批量删除 " class="btn" /></center>
+    <?php }?>
+  </div>
+  </form>
+</div>
+
+<div id="id_qry_dlg" style="display:none">
+<div class="cls_title">搜索职业</div>
+  <form method="get" name="search_form" action="<?=site_url('admin/profession/index/')?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">职业名称</td>
+                <td><input type="text" name="profession_name" value="<?=$search['profession_name']?>" class="txtbox" /></td>
+            </tr>
+            <tr>
+                <td class="altbg1">新兴职业</td>
+                <td>
+                <?php $profession_emerging = explode(',', $search['profession_emerging']);?>
+                <input type="checkbox" id="profession_emerging_1" name="profession_emerging[]" value="1" <?=in_array(1, $profession_emerging) ? 'checked' : ''?>><label for="profession_emerging_1">是</label>
+        <input type="checkbox" id="profession_emerging_0" name="profession_emerging[]" value="0" <?=in_array('0', $profession_emerging, true) ? 'checked' : ''?>><label for="profession_emerging_0">否</label>
+                </td>
+            </tr>      
+        </table>
+        <center><input type="submit" value=" 搜索 " class="btn" /> <input type="button" value="取消 " class="btn" onclick="fnCloseDialog('id_qry_dlg')"/></center>
+    </div>
+  </form>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

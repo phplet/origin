@@ -1,0 +1,159 @@
+<div id="id_register_exam_place_dlg" style="width:700px">
+<script type="text/javascript">
+$(function(){
+<? if (empty($student)) { ?>
+    setTimeout(function(){
+        fnCloseDialog('id_register_exam_place_dlg');
+        fnShowDialog('<?=site_url('student/index/logindiv')?>');
+    }, 1500);
+<? } else { ?>
+
+    //提交报名
+    $('.place_in').unbind('click').bind('click', function(){
+    	var $thiz = $(this);
+        var place = $(this).attr('place');
+        var p_id = $(this).attr('p_id');
+        var exam = $(this).attr('exam');
+        var force = 0;
+        var $font_form = $('#font_form');
+        var use_pushcourse = $("#id_use_pushcourse").get(0).checked ? 1 : 0;
+    	$thiz.attr('disabled', 'disabled');
+        $.ajax({
+            url : '<?php echo site_url('student/profile/place_in/'); ?>',
+            dataType : 'json',
+            type : 'post',
+            data : {
+                place : place,
+                p_id : p_id,
+                exam : exam,
+                force : force,
+                b_pushcourse : use_pushcourse
+            },
+            timeout : 5000,
+            error : function(a, b, c) {
+                //alert(a + b + c);
+                $thiz.removeAttr('disabled');
+                $font_form.removeClass('success').addClass('error').html('报名失败.').hide().fadeIn();
+            },
+            success : function(response) {
+                var code = response.code;
+                var msg	= response.msg;
+                var data = response.data;
+                $thiz.removeAttr('disabled');
+                if (code < 0)
+                {
+                    $font_form.removeClass('success').addClass('error').html('<font color="red">'+msg+'</font>').hide().fadeIn();
+                    if (code == -2)
+                    {
+                        $('.place_f').removeAttr('disabled');
+                        $thiz.attr('disabled', 'disabled');
+                    }
+                    return false;
+                }
+                $font_form.removeClass('error').addClass('success').html('<font color="green">'+msg+'</font>').hide().fadeIn();
+                setTimeout(function(){
+                    <? /* 进行产品前置检查 */ ?>
+                    fnShowDialog('<?=site_url('student/exam/product_prefixcheck/' . $exam_id . '/' . $p_id)?>?refresh=1');
+                    //parent.window.frames["main_iframe"].location.reload();
+                }, 1500);
+                return true;
+            }
+        });
+    });
+    
+    //提交报名
+    $('.place_f').unbind('click').bind('click', function (){
+        var $thiz = $(this);
+        var place = $(this).attr('place');
+        var p_id = $(this).attr('p_id');
+        var exam = $(this).attr('exam');
+        var force = 1;
+        var $font_form = $('#font_form');
+        var use_pushcourse = $("#id_use_pushcourse").get(0).checked ? 1 : 0;
+        $thiz.attr('disabled', 'disabled');
+        $.ajax({
+            url : '<?php echo site_url('student/profile/place_in/'); ?>',
+            dataType : 'json',
+            type : 'post',
+            data : {
+                place : place,
+                p_id : p_id,
+                exam : exam,
+                force : force,
+                b_pushcourse : use_pushcourse
+            },
+            timeout : 5000,
+            error : function(a, b, c){
+                //alert(a + b + c);
+                $thiz.removeAttr('disabled');
+                $font_form.removeClass('success').addClass('error').html('报名失败.').hide().fadeIn();
+            },
+            success : function(response) {
+                var code = response.code;
+                var msg = response.msg;
+                var data = response.data;
+                $thiz.removeAttr('disabled');
+                if (code < 0)
+                {
+                    $font_form.removeClass('success').addClass('error').html('<font color=red>'+msg+'</font>').hide().fadeIn();
+                    return false;
+                }
+                $font_form.removeClass('error').addClass('success').html('<font color=green>'+msg+'</font>').hide().fadeIn();
+                setTimeout(function ()
+                {
+                    <? /* 进行产品前置检查 */ ?>
+                    fnShowDialog('<?=site_url('student/exam/product_prefixcheck/' . $exam_id . '/' . $p_id)?>?refresh=1');
+                    //parent.window.frames["main_iframe"].location.reload();
+                }, 1500);
+                return true;
+            }
+        });
+    });
+<? } ?>
+});
+</script>
+    <div class="cls_title">报名<? if ($student) { ?>(<span style='color:red'><?=Func::echo_s($exam_info['exam_name'])?></span>)<? } ?></div>
+  <div class="space" style="margin:5px;">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0" style="width:100%">
+       <? if (empty($student)) { ?>
+      <tr><td colspan="3">您还没有登录，请先登录</td></tr>
+       <? } else { ?>
+       <? if(empty($exam_place_list)){ ?>
+      <tr><td colspan="3">暂无记录</td></tr>
+       <? } else { ?>
+        <tr><td colspan="3" style="line-height:30px;">该场测试需要收费<b><span style="color:red"><?=$product_info['p_price']?></span><?=C('virtual_currency/fullname')?></b>,建议您选择如下增值服务:<br/>
+       <label><input type="checkbox" value="1" id="id_use_pushcourse"/>推送课程(<span style="color:red">-<?=$product_info['p_price'] - $product_info['p_price_pushcourse']?></span><?=C('virtual_currency/fullname')?>)</label><br/>
+       优惠后需要耗费<b><span style="color:red"><?=$product_info['p_price_pushcourse']?></span><?=C('virtual_currency/fullname')?></b></td></tr>
+        <? /* if (count($exam_place_list) > 1) {  ?>
+        <tr><td style="border:none;height:5px;border-bottom:1px dotted lightgray" colspan="3"><b>请选择考试场次</b></td></tr>
+        <? } */ ?>
+        <? $place_id_arr = array(); foreach ($exam_place_list as $v2) { $place_id_arr[] = $v2['place_id']; ?>
+        <tr>
+          <td style="text-align:left"><?=Func::echo_s($v2['place_name'])?></td>
+          <td style="text-align:left" colspan="2">开始时间: <?=$v2['exam_isfree'] == 1 ? '任意时间' : $v2['start_time']?>, 时长: <?=$v2['duration_minute']?>分钟</td>
+<? /* // 改为批量报名
+          <td style="text-align:right">
+            <input type="button" value="考前须知" onclick="fnShowDialog('<?=site_url('student/exam/product_notice')?>/<?=$v2['exam_pid']?>/<?=$p_id?>');"/>
+            <input type="button" class="place_in" value="报名" place='<?=$v2["place_id"]?>' p_id="<?=$p_id?>" exam='<?=$v2["exam_pid"]?>'/>
+            <input type="button" class="place_f" value="强制报名" place='<?=$v2["place_id"]?>' p_id="<?=$p_id?>" exam='<?=$v2["exam_pid"]?>' disabled="disabled"/>
+          </td>
+ */ ?>
+        </tr>
+      <? } /* 这里加入批量报名功能 BEGIN */?>
+
+      <tr>
+        <td colspan="3" align="right">
+            <input type="button" value="考前须知" onclick="fnShowDialog('<?=site_url('student/exam/product_notice')?>/<?=$v2['exam_pid']?>/<?=$p_id?>');"/>
+            <input type="button" class="place_in" value="报名" place='<?=implode(',', $place_id_arr)?>' p_id="<?=$p_id?>" exam='<?=$v2["exam_pid"]?>'/>
+            <input type="button" class="place_f" value="强制报名" place='<?=implode(',', $place_id_arr)?>' p_id="<?=$p_id?>" exam='<?=$v2["exam_pid"]?>' disabled="disabled"/>
+       </td>
+      </tr>
+<? /* 批量报名功能 END */ } ?>
+      <? } ?>
+    </table>
+    <div class="info error" id="font_form"></div>
+  </div>
+  <div class="cls_dialog_buttons">
+      <button type="button" onclick="fnCloseDialog('id_register_exam_place_dlg')">关闭</button>
+  </div>
+</div>

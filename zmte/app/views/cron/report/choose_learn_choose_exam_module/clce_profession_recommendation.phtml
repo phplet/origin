@@ -1,0 +1,59 @@
+<?php if ($clce_profession_recommendation) {?>
+<?php 
+if ($is_junior_high)
+{
+    $profession = array_unique(array_merge(array_keys($clce_vocational_aptitude['profession']), array_keys($clce_vocational_interest['profession'])));
+}
+else
+{
+    $profession = array_unique(array_intersect(array_merge(array_keys($clce_vocational_aptitude['profession']), array_keys($clce_vocational_interest['profession'])),
+        array_keys($clce_comprehensive_selection['subject_related_profession'])));
+    
+}
+?>
+
+<?php if ($profession) {?>
+<?php 
+$profession_info = $clce_vocational_aptitude['profession'];
+$profession_info2 = $clce_vocational_interest['profession'];
+$arr = array();
+$key = array('传统职业', '新兴职业');
+
+foreach ($profession as $profession_id)
+{
+    if (isset($profession_info[$profession_id]['profession_emerging']))
+    {
+        if ($profession_info[$profession_id]['profession_emerging'])
+        {
+            $arr[1][] = $profession_info[$profession_id]['profession_name'];
+        }
+        else 
+        {
+            $arr[0][] = $profession_info[$profession_id]['profession_name'];
+        }
+    }
+    else if (isset($profession_info2[$profession_id]['profession_emerging']))
+    {
+        if ($profession_info2[$profession_id]['profession_emerging'])
+        {
+            $arr[1][] = $profession_info2[$profession_id]['profession_name'];
+        }
+        else 
+        {
+            $arr[0][] = $profession_info2[$profession_id]['profession_name'];
+        }
+    }
+}
+?>
+<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?> <?=$module_name?></h5>
+<p class="cls_row indent_25 font14">综合考虑你的职业兴趣、职业能力倾向和现在的选课情况，我们推荐如下职业作为参考：</p>
+<table class="cls_row cls_table indent_25">
+<?php foreach ($arr as $k => $val) {?>
+    <tr>
+   		<th width="10%"><?=$key[$k]?></th>
+   		<td width="90%" style="text-align: left;"><?=implode('、', $val)?></td>
+   	</tr>
+<?php }?>
+</table>
+<?php }?>
+<?php }?>

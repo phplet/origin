@@ -1,0 +1,51 @@
+<?php 
+$this->load->view('common/header');?>
+
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/evaluate_rule/interview_general/' . $rule['id'])?>">
+  <div class="space">
+    <div class="subtitle">选择面试报告模板</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">总结面试模板</td>        
+        <td>
+            <select name="template_id[0]" id="template_id">
+                <option value='0'>请选择报告模板</option>
+                <?php if ($template_list): ?>
+                    <?php foreach ($template_list as $item) {?>
+                        <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                    <?php }?>
+                <?php endif ?>
+            </select>
+            <span style="color: red;"></span>
+        </td>
+      </tr>
+
+      <?php foreach ($subjects as $key => $value): ?>
+        <tr>
+          <td width="16%" class="altbg1"><?php echo $value; ?>面试模板</td>        
+          <td>
+              <select name="template_id[<?php echo $key; ?>]" id="template_id">
+                  <option value='0'>请选择报告模板</option>
+                  <?php if ($subject_template_list): ?>
+                      <?php foreach ($subject_template_list as $item) {?>
+                          <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                      <?php }?>
+                  <?php endif ?>
+              </select>
+              <span style="color: red;"></span>
+          </td>
+        </tr>
+      <?php endforeach ?>
+      <tr>
+        <td colspan="2" class="altbg1" style="color:red;">Tips:不选择模板即为不生成报告！</td>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

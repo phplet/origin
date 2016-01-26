@@ -1,0 +1,95 @@
+<?php echo $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            var notice = '';
+            if (op == 'delete') {
+              notice = '删除之后无法再恢复，';
+            }
+            if (confirm(notice + '您确定要执行该操作么？')) {
+                var action = $('#batch_op').find('option[value='+op+']').attr('op');
+
+                form.action = action;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="" method="POST" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+        <?php if ($priv_manage) {?>
+        <a class="menu" href="<?=site_url('admin/comparison_info/add/'.$type_detail['cmp_type_id'])?>">添加对比信息</a>
+        <?php } ?>
+        <a href="<?php echo site_url('admin/comparison_type/index');?>">对比信息分类</a> ->
+                     对比信息列表
+      </div>  
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      	<tr>
+      	  <td class="altbg2" colspan="10" style="text-align:center;">
+      	    <?php echo $type_detail['cmp_type_name'];?>
+      	    <input name="type_id" type="hidden" value="<?php echo $type_detail['cmp_type_id'];?>" />
+      	  </td>
+      	</tr>
+        <tbody>
+          <tr class="altbg1">
+            <th width="100">ID</th>
+            <th>考试年份</th>
+            <th width="150">考试总分</th>
+            <th width="200">创建时间</th>
+            <th width="200">修改时间</th>
+            <th width="200">操作</th>
+          </tr>
+          <?php if ($list):?>
+          <?php foreach($list as $val):?>
+          <tr>
+            <td><?php if ($priv_manage) {?><input type="checkbox" name="ids[]" value="<?=$val['cmp_info_id']?>"><?php } ?><?=$val['cmp_info_id']?></td>
+            <td><?=$val['cmp_info_year']?></td>
+            <td><?=$val['cmp_info_score']?></td> 
+            <td><?=date('Y-m-d H:i:s', $val['addtime'])?></td> 
+            <td><?=date('Y-m-d H:i:s', $val['updatetime'])?></td> 
+            <td>
+            	<?php if ($priv_manage) {?>
+                <a href="<?=site_url('admin/comparison_info/edit/'.$val['cmp_info_id'])?>">编辑</a>
+                <a href="<?=site_url('admin/comparison_info/do_action/'.$val['cmp_info_id'].'/delete')?>" onclick="return confirm('删除后不能恢复，您确认要删除么？')">删除</a>
+                <?php } ?>
+            </td>
+          </tr>
+          <?php endforeach;?>
+          <?php else: ?>
+          <tr>  
+              <td colspan="8" align="center">暂无记录.</td>
+          </tr>          
+          <?php endif; ?>
+          <tr class="altbg1">
+            <td colspan="3">
+              <?php if ($priv_manage) {?>
+              <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <option value="remove" op="<?=site_url('admin/comparison_info/do_batch/remove')?>">批量删除</option>
+              </select>
+              <?php } ?>
+            </td>
+            <td colspan="5" style="text-align:right"><?=$pagination?></td>
+          </tr> 
+        </tbody>
+      </table>
+      <center>
+        <input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />
+        <input type="button" name="back" value=" 返回 " onclick="window.history.go(-1);"class="btn" />
+     </center>
+    </div>
+  </form>
+</div>
+<?php echo $this->load->view('common/footer');?>

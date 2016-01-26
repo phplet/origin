@@ -1,0 +1,111 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js'));
+?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveTC(tc_id_str)
+{
+    if (tc_id_str == '')
+    {
+        alert('您没有选择任何要删除的记录');
+        return;
+    }
+    if (!confirm('您确认要删除所选记录么?'))
+    {
+        return;
+    }
+    ajax_removeTC(tc_id_str);
+}
+</script>
+<?
+$CI = &get_instance();
+$bPrivAdd = $CI->check_power_new('traininginstitution_addtcinfo', false); 
+$bPrivEdit = $CI->check_power_new('traininginstitution_settcinfo', false); 
+$bPrivRemove = $CI->check_power_new('traininginstitution_removetc', false); 
+$bPrivImport = $CI->check_power_new('traininginstitution_import_titc_excel', false); 
+?>
+<div id="body">
+  <div class="space">
+  <div class="subtitle">培训机构校区列表<?if ($ti_info) { ?>(<? Func::echo_s($ti_info['ti_name']); ?>)<? } ?>
+        
+      <div class="cls_toolbar">
+      <button type="button" onclick="">查询</button>
+      <? if ($ti_info) { ?>
+<? if ($bPrivAdd) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/addtcinfo/' . $ti_info['ti_id'])?>'">新增</button>
+<? } ?>
+      <? } ?>
+<? if ($bPrivImport) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/import_titc_excel' . ($ti_info ? ('/' . $ti_info['ti_id']) : ''))?>'">导入</button>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+      <button type="button" onclick="fnRemoveTC(fnGetCheckBoxValues('body', 'tc_id'))">删除</button>
+<? } ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/tilist')?>'">返回列表</button>
+      <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" border="0" cellspacing="0" cellpadding="0" id="id_grid">
+      <tr class="cls_title">
+        <td width="20"><input type="checkbox" onchange="fnSelAll('id_grid', 'tc_id', this.checked)"/></td>
+        <td width="40">ID</td>
+        <td width="80">名称</td>
+        <? if ($ti_info) {} else { ?>
+        <td width="100">所属培训机构</td>
+        <? } ?>
+        <td width="120">省/市/区</td>
+        <td width="100">联系地址</td>
+        <td width="100">联系人员</td>
+        <td width="100">联系电话</td>
+        <td width="35" align="right">环境指数</td>
+        <td width="120">添加时间</td>
+        <td width="60">添加人员</td>
+        <td width="35">状态</td>
+        <td width="100">操作</td>
+      </tr>
+      <? if(!empty($tc_list)) { ?>
+      <? foreach($tc_list as $v) { ?>
+      <tr>
+        <td><input type="checkbox" name="tc_id" value="<?=$v['tc_id']?>"/></td>
+        <td><?=$v['tc_id']?></td>
+        <td><? Func::echo_s($v['tc_name']); ?></td>
+        <? if ($ti_info) {} else { ?>
+        <td><? Func::echo_s($v['ti_name']); ?></td>
+        <? } ?>
+        <td><? Func::echo_s($v['tc_provname']); ?> /
+        <? Func::echo_s($v['tc_cityname']); ?> /
+        <? Func::echo_s($v['tc_areaname']); ?></td>
+        <td><? Func::echo_s($v['tc_ctcaddr']); ?></td>
+        <td><? Func::echo_s($v['tc_ctcperson']); ?></td>
+        <td><? Func::echo_s($v['tc_ctcphone']); ?></td>
+        <td><?=$v['tc_environ']?></td>
+        <td><?=$v['tc_addtime']?></td>
+        <td><?=$v['tc_adduname']?></td>
+        <td><?  if ($v['tc_flag'] < 0) echo('已删'); 
+                else if ($v['tc_flag'] == '0') echo('禁用'); 
+                else if ($v['tc_flag'] == 1) echo('启用'); 
+                else if ($v['tc_flag'] > 1) echo('待审'); ?></td>
+        <td>
+          <a href="<?=site_url('admin/traininginstitution/tcinfo/' . $v['tc_id'])?>">查看</a>
+<? if ($bPrivEdit) { ?>
+          <a href="<?=site_url('admin/traininginstitution/settcinfo/' . $v['tc_id'])?>">编辑</a>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+          <a href="javascript:void(0)" onclick="fnRemoveTC('<?=$v['tc_id']?>')">删除</a>
+<? } ?>
+        </td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+    <? $this->load->view('common/paginator', Fn::paginator($tc_list_count));?>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,92 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<style>
+tr.exam_pid{
+	background:#eee;
+}
+tr.exam_pid td{
+	border-bottom: 1px solid #ccc;
+}
+</style>
+<script>
+$(function(){
+    $('a.folder').click(function(){
+        var pid = $(this).attr('pid');
+        $('#exams_'+pid).toggle();
+        $(this).html($(this).html()=='[-]'?'[+]':'[-]');
+    });
+});
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    <?php if ($is_setexamrelate_priv) {?>
+    <a class="menu ajax_loader" href="###" name="添加对应关系" ajax="<?=site_url('admin/zmoss/setexamrelate')?>">添加对应关系</a>
+    <?php }?>
+    <a class="menu" href="javascript:void(0);" onclick="location.reload()">刷新</a>
+成绩同步管理</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="30%">考试期次</td>
+        <td width="30%">对应阅卷项目</td>
+        <td width="10%">同步管理员</td>
+        <td width="10%">状态</td>
+        <td width="">操作</td>
+      </tr>
+      <?php if($list) {?>
+          <?php foreach($list as $val) {?>
+          <tr class="altbg2 exam_pid">
+            <td>
+              <a href="javascript://" class="folder" pid="<?=$val['er_examid']?>">[-]</a>
+              <?=$val['exam_name']?>
+            </td>
+            <td><? Func::echo_s($examrelatelist[$val['er_zmoss_examid']]['exam_name'])?></td>
+            <td><?=$admin_list[$val['er_adminid']]['realname']?></td>
+            <td>&nbsp;</td>
+            <td>
+            <?php if ($is_setexamrelate_priv) {?>
+            <a class="ajax_loader" href="###" name="编辑对应关系" ajax="<?=site_url('admin/zmoss/setexamrelate/'.$val['er_examid'])?>">编辑</a> 
+            <?php }?>
+            <?php if ($is_remove_priv) {?>
+            <a href="javascript:void(0);" onclick="if (confirm('你确定要删除吗？')) {ajax_removeExamRelate(<?=$val['er_examid']?>);}">删除</a>
+            <?php }?>
+            </td>
+          </tr>
+          <?php if($val['child']) {?>
+              <tbody id="exams_<?=$val['er_examid']?>">
+                <?php foreach($val['child'] as $k => $sub) {?>
+                <tr>
+                    <td>　<?=count($val['child'])-1>$k?'├':'└'?>&emsp;<?=C('subject/' . $sub['subject_id'])?></td>
+                    <td><? Func::echo_s($examrelatelist[$sub['er_zmoss_examid']]['exam_name'])?></td>
+                    <td><?=$admin_list[$sub['er_adminid']]['realname']?></td>
+                    <td><?=($er_flag[$sub['er_flag']] ? $er_flag[$sub['er_flag']] : '进行中')?></td>
+                    <td>
+                       <?php if ($is_setexamrelatequestion_priv) {?>
+                       <a class="ajax_loader" href="###" name="设置试题对应关系" ajax="<?=site_url('admin/zmoss/setexamrelatequestion/'.$sub['er_examid'].'/'.$sub['er_zmoss_examid'])?>">设置试题对应</a>
+                       <?php }?>
+                       <?php if ($is_sync_result_priv && !$sub['er_flag']) {?>
+                       <a href="javascript:void(0);" onclick="if (confirm('你确定要同步成绩吗？')) {ajax_setExamRelateFlag(<?=$sub['er_examid']?>, <?=$sub['er_zmoss_examid']?>, 1);}">同步成绩</a>
+                       <?php }?>
+                       <?php if ($is_showresult_priv) {?>
+                       <a class="ajax_loader" href="###" name="查看成绩" ajax="<?=site_url('admin/exam_student_result/index/?exam_pid='.$val['er_examid'].'&subject_id='.$sub['subject_id'])?>">查看成绩</a>
+                       <?php }?>
+                    </td>
+                </tr>
+                <?php }?>
+              </tbody>
+          <?php }?>
+      <?php }?>
+      <tr class="altbg1">
+        <td colspan="2"></td>
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php } else {?>
+      <tr>
+        <td colspan="12">暂无记录！</td>
+      </tr>
+      <?php } ?>
+    </table>
+  </div>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

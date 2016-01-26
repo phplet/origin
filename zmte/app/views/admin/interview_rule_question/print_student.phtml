@@ -1,0 +1,35 @@
+<?php $this->load->view('common/header');?>
+<?php $this->load->view('common/mathjax');?>
+
+<style>
+html,body {
+	background: #fff;
+    text-align:center;
+}
+#body {
+	width: 90%;
+    margin:0 auto;
+}
+.space{
+    margin-bottom: 20px;
+}
+</style>
+<div id="body">    
+  <div style="text-align:center;"><h3><?=$rule['rule_name']?> [考点：<?=$rule['type_name']?>]</h3></div>
+  <?php foreach($list as $val):?>
+  <?php if($val['student_content']):?>
+  <div class="space">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>序号：<?=$val['index']?></td>
+            <td style="text-align:right;">试题编号：<?=$val['id']?></td>
+        </tr>
+        <tr>
+            <td colspan="2"><?=$val['student_content']?></td>
+        </tr>
+    </table>
+  </div>
+  <?php endif;?>
+  <?php endforeach;?>
+ 
+</div>

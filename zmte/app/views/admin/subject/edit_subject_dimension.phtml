@@ -1,0 +1,156 @@
+<?php 
+/**
+ * 后台管理->题库及分类管理->学科四维学科编辑
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/subject/save_subject_dimension')?>">
+  <div class="space">
+  <div class="subtitle"><?if ($action ='renew'){?>编辑<?}else{?>新增<?}?>学科</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">学科名称</td>        
+        <td>
+        <select name="subd_subjectid" id="subd_subjectid" <?php if ($info) {?>disabled<?php }?>>
+        <option value="0">请选择学科</option>
+        <?php foreach ($subject_list as $subject_id => $name) {?>
+        <option value="<?=$subject_id?>" <?=$info['subd_subjectid'] == $subject_id ? 'selected' : ''?>><?=$name?></option>
+        <?php }?>
+        </select>
+        <?php if ($info) {?>
+        <input type="hidden" name="subd_subjectid" value="<?=$info['subd_subjectid']?>">
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学科四维</td>        
+        <td>
+        <?php $subd_value = explode(',', $info['subd_value'])?>
+        <input type="text" class="txtbox5" name="subd_value[0]" value="<?=$subd_value[0]?>" maxlength="2"> - 
+        <input type="text" class="txtbox5" name="subd_value[1]" value="<?=$subd_value[1]?>" maxlength="2"> - 
+        <input type="text" class="txtbox5" name="subd_value[2]" value="<?=$subd_value[2]?>" maxlength="2"> - 
+        <input type="text" class="txtbox5" name="subd_value[3]" value="<?=$subd_value[3]?>" maxlength="2">
+        <label class="error" for="subd_value[0]" style="display: none"></label>
+        <label class="error" for="subd_value[1]" style="display: none"></label>
+        <label class="error" for="subd_value[2]" style="display: none"></label>
+        <label class="error" for="subd_value[3]" style="display: none"></label>
+（学科四维用于计算学科与学习风格的匹配度，顺序为感知、输入、加工、理解。）
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">关联职业</td>        
+        <td>
+        <?
+        $subd_professionid = array();
+        if (isset($info['subd_professionid']))
+        {
+            $subd_professionid = json_decode($info['subd_professionid'], true);
+        }
+        ?>
+        <?php foreach ($profession as $item) {?>
+        <input type="checkbox" id="profession_id_<?=$item['profession_id']?>" name="subd_professionid[]" value="<?=$item['profession_id']?>" <?=in_array($item['profession_id'], $subd_professionid) ? 'checked' : ''?>><label for="profession_id_<?=$item['profession_id']?>"><?=$item['profession_name']?></label>
+        <?php }?>
+        <label class="error" for="subd_professionid[]"></label>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	jQuery.validator.addMethod("positiveinteger", function(value, element) {
+		    return  parseInt(value) == value;   
+		  }, "Please enter a valid number.");   
+	  
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	subd_subjectid : {
+	    		required : true,
+	    		min : 1
+		    },
+		    'subd_value[0]' : {
+			    required : true,
+			    positiveinteger : true,
+			    range : [-7, 7]
+			},
+		    'subd_value[1]' : {
+			    required : true,
+			    positiveinteger : true,
+			    range : [-7, 7]
+			},
+		    'subd_value[2]' : {
+			    required : true,
+			    positiveinteger : true,
+			    range : [-7, 7]
+			},
+		    'subd_value[3]' : {
+			    required : true,
+			    positiveinteger : true,
+			    range : [-7, 7]
+			},
+		    'subd_professionid[]': 'required'
+	    },
+	    messages: {
+	    	subd_subjectid : "请选择学科",
+    		'subd_value[0]' : '学科四维赋值必须为[-7,7]范围的整数',
+    		'subd_value[1]' : '学科四维赋值必须为[-7,7]范围的整数',
+    		'subd_value[2]' : '学科四维赋值必须为[-7,7]范围的整数',
+    		'subd_value[3]' : '学科四维赋值必须为[-7,7]范围的整数',
+    		'subd_professionid[]' : '请选择关联职业'
+	    }
+	});
+
+	$('#Frm_info').submit(function(){
+		change_show_error();
+	});
+
+	$('input[name^="subd_value"]').focus(function(){
+		var _subd_value = $(this).val();
+		if (!_subd_value
+				|| isNaN(_subd_value)
+				|| _subd_value > 7 
+				|| _subd_value < -7)
+		{
+    		$('label[for^="subd_value"]').hide();
+    		$('label[for="'+$(this).attr('name')+'"]').show();
+		}
+	});
+
+	$('input[name^="subd_value"]').blur(function(){
+		change_show_error();
+	});
+});
+
+function change_show_error()
+{
+	$('label[for^="subd_value"]').each(function(){
+		var _subd_value = $('input[name="'+$(this).attr('for')+'"]').val();
+		if (!_subd_value
+			|| isNaN(_subd_value)
+			|| _subd_value > 7 
+			|| _subd_value < -7)
+		{
+    		$('label[for^="subd_value"]').hide();
+    		$(this).show();
+    		return;
+		}
+	});
+}
+
+</script>
+
+<?php $this->load->view('common/footer');?>

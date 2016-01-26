@@ -1,0 +1,172 @@
+<?php echo $this->load->view('common/header');?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<script>
+	//gloal config
+	var config_urls = {
+			'login' : '<?php echo site_url('demo/index/login/');?>',
+			'submit_test' : '<?php echo site_url('demo/test/submit/');?>',
+			'submit_test_p' : '<?php echo site_url('demo/test/submitp/');?>',
+			'get_question_detail' : '<?php echo site_url('demo/test/question_detail/');?>',
+			'index' : '<?php echo site_url('demo/index/index/');?>',
+			'cheat_log' : '<?php echo site_url('demo/log/push/');?>',
+			'ping' : '<?php echo site_url('demo/test/ping');?>',
+			'blur_count' : '<?php echo site_url('demo/test/set_window_blur');?>',
+			'report' : '<?php echo site_url('demo/test/report?act=doing');?>',
+			's_source_url' : '<?php echo C('global_source_host');?>'
+	};
+
+	var config_global = {
+				'exam_type' : '<?php echo isset($current_exam['exam_type']) ? $current_exam['exam_type'] : '1';?>'//1 为单题模式, 2为全题模式
+	};
+
+	//是否是单题模式
+	var is_single_mode = config_global.exam_type == '1';
+
+	//倒计时
+	var count_downs = {
+			'submit_success' : 5 //交卷成功重定向倒计时
+	};
+
+	//当前学生离开当前窗口累计次数
+	var count_window_blur = parseInt('<?php echo $count_window_blur;?>') || 0;
+</script>
+<style>
+.cls_instr_text {
+	width: 280px;
+}
+</style>
+</head>
+<body>
+<div class="cls_body cls_question">
+    <div class="cls_question_pos">
+    	<?php echo $this->load->view('common/copyright_system_name.phtml');?>
+		<!-- 考生信息 -->
+		<?php echo $this->load->view('test/student_info.phtml');?>
+		<div id="question_box">
+			<!-- 考题列表 -->
+			<?php echo $this->load->view('test/question_list.phtml');?>
+		</div>
+
+		<!-- 工具条 -->
+		<?php echo $this->load->view('test/tool_bar.phtml');?>
+
+		<a href="javascript:void(0);" id="btn_hidden_target"></a>
+        <a href="javascript:;" class="cls_side_mag">
+            <i></i>
+            <span></span>
+        </a>
+	</div>
+</div>
+</body>
+
+<?php static_global('js/third_party/kibo.js');?>
+<?php static_global('js/third_party/fullscreen.js');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+
+<?php static_js(array('front/question.js'));?>
+<?php static_js(array('front/top.js'));?>
+<?php static_js(array('front/inforshow.js'));?>
+<?php static_js(array('test_control.js'));?>
+<?php static_js(array('test.js'));?>
+
+<!-- 公式转化 -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+	extensions: ["tex2jax.js"],
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']],displayMath:[ ['$$', '$$'],["\\[","\\]"] ], processEscapes: true},
+    "HTML-CSS": {scale:105},//字体放大倍数
+
+    menuSettings: {
+    zoom: "Hover",        //  when to do MathZoom
+    CTRL: false,         //    require CTRL for MathZoom?
+    ALT: true,          //    require Alt or Option?
+    CMD: false,          //    require CMD?
+    Shift: false,        //    require Shift?
+    zscale: "200%",      //  the scaling factor for MathZoom
+    font: "Auto",        //  what font HTML-CSS should use
+    context: "MathJax",  //  or "Browser" for pass-through to browser menu
+    mpContext: false,    //  true means pass menu events to MathPlayer in IE
+    mpMouse: false,      //  true means pass mouse events to MathPlayer in IE
+    texHints: true       //  include class names for TeXAtom elements
+  }
+
+  });
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+</script>
+
+<?php static_global('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML');?>
+<?php static_global('js/jquery/plugin/scroll_to_top.js');?>
+
+<script type="text/javascript">
+$(document).ready(function (){
+	//返回顶部
+	scrollToTop.init({iconNumber:'34', scrollduration:'200', controlattrs: {offsetx:0, offsety:80}});
+
+	//自定义radio 和 checkbox样式
+	//$('#question_box').find('input.q_sub_option').customInput();
+
+	//page
+
+	//重设left科目菜单的尺寸
+	var $_subject_menu = $('#left_subject_ul'),
+		$_ques_items = $_subject_menu.find('li'),
+		$_current_tab = $_ques_items.find('.current');
+    //标签宽度设置
+	$_ques_items
+		.css("width", parseInt($_subject_menu.outerWidth()/$_ques_items.length)-1)
+		.hover(function(){
+		 var $thiz = $(this),
+		 	_subject_id = $thiz.attr('subject_id'),
+		 	 $_score_tip = $('#subject_score_tip_' + _subject_id),
+		 	 _index = $thiz.index(),
+		 	 _pos = $thiz.width()*_index;
+
+		 $_score_tip.css({"display":"block","left":_pos}).siblings().hide();
+    });
+
+    var tabitem=$(".cls_ques_tab").children();
+    tabitem.hover(function(){
+        var index = tabitem.index(this);
+        var pos = $(this).width()*index;
+        $(".cls_sidel_number").hide();
+        $(".cls_sidel_number").eq(index).css({"display":"block","left":pos});
+    });
+
+    $(".cls_ques_tab li").css("width",parseInt($(".cls_ques_tab").outerWidth()/tabitem.length)-1);
+    $(".cls_sidel_active").css("width",$(".cls_sidel_active").width()-1);
+
+    var quesListheight = parseInt($(window).height()- 170 - $(".cls_footer_bg").outerHeight(true)- 90);
+
+    $(".cls_ques_list").css("height",quesListheight);
+    <!--左侧位置固定-->
+//    $("#id_navigator").css({"top":itemHeight()});
+    var s1 = new leftTop('#id_navigator');
+
+    var topshow = new topShow(".cls_instruction",{
+        "showTime":"2",
+        "btnname":".cls_infor_btn",
+        'auto_hide_count_down' : '#time_left'
+      });
+
+   $(".cls_space").click(function(e){
+       setTimeout(function(){
+        var navigator = $("#id_navigator");
+        var p = parseInt($(window).scrollTop());
+        var divHeight2 =  $(".cls_footer_bg").outerHeight(true)-50;
+        navigator.css('position',(p > 390) ? 'fixed' : 'static');
+        if(navigator.css('position')=='fixed'){
+            $("#id_navigator").css('bottom',divHeight2+'px');
+        } else {
+            navigator.css('top', '');
+        }
+      },500)
+    });
+});
+</script>
+
+<?php static_global('js/jquery/plugin/jquery.json-2.4.min.js');?>
+<?php static_js(array('third_party/ueditor/ueditor.parse.min.js')); ?>
+
+</html>

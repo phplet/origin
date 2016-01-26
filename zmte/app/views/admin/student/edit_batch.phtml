@@ -1,0 +1,75 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+<Script>
+function isPInt(str) {
+    var g = /^[1-9]*[1-9][0-9]*$/;
+    return g.test(str);
+}
+
+$(document).ready(function () {
+
+	$('#exam_form').submit(function (){
+
+	    if(isPInt($("#uid").val())==false)
+	    {
+	        alert('请输入大于0的整数');
+	        return false;
+	    }
+
+	 return true;
+	});
+});
+
+
+
+
+</script>
+
+<div id="body">
+  <form name="exam_form"  class="validate"  id="exam_form" method="get" action="<?=site_url('admin/student/test')?>" autocomplete="off" multipart/form-data">
+
+
+  <div class="space">
+    <div class="subtitle">批量增加学生信息(<font color="red">请注意查看带 * 的必填字段 测试用</font>)</div>
+    <div>
+        <ul class="subtab">
+            <li class="current"><a href="javascript://" name="basic" id="menu_basic">基本信息</a></li>
+          
+        </ul>
+    </div>
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            帐号信息
+        </td>
+      </tr>
+     
+      <tr>
+        <td class="altbg1">用户编号</td>
+        <td>                      
+          <input type="text" id="uid" name="uid" value="" class="txtbox" />
+           <span style="color:#f00">*</span>
+        </td>
+        </tr>
+
+       <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            <input type="submit" value="提交">
+        </td>
+      </tr>
+    </table>
+    
+    
+    
+    
+    
+     
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>
+

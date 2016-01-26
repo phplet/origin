@@ -1,0 +1,47 @@
+<tr>
+    <td class="altbg1">题目类型</td>
+    <td>
+        <select name="is_original" id="is_original">
+            <option value="">--请选择--</option>
+            <option value="1" <?php if($question['is_original'] == 1) echo 'selected'; ?>>原创</option>
+            <option value="2" <?php if($question['is_original'] == 2) echo 'selected'; ?>>真题</option>
+            <option value="3" <?php if($question['is_original'] == 3) echo 'selected'; ?>>模拟题</option>
+        </select>
+
+        <?php if ($question['is_original'] == 2): ?>
+            <span id="exam_question_extras">
+        <?php else: ?>
+            <span id="exam_question_extras" style="display: none;">
+        <?php endif ?>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label for="exam_year">年份：</label>
+            <input type="text" id="exam_year" class="txtbox2" name="exam_year" onclick="WdatePicker({dateFmt:'yyyy'});" value="<?php echo $question['exam_year'] ?>" readonly/> <span>请点击选择年份</span>
+            <p><label for="remar">备注：</label></p>
+            <textarea name="remark" id="remark" cols="100" rows="5"><?php echo $question['remark']; ?></textarea>
+        </span>
+
+        <?php /** 真题路径 */ ?>
+        <?php if ($question['is_original'] == 1): ?>
+            <span id="exam_question_related">
+        <?php else: ?>
+            <span id="exam_question_related" style="display: none;">
+        <?php endif ?>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label for="related">真题路径：</label>
+            <input type="text" id="related" class="txtbox2" name="related" value="<?php echo $question['related']; ?>"/>
+            <span>真题路径必须为已录入的真题</span>
+        </span>
+
+        <?php if ($question['is_original'] == 3): ?>
+            <span id="exam_question_simulation">
+        <?php else: ?>
+            <span id="exam_question_simulation" style="display: none;">
+        <?php endif ?>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <p><label for="simulation">来源：</label></p>
+            <textarea name="simulation" id="simulation" cols="100" rows="5"><?php echo $question['simulation']; ?></textarea>
+            <span style="color:#f00">*</span>
+            <label for="simulation" class="error" style="display:none"></label>
+        </span>
+    </td>
+</tr>

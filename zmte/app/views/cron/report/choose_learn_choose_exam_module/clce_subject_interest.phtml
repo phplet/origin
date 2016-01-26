@@ -1,0 +1,16 @@
+<?php if (!empty($clce_subject_interest)) {?>
+        <table class="cls_row cls_table table_header indent_25">
+        <tr>
+        <th>学科</th>
+        <?php foreach ($clce_subject_interest as $keys => $item): ?>
+                <th><?=$item['knowledge_name']?></th>
+        <?php endforeach;?>
+        </tr>
+        <tr>
+        <th>得分</th>
+        <?php foreach ($clce_subject_interest as $keys => $item): ?>
+                <td><?=$item['test_score']?></td>
+        <?php endforeach;?>
+        </tr>
+        </table>
+<?php } ?>

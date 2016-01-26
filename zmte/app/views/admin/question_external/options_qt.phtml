@@ -1,0 +1,78 @@
+<tbody>
+
+  <tr>
+    <td colspan="2" class="altbg2" style="text-align: center;">选项信息</td>
+  </tr>
+
+
+
+  <tr id="options" <?php if($question['type']==3):?>style="display:none;"<?php endif;?>>
+    <td class="altbg1">选项</td>
+    <td id="option_container">
+      <?php if(isset($question['p_type']) && $question['p_type'] != 4):?>
+        <?php if(isset($question['is_primary']) && $question['is_primary']): ?>
+          <div class="group_notice" style="color:#00f;text-align:center;width:100%">提示：单选填写3~4个<?php if($question['p_type']!=7):?>，不定项填写4-10个选项<?php endif;?>（每个选项文字、图片至少填写一个)；在正确答案前面打勾。</div>
+        <?php else: ?>
+          <div class="group_notice" style="color:#00f;text-align:center;width:100%">提示：单选填写4个<?php if($question['p_type']!=7):?>，不定项填写4-10个选项<?php endif;?>（每个选项文字、图片至少填写一个)；在正确答案前面打勾。</div>
+        <?php endif; ?>
+      <?php endif;?>
+
+      <div>
+        <label for="answer" class="error" style="display:none"></label>
+        <label for="answer[]" class="error" style="display:none"></label>
+      </div>
+
+      <?php for($i=0; $i < 10; $i++):?>
+
+        <?php $option = isset($options[$i]) ? $options[$i] : array(); ?>
+
+        <?php if($i==4 && $question['type'] == 1):?>
+          <div class="extend_option"style="display:none">
+        <?php endif;?>
+
+        <?php if($i==5 && $question['type'] == 7):?>
+          <div class="extend_option" style="display:none">
+        <?php endif;?>
+
+        <?php if($option):?>
+          <div class="div_option"  id="div_option<?php echo $i;?>">
+              <input type="hidden" name="old_opt_id[]" value="<?=$option['option_id']?>"/>
+              <input type="radio" name="answer" value="<?=$i?>" <?php if($question['type']==1 || $question['type']==7):?><?=$question['answer']==$option['option_id'] ? ' checked':''?> <?php else:?> style="display:none" disabled <?php endif;?> <?php if($i==0):?>required title="请选择答案"<?php endif;?> />
+              <input type="checkbox" name="answer[]" value="<?=$i?>"
+              <?php if($question['type']==2):?>
+                    <?=strpos(','.$question['answer'].',',','.$option['option_id'].',')!==false ? ' checked':''?>
+              <?php else:?>
+                    style="display:none" disabled
+              <?php endif;?>
+
+              <?php if($i==0):?>required title="请选择答案"<?php endif;?> />
+                <textarea name="option[]" rows="2" cols="80" ><?=$option['option_name']?></textarea>
+          </div>
+        <?php else:?>
+          <div class="div_option" id="div_option<?php echo $i;?>">
+            <input type="radio" name="answer" value="<?=$i?>"
+              <?php if($question['type']==2):?>
+                style="display:none" disabled
+              <?php endif;?>
+            <?php if($i==0):?>required title="请选择答案"<?php endif;?> />
+              <input type="checkbox" name="answer[]" value="<?=$i?>" <?php if($question['type']==1):?>style="display:none" disabled<?php endif;?>
+            <?php if($i==0):?>required title="请选择答案"<?php endif;?> />
+            <textarea name="option[]" rows="2" cols="80" ></textarea>
+          </div>
+        <?php endif;?>
+      <?php endfor;?>
+    </td>
+  </tr>
+  <tr id="input_answer_tr" <?php if($question['type']!=3):?>style="display:none;"<?php endif;?>>
+      <td class="altbg1">答案</td>
+      <td>
+          <textarea id="input_answer" name="input_answer" style="width:300px;height:80px;" required title="请填写答案"><?=$question['type']==3?$question['answer']:''?></textarea>
+          <label for="input_answer" class="error" style="display:none"></label>
+
+          <?php if(isset($question['p_type']) && !in_array($question['p_type'], array(5,6))):?>
+            <div>请输入填空题的答案；每一行代表一个填空项答案，直接填写答案，不要填写题目中对应的数字。</div>
+          <?php endif;?>
+
+      </td>
+  </tr>
+</tbody>

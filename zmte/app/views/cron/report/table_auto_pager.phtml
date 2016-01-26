@@ -1,0 +1,82 @@
+<?php 
+/*
+ * 表格自动分页 for general pdf
+ */
+?>
+<script type="text/javascript">
+/**
+ * 进行表格分页及添加新页表格行标题
+ * 1. 将所有表格的每一行都放到一个table中,并给行标题所在的table设置id属性,给
+ *    普通行的table设置ref_title_id属性，其值为对应的行标题所在table的id值
+ * 2. 给cls_root所指的div下的每一个一级元素设置cls_row类,并对每个数据行所对应
+ *    table设置cls_table类
+ * 3. 设置下面的g_real_page_height为正确的值
+ */
+$(function(){
+    var bViewHtmlOnePage = location.href.indexOf('/egapenolmthweiv') > 0;
+    var g_real_page_height = <?=$g_real_page_height?>;
+    if (!bViewHtmlOnePage)
+    {
+        var g_pos_inc = 0;
+        var id_title_arr_remove = new Array();
+        $(".cls_row").each(function(){
+            var obj = $(this);
+            var pos_top = obj.position().top + g_pos_inc;
+            var pos_btm = pos_top + obj.outerHeight(true);
+            var p1 = Math.floor(pos_top / g_real_page_height);
+            var p2 = Math.floor(pos_btm / g_real_page_height);
+            if (p1 != p2)
+            {
+                if (obj.hasClass("cls_table") && (obj.attr('ref_title_id') != undefined))
+                {
+                    var id = obj.attr('ref_title_id');
+                    var obj0 = $("#" + id);
+                    var obj1 = obj0.clone();
+                    obj1.removeAttr('id');
+                    obj1.css('page-break-before', 'always');
+                    obj.before(obj1);
+                    g_pos_inc += obj0.outerHeight(true);
+
+                    // 判断是否其前一个元素是表头，如果是则保存到待删除列表
+                    if (obj.prev('table').prev('table').attr('id') == id)
+                    {
+                        if ($.inArray(id, id_title_arr_remove) == -1)
+                        {
+                            id_title_arr_remove[id_title_arr_remove.length] = id;
+                        }
+                    }
+                }
+                else
+                {
+                    obj.css('page-break-before', 'always');
+                }
+
+                g_pos_inc += (p2 * g_real_page_height - pos_top);
+            }
+        });
+
+        // 删除页尾的单个标题行
+        for (var i = id_title_arr_remove.length - 1; i > -1; i--)
+        {
+            $("#" + id_title_arr_remove[i]).replaceWith('');
+        }
+    }
+
+    // 如果为单页，则添加页眉
+    var page_height = g_real_page_height - 30;
+    var doc_height = $(document).height();
+    var page_header_str = '<div class="page_header" style="height:30px;width:840px;border-top:1px solid #fff;border-bottom:2px solid #000;position:relative;font-size:14px;text-align:center;margin:0 auto;"><?/*<img src="<?php //echo __GLOBAL_HTML_URL__; ?>/images/zeming/report/header_logo.png" style="position:absolute;bottom:2px;left:0px;"/>*/?><span style="font-family:\'华文行楷\';font-size:22px;position:absolute;bottom:0;left:0px;color:#087890">新步伐</span><span style="width:auto;display:block;margin:auto;margin-top:10px;"></span><span style="position:absolute;bottom:0;right:0;">科技引领风尚，教育开拓未来！</span></div>';
+
+    if (!bViewHtmlOnePage)
+    {
+        if (doc_height < page_height) {
+            $('body').prepend(page_header_str);
+        };
+
+    }
+    else
+    {
+        $('body').prepend(page_header_str);
+    }
+});
+</script>

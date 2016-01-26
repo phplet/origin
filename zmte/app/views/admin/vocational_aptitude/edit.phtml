@@ -1,0 +1,85 @@
+<?php 
+/**
+ * 后台管理->素质相关管理->职业能力倾向管理
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/vocational_aptitude/save')?>">
+  <input type="hidden" name="pr_id" value="<?=$info['pr_id']?>" />
+  <div class="space">
+    <div class="subtitle"><?=$info['pr_id'] ? '编辑' : '新增'?>职业能力倾向</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">职业能力倾向</td>
+        <td>
+        <?php if ($info['pr_id']) {?>
+        <?=$info['knowledge_name']?>
+        <?php } else {?>
+        <select name="pr_knowledgeid" id="pr_knowledgeid" <?=$info['pr_id'] ? 'disabled' : ''?>>
+        <option value="0">请选择职业能力倾向</option>
+        <?php foreach ($knowledge_list as $val) {?>
+        <?php if (in_array($val['id'], $pr_knowledgeids)) { continue ;}?>
+        <option value="<?=$val['id']?>" <?=$info['pr_knowledgeid'] == $val['id'] ? 'selected' : ''?>><?=$val['knowledge_name']?></option>
+        <?php }?>
+        </select>
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">说明</td>        
+        <td>
+            <textarea id="pr_explain" name="pr_explain" class="txtbox"><?=$info['pr_explain']?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">关联职业</td>        
+        <td>
+        <?
+        $pr_professionid = array();
+        if (isset($info['pr_professionid']))
+        {
+            $pr_professionid = json_decode($info['pr_professionid'], true);
+        }
+        ?>
+        <?php foreach ($profession as $item) {?>
+        <input type="checkbox" id="profession_id_<?=$item['profession_id']?>" name="pr_professionid[]" value="<?=$item['profession_id']?>" <?=in_array($item['profession_id'], $pr_professionid) ? 'checked' : ''?>><label for="profession_id_<?=$item['profession_id']?>"><?=$item['profession_name']?></label>
+        <?php }?>
+        <label class="error" for="pr_professionid[]"></label>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	pr_knowledgeid: {
+	    		required : true,
+	    		min : 1
+		    },
+		    'pr_professionid[]': 'required'
+	    },
+	    messages: {
+	    	pr_knowledgeid: "请选择职业能力倾向",
+    		'pr_professionid[]' : '请选择关联职业'
+	    }
+	});
+})
+</script>
+
+<?php $this->load->view('common/footer');?>

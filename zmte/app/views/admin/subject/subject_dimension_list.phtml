@@ -1,0 +1,51 @@
+<?php
+/**
+ * 后台管理->题库及分类管理->四维学科列表
+ */
+$this->load->view('common/header');?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    <? if ($priv_manage) {?>
+    <a class="menu" href="<?=site_url('admin/subject/edit_subject_dimension')?>">新增</a>
+    <?php }?>
+            学科四维管理
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="10%">学科</td>
+        <td width="10%">学科思维</td>
+        <td>关联职业</td>
+        <td width="10%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$subject[$val['subd_subjectid']]?></td>
+        <td><?=$val['subd_value']?></td>
+        <td>
+        <?php $profession_name = array();?>
+        <?php foreach ($val['subd_professionid'] as $professionid) {?>
+        <? $profession_name[] = $profession[$professionid]['profession_name'];?> 
+        <?php }?>
+        <?=implode('、', $profession_name)?></td>
+        <td>
+          <? if ($priv_manage) {?>
+          <a href="<?=site_url('admin/subject/edit_subject_dimension/'.$val['subd_subjectid'])?>">编辑</a>
+          <?php } ?>
+          <?if ($priv_delete) {?>
+          <a href="<?=site_url('admin/subject/remove_subject_dimension/'.$val['subd_subjectid'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?}?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

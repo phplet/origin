@@ -1,0 +1,514 @@
+<?php echo $this->load->view('common/header');?>
+<?php $current_module_url = site_url('admin/evaluate_rule');?>
+<?php 
+  $detail = isset($detail) ? $detail : array();
+  $mode = isset($mode) ? $mode : 'add';
+?>
+
+<?php 
+ 	/*
+	static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+						'js/jquery/plugin/validate/messages_zh.js'));*/
+?>
+
+<style>
+ul li{list-style:none;}
+textarea{
+	width:600px;
+	height:80px;
+}
+hr {
+	border:1px dotted #ccc;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+#knowledge_box li{
+	background:#eee;
+	padding:5px;
+	border:1px dotted #ccc;
+	border-bottom:2px solid #90AEFB;
+} 
+#knowledge_box li .box{
+	padding-left:30px;
+}
+#knowledge_box li.checked{
+	background:#E0EDFE;
+	border:1px solid #CBD0FF;
+}
+#knowledge_box li .box h3 {
+	padding: 7px;
+	border: 1px dotted #ddd;
+	margin-top: 13px;
+	background: #FAF6D0;
+}
+textarea.error{
+	border:1px solid red;
+}
+ul.ul_box li {
+	height:36px;
+	line-height:36px;
+}
+h2.line_h2{
+	margin-top:30px;background:#ccc;padding:5px;
+}
+
+/*外部对比信息*/
+#comparison_info_box .box{
+	width:500px;
+	max-height:200px;
+	overflow:auto;
+	border:1px solid #ccc;
+	padding:6px;
+}
+
+#comparison_info_box ul li{
+	line-height:24px;
+	border-bottom:1px dotted #ccc;
+	height:24px;
+	padding:3px;
+	text-indent:10px;
+}
+
+#comparison_info_box ul li span.title{
+	font-weight:bold;
+	padding-right:10px;
+}
+#comparison_info_box ul li label{
+	cursor:pointer;
+}
+</style>
+
+<div id="body">
+  <form name="frm_add_evaluate_rule" id="frm_add_evaluate_rule" method="POST" action="<?php echo $detail['is_reportting'] ? '' : $current_module_url . '/save/';?>">
+  <input type="hidden" name="id" value="<?php echo empty($copy_id) ? $detail['id'] : ''; ?>" />
+  <div class="space">
+    <div class="subtitle">评估管理 - <?php echo $mode == 'add' ? '添加' : '编辑'; ?> 评估规则信息 </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">规则名称：</td>
+        <td>
+        	<input type="text" class="txtbox" value="<?php echo $detail['name'];?>" name="name">
+        	<label for="name" class="error"></label>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">期次：</td>
+        <td>
+        	<?php if ($mode == 'add') {?>
+        	<select name="exam_pid" id="select_exam_pid">
+        		<option value="">== 选择期次 ==</option>
+        	</select>
+        	<?php } else {?>
+        	<?php echo $detail['exam_name']?>
+        	<select name="exam_pid" style="display: none;" id="select_exam_pid">
+        		<option value="">== 选择期次 ==</option>
+        	</select>
+        	<?php } ?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">考场：</td>
+        <td>
+        	<?php if ($mode == 'add') {?>
+        	<select name="place_id" id="select_place_id">
+        		<option value="">== 选择考场 ==</option>
+        	</select>
+        	<?php } else {?>
+        	<?php echo $detail['place_name']?>
+        	<select name="place_id" style="display: none;" id="select_place_id">
+        		<option value="">== 选择考场 ==</option>
+        	</select>
+        	<?php } ?>
+        	
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学科：</td>
+        <td>
+        	<select name="subject_id" id="select_subject_id">
+        		<option value="">== 选择学科 ==</option>
+        	</select>
+        	<label for="subject_id" class="error"></label>
+        	<span id="subject_percent_box"></span>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">对比期次：</td>
+        <td>
+        
+        	<select name="contrast_exam_pid" id="select_contrast_exam_pid">
+        	<option value="">== 选择对比期次  ==</option>
+        	</select>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否生成学科报告：</td>
+        <td>
+        <input type="radio" name="generate_subject_report" value="0" id="generate_subject_report_0" <?=($detail['generate_subject_report'] == 0) ? 'checked' : ''?>/><label for="generate_class_report_0">否</label>
+        <input type="radio" name="generate_subject_report" value="1" id="generate_subject_report_1" <?=($detail['generate_subject_report'] == 1) ? 'checked' : ''?>/><label for="generate_class_report_1">是</label>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否生成学生成绩单：</td>
+        <td>
+        <input type="radio" name="generate_transcript" value="0" id="generate_transcript_0" <?=($detail['generate_transcript'] == 0) ? 'checked' : ''?>/><label for="generate_transcript_0">否</label>
+        <input type="radio" name="generate_transcript" value="1" id="generate_transcript_1" <?=($detail['generate_transcript'] == 1) ? 'checked' : ''?>/><label for="generate_transcript_1">是</label>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否生成班级报告：</td>
+        <td>
+        <input type="radio" name="generate_class_report" value="0" id="generate_class_report_0" <?=($detail['generate_class_report'] == 0) ? 'checked' : ''?>/><label for="generate_class_report_0">否</label>
+        <input type="radio" name="generate_class_report" value="1" id="generate_class_report_1" <?=($detail['generate_class_report'] == 1) ? 'checked' : ''?>/><label for="generate_class_report_1">是</label>
+        <span style="color: red; padding-left:30px;">（注：当考场存在班级属性时设置才有效）</span>        
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否生成教师报告：</td>
+        <td>
+        <input type="radio" name="generate_teacher_report" value="0" id="generate_teacher_report_0" <?=($detail['generate_teacher_report'] == 0) ? 'checked' : ''?>/><label for="generate_teacher_report_0">否</label>
+        <input type="radio" name="generate_teacher_report" value="1" id="generate_teacher_report_1" <?=($detail['generate_teacher_report'] == 1) ? 'checked' : ''?>/><label for="generate_teacher_report_1">是</label>
+        <span style="color: red; padding-left:30px;">（注：当期次中存在师生对应关系时有效）</span>        
+        </td>
+      </tr>
+      <tr id="distribution_proportion_tr" <?if (!$detail['generate_teacher_report'] && !$detail['generate_class_report']) {?>style="display: none;"<?php }?>>
+        <td width="16%" class="altbg1">分布比例：</td>
+        <td id="distribution_proportion_box">
+        <span style="color: red;">注：分布比例名称所对应区域为上一个分布比例临界值到当前分布比例临界值的区间，临界值取值范围为(0, 100]左开右闭区间的整数值。</span>
+        <?php 
+            $proportion = array();
+            if (isset($detail['distribution_proportion'])
+                && $detail['distribution_proportion'])
+            {
+                $proportion = json_decode($detail['distribution_proportion'], true);
+            }
+        ?>
+        <?php if ($proportion) {?>
+        <?php $i = 0;?>
+            <?php foreach ($proportion as $name => $rate) {?>
+                <p>
+                <input type="text" name="distribution_proportion_name[]" placeholder="分布比例名称，如：高分段" value="<?=$name?>">：<input type="text" name="distribution_proportion[]" placeholder="分布比例临界值，如：20" value="<?=$rate?>">
+                <?php if (!$i) {?>
+                <input class="add" type="button" value="添加" style="margin-left:10px;" id="btn_add_distribution_proportion">
+                <input class="remove" type="button" value="删除" style="margin-left:10px;display:none;" onclick="$(this).parent().remove();">
+                <?php } else {?>
+                <input class="remove" type="button" value="删除" style="margin-left:10px;" onclick="$(this).parent().remove();">
+                <?php }?>
+                </p>
+                <?php $i++;?>
+            <?php }?>
+        <?php } else {?>
+            <p>
+            <input type="text" name="distribution_proportion_name[]" placeholder="分布比例名称，如：高分段">：<input type="text" name="distribution_proportion[]" placeholder="分布比例临界值，如：20">
+            <input class="add" type="button" value="添加" style="margin-left:10px;" id="btn_add_distribution_proportion">
+            <input class="remove" type="button" value="删除" style="margin-left:10px;display:none;" onclick="$(this).parent().remove();">
+            </p>
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">外部对比信息：</td>
+        <td id="comparison_info_box">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">对比等级：</td>
+        <td id="comparison_level_box">
+        </td>
+      </tr>
+      <tr id="subject_method_tactic_3">
+        <td width="16%" class="altbg1" style="vertical-align: top;">方法策略：</td>
+        <td>
+        	<ul id="method_tactic_box"></ul>
+        </td>
+      </tr>
+      <tr id="subject_group_type_3" style="display: none;">
+        <td width="16%" class="altbg1" style="vertical-align: top;">信息提取方式：</td>
+        <td>
+        	<ul id="group_type_box"></ul>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1" style="vertical-align: top;">知识点：</td>
+        <td>
+        	<ul id="knowledge_box"></ul>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1" style="vertical-align: top;">生成模式：</td>
+        <td>
+        	<?php $modes = array('1' => '单人模式', '批量模式');?>
+        	<select name="generate_mode" id="generate_mode">
+        		<?php foreach ($modes as $k=>$v) {?>
+        		<option value="<?php echo $k;?>" <?php echo $detail['generate_mode'] == $k ? 'selected="selected"' : ''; ?>><?php echo $v;?></option>
+        		<?php } ?>
+        	</select>
+        	<span id="generate_uid_box" style="display:none;">
+        		请输入要搜索的邮箱或准考证号：
+        		<input type="text" class="txtbox" name="generate_u_keyword" value="<?php echo $detail['generate_u_keyword'];?>" id="generate_u_keyword"/>
+        	</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <?php if (!$detail['is_reportting']) {?>
+    <input type="submit" id="btn_submit" value=" <?php echo $mode == 'add' ? '保存' : '保存修改'; ?> " class="btn" />
+    &nbsp;&nbsp;
+    <?php } ?>
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<?php echo $this->load->view('evaluate_rule/exam_selector');?>
+<script type="text/javascript">  
+  $(document).ready(function () {
+	  var $body = $(body);
+	//设置tiper的消失时间间隔为 5s
+	UtilTiper.message.dismissin = 3000;
+	$('#frm_add_evaluate_rule').submit(function (){
+		if (!form_validate()) {
+			return false;
+		}	
+	
+		//利用ajax提交，避免表单报错后，返回会情况表单数据
+		UtilTiper.message.doing('正在提交数据,可能需要花费1分钟，请耐心等待...');
+		$('#btn_submit').attr('disabled', 'disabled');
+		var $form = $(this);
+		$(this).ajaxSubmit({
+			url : $form.attr('action'),
+			dataType : 'json',
+			timeout : 60000,
+			error: function (a, b, c) {
+				//alert(a + b + c);
+				alert('保存失败');
+				UtilTiper.message.loaded();
+				$('#btn_submit').removeAttr('disabled');
+			},
+			success : function (responseText, statusText, xhr, $form) {
+				var code = responseText.code,
+					msg	= responseText.msg;
+
+				$('#btn_submit').removeAttr('disabled');
+				UtilTiper.message.loaded();
+				alert(msg);
+				if (code < 0) {
+					return false;
+				} else {
+					window.location.href = '<?php echo site_url('admin/evaluate_rule/index');?>';
+					return true; 
+				}
+			}
+		});
+
+		return false;
+	});
+
+	//表单验证
+	function form_validate() {
+		//验证已选知识点的评语和建议
+		var $knowledge = $('#knowledge_box').find('input.check_knowledge_ids:checked'),
+			$method_tactic = $('#method_tactic_box').find('input.check_method_tactic_ids:checked'),
+			$group_type = $('#group_type_box').find('input.check_group_type_ids:checked'),
+			$comparison_info = $('#comparison_info_box').find('input.comparison_info:checked'),
+			msg = [],
+			uncompleted = [],
+			uncompleted_mark = [];
+
+		//期次
+		if ($('#select_exam_pid').val() == '') {
+			msg.push('请选择期次');
+		}
+		
+		//场次
+		if ($('#select_place_id').val() == '') {
+			msg.push('请选择考场');
+		}
+		
+		//科目
+		if ($('#select_subject_id').val() == '') {
+			msg.push('请选择科目');
+		}
+		
+		//外部对比信息
+		/*
+		if (!$comparison_info.length) {
+			msg.push('请选择外部对比信息');
+		}
+		*/
+
+		//知识点
+		$knowledge.each(function (){
+			var $thiz = $(this),
+				$li = $thiz.parent().parent(),
+				$textarea = $li.find('textarea'),
+				_knowledge_name = $thiz.next('label').html();
+						
+			$textarea.each(function(){
+				var _subject_name = $(this).attr('subject_name');
+				if ($.trim($(this).val()) == '') {
+					uncompleted.push($(this));
+					if ($.inArray(_knowledge_name, uncompleted_mark) < 0) {
+						msg.push('学科：' + _subject_name + '->知识点 为：“' + _knowledge_name + '” 有未填写完整信息');
+						uncompleted_mark.push(_knowledge_name);
+					}
+				}
+			});
+		});
+
+		//方法策略
+		$method_tactic.each(function (){
+			var $thiz = $(this),
+				$li = $thiz.parent().parent(),
+				$textarea = $li.find('textarea'),
+				_method_tactic_name = $thiz.next('label').html();
+						
+			$textarea.each(function(){
+				var _subject_name = $(this).attr('subject_name');
+				if ($.trim($(this).val()) == '') {
+					uncompleted.push($(this));
+					if ($.inArray(_method_tactic_name, uncompleted_mark) < 0) {
+						msg.push('学科：' + _subject_name + '->方法策略 为：“' + _method_tactic_name + '” 有未填写完整信息');
+						uncompleted_mark.push(_method_tactic_name);
+					}
+				}
+			});
+		});
+
+		//信息提取方式
+		$group_type.each(function (){
+			var $thiz = $(this),
+				$li = $thiz.parent().parent(),
+				$textarea = $li.find('textarea'),
+				_gr_name = $thiz.next('label').html();
+						
+			$textarea.each(function(){
+				var _subject_name = $(this).attr('subject_name');
+				if ($.trim($(this).val()) == '') {
+					uncompleted.push($(this));
+					if ($.inArray(_gr_name, uncompleted_mark) < 0) {
+						msg.push('学科：' + _subject_name + '->信息提取方式 为：“' + _gr_name + '” 有未填写完整信息');
+						uncompleted_mark.push(_gr_name);
+					}
+				}
+			});
+		});
+
+		//控制学科综合选项 占比的总分为 100
+		if ($('#select_subject_id').val() == '0') {
+			var c_subject_percent = 0;
+			$('input.subject_percent').each(function () {
+				var $thiz = $(this),
+					val = parseFloat($thiz.val()),
+					subject_name = $thiz.attr('subject_name');
+
+				if (isNaN(val) || $thiz.val() == '' || val > 100 || val < 0) {
+					msg.push('学科：' + subject_name + ' 的占比必须为[0-100]');
+				}
+				if (val > 0) {
+					c_subject_percent += val;
+				}
+			});
+			if (c_subject_percent != 100) {
+				msg.push('学科占比总和必须等于 100');
+			}
+		}
+
+		//对比等级
+		if ($('select.select_comparison_level').eq(0).val() == '') {
+			msg.push('请选择对比等级');
+		}
+
+		//控制生成模式， 单人模式 需要验证准考证号
+		if ($('#generate_mode').val() == '1' && !$.trim($('#generate_u_keyword').val()).length) {
+			msg.push('单人模式下 考生的邮箱或准考证号不能为空');
+		}
+
+		if (msg.length) {
+			alert(msg.join("\n"));
+			$('html,body')
+				.stop(true, true)
+				.animate({'scrollTop':uncompleted.length ? ($(uncompleted[0]).offset().top - 100) : 0}, 300, function () {
+			});
+			if (uncompleted.length) {
+				$.each(uncompleted, function (i, item) {
+					$(item).addClass('error').unbind('keyup').keyup(function () {if ($.trim($(this).val()) != '') {$(this).removeClass('error');}});
+				});
+				$(uncompleted[0]).focus();
+			}
+			return false;
+		}	
+
+		return true;
+	}
+
+    //生成模式选择（单人模式时显示搜索学生姓名）
+    var $generate_uid_box = $('#generate_uid_box');
+    $('#generate_mode').change(function () {
+		if ($(this).val() == '1') {
+			$generate_uid_box.show();
+		} else {
+			$generate_uid_box.hide();
+		}
+    });
+
+    $('#generate_mode').change();
+
+	$('input[name=generate_teacher_report]').change(function(){
+		change_distribution_proportion();
+	});
+	$('input[name=generate_class_report]').change(function(){
+		change_distribution_proportion();
+	});
+    $('#btn_add_distribution_proportion').click(function(){
+    	add_distribution_proportion();
+    });
+});
+
+function change_distribution_proportion()
+{
+	if ($('input[name=generate_class_report]:checked').val() == 1)
+	{
+		$('#distribution_proportion_tr').show();
+	}
+	else if ($('input[name=generate_teacher_report]:checked').val() == 1)
+	{
+		$('#distribution_proportion_tr').show();
+	}
+	else
+	{
+		$('#distribution_proportion_tr').hide();
+	}
+}
+
+//添加分布比例
+function add_distribution_proportion() 
+{
+	var $thiz = $('#distribution_proportion_box');
+	var $c_levels = $thiz.find('p'),
+		$clone_last = $c_levels.last().clone(),
+		_length = $c_levels.length;
+	
+	if (_length == 1) {
+		$clone_last.find('.add').remove();
+		$clone_last.find('.remove').show();
+	}
+
+	$clone_last.find('input[type=text]').val('');
+
+	$thiz.append($clone_last);
+}
+</script>
+<?php echo $this->load->view('common/footer');?>
+<?php static_global(array(
+							'js/jquery/plugin/scroll_to_top.js',
+							'js/jquery/plugin/tiper.min.js',
+							'js/jquery/plugin/jquery.form.js',
+));?>
+<script type="text/javascript">
+$(document).ready(function (){
+	//返回顶部
+	scrollToTop.init({iconNumber:'34', scrollduration:'200', controlattrs: {offsetx:0, offsety:20}});
+});
+</script>

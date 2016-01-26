@@ -1,0 +1,16 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+
+<?php $count_logs = count($logs);?>
+<?php if (!$count_logs) {?>
+<li class="cls_jk_single_item  cls_jk_single_bgc clearfix">空空如也~</li>
+<?php } else {?>
+<?php $auto_key = 0;?>
+<?php foreach ($logs as $log) {?>
+<?php $auto_key++;?>
+<li class="cls_jk_single_item <?php echo ($auto_key+1)%2 == 0 ? '' : 'cls_jk_single_bgc'; ?>">
+	<span class="cls_jk_single_time"><?php echo date('Y/m/d H:i:s', strtotime($log['ctime']));?></span>
+	<span class="cls_jk_single_event"><?php echo $this->load->view('invigilate/render_log_type', array('type' => $log['type'], 'content' => trim($log['content'])));?></span>
+</li>
+<?php } ?>
+<?php } ?>
+	

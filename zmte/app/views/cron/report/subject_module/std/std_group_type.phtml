@@ -1,0 +1,116 @@
+<?php if (!empty($std_group_type['comment_data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+
+    <?php $std_group_type['comment_data'] = isset($std_group_type['comment_data']) ? $std_group_type['comment_data'] : array();?>
+
+        <table class="mb10 cls_row table_header indent_25" id="table_std_gt_c">
+	        <tr>
+	        	<th width="15%">信息提取方式</th>
+	        	<th width="15%">得分率(%)</th>
+	        	<th width="15%">掌握等级</th>
+	        	<th width="55%">评价</th>
+	        </tr>
+	    </table>
+	        
+		<?php $auto_key  = 0;?>
+	    <?php foreach ($std_group_type['comment_data'] as $item) {?>
+	    	<?php $auto_key++;?>
+	        <table class=" cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_std_gt_c"<?php }?>>
+	        	<tr <?if ($auto_key%2==0) { ?>class="bgc_level<?=Fn::judgmentBelongsLevel($item['percent'])?>"<?}?>>
+		            <th width="15%">
+		            <?if ($zmcat_studyplus_enabled) {?><a href="/student/index/studyplus?<?=http_build_query(array('subject_name'=>$subject_name,'ms_name'=>$item['name']))?>" target="_blank"><?=$item['name'];?></a><?}else{?><?=$item['name'];?><?}?>
+		            </th>
+		            <td width="15%"><?php echo $item['percent'];?></td>
+		            <td width="15%"><?php echo str_repeat("★", $item['level']);?></td>
+		            <td width="55%" style="text-align:left;"><?php echo $item['comment'];?></td>
+		        </tr>
+	        </table>
+	    <?php } ?>
+	    
+	    <p class="cls_row">&nbsp;</p>
+	    
+	   <?php if (isset($std_group_type['flash_data']['data']) && count($std_group_type['flash_data']['data'])) {?>
+	        <?php
+	        	$flash_titles = array();
+	        	//flash_data
+	        	$flash_data = array();
+	        	foreach ($std_group_type['flash_data']['field'] as $name) {
+	        		$tmp_arr = array();
+	        		foreach ($std_group_type['flash_data']['data'] as $gt_name=>$item) {
+	        			$tmp_arr[] = isset($item[$name]) ? floatval($item[$name]) : 0;
+	        			$flash_titles[] = $gt_name;
+	        		}
+	        		$flash_data[] = array(
+						'name' 	=> $name,
+						'data' 	=> $tmp_arr,
+					);
+	        	}
+	        	$std_group_type['flash_data']['data'] = $flash_data;
+	        	$flash_titles = array_unique($flash_titles);
+	        ?>
+
+	        <div id="flash_container_std_gt"  class="cls_row indent_25"></div>
+	        <script type="text/javascript">
+		    	$(function () {
+		           //方法策略柱状图1
+		           $('#flash_container_std_gt').highcharts({
+		           chart: {
+		               type: 'column',
+		               height: '400'
+		           },
+		           title: {
+		               text: '	信息提取方式柱状图'
+		           },
+		           xAxis: {
+		               categories: eval("("+'<?php echo json_encode($flash_titles); ?>'+")"),
+		               labels: {
+		    				rotation : -45,//坐标旋转角度 为0：表示横放置
+		    				align : 'right'
+		    				/* style: {
+		    					fontSize: '13px',
+		    					fontFamily: 'Verdana, sans-serif'
+		    				} */
+		    			}	
+		           },
+		           yAxis: {
+		    			title: {
+		    				text: ''
+		    			}
+		    		},	
+		           plotOptions : {
+		               column : {
+		       				//pointWidth: 2,	//柱子的大小(会影响到柱子的大小)
+		               pointPadding: 0	//柱子之间的间隔(会影响到柱子的大小)
+		               }
+		           },
+		           legend: {
+		               layout: 'vertical',
+		               align: 'right',
+		               verticalAlign: 'middle',
+		               borderWidth: 0
+		           },
+			       colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+		           series: eval("("+'<?php echo json_encode($std_group_type['flash_data']['data']); ?>'+")")
+		           /*
+		           series: [{
+		               name: '我-总体1',
+		               data: [4, -3, 3]
+		           }, {
+		               name: '我-总体2',
+		               data: [2, 4, 1.5]
+		           }]*/
+		           });
+	           });
+	        </script>
+
+	        <?php if (isset($std_group_type['flash_comment'])) {?>
+	    	    <p class="mokuai-text cls_row indent_25">
+			       	<?php if (empty($std_group_type['flash_comment'])) :?>
+			            文章理解到位，已全面掌握各类信息提取方式，应对阅读，游刃有余。
+			       	<?php else :?>
+			       		<?=$std_group_type['flash_comment']?>把握不完全到位，信息理解还有一些偏差，再接再厉，力争上游！
+			       <?php endif;?>
+			    </p>
+		    <?php }?>
+		<?php } ?> 
+<?php } ?>

@@ -1,0 +1,121 @@
+<?php if (!empty($c_level_assign_points)) {?>
+    <?php $level_assign_points = $c_level_assign_points;?>
+    <h3 class="cls_row"><?=$g_sort?>&nbsp;<?=$parent_module_name?></h3>
+    <?php $academic_level = $level_assign_points['academic_level'];?>
+    <table class="cls_row cls_table table_header" id="table_level_assign_points">
+        <tr>
+            <th class="w168" width="20%">学科</th>
+            <?php $width = round(80 / (count($academic_level)));?>
+            <?php foreach ($academic_level as $subject_id => $level) {?>
+                <th width="<?=$width;?>%"><?=$subject[$subject_id]?></th>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row cls_table" ref_title_id="table_level_assign_points">
+        <tr>
+            <th class="w168" width="20%">卷面得分</th>
+            <?php foreach ($academic_level as $subject_id => $level) {?>
+                <th width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;"><?=$level_assign_points['score'][$subject_id]?></th>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row cls_table" ref_title_id="table_level_assign_points">
+        <tr>
+            <th class="w168" width="20%">模拟学业水平等级</th>
+            <?php foreach ($academic_level as $subject_id => $level) {?>
+                <th width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;"><?=$level?></th>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row cls_table" ref_title_id="table_level_assign_points">
+        <tr>
+            <th class="w168" width="20%">模拟选考科目等级</th>
+            <?php foreach ($academic_level as $subject_id => $level) {?>
+                <th width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;"><?=$level_assign_points['assign_level'][$subject_id]?></th>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row cls_table" ref_title_id="table_level_assign_points">
+        <tr>
+            <th class="w168" width="20%">模拟选考科目赋分</th>
+            <?php foreach ($academic_level as $subject_id => $level) {?>
+                <th width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;"><?=$level_assign_points['assign_points'][$subject_id]?></th>
+            <?php }?>
+        </tr>
+    </table>
+
+    <p>&nbsp;&nbsp;</p>
+    <p class="cls_row mokuai-text cls_person_info">说明：</p>
+    <p class="cls_row indent_25 cls_person_info_p">1. 数据依据《浙江省普通高校招生选考科目考试实施办法》与《浙江省普通高中学业水平考试实施办法》规定模拟换算而得，仅适用于本场考试，仅供参考，不代表浙江省实际水平等级。</p>
+    <p class="cls_row indent_25 cls_person_info_p">2. 普通高中学业水平等级性考试成绩在计入高考总分时划分成11级， 其中E为不合格。</p>
+
+    <?php 
+        $academic_level = array(
+                'A+' => 5,
+                'A' => 10,
+                'B+' => 10,
+                'B' => 10,
+                'B-' => 10,
+                'C+' => 10,
+                'C' => 10,
+                'C-' => 10,
+                'D+' => 10,
+                'D' => 10,
+                'E' => 5
+        );
+        
+        $width = round(90 / count($academic_level));
+    ?>
+
+    <table class="cls_row table_header indent_25" style="width: auto;">
+        <tr>
+            <th class="w168" width="10%">等级</th>
+            <?php foreach ($academic_level as $level => $val) {?>
+                <td width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;padding:0"><?=$level?></td>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row indent_25" style="width: auto;">
+        <tr>
+            <th class="w168" width="10%">人数比例(%)</th>
+            <?php foreach ($academic_level as $level => $val) {?>
+                <td width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;padding:0"><?=$val?></td>
+            <?php }?>
+        </tr>
+    </table>
+
+    <p class="cls_row indent_25 indent_25 cls_person_info_p">3．选考科目等级比例和赋分：考生各科成绩按等级赋分，以当次高中学考合格成绩为赋分前提，高中学考不合格不赋分，起点赋分40分，满分100分，共分21个等级，每个等级分差为3分。</p>
+
+    <?php 
+        $grade_proportion= array(
+                1, 2, 3, 4, 5, 6, 7, 8, 7, 7, 7, 7, 7, 7, 6, 5, 4, 3, 2, 1, 1
+        );
+
+        $width = round(90 / count($grade_proportion));
+    ?>
+    <table class="cls_row table_header indent_25" style="width: auto;">
+        <tr>
+            <th class="w168" width="10%">等级</th>
+            <?php foreach ($grade_proportion as $level => $percent) {?>
+                <td width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;padding:0"><?=$level+1?></td>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row indent_25" style="width: auto;">
+        <tr>
+            <th class="w168" width="10%">赋分</th>
+            <?php foreach ($grade_proportion as $level => $percent) {?>
+                <td width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;padding:0"><?=(100 - $level * 3)?></td>
+            <?php }?>
+        </tr>
+    </table>
+    <table class="cls_row indent_25" style="width: auto;">
+        <tr>
+            <th class="w168" width="10%">人数比例(%)</th>
+            <?php foreach ($grade_proportion as $level => $percent) {?>
+                <td width="<?=$width;?>%" style="background-color:#DBEDF7;color:#323a45;padding:0"><?=$percent?></td>
+            <?php }?>
+        </tr>
+    </table>
+    
+<?php } ?>

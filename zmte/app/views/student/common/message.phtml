@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>信息</title>
+
+<?php static_css('register/style.css');?>
+
+</head>
+<?php if($url_forward):?>
+<script type="text/javascript">
+window.onload = function() {
+    setTimeout(do_location, <?=$redirect_time?>);
+}
+
+function do_location() {
+    document.location.href = '<?=$url_forward?>';
+}
+</script>
+<?php endif;?>
+<body>
+<div class="cls_msgn">
+  <div class="cls_pos clearfix" style="position:relative;margin:100px auto 0px auto !important;width:600px">
+    <div class="fl_l cls_msgn_or cls_msg_<?=$msg_type=='success'?'success':'error'?>"></div>
+    <div class="fl_l">
+        <!--  <div class="cls_msg_h1 cls_msg_h1_<?=$msg_type=='success'?'suc':'error'?>">提交<?=$msg_type=='success'?'成功':'失败'?></div> -->
+        <div class="cls_msgtitle"><span class="cls_msgico"> </span><?=$message?></div>
+        <?php if($url_forward):?>
+        <div class="cls_infor"><a href="<?=$url_forward?>">如果您的浏览器没有自动跳转，请点击这里。</a></div>
+        <?php endif;?>
+    </div>
+  </div>
+</div>
+</body>
+</html>

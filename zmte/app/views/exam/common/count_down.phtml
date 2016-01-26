@@ -1,0 +1,31 @@
+<script>
+
+$(document).ready(function () {
+	//倒计时
+	$.examTime("#id_statusbar_clock", exam_count_down_config);
+
+    // 每隔一段时间从新请求服务器端考试时间
+     //exam_place_info_url = "<?php echo site_url('exam/test/exam_place_info');?>";
+     //exam_palce_request_time = 1000 * 60 * 2; //单位ms
+
+   //  var reset_exam_time = function (){
+         // 获取新的考试结束时间
+      //  $.post(exam_place_info_url, function(data){
+         //  data = $.parseJSON(data);
+          //   if (data && data['end_time'] && (exam_count_down_config.endT != data['end_time'])) {
+                 // 重置计时器
+             //   exam_count_down_config.endT = data['end_time'];
+               // $.examTime("#id_statusbar_clock", exam_count_down_config);
+           // };
+        //})
+     //}
+
+   // var exe_reset_exam_time = function () {
+       // setInterval(function () {
+          //  reset_exam_time();
+       // }, exam_palce_request_time)};
+
+    // exe_reset_exam_time();
+});
+
+</script>

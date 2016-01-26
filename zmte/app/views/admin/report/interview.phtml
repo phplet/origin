@@ -1,0 +1,94 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    	测评规则：<?php echo $rule['name'];?>（关联期次：<?php echo $rule['exam_name'];?>） 》》 报告生成情况
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="10%">考生ID</td>
+        <td width="10%">姓名</td>
+        <td width="20%">邮箱</td>
+        <td width="20%">所在学校</td>
+        <td width="25%">报告生成情况</td>
+      </tr>
+      <?php if(count($rule['students'])):?>
+        <?php foreach($rule['students'] as $val):?>
+          <?php
+      			$zip_status = isset($val['zip_status']) ? $val['zip_status']  : '0';
+          ?>
+          <tr>
+            <td><?=$val['uid']?></td>
+            <td><?=$val['last_name']. $val['first_name']?></td>
+            <td><?=$val['email']?>（<?php echo $val['email_validate'] ? '<font color="green">已验证√</font>' : '<font color="red">未验证x</font>';?>）</td>
+            <td><?=$val['school_name']?></td>
+            <td>
+            	<table  border="0" cellspacing="0" cellpadding="0">
+            		<tr>
+                            <td style="font-size:16px;font-weight:bold;">PDF:</td>
+                            <td>
+                  <?php foreach ($val['interview'] as $subject_id => $pdf_status): ?>
+                    <?php echo $subject_names[$subject_id] ?>:
+                      <?php if ($pdf_status): ?>
+                        <font color="green">已生成</font>(<a href="<?php echo site_url('admin/report/down_file?type=3&target_id=' . $rule['id'] . '_' . $val['uid'] . '_' . $subject_id) ?>">下载查看</a>)
+                      <?php else: ?>
+                        <font color="red">未生成</font>
+                      <?php endif ?>
+                        <br/>
+                  <?php endforeach ?>
+                            </td>
+            		</tr>
+            		<tr>
+            			<td style="font-size:16px;font-weight:bold;">ZIP:</td>
+            			<td>
+                    <?php
+                      echo $zip_status == '1' ? '<font color="green">已生成</font>（<a href="' . site_url('admin/report/down_file?type=4&source_path=') . urlencode($rule['id'] . '/' . $val['uid'] . '.zip') . '&name=' . ($val['last_name']. $val['first_name']) . '面试.zip"">下载查看</a>）' : '<font color="red">未生成</font>';
+                    ?>
+                  </td>
+            		</tr>
+            	</table>
+            </td>
+          </tr><tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('uid[]');">全选</button></td>
+        <td colspan="5" style="text-align:right"><?=isset($pagination)?$pagination:''?></td>
+      </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="7">暂无记录！</td>
+        </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+
+  <div class="space">
+    <form method="get" name="search_form" action="<?=site_url('admin/report/interview/' . $rule['id'])?>">
+        <div class="space">
+            <div class="subtitle">搜索</div>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1" width="15%">考生ID</td>
+                    <td>
+                    	<input type="text" value="<?php echo $search['uid'] ? $search['uid'] : '';?>" name="uid" id="uid"/>
+                    </td>
+
+                </tr>
+
+                 <tr>
+                    <td class="altbg1" width="15%">考生姓名</td>
+                    <td>
+                    	<input type="text" value="<?php echo $search['name'] ? $search['name'] : '';?>" name="name" id="name"/>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                    	<input type="submit" value=" 搜索 " class="btn" />
+                    	<input type="reset" value=" 重置 " class="btn" onclick="$('#uid').attr('value','');$('#name').attr('value','');history.go(-1);"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+</div>
+<?php $this->load->view('common/footer');?>

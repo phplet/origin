@@ -1,0 +1,37 @@
+<!-- 考试题目 格式转化 -->
+<?php
+	/**
+	 * 自增
+	 */
+	function auto_count() {
+		static $auto_key = 0;
+		$auto_key++;
+		return $auto_key;
+	}
+	if( intval($this->session->userdata('subject_id'))=='3'){
+	?>
+	<Script>
+
+	        $('head link[href="'+config_urls.public_css+'"]').attr('href',config_urls.public_qt_css);
+	    </script>
+	 <?php
+	}
+	 else {
+	     ?>
+	      <Script>  $('head link[href="'+config_urls.public_qt_css+'"]').attr('href',config_urls.public_css); </script>
+	
+	   <?php }
+
+		
+	foreach ($questions as $key=>$question) { 
+		//试题类型
+		$question_type = $key;
+		$qtype_name = isset($qtypes[$question_type]) ? $qtypes[$question_type] : '--'; 
+
+		echo $this->load->view("test/question_type/type_{$question_type}", array('qtype_name' => $qtype_name, 'question_list' => $question));
+	}
+?>
+<script>
+//公式转化
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,"question_detail_box"]);
+</script>

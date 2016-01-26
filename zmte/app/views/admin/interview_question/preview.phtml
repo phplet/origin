@@ -1,0 +1,51 @@
+<?php $this->load->view('common/header');?>
+<?php $this->load->view('common/mathjax');?>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">面试题预览 [<a href="<?=site_url('admin/interview_question/edit/'.$row['id'])?>">编辑</a>]</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+                试题分类
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">试题类型</td>
+            <td colspan="3">
+              <?php foreach($class_names as $period => $cnames):?>
+              <?=isset($periods[$period]) ? $periods[$period] : ''?> ：
+              <?=implode(',', $cnames)?><br/>
+              <?php endforeach;?>
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">语言</td>
+            <td width="30%"><?=$row['language']?></td>
+            <td width="10%" class="altbg1">考点</td>
+            <td><?=$row['type_name']?></td>
+        </tr>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+                试题内容
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><?=$row['content']?></td>
+        </tr>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+                学生题面
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><?=$row['student_content']?></td>
+        </tr>
+    </table>
+  </div>
+
+  <center> 
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+</div>
+<?php $this->load->view('common/footer');?>

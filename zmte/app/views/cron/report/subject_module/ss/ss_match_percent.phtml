@@ -1,0 +1,74 @@
+<?php if (count($ss_match_percent)) {?>
+	<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?>：<span class="cr"><?php echo $ss_match_percent['percent'];?>%</span></h5>
+	<?php if (!$ss_match_percent['contrast_exam_id'] && isset($ss_match_percent['data'])):?>
+	    <?php $last_data = array_values($ss_match_percent['data'][3])?>
+	    <?php $except_data = array_values($ss_match_percent['data'][2])?>
+	    <?php $count_num = 1; ?>
+		<?php foreach ($ss_match_percent['data'] as $keys => $item): ?>
+		   	<table class="cls_row indent_25 cls_table <?php if($count_num == 1){ echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_match_percent"<?php else: ?><?php if (!$no_paging) {?>ref_title_id="table_match_percent"<?php }?><?php endif; ?>>
+		       	<tr>
+		       	    <?php $item = array_values($item);?>
+			       	<?php foreach ($item as $key => $val):?>
+			       	    <?php if ($last_data[$key] || $keys == 0) {?>
+    				   		<<?=is_numeric($val) ? 'td' : 'th'?> width="20%" <?php if ($keys == 1 && is_numeric($val) && $val != $except_data[$key]) {?>style="color:<?=$val > $except_data[$key] ? "green" : 'red'?>"<?php }?>>
+    				   		<?php echo $val;?>
+    				   		</<?=is_numeric($val) ? 'td' : 'th'?>>
+				   		<?php } else {?>
+				   		   <td>-</td>
+				   		<?php }?>
+				   	<?php endforeach;?>	 
+		       	</tr>
+		    </table>
+		    <?php $count_num++; ?>
+		<?php endforeach;?>
+	<?php elseif ($ss_match_percent['contrast_exam_id'] && isset($ss_match_percent['data'])):?>
+	   <?php if ($ss_match_percent['old_match_percent']['data']) {?>
+	   <?php $count_num = 1; ?>
+	   <?php $last_data = array_values($ss_match_percent['old_match_percent']['data'][3])?>
+	    <?php $except_data = array_values($ss_match_percent['old_match_percent']['data'][2])?>
+		<?php foreach ($ss_match_percent['old_match_percent']['data'] as $keys => $item): ?>
+		   	<table class="cls_row indent_25 cls_table <?php if($count_num == 1){ echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_match_percent"<?php else: ?><?php if (!$no_paging) {?>ref_title_id="table_match_percent"<?php }?><?php endif; ?>>
+		       	<tr>
+		       	    <?php $item = array_values($item);?>
+			       	<?php foreach ($item as $key => $val):?>
+			       	    <?php if ($last_data[$key] || $keys == 0) {?>
+    				   		<<?=is_numeric($val) ? 'td' : 'th'?> width="20%" <?php if ($keys == 1 && is_numeric($val) && $val != $except_data[$key]) {?>style="color:<?=$val > $except_data[$key] ? "green" : 'red'?>"<?php }?>>
+    				   		<?php echo $val;?>
+    				   		</<?=is_numeric($val) ? 'td' : 'th'?>>
+				   		<?php } else {?>
+				   		   <td>-</td>
+				   		<?php }?>
+				   	<?php endforeach;?>	 
+		       	</tr>
+		    </table>
+		    <?php $count_num++; ?>
+		<?php endforeach;?>
+		<p class="cls_row">&nbsp;&nbsp;</p>
+	   <?php }?>
+	   
+	   <?php $count_num = 1; ?>
+	   <table class="cls_row indent_25 cls_table <?php if($count_num == 1){ echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_match_percent"<?php else: ?><?php if (!$no_paging) {?>ref_title_id="table_match_percent"<?php }?><?php endif; ?>>
+	   <?php foreach ($ss_match_percent['data'] as $keys => $item): ?>
+		       	<tr>
+			       	<?php foreach ($item as $key => $val):?>
+				   		<<?=is_numeric($val) ? 'td' : 'th'?> <?php if(is_numeric($val)):?>style="<?php if ($keys == 1 && $val >= 0 && $ss_match_percent['data'][2][$key] >= 0 && $val != $ss_match_percent['data'][2][$key]) {?>position:relative;<?php }?>"<?php endif; ?> width="20%">
+				   		<?php if (is_numeric($val) && $ss_match_percent['contrast_exam_id']) {?>
+				   		   <?php if ($val >= 0) {?>
+				   		   <?php echo $val;?>%
+				   		   <?php } else {?>
+				   		   -
+				   		   <?php }?>
+				   		<?php } else {?>
+				   		   <?php echo $val;?>
+				   		<?php }?>
+				   		<?php if ($keys == 1 && $val >= 0 && $ss_match_percent['data'][2][$key] >= 0 && is_numeric($val) && $val != $ss_match_percent['data'][2][$key]) {?>
+        		   		     <div class="<?php if ($val > $ss_match_percent['data'][2][$key]){?>cls_sort cls_up<?php } elseif ($val < $ss_match_percent['data'][2][$key]) {?>cls_sort cls_down<?php }?>"></div>
+        		   		 <?php }?>
+				   		</<?=is_numeric($val) ? 'td' : 'th'?>>
+				   	<?php endforeach;?>	           
+		       	</tr>
+		    <?php $count_num++; ?>
+		<?php endforeach;?>
+		</table>
+	<?php endif;?>
+<?php } ?>

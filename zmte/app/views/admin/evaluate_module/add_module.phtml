@@ -1,0 +1,158 @@
+<?php echo $this->load->view('common/header');?>
+<?php $current_module_url = site_url('admin/module_manage');?>
+<?php
+    $detail = isset($detail) ? $detail : array();
+    $mod = isset($mod) ? $mod : 'edit';
+?>
+
+<?php
+ 	/*
+	static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+						'js/jquery/plugin/validate/messages_zh.js'));*/
+?>
+
+<style>
+ul li{list-style:none;}
+textarea{
+	width:600px;
+	height:80px;
+}
+hr {
+	border:1px dotted #ccc;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+#knowledge_box li{
+	background:#eee;
+	padding:5px;
+	border:1px dotted #ccc;
+	border-bottom:2px solid #90AEFB;
+}
+#knowledge_box li .box{
+	padding-left:30px;
+}
+#knowledge_box li.checked{
+	background:#E0EDFE;
+	border:1px solid #CBD0FF;
+}
+#knowledge_box li .box h3 {
+	padding: 7px;
+	border: 1px dotted #ddd;
+	margin-top: 13px;
+	background: #FAF6D0;
+}
+textarea.error{
+	border:1px solid red;
+}
+ul.ul_box li {
+	height:36px;
+	line-height:36px;
+}
+h2.line_h2{
+	margin-top:30px;background:#ccc;padding:5px;
+}
+
+/*外部对比信息*/
+#comparison_info_box .box{
+	width:500px;
+	max-height:200px;
+	overflow:auto;
+	border:1px solid #ccc;
+	padding:6px;
+}
+
+#comparison_info_box ul li{
+	line-height:24px;
+	border-bottom:1px dotted #ccc;
+	height:24px;
+	padding:3px;
+	text-indent:10px;
+}
+
+#comparison_info_box ul li span.title{
+	font-weight:bold;
+	padding-right:10px;
+}
+#comparison_info_box ul li label{
+	cursor:pointer;
+}
+</style>
+<style>
+#body .btn_bg {background:#a6cbe7}
+</style>
+
+<div id="body">
+<div style="height:40px; line-height:40px; ">
+    <?foreach ($module_type_name as $key => $val) {?>
+    <input class="btn <?php if ($module_type == $key) {?>btn_bg<?php }?>" type="button" value="<?=$val?>模板管理" onclick="location.href='<?=site_url('admin/evaluate_template/index/'.$key)?>'">
+    <?php }?>
+</div>
+  <form name="frm_add_evaluate_rule" id="frm_add_evaluate_rule" method="POST" action="<?=site_url('/admin/evaluate_module/save_module')?>">
+  <?php
+  ?>
+  <div class="space">
+    <div class="subtitle"><?=(empty($module_info['module_id']) ? '新增' : '编辑'); ?><?=$module_type_name[$module_type]?>模块信息 </div>
+    <input type="hidden" name="parent_moduleid" value="<?echo $parent_moduleid;?>"/>
+    <?if (isset($module_info)) {?>
+    <input type="hidden" name="edit_id" value="<?echo $module_info['module_id'];?>">
+    <?}?>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td width="16%" class="altbg1">模块序号：</td>
+        <td>
+            <input type="text" class="txtbox" value="<?if(!empty($module_info['module_id'])) {echo $module_info['module_sort'];}?>" name="module_sort">
+        </td>
+    </tr>
+    <tr>
+        <td width="16%" class="altbg1">模块名称：</td>
+        <td>
+        	<input type="text" maxlength="50" class="txtbox" value="<?if($mod=="edit") echo $module_info['module_name'];?>" name="module_name">
+        </td>
+    </tr>
+    <?if (empty($module_info['module_id'])){?>
+    <tr>
+        <td width="16%" class="altbg1">模块编码：</td>
+        <td>
+            <input type="text" name="module_code" class="txtbox" value="" maxlength="30"/>
+        </td>
+    </tr>
+    <?}?>
+    <?php if ($module_type != 2) {?>
+    <tr>
+        <td width="16%" class="altbg1">模块适用学科：</td>
+        <td>
+            <? foreach ($subjects as $subject_id => $subject_name) {
+                $subject_ids = array();
+                if (isset($module_info))
+                {
+                    $subject_ids = explode(',', $module_info['module_subjectid']);
+                }
+                ?>
+                <label>
+                <input type="checkbox" name="module_subjects[]"
+                    value="<?=$subject_id?>" <? if(in_array($subject_id, $subject_ids)) {?>checked="checked"<?}?>/>
+                 <?=$subject_name?></label>
+            <?}?>
+        </td>
+    </tr>
+    <?php }?>
+    <?if (!empty($module_info['module_id'])) {?>
+    <tr>
+        <td width="16%" class="altbg1">状态：</td>
+        <td>
+            <input type="radio" name="status" value='1' <?if($module_info['status'] == 1) {?>checked="checked"<?}?>/>启用
+            <input type="radio" name="status" value='0' <?if($module_info['status'] == 0) {?>checked="checked"<?}?>/>禁用
+        </td>
+    </tr>
+    <?}?>
+    </table>
+  </div>
+  <center>
+    <input type="submit" id="btn_submit" value=" <?=(empty($module_info['module_id']) ? '提交' : '保存修改'); ?> " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+
+

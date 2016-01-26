@@ -1,0 +1,143 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<?php $this->load->view('common/mathjax');?>
+
+<style>
+  body,td {
+    margin: 0px;
+    font: 16px Cambria;
+    text-align: left;
+  }
+</style>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    考生答题情况
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <th width="5%">序号</th>
+        <th width="5%">ID</th>
+        <th width="50%">答案</th>
+        <th width="15%">分值</th>
+        <th width="15%">得分</th>
+      </tr>
+      <?php if($result):?>
+      <?php $qtype = C('qtype'); ?>
+      <?php $index = 1; ?>
+      <?php $g_index = 0?>
+      
+    <?php foreach($result as $type=>$val):?>
+        <?php if (!$val['list']) continue;?>
+            <tr>  
+            <td colspan=5><?php echo $group_index[$g_index]; $g_index++;?>、<?=$qtype[$type]?></td>
+            </tr>
+          <?php foreach($val['list'] as $ques_id => $val):?>
+          <tr>
+            <td><?php echo $index++; ?></td>
+            <td><?=$ques_id?></td>
+            <?php if (isset($val['answer'])) {?>
+                    <td>
+                    <?php 
+                    if (is_array($val['answer'])): 
+                    ksort($val['answer']);
+                    ?>
+                    
+                    <?php if (count($val['answer']) > 1){?>
+                    <ul style="list-style:none;">
+                    <?php foreach ($val['answer'] as $key => $value): ?>
+                      <li>(<?php echo $key+1; ?>)&nbsp;&nbsp;<?php echo $value; ?></li>
+                    <?php endforeach; ?>
+                    </ul>
+                    <?php } else {?>
+                    <span><?php echo $val['answer'][0]; ?></span>
+                    <?php }?>
+                    <?php else: ?>
+                    <span><?php echo $val['answer']; ?></span>
+                    <?php endif; ?>
+                    </td> 
+                    <td>
+                      <?php if (is_array($val['full_score'])): 
+                      
+                      ksort($val['full_score']);
+                      ?>
+                      <ul style="list-style:none;">
+                        <?php foreach ($val['full_score'] as $key => $value): ?>
+                          <li>(<?php echo $key; ?>)&nbsp;&nbsp;<?php echo $value; ?></li>
+                        <?php endforeach; ?>
+                      </ul>
+                      <?php else: ?>
+                        <span><?php echo $val['full_score']; ?></span>
+                      <?php endif; ?>
+                    </td>
+                    <td>
+                      <?php 
+                        if (is_array($val['test_score'])): 
+                            ksort($val['test_score']);
+                      ?>
+                      <ul style="list-style:none;">
+                        <?php foreach ($val['test_score'] as $key => $value): ?>
+                          <li>(<?php echo $key; ?>)&nbsp;&nbsp;<?php echo $value; ?></li>
+                        <?php endforeach; ?>
+                      </ul>
+                      <?php else: ?>
+                        <span><?php echo $val['test_score']; ?></span>
+                      <?php endif; ?>
+                    </td>
+              <?php } else {?>
+              <td colspan="3">
+                  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                  <tr class="altbg1">
+                    <th width="5%">序号</th>
+                    <th width="5%">ID</th>
+                    <th width="50%">答案</th>
+                    <th width="15%">分值</th>
+                    <th width="15%">得分</th>
+                  </tr>
+                  <?php 
+                  $sub_index = 1;
+                  unset($val['type']);
+                  ?>
+                  <?php foreach ($val as $sub_ques_id => $item) {?>
+                  <tr>
+                    <td width="5%"><?php echo $sub_index++;?></td>
+                    <td width="5%"><?php echo $sub_ques_id;?></td>
+                    <td>
+                      <?php 
+                        if (is_array($item['answer'])): 
+                        ksort($item['answer']);
+                      ?>
+                       <?php if (count($item['answer']) > 1){?>
+                       <ul style="list-style:none;">
+                        <?php foreach ($item['answer'] as $key => $value): ?>
+                          <li>(<?php echo $key+1; ?>)&nbsp;&nbsp;<?php echo $value; ?></li>
+                        <?php endforeach; ?>
+                      </ul>
+                       <?php } else {?>
+                       <span><?php echo $item['answer'][0]; ?></span>
+                       <?php }?>
+                      
+                      <?php else: ?>
+                        <span><?php echo $item['answer']; ?></span>
+                      <?php endif; ?>
+                  </td>
+                  <td width="15%"><?php echo $item['full_score']?></td>
+                    <td width="15%"><?php echo $item['test_score']?></td>
+                  </tr>
+                  <?php }?>
+                  </table>
+                </td> 
+              <?php }?>
+            </tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

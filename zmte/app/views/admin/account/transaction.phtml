@@ -1,0 +1,110 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+
+<style>
+.score_rank_td div{
+	line-height:30px;
+	height:30px;
+	padding-top:6px;
+}
+</style>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+
+<div id="body">
+ 
+  <div class="space">
+    <div class="subtitle">交易明细(<?php echo $student['last_name']?><?php echo $student['first_name']?>)</div>
+    <form method="get" name="search_form" action="<?=site_url('/admin/account/transaction/'.$uid)?>">
+         
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">交易明细</td>
+              
+               <td>
+                            <input type="text" id="begin_time" name="begin_time" class="txtbox3" value="<?=$search['begin_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});"> -
+                            <input type="text" id="end_time" name="end_time" class="txtbox3" value="<?=$search['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});">
+                       <input type="submit" value=" 查询 " class="btn" /> </td>
+         <td></td>
+            </tr>  
+   
+           
+          
+        </table>
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="4" class="altbg2" style="text-align: center;">
+          <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr class="altbg1">
+                <td width="5%">交易ID</td>
+                <td width="8%">交易类型</td>
+                <td width="10%">交易金额</td>
+                <td width="10%">支付金额</td>
+                <td width="10%">交易后余额</td>
+                <td width="10%">产品名称</td>
+                <td width="10%">产品类别</td>
+                <td width="10%">状态</td>
+                <td width="10%">交易时间</td>
+                <td>备注</td>
+            </tr>
+      <?php if($list) { 
+        $trade_type = C('trade_type');
+        foreach($list as $val) { ?>
+      <tr>
+        <td><?=$val['tr_id']?></td>        
+        <td><?=$trade_type[$val['tr_type']]?></td>
+        <td><?=$val['tr_trade_amount']?></td> 
+        <td><?=$val['tr_cash'] ? $val['tr_cash'] . '元' : '-'?></td>
+        <td><?=$val['tr_money']?></td>
+        <td><?=$val['p_name']?></td> 
+        <td><?=$val['pc_name']?></td> 
+        <td><?=$val['tr_flag'] ? '已支付' : '未支付'?></td>
+        <td><?=date('Y-m-d H:i', $val['tr_createtime'])?></td>
+        <td><?=$val['tr_comment']?></td>
+      </tr>
+      <?php } ?>
+      <tr class="altbg1">
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php } else {  ?>
+      <tr>
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php } ?>
+      </td>
+      </tr>
+     <tr>
+      	<td colspan="10">
+		     <center> 
+			    <input type="button" name="" value=" 返回 " onclick="window.history.go(-1)" class="btn next_step" />
+			  </center> 
+      	</td>
+      </tr>
+    </table>
+
+</form>
+    
+     
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+  
+</div>
+
+<?php $this->load->view('common/footer');?>
+

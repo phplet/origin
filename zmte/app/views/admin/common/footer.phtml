@@ -1,0 +1,16 @@
+<?php if ( ! defined('BASEPATH')) die;
+    //$gzip = function_exists('ob_gzhandler') ? 'enabled' : 'disabled';
+    //$sitedebug = 'Processed in {elapsed_time} second(s), {memory_usage} memory,'.$this->db->total_queries().' queries, Gzip '.$gzip;
+?>
+<div id="footer">
+Powered by <?=C('webconfig/site_name')?> &nbsp;&copy;&nbsp;<?php echo date('Y');?>&nbsp;&nbsp;<?=C('version') ?><br />
+<? /*
+<small><?=$sitedebug?></small>
+ */ ?>
+</div>
+</body>
+<?php if(isset($load_dialog_js) && $load_dialog_js === true) {?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+
+<?php }  ?>
+</html>

@@ -1,0 +1,177 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">试卷详情</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="altbg1" width="10%">试卷名称</td>
+            <td><?=$paper['paper_name']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">试题总数</td>
+            <td><?=count(json_decode($paper['question_sort'], true))?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">试题总分</td>
+            <td><? echo $paper['total_scores'];?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">题型数量</td>
+            <td>
+                <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <tr>
+                    <td>          
+                        <?php $g_index = 0; $index = 1; ?>
+                        <?php foreach ($questions as $group):?>
+                            <div class="clear"></div>
+                            <div class="q_group">
+                                <?=$group_index[$g_index++]?>、<?=$qtypes[$group['type']]?>(本部分共有<?=count($group['questions']);?>道题，共<?php echo $group['scores'];?>分)
+                            </div>
+                            <?php foreach ($group['questions'] as $item) :?>
+                                <div class="clear"></div>
+                                <div class="q_info">
+                                    <h4 class="q_index question_index_font fl"><?=$index++?>.&nbsp;(<?php echo $item['score'];?>分)</h4>
+                                </div>
+                            <?php endforeach;?>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+               </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">分组数量</td>
+            <td><?=$paper['group_count']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">平均难易度</td>
+            <td><?=$paper['difficulty']?> [更新时间：<?=$paper['uptime']?>]</td>
+        </tr>
+
+        <!-- 方法策略 -->
+        <?php if (
+           isset($paper['subject_id'])
+           &&is_array($paper['subject_ids'])
+           &&in_array($paper['subject_id'], $paper['subject_ids'])
+       ):?>
+        <tr>
+            <td class="altbg1">方法策略分布</td>
+            <td>
+                <?php if (isset($paper['method_tactics']) && !empty($paper['method_tactics'])): ?>
+                   <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                    <tr>
+                        <th>方法策略</th>
+                        <th>出现次数</th>
+                        <th>百分比(次数)</th>
+                        <th>对应分数</th>
+                        <th>百分比(分数)</th>
+                    </tr>
+                    <?php foreach($paper['method_tactics'] as $val):?>
+                        <tr>
+                            <td width="20%">
+                                <a href="<?=site_url('admin/exam_question/index3/'.$paper['paper_id'].'?method_tactic_id='.$val['id'])?>" target="_self">
+                                    <?=$val['name']?>
+                                </a>
+                            </td>
+                            <td width="10%"><?=$val['num']?></td>
+                            <td><?=$val['percent']?></td>
+                            <td><?php echo $val['score']; ?></td>
+                            <td><?php echo $val['percent_score']; ?></td>
+                        </tr>
+                    <?php endforeach;?>
+                   </table>
+               <?php endif; ?>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <!-- end 方法策略 -->
+
+        <!-- 知识点 -->
+        <tr>
+            <td class="altbg1">知识点分布</td>
+            <td>
+            <?php if (isset($paper['knowledges']) && !empty($paper['knowledges'])): ?>
+               <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <tr>
+                    <th>知识点</th>
+                    <th>出现次数</th>
+                    <th>百分比(次数)</th>
+                    <th>对应分数</th>
+                    <th>百分比(分数)</th>
+                </tr>
+
+                <?php foreach($paper['knowledges'] as $val):?>
+                    <tr>
+                        <td colspan="5" class="altbg2" style="text-align:center;">
+                            <a href="<?=site_url('admin/exam_question/index3/'.$paper['paper_id'].'?kid='.$val['id'])?>" target="_self"><?=$val['name']?></a>
+                            <span><?=$val['num']?> (<?=$val['percent']?>)&nbsp;&nbsp;/&nbsp;&nbsp;<?php echo $val['score'] ?>(<?php echo $val['percent_score'] ?>)</span>
+                        </td>
+                    </tr>
+                    <?php foreach($val['children'] as $k => $v):?>
+                        <tr>
+                            <td>
+                                <a href="<?=site_url('admin/exam_question/index3/'.$paper['paper_id'].'?kid='.$v['id'])?>" target="_self"><?=$v['name']?></a>
+                            </td>
+                            <td><?=$v['num']?></td>
+                            <td><?=$v['percent']?></td>
+                            <td><?php echo $v['score']; ?></td>
+                            <td><?php echo $v['percent_score']; ?></td>
+                        </tr>
+                    <?php endforeach;?>
+                <?php endforeach;?>
+               </table>
+                  <?php endif; ?>
+            </td>
+        </tr>
+        <!-- end 知识点 -->
+
+        <!-- 信息提取方式 -->
+    <?php if (isset($paper['subject_id']) && $paper['subject_id']==3): ?>
+        <tr>
+            <td class="altbg1">信息提取方式分布</td>
+            <td>
+             <?php if (isset($paper['group_types']) && !empty($paper['group_types'])): ?>
+                <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                    <tr>
+                        <th>信息提取</th>
+                        <th>出现次数</th>
+                        <th>百分比(次数)</th>
+                        <th>对应分数</th>
+                        <th>百分比(分数)</th>
+                    </tr>
+                    <?php foreach($paper['group_types'] as $val):?>
+                        <tr>
+                            <td colspan="5" class="altbg2" style="text-align:center;">
+                                <a href="<?=site_url('admin/exam_question/index3/'.$paper['paper_id'].'?group_type_id='.$val['id'])?>" target="_self"><?=$val['name']?></a>
+                                <span><?=$val['num']?>(<?=$val['percent']?>)&nbsp;&nbsp;/&nbsp;&nbsp;<?php echo $val['score'] ?>(<?php echo $val['percent_score'] ?>)</span>
+                            </td>
+                        </tr>
+                        <?php foreach($val['children'] as $k => $v):?>
+                            <tr>
+                                <td><a href="<?=site_url('admin/exam_question/index3/'.$paper['paper_id'].'?group_type_id='.$v['id'])?>" target="_self"><?=$v['name']?></a>
+                                </td>
+                                <td><?=$v['num']?></td>
+                                <td><?=$v['percent']?></td>
+                                <td><?php echo $v['score']; ?></td>
+                                <td><?php echo $v['percent_score']; ?></td>
+                            </tr>
+                        <?php endforeach;?>
+                    <?php endforeach;?>
+                </table>     
+                 <?php endif; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+        <!-- end 信息提取方式 -->
+
+    </table>
+  </div>
+  <center>
+<input type="button" name="dosubmit" value="返回已添加试卷列表" class="btn" onclick="window.location.href='<?=site_url('/admin/subject_paper/index/'.$paper['exam_id']);?>';" />
+    <input type="button" name="back" value=" 试题详情 " onclick="location='<?=site_url('admin/exam_question/index3/'.$paper['paper_id'])?>'" class="btn" />
+  </center>
+</div>
+<?php $this->load->view('common/footer');?>

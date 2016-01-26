@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>评估报告(<?php echo $subject_name;?>)</title>
+    <?php static_global(array(
+						'js/jquery/jquery.js',
+		  ));
+	?>
+	
+<style>
+#box{
+	margin:0 auto;
+	margin-left: 32%;
+	margin-top: 10%;
+	width:60%;
+	height:400px;
+	font-size:18px;
+	position:relative;
+}	
+.top{
+	background:url('<?=__IMG_ROOT_URL__?>zeming/demo/doing.gif') no-repeat left top;
+	text-align:center;
+	width:400px;
+	height:300px;
+}
+.bottom{
+	position: absolute;
+	top: 235px;
+	left: 15%;
+	height: 40px;
+	font-size: 20px;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div id="box">
+	<div class="top">
+		
+	</div>
+	<div class="bottom">正在处理中，请稍等...	</div>
+</div>
+</body>
+<script>
+$('body').ready(function () {
+	var $box = $('#box');
+	$.post(
+	        '<?php echo site_url('demo/test/report');?>',
+	        {act:'general'},
+	        function(data){
+	            var code = data.code,
+	            	msg = data.msg;
+
+            	if (code < 0)
+            	{
+            		$box.html(msg);
+            	}
+            	else
+            	{
+                	window.location.href = '<?php echo site_url('demo/test/report/?act=get');?>';
+            	}
+	        },
+	        'json'
+	    );
+});
+</script>
+</html>

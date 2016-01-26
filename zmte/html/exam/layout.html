@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>双飞翼VS金杯</title>
+    <style type="text/css">
+        body,div{
+            padding: 0;
+            margin: 0;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .clearfix:before, .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .fl_l{
+            display: inline-block;
+            float: left;
+        }
+        .fl_r{
+            display: inline-block;
+            float: right;
+        }
+        #container{
+            display: block;
+            padding: 0 150px 0 200px;
+            position: relative;
+            height: 200px;
+        }
+        #center{
+            width: 100%;
+            background-color: #ff0;
+
+        }
+        #left{
+            width: 200px;
+            background-color: #f0f;
+            position: absolute;
+            left: 0;
+            top: 0;
+
+        }
+        #right{
+            width: 150px;
+            background-color: #f00;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        #container2{
+        }
+        #center2{
+            width: 100%;
+            margin-right: -100%;
+            background-color: #0000ff;
+        }
+        #wap{
+            margin: 0 200px 0 250px;
+        }
+        #left2{
+            width: 200px;
+            background-color: green;
+        }
+        #right2{
+            width: 150px;
+            background-color: yellow;
+        }
+
+    </style>
+</head>
+<body>
+<!--金杯布局-->
+<div id="container">
+    <div id="center" class="column">
+        woniu  收藏了精选集
+        心若简单，幸福易得 - 古琴
+        woniu
+        18天前woniu  收藏了精选集
+        继承者们상속자들 OST/BGM - yoyoqlp
+        woniu
+        woniu  分享了歌曲
+        愿得一人心 - 李行亮
+    </div>
+    <div id="left" class="column">
+        oniu  收藏了精选集
+        心若简单，幸福易得 - 古琴
+        woniu
+        18天前woniu  收藏了精选集
+        继承者们상속자들 OST/BGM - yoyoqlp
+        woniu
+        woniu  分享了歌曲
+        愿得一人心 - 李行亮
+    </div>
+    <div id="right" class="column">
+        oniu  收藏了精选集
+        心若简单，幸福易得 - 古琴
+        woniu
+        18天前woniu  收藏了精选集
+        继承者们상속자들 OST/BGM - yoyoqlp
+        woniu
+        woniu  分享了歌曲
+        愿得一人心 - 李行亮
+    </div>
+</div>
+<!--双飞翼-->
+<div id="container2"  class="clearfix">
+    <div id="center2" class="fl_l">
+        <div id="wap">
+            2014年，你的欲望清单有那些？5117/9881
+            说一说所谓的年终奖吧5084/10007
+            【官方产品调查】首页链接是否需要新标签页打开？5422/12171
+            【新手考核第5张-自更】原声带-兰陵王 戏剧原声带83/221
+        </div>
+    </div>
+    <div id="left2" class="fl_l">
+        2014年，你的欲望清单有那些？5117/9881
+        说一说所谓的年终奖吧5084/10007
+        【官方产品调查】首页链接是否需要新标签页打开？5422/12171
+        【新手考核第5张-自更】原声带-兰陵王 戏剧原声带83/221
+    </div>
+    <div id="right2" class="fl_r">
+        2014年，你的欲望清单有那些？5117/9881
+        说一说所谓的年终奖吧5084/10007
+        【官方产品调查】首页链接是否需要新标签页打开？5422/12171
+        【新手考核第5张-自更】原声带-兰陵王 戏剧原声带83/221
+    </div>
+</div>
+</body>
+</html>

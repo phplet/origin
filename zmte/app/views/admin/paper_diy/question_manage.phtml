@@ -1,0 +1,142 @@
+<?php
+    $this->load->view('common/header');
+    static_global(array('js/datepicker/wdatepicker.js'));
+    static_js(array('third_party/layer/layer.min.js'));
+?>
+<script>
+    function select_question() {
+        $.layer({
+            type: 2,
+            border: [0],
+            title: '选择试题',
+            shadeClose: true,
+            closeBtn:  [0, true],
+            iframe: {src : '<?php echo site_url("admin/paper_diy/select_question/" . $paper_id); ?>'},
+            area: ['900px', '600px']
+        });
+    }
+
+    $(function(){
+        $('.maintable').on('click', '.remove_question', function(){
+            $(this).parent().parent().remove();
+        });
+
+        //双击展开
+        $('.maintable').on('dblclick', '.ques_title', function(){
+            $(this).find('div').toggleClass('line_18');
+        })
+
+        // 全选/反选
+        var option_select_all_off = true;
+        $('#select_all').click(function(){
+            if (!option_select_all_off) {
+                $('.ques_id').prop("checked", true);
+                option_select_all_off = true;
+            } else {
+                $('.ques_id').prop("checked", false);
+                option_select_all_off = false;
+            }
+        });
+
+        // 批量删除试题
+        $('#remove_batch_question').click(function(){
+
+            var checkbox = $('input:checked[name=ques_ids_c]');
+
+            if (checkbox.length == 0) {
+                layer.alert('请选择试题！', -1);
+                return;
+            }
+
+            for (i=0; i<checkbox.length; i++) {
+                $(checkbox[i]).parent().parent().remove();
+            }
+        });
+
+    })
+</script>
+
+<div id="body">
+    <form name="frm_cpuser_list" action="<?=site_url('admin/paper_diy/update_question')?>" method="POST">
+        <div class="space">
+            <div class="subtitle">
+                <a href="javascript:void(0)" id="select_all" style="color:red;">[全选/反选]</a>
+                <!-- <a href="<?=site_url('admin/question_external/index')?>" class="menu" id="select_all" style="color:red;">试题管理</a> -->
+                <?php if (!$has_tested) {?>
+                <a class="menu" href="javascript:void(0);" onclick="select_question();">添加试题</a>
+                <?php }?>
+                <input type="hidden" name="paper_id" value="<?php echo $paper_id; ?>">
+            </div>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr class="altbg1">
+                    <td width="5%">&nbsp;&nbsp;ID</td>
+                    <td width="5%">排序</td>
+                    <td width="10%">分数</td>
+                    <td width="40%">题目（双击展开/收缩）</td>
+                    <td width="5%">类型</td>
+                    <td width="5%">学科</td>
+                    <td width="10%">录入时间</td>
+                    <td width="5%">录入人员</td>
+                    <td>操作</td>
+                </tr>
+
+                <?php if($questions):?>
+                    <?php foreach($questions as $key => $val):?>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="ques_id" name="ques_ids_c" value="<?=$val['ques_id']?>" />
+                                <?=$val['ques_id']?>
+                                <input type="hidden" name="ques_ids[]" value="<?=$val['ques_id']?>" />
+                            </td>
+                            <td>
+                                <input type="text" name="sort[]" style="width: 30px;" value="<?php echo ($key+1); ?>"/>
+                            </td>
+                                 <td>
+                                 <?php if (in_array($val['type'], array(10, 15)) && count($val['score']) > 1) {?>
+                                 <?php foreach ($val['score'] as $k => $v) {?>
+                                 第<?=$k+1?>题 <input type="text" name="score[<?=$val['ques_id']?>][]" style="width: 30px;" value="<?=($v ? $v : 0)?>"/><br/>
+                                 <?php }?>
+                                 <?php } else {?>
+                                <input type="text" name="score[<?=$val['ques_id']?>][]" style="width: 30px;" value="<?php echo isset($val['score'])?$val['score'][0] : 0; ?>"/>
+                                <?php }?>
+                            </td>
+                            <td class="ques_title">
+                                <div class="line_18" style="width:450px;"><?=$val['title']?></div>
+                            </td>
+                            <td><?=$val['qtype']?></td>
+                            <td><?=$val['subject_name']?></td>
+                            <td><?=$val['addtime']?></td>
+                            <td><?=$val['admin_info']['realname']?></td>
+                            <td>
+                               <a href="<?=site_url('admin/question/preview/'.$val['ques_id'])?>" target="_blank">预览</a>
+	                           <a href="javascript:void(0);" class="remove_question" >从试卷中移除</a>
+                            </td>
+                         </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="10">暂无记录！</td>
+                    </tr>
+                <?php endif; ?>
+                <tr class="altbg1" id="container_button">
+                    <td colspan="3">
+                    <?php if (!$has_tested) {?>
+                        <button type="button" class="btn2" id="remove_batch_question">批量移除</button>
+                    <?php }?>
+                    &nbsp;
+                    </td>
+                    <td colspan="7" style="text-align:right"><?=$pagination?></td>
+                </tr>
+            </table>
+            <?php if (!$has_tested) {?>
+            <center>
+                <input type="submit" name="dosubmit" value=" 更新试卷 " class="btn" />
+                &emsp;
+                <input type="button" value="返回列表" class="btn" onclick="window.location.href='<?=site_url('/admin/paper_diy/index')?>'"/>
+            </center>
+            <?php }?>
+        </div>
+    </form>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

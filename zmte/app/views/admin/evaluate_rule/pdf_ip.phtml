@@ -1,0 +1,26 @@
+<?php $this->load->view('common/header');?>
+<?php
+$current_module_url = site_url('/admin/evaluate_rule/pdf_ip_c');
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+     	PDF生成任务分配
+    </div>
+     <form name="frm_import" id="frm_import" method="POST" action="<?=$current_module_url;?>" enctype="multipart/form-data">
+  <input type="hidden" name="id" value="<?php echo $id;?>" />
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td colspan="2" style="text-align:center;" class="altbg2">
+      机器标志：<textarea rows="1" cols="25" name="proc_id"></textarea>proc_id,以英文逗号分隔
+        </td>
+      </tr>
+
+    </table>  <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </form>
+
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

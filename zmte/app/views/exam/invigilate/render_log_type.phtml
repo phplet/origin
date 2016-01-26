@@ -1,0 +1,9 @@
+<?php require_once (APPPATH.'config/app/exam/log_type_desc.php');?>
+<?php 
+	$tmp_content = (Array) json_decode($content);
+	if ($content == '' || (is_array($tmp_content) && count($tmp_content) > 0)) {
+		echo Log_type_desc::get_log_type_desc($type);
+	} else {
+		echo $content;
+	}	
+?>

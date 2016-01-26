@@ -1,0 +1,129 @@
+<?php
+/**
+ * 试题分析及与之对应的评价 && 诊断及建议 
+ */
+?>
+<style>
+ul.k_ul li.line
+{
+	border-bottom:1px dotted #ccc;
+}
+ul.k_ul li
+{
+	height:30px;
+	list-style:none;
+	width:90%;
+	padding:5px;
+}
+
+ul.k_ul li span
+{
+	padding-left:5px;
+	display: block;
+}
+
+ul.k_ul li span.fl
+{
+	float:left;
+	width: 50%;
+}
+
+ul.k_ul li span.fr
+{
+	float: right;
+	text-align: center;
+	width: 40%;
+}
+
+.text_center{ text-align:center;}
+.text_left{text-align: left;}
+.ml5{ margin-left:5px;}
+</style>
+	<div class="pingjia">
+       <h3>1.试题分析及与之对应的评价</h3>
+       <?php 
+			$sq_all['fields'] = isset($sq_all['fields']) ? $sq_all['fields'] : array();
+			$sq_all['data'] = isset($sq_all['data']) ? $sq_all['data'] : array();
+			$sq_all['desc_data'] = isset($sq_all['desc_data']) ? $sq_all['desc_data'] : array();
+		?>
+       <table class="mb10">
+           <tr>
+               <th width="20%">题号</th>
+               <!--  
+               <th width="35%">知识点</th>
+               <th width="13%">认知过程</th> -->
+               <th width="20%">难易度</th>
+               <th width="20%">分值</th>
+               <th width="20%">得分</th>
+               <th width="20%">期望得分</th>
+           </tr>
+           <?php $auto_key  = 0;?>
+	       <?php foreach ($sq_all['desc_data'] as $item) {?>
+	       <?php $auto_key++;?>
+	       <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+	            <th width="20%"><?php echo $item['id'];?></th>
+	            <?php /*?>
+	            <?php $i_knowledge = $item['knowledge'];?>
+	            <?php $count_k = count($i_knowledge);?>
+	            <td width="35%">
+	            	<ul <?php echo $count_k > 1 ? 'class="k_ul"' : '';?>>
+	            	<?php foreach ($i_knowledge as $val) {?>
+	           			<li <?php echo $count_k > 1 ? 'class="line text_left"' : 'class="text_left ml5"';?>>
+	           				<?php echo isset($val['knowledge']) ? $val['knowledge'] : '--';?>
+	           			</li>
+           			<?php } ?>
+	            	</ul>
+            	</td>
+            	
+	            <td width="13%">
+	            	<ul <?php echo $count_k > 1 ? 'class="k_ul"' : '';?>>
+	            	<?php foreach ($i_knowledge as $val) {?>
+	           			<li <?php echo $count_k > 1 ? 'class="line text_center"' : 'class="text_center"';?>>
+	           				<?php echo isset($val['know_process']) ? $val['know_process'] : '--';?>
+	           			</li>
+	            	<?php } ?>
+	            	</ul>
+            	</td>
+            	<?php */?>
+	            <td width="20%"><?php echo $item['difficulty'];?></td>
+	            <td width="20%"><?php echo $item['full_score'];?></td>
+	            <td width="20%"><?php echo $item['test_score'];?></td>
+	            <td width="20%"><?php echo $item['expect_score'];?></td>
+	       </tr>
+	       <?php } ?>
+           </table>
+	   </div>
+       <div class="zhenduan">
+	       <h3>2.诊断及建议：</h3>
+	       <h5>1) 强弱点分布情况：</h5>
+	       <table>
+	           <tr>
+	           <th class="w168">知识点\认知过程</th>
+		           <th>记忆</th>
+		           <th>理解</th>
+		           <th>应用</th>
+		           <th>评语</th>
+	           </tr>
+	           <?php if (count($ss_application_situation)) {?>
+	           <?php $auto_key = 0;?>
+		       <?php foreach ($ss_application_situation as $k_name=>$item) {?>
+		       <?php $auto_key++;?>
+		       <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+		            <td><?php echo $k_name;?></td>
+		            <td><span class="level level<?php echo $item['kp_1']?>"></span></td>
+		            <td><span class="level level<?php echo $item['kp_2']?>"></span></td>
+		            <td><span class="level level<?php echo $item['kp_3']?>"></span></td>
+		            <td><?php echo $item['comment'];?></td>
+		       </tr>
+		       <?php } ?>
+		       <?php } ?>
+	       </table>
+	        <?php if (isset($ss_summary['win_percent'])) {?>
+           <?php if (!$ss_summary['is_last_rank'] && $test_score > 0) {?>
+           <h5>恭喜，你的测试成绩比 <strong><?php echo isset($ss_summary['win_percent']) ? $ss_summary['win_percent'] : 0;?> %</strong> 的学生更出色！<?php //echo str_repeat("★", $ss_summary['level']);?></h5>
+           <?php } else {?>
+           <h5>你的测试成绩比 0%的学生更出色！请再接再厉！</h5>
+           <?php }?>
+           <?php } ?>
+		</div>
+<!--试题分析及与之对应的评价end-->

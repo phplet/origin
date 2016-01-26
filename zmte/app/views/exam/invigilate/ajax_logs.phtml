@@ -1,0 +1,24 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+
+<?php $count_logs = count($logs);?>
+<?php if (!$count_logs) {?>
+<?php if ($is_ajax == '0') {?>
+<li class="cls_jk_list_item  cls_jk_list_bgc clearfix no_record" id="tr_no_data"><?php echo is_null($tip_msg) ? '空空如也~' : $tip_msg; ?></li>
+<?php }?>
+<?php } else {?>
+<?php $auto_key = 0;?>
+<?php foreach ($logs as $log) {?>
+<?php $auto_key++;?>
+<li class="log_item cls_jk_list_item  <?php echo ($auto_key+1)%2 == 0 ? 'cls_jk_list_bgc' : ''; ?> clearfix">
+    <span class="cls_jk_list_time"><?php echo date('Y/m/d H:i:s', strtotime($log['ctime']));?></span>
+    <span class="cls_jk_list_number"><?php echo $log['exam_ticket'];?></span>
+    <span class="cls_jk_list_name"><?php echo $log['truename'];?></span>
+    <span class="cls_jk_list_event"><?php echo $this->load->view('invigilate/render_log_type', array('type' => $log['type'], 'content' => trim($log['content'])));?></span>
+    <span class="cls_jk_list_more">
+    <a href="###" class="s_log" truename="<?php echo $log['truename'];?>" uid="<?php echo $log['uid'];?>">该学生所有事件</a>
+
+    </span>
+</li>
+<?php } ?>
+<?php } ?>
+	

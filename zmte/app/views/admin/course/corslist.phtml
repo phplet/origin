@@ -1,0 +1,183 @@
+<? $this->load->view('common/header'); ?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js'));
+?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveCORS(cors_id_str)
+{
+    if (cors_id_str == '')
+    {
+        alert('您没有选择任何要删除的记录');
+        return;
+    }
+    if (!confirm('您确认要删除所选记录么?'))
+    {
+        return;
+    }
+    ajax_removeCORS(cors_id_str);
+}
+</script>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('course_setcorsinfo', false); 
+$bPrivRemove = $CI->check_power_new('course_removecors', false);
+$bPrivAdd = $CI->check_power_new('course_addcorsinfo', false);
+$bPrivImport = $CI->check_power_new('course_import_cors_excel', false);
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">课程列表
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnShowDialog('id_qry_dlg')">查询</button>
+<? if ($bPrivAdd) { ?>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/addcorsinfo')?>'">新增</button>
+<? } ?>
+<? if ($bPrivImport) { ?>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/import_cors_excel')?>'">导入</button>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+        <button type="button" onclick="fnRemoveCORS(fnGetCheckBoxValues('body', 'cors_id'))">删除</button>
+<? } ?>
+        <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" id="id_grid" border="0" cellspacing="0" cellpadding="0">
+      <tr class="cls_title">
+        <td width="20"><input type="checkbox" onchange="fnSelAll('id_grid', 'cors_id', this.checked)"/></td>
+        <td width="40">ID</td>
+        <td width="100">名称</td>
+        <td width="120">来源机构</td>
+        <td width="80">授课模式</td>
+        <td width="160">年级</td>
+        <td width="160">学科</td>
+        <td width="160">类型</td>
+        <td width="120">添加时间</td>
+        <td width="60">添加人员</td>
+        <td width="120">修改时间</td>
+        <td width="40">状态</td>
+        <td width="100">操作</td>
+      </tr>
+      <? if(!empty($cors_list)) { ?>
+      <? foreach($cors_list as $v) { ?>
+      <tr>
+        <td><input type="checkbox" name="cors_id" value="<?=$v['cors_id']?>"/></td>
+        <td><?=$v['cors_id']?></td>
+        <td><? Func::echo_s($v['cors_name']); ?></td>
+        <td><? Func::echo_s($v['ti_name']); ?></td>
+        <td><? Func::echo_s($v['cm_name']); ?></td>
+        <td><? if (isset($cors_gradeid[$v['cors_id']])) foreach ($cors_gradeid[$v['cors_id']] as $v1) { ?>
+            &nbsp;<?=$grade_map[$v1['cg_gradeid']]?>
+            <? } ?>
+        </td>
+        <td><? if (isset($cors_subjectid[$v['cors_id']])) foreach ($cors_subjectid[$v['cors_id']] as $v2) { ?>
+            &nbsp;<?=$subject_map[$v2['cs_subjectid']]?>
+            <? } ?>
+        </td>
+        <td><? if (isset($cors_classid[$v['cors_id']])) foreach ($cors_classid[$v['cors_id']] as $v3) { ?>
+            &nbsp;<?=$v3['class_name']?>
+            <? } ?>
+        </td>
+        <td><?=$v['cors_addtime']?></td>
+        <td><?=$v['cors_adduname']?></td>
+        <td><?=$v['cors_lastmodify']?></td>
+        <td><?  if ($v['cors_flag'] < 0) echo('已删'); 
+                else if ($v['cors_flag'] == '0') echo('禁用'); 
+                else if ($v['cors_flag'] == 1) echo('启用'); 
+                else if ($v['cors_flag'] > 1) echo('待审'); ?></td>
+        <td>
+          <a href="<?=site_url('admin/course/corsinfo/' . $v['cors_id'])?>">查看</a>
+<? if ($bPrivEdit) { ?>
+          <a href="<?=site_url('admin/course/setcorsinfo/' . $v['cors_id'])?>">编辑</a>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+          <a href="javascript:void(0)" onclick="fnRemoveCORS('<?=$v['cors_id']?>')">删除</a>
+<? } ?>
+        </td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+    <? $this->load->view('common/paginator', Fn::paginator($cors_list_count));?>
+  </div>
+</div>
+
+<div id="id_qry_dlg" style="display:none">
+<div class="cls_title">搜索课程信息</div>
+  <form method="GET" id="id_qry_form" name="search_form" action="<?=site_url('admin/course/corslist')?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">课程名称</td>
+                <td><input type="text" name="cors_name" value="<? Func::echo_s($param['cors_name']); ?>" class="txtbox"/></td>
+            </tr>  
+            <tr>
+                <td class="altbg1">来源机构</td>
+                <td><input type="text" name="ti_name" value="<? Func::echo_s($param['ti_name']); ?>" class="txtbox"/></td>
+            </tr>
+            <tr>
+                <td class="altbg1">授课模式</td>
+                <td>                      
+                    <select name="cors_cmid">
+                    <option value="">[不限]</option>
+                    <? foreach ($mode_list as $val) { ?>
+                    <option value="<?=$val['cm_id'];?>" <? if ($param['cors_cmid'] == $val['cm_id']) echo('selected="selected"'); ?>><?=$val['cm_name'];?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr> 
+            <tr>
+                <td class="altbg1">年级</td>
+                <td>
+                    <select name="grade_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($grade_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['grade_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">学科</td>
+                <td>
+                    <select name="subject_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($subject_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['subject_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">考试类型</td>
+                <td>
+                    <select name="class_id_str">
+                    <option value="">[不限]</option>
+                  <? foreach ($classid_map as $key =>$val) { ?>
+                    <option value="<?=$key?>"
+<? if ($key == $param['class_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                 </td>
+            </tr>    
+        </table>
+      </div>
+  </form>
+<div class="cls_dialog_buttons">
+<button type="submit" onclick="document.getElementById('id_qry_form').submit()">确定</button>
+<button type="button" onclick="fnCloseDialog('id_qry_dlg')">取消</button>
+</div>
+</div>
+<? $this->load->view('common/footer'); ?>
+

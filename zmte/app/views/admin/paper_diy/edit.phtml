@@ -1,0 +1,65 @@
+<?php $this->load->view('common/header'); ?>
+
+<script type="text/javascript">
+$(function(){
+    $('#option_info').submit(function(){
+
+        if ($('#title').val() == '') {
+        	alert("请填写标题！");
+        	return false;
+        };
+        
+        if ($('#exam_subject').val() == '0') {
+            alert("请选择期次-学科！");
+            return false;
+        };
+	});
+
+    <?php if ($paper) {?>
+	$('#exam_subject').val('<?=($paper['exam_id'] . "_" . $paper['subject_id'])?>').attr('disabled', true);
+	<?php }?>
+});
+</script>
+<div id="body">   
+  <form id="option_info" name="Frm_info" method="POST" action="<?=site_url('admin/paper_diy/update_paper')?>">
+  <div class="space">
+    <div class="subtitle"><?php if ($paper) {?>编辑<?php } else {?>添加<?php }?>试卷</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">标题</td>        
+        <td>
+            <input type="text" name="title" id="title" class="txtbox" value="<?php echo $paper['paper_name']; ?>">
+            <input type="hidden" name="type" value="<?php echo $type; ?>">
+            <?php if ($type == 'edit'): ?>
+              <input type="hidden" name="paper_id" value="<?php echo $paper['paper_id']; ?>">
+            <?php endif ?> 
+            <span style="color:#f00">*</span>
+        </td>
+      </tr>
+         <tr>
+        <td width="16%" class="altbg1">期次-学科</td>        
+        <td>
+                   <select name="exam_subject" id="exam_subject" class="txtbox">
+                        <option value="0">--请选择--</option>
+                        <?php $subject = C('subject')?>
+                        <?php foreach($exam_list as $val): ?>
+                            <option value="<?=$val['exam_id']?>_<?=$val['subject_id']?>">
+                            <?=$val['exam_name']?>（<?=$subject[$val['subject_id']]?>）
+                        </option>
+                        <?php endforeach; ?>
+                      </select> 
+                      <span style="color:#f00">*</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+     <input type="hidden" value="<?php echo $back_url?> " name="back_url" />
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<?php $this->load->view('common/footer');?>

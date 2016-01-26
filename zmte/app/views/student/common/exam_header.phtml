@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=8" />
+<title><?=$page_title ? "$page_title - " : ""?><?=C('webconfig/site_name')?></title>
+<? static_css('exam/style.css');?>
+<? static_global(array('js/jquery/jquery.js', 'js/common/common.js'));?>
+<? static_global('js/all.css', 'css'); ?>
+<? static_global('js/all.js'); ?>
+<script type="text/javascript">
+<? if ($ajaxScript = get_instance()->_ajaxScript) echo($ajaxScript); ?>
+</script>
+<?=C('tongji_script')?>
+</head>
+<body>
+<div class="cls_header_bg <? if ($header_bg) { ?>cls_header_bg_small<? } ?>"
+<? if ($header_bg) { ?>
+style="background-image:url(<?=$header_bg?>)"
+<? } else { ?>
+style="background-image:url(<?=site_url('images/exam/header_bg.png')?>)"
+<? } ?>
+>
+  <div class="cls_header">
+  <img class="cls_header_logo" title="返回官网首页" onclick="location.href='http://www.new-steps.com';" src="<?=site_url('images/exam/logo_big.png')?>"/>
+    <span class="cls_header_userinfo">
+      <? if ($uinfo['uid']) { ?>
+      欢迎你, <? Func::echo_s($uinfo['fullname']); ?>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="<?=site_url('student/profile/index')?>">个人中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascript:void(0)" onclick="ajax_logout()">退出</a>
+      <? } else { ?>
+      <?=$uinfo['fullname']?>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url('student/index/logindiv')?>')">登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="<?=site_url('student/register/index')?>" target="_blank">注册</a>
+      <? } ?>
+<? if ($avatar_url) { ?>
+    <div class="cls_header_goexam"><a href="<?=site_url('student/exam/mini')?>" target="_blank">免费体验</a> <a href="<?=site_url('student/exam/index')?>">测评中心</a></div>
+<? } ?>
+    </span>
+    <? if ($avatar_url) { ?>
+    <div class="cls_header_avatar"><img src="<?=$avatar_url?>" <? if ($uinfo['uid']) { ?>onclick="location.href='<?=site_url('student/profile/index')?>'" style="cursor:pointer" title="中心首页"<? } ?>/></div>
+    <? } else { ?>
+    <div class="cls_header_title"><?=$page_title?></div>
+    <? } ?>
+  </div>
+</div>
+<div class="cls_page">

@@ -1,0 +1,101 @@
+  <div class="space">
+  <div class="subtitle"><span class="menu" style="padding-top:5px;"><a href="javascript://" class="close"><img src="<?=__HTML_URL__?>images/no.gif" /></a></span>信息提取方式选择</div> 
+    <div style="max-height:300px;_height:300px;overflow:auto;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:0px;width:780px;">
+        <?php if($list):?>
+        <?php foreach($list as $parent):?>
+        <tbody id="range_parent_<?=$parent['id']?>">
+        <tr>
+            <td colspan="3" class="altbg2" style="text-align: center;">
+                <input type="hidden" name="pid" value="<?=$parent['id']?>" />                
+                <span class="pname font_4"><?=$parent['group_type_name']?></span>
+                [<a href="javascript://" class="expand">收起</a>]
+                <input type="checkbox" name="group_type_parent<?=$parent['id']?>" id="group_type_parent<?=$parent['id']?>" onclick="allchecked('','range_parent_<?=$parent['id']?>',this)" /><label for="group_type_parent<?=$parent['id']?>">全选/取消</label>
+            </td>
+        </tr>
+        <?php $i = 0;?>
+        <?php foreach($parent['children'] as $key => $val):?>
+        <?php $td_index = $i%3;?>
+        <?php if($td_index == 0):?><tr><?php endif;?>
+            <td<?php if($i+1==count($parent['children']) && $td_index<2):?> colspan="<?=(3-$td_index)?>"<?php endif;?>><input type="checkbox" name="group_type_ids" id="group_type_<?=$val['id']?>" value="<?=$val['id']?>" <?=strpos($group_type_ids, ','.$val['id'].',')!==false?' checked':''?>/><label for="group_type_<?=$val['id']?>"><?=$val['group_type_name']?></label></td>
+        <?php if($td_index==2 OR $i+1==count($parent['children'])):?></tr><?php endif;?>
+        <?php $i++;?>
+        <?php endforeach;?>
+        </tbody>
+        <?php endforeach;?>
+        <?php else:?>
+        <tr>
+            <td colspan="3" style="text-align: center;color:#f00">
+                暂无信息提取方式
+            </td>
+        </tr>
+        <?php endif;?>
+    </table>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="background:#A6CBE7;text-align: center;color:#f00">
+                <input type="button" id="group_type_confirm" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " class="btn close" />
+            </td>
+        </tr>
+    </table>
+  </div>
+  <script>
+    $(document).ready(function(){
+        $('#group_type_confirm').click(function(){
+            var selected = [];
+            var item = [];
+            var index = 0;
+            var checkbox = $('input:checked[name=group_type_ids]');
+            for (var i=0; i<checkbox.length; i++) {
+                if (checkbox[i].checked == true) {
+                    var pid = $(checkbox[i]).parent().parent().parent().find('input[name=pid]').val();
+                    var pname = $(checkbox[i]).parent().parent().parent().find('span.pname').text();                    
+                    if (typeof(selected[pid])=='undefined') {
+                        selected[pid] = [pname,[]];
+                        index = 0;
+                    }                     
+                    var kid = checkbox[i].value;
+                    var kname = $(checkbox[i]).parent().find('label').html();
+                    item = [kid,kname];
+                    selected[pid][1][index++] = item;
+                } 
+            }
+            if (selected.length == 0) {
+                alert('请选择知识点');
+                return;
+            }
+            var string = '';
+            var group_type_ids = '';
+            for (pid in selected) {
+                if (pid != 'indexof') {                   
+                    var parent = selected[pid];
+                    string += '<div><span class="font_4" pkid="'+pid+'">'+parent[0]+'</span>：';
+                    for (i=0; i<parent[1].length; i++) {
+                        string += '<input type="checkbox" name="group_type_id[]" id="group_type'+parent[1][i][0]+'" value="'+parent[1][i][0]+'" checked /><label for="group_type'+parent[1][i][0]+'">'+parent[1][i][1]+'</label>';
+                        group_type_ids += (group_type_ids?',':'') + parent[1][i][0];
+                    }
+                    string += '</div><hr/>';
+                }                  
+            }
+            $('#group_type_list').html(string);
+            $('#group_type_ids').val(group_type_ids);            
+            $.unblockUI();
+            // 试题规则编辑页面
+            if ($('#group_type_rule_list').length) {                
+                reset_group_type_rule_list();
+            }
+        });
+        $('.expand').click(function(){
+            if ($(this).html() == '展开') {
+                $(this).html('收起');
+                $(this).parent().parent().siblings().show();
+            } else {
+                $(this).html('展开');
+                $(this).parent().parent().siblings().hide();
+            }
+            
+        });
+    });
+  </script>

@@ -1,0 +1,138 @@
+<?php 
+	/**
+		该页面为选择学校的页面组建
+		@author: TCG
+		@final: 2013-11-14
+		@notice:
+			1、使用该页面之前需要先引入jquery类库
+			2、该页面只能在body的一级节点之间被引入
+	*/
+?>
+<style>
+	#select_school_box {
+		width: 800px;
+		height:600px;
+		position:absolute;
+		top:10%;
+		left:15%;
+		border-radius: 2px;
+		border:1px solid #ccc;
+		z-index:9999;
+	}
+	#select_school_box .title{
+		width: 100%;
+		height: 30px;
+		line-height: 15px;
+		font-weight: bold;
+		color: #333;
+		overflow: hidden;
+		background-color: #EFF4F8;
+	}
+	#select_school_box .title .left{
+		float:left;
+		padding:8px 0px 0px 8px;
+		width:702;
+	}
+	#select_school_box .title .right {
+		float: right;
+		width: 90px;
+		height: 100%;
+		text-align: right;
+		padding-right: 20px;
+		padding-top: 6px;
+		font-size: 16px;
+	}
+	#select_school_box .content .line_bar{
+		height:10px;
+		clear:both;
+	}
+
+	#select_school_box_content{
+		padding:8px;
+		height: 100%;
+	}
+
+	#select_school_box .content{
+		width: 100%;
+		height:570px;
+		overflow: auto;
+		background-color: #fff;
+	}
+
+	#select_school_box .iframe_box{
+		width: 100%;
+		height:100%;
+		border:none;
+		background-color: #fff;
+	}
+	
+</style>
+<div id="select_school_box" style="display:none;">
+	<div class="title">
+		<div class="left">选择 所在学校（<font color="red">*注：单击列表中任意一行即可选择学校</font>）</div>
+		<div class="right"><a href="javascript:void(0);" onclick="$('#select_school_box').fadeOut();" title="点击关闭">x</a></div>
+	</div>
+	<p></p>
+	<div class="content">
+		<div class="line_bar"></div>
+		<div id="select_school_box_content">
+			<iframe class="iframe_box" src="" id="iframe_select_school" rameborder="no" border="0" marginwidth="0" marginheight="0" scrolling=”no” allowtransparency=”yes”></iframe>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    //获取学校回调
+    var select_school_callback = function(school_id, school_name) {
+        $('#select_school_id').val(school_id);
+        $('#select_school').val(school_name);
+
+        if ($('.hidden_school_id').length) {
+        	$('.hidden_school_id').val(school_id);
+        }
+
+        if ($('#select_school_box').length) {
+            $('#select_school_box').fadeOut();
+        }
+    };
+
+    window.select_school_callback = select_school_callback;
+    
+	$('#select_school').unbind('click')
+					.bind('click', function() {
+		var province = parseInt($('#hidden_province').val()) || 0,
+			city = parseInt($('#hidden_city').val()) || 0,
+			area = parseInt($('#hidden_area').val()) || 0,
+			grade_period = $.trim($('#hidden_grade_period').val()) || '';
+		
+		var query_string = [];
+		if (province > 0) {
+			query_string.push('province=' + province);
+		} 
+		if (city > 0) {
+			query_string.push('city=' + city);
+		} 
+		if (area > 0) {
+			query_string.push('area=' + area);
+		}
+		if (grade_period.length) {
+			var periods = grade_period.split(',');
+			for(var i = 0; i < periods.length; i++) {
+				query_string.push('grade_period[]=' + periods[i]);
+			}			
+		}
+
+		var q_str = '';
+		if (query_string.length) {
+			q_str = '&' + query_string.join('&');
+		} 
+			
+		$('#select_school_box').fadeIn();
+		$('#iframe_select_school').attr('src', '<?php echo site_url("admin/school/index?is_ajax=1");?>' + q_str);
+	});
+});
+
+
+</script>

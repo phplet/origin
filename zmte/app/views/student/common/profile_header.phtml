@@ -1,0 +1,133 @@
+<? $this->load->view('common/exam_header', array('page_title' => '个人中心', 'avatar_url' => $uinfo['avatar_url'])); ?>
+<? static_css('register/style.css');?>
+<script type="text/javascript">
+$(function(){
+    $('.subtab1').find('a').click(function(){
+        $(this).parent().addClass("current").siblings().removeClass('current');
+    });
+});
+</script>
+<style type="text/css">
+.altbg2, .altbg2-r, .altbg2-bg {
+    background:#7eb8dd !important;
+}
+
+.altbg2-bg {
+    color:black !important;
+}
+
+.altbg1 {
+    background:#9cd5f9 !important;
+}
+
+.btn {
+}
+
+.cls_profile_topmenu {
+    display:table;
+    width:100%;
+}
+
+.cls_profile_topmenu_item {
+    display:table-cell;
+    height:30px;
+    text-align:center;
+    background-image:url(<?=site_url('images/profile/topmenu_bg.png')?>);
+    width:250px;
+    background-repeat:no-repeat;
+    background-position:center;
+}
+
+.cls_profile_topmenu_item a {
+    font-size:1.6em;
+    color: black;
+    text-decoration:none;
+}
+
+.cls_profile_topmenu_selitem {
+    display:table-cell;
+    height:30px;
+    text-align:center;
+    background-image:url(<?=site_url('images/profile/topmenu_bg_sel.png')?>);
+    width:250px;
+    background-repeat:no-repeat;
+    background-position:center;
+}
+.cls_profile_topmenu_selitem a {
+    font-size:1.6em;
+    color: black;
+    text-decoration:none;
+}
+.subtab1 {
+    overflow:hidden; 
+    clear:both; 
+    margin-bottom:10px; 
+    padding:10px 0 0px 5px;
+    margin:0;
+    height:30px;
+}
+.subtab1 li { 
+    float:left;
+    font-size:1.1em;
+    text-align:center;
+    width:100px;
+}
+.subtab1 a {
+    border-radius:15px; 
+    height:40px;
+    display:block; 
+    position:relative; top:5px; z-index:2; margin:0 2px; 
+    color:black;
+    position:relative; 
+    padding:5px 5px 3px 5px; 
+    border-color:#96C2F1; 
+    border-width:2px 1px 0 1px; 
+    border-style:solid;
+    font-weight:normal;
+    /*background-color:#3964a6; */
+    background-color:#d3e2f2;
+}
+.subtab1 a select {
+    border: 0; background: none; box-shadow: none;}
+.subtab1 a:hover { 
+    background:#3964a6; padding:6px 5px 6px 5px; top:3px; 
+    color:#000066;text-decoration:none;
+}
+.subtab1 .current { 
+    width:100;}
+.subtab1 .current a { 
+    width:100;
+    background-color:#7eb8dd;
+    padding:6px 5px 6px 5px; 
+    top:3px; 
+    color:#000066;
+}
+</style>
+<div class="cls_profile_topmenu">
+<div class="cls_profile_topmenu_<?=$topmenu == 'home' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/index')?>">中心首页</a></div>
+<div class="cls_profile_topmenu_<?=$topmenu == 'profile' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/basic')?>">个人资料</a></div>
+<div class="cls_profile_topmenu_<?=$topmenu == 'exam' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/examresult')?>">考试管理</a></div>
+<div class="cls_profile_topmenu_<?=$topmenu == 'error' ? 'selitem' : 'item'?>"><a target="_blank" href="<?=site_url('student/profile/errorlist')?>">错题集</a></div>
+<div class="cls_profile_topmenu_<?=$topmenu == 'transaction' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/transaction')?>">帐号管理</a></div>
+</div>
+<? if ($topmenu == 'profile' && $student['grade_id'] == 6) { ?>
+<div style="margin-left:3px">
+    <ul class="subtab1">
+       <li <? if ($submenu == 'basic') echo('class="current"'); ?>><a  href="<?=site_url("student/profile/basic?dl=1")?>" >基本信息</a></li>
+       <li <? if ($submenu == 'awards') echo('class="current"'); ?>><a href="<?=site_url("student/profile/awards?dl=1")?>">小升初必填</a></li>
+    </ul>
+</div>
+<? } ?>
+
+<? /*
+<!--<div class="cls_profile_submenu">
+<div class="cls_profile_submenu_<?=$submenu == 'basic' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/basic')?>">基本信息</a></div>
+
+<div class="cls_profile_submenu_<?=$submenu == 'awards' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/awards')?>">学习成绩</a></div>
+<div class="cls_profile_submenu_<?=$submenu == 'base' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/base')?>">学习概况</a></div>
+<div class="cls_profile_submenu_<?=$submenu == 'practice' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/practice')?>">社会实践</a></div>
+<div class="cls_profile_submenu_<?=$submenu == 'wish' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/wish')?>">学生意愿</a></div>
+<div class="cls_profile_submenu_<?=$submenu == 'pwish' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/pwish')?>">家长意愿</a></div>
+<div class="cls_profile_submenu_<?=$submenu == 'preview' ? 'selitem' : 'item'?>"><a href="<?=site_url('student/profile/preview')?>">复核报名信息</a></div>
+</div>--!>
+ */?>

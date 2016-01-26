@@ -1,0 +1,144 @@
+<?php
+    /**
+     * 试题分析及与之对应的评价 
+     */
+
+    $sq_all['fields'] = isset($sq_all['fields']) ? $sq_all['fields'] : array();
+    $sq_all['data'] = isset($sq_all['data']) ? $sq_all['data'] : array();
+    $sq_all['desc_data'] = isset($sq_all['desc_data']) ? $sq_all['desc_data'] : array();
+?>
+
+<?php if (count($sq_all['data'])) {?>
+    <?php 
+        $flash_data = array();
+        foreach ($sq_all['fields'] as $field_name) {
+            if ($field_name == '总分') continue;
+    
+            $tmp_arr = array();
+            foreach ($sq_all['data'] as $key=>$item) {
+                $tmp_arr[] = isset($item[$field_name]) ? round($item[$field_name], 2) : 0;
+            }
+                
+            $field_name = $field_name == '得分' ? '我' : $field_name;
+            $flash_data[] = array('name'=>$field_name, 'data' => $tmp_arr);
+        }
+        
+        $max_score = 0;
+        foreach ($sq_all['data'] as $data) {
+            $data = array_values($data);
+            foreach ($data as $key => $score) {
+                if ($key < 1) {
+                    continue;
+                }
+
+                if ($score > $max_score) {
+                    $max_score = $score;
+                }
+            }
+        }
+        
+        
+        if ($max_score > 0) {
+            $max_score = ceil($max_score) + 1;
+        }
+    ?>
+
+    <div id="flash_container_sq_<?=$t_subject_id?>"  class="cls_row indent_25"></div>
+    <script type="text/javascript">
+    $(function () {
+        //试题分析及与之对应的评价 曲线图
+        $('#flash_container_sq_<?=$t_subject_id?>').highcharts({
+            chart: {
+                height: '1000',
+                type: 'line',
+                inverted: true
+            },
+            title: {
+                text: '试题得分折线图'
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: false
+                    },
+                    enableMouseTracking: false  //关闭动画特效,使其在pdf中线条不会变粗
+                }
+            },
+            xAxis: {
+                categories: eval("("+'<?php echo json_encode(array_keys($sq_all['data'])); ?>'+")"),
+                labels: {
+                    rotation : 0.5,//坐标旋转角度 为0：表示横放置
+                    align : 'right'
+                }
+            },
+            yAxis:[{
+                title:'',
+                <?php if($max_score > 0) {?>
+                    max:<?=$max_score?>, // 定义Y轴 最大值  
+                    min:0 // 定义最小值 
+                <?php } else {?>
+                    tickPositions: [0]
+                <?php } ?>
+                },
+                {
+                title:'',
+                <?php if($max_score > 0) {?>
+                    max:<?=$max_score?>, // 定义Y轴 最大值  
+                    min:0, // 定义最小值
+                <?php } else {?>
+                    tickPositions: [0],
+                <?php }?>
+                opposite:true
+            }],
+            tooltip: {
+                valueSuffix: ''
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+            series: eval("("+'<?php echo json_encode($flash_data); ?>'+")")
+            /*
+            series: [{
+                name: '我',
+                data: [4.5, 2.5, 3.5, 4.5]
+            }, {
+                name: '总体1',
+                data: [2.5, 4.5, 1.5, 2.5]
+            }, {
+                name: '总体2',
+                data: [2.0, 2.0, 3.0, 5.0]
+            }]*/
+        });
+    });
+    </script>
+<?php } ?>
+
+<?php if (count($sq_all['desc_data'])) {?>
+    <table class="mb10 cls_row table_header indent_25" id="table_sq_ss_1">
+        <tr>
+            <th width="20%">题号</th>
+            <th width="20%">难易度</th>
+            <th width="20%">分值</th>
+            <th width="20%">得分</th>
+            <th width="20%">期望得分</th>
+        </tr>
+    </table>
+
+    <?php $auto_key  = 0;?>
+    <?php foreach ($sq_all['desc_data'] as $item) {?>
+        <?php $auto_key++;?>
+        <table class=" cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sq_ss_1"<?php }?>>
+            <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="20%"><?php echo $item['id'];?></th>
+                    <td width="20%"><?php echo $item['difficulty'];?></td>
+                    <td width="20%"><?php echo $item['full_score'];?></td>
+                    <td width="20%" <?php if ($item['test_score'] != $item['expect_score']) {?>style="color:<?=$item['test_score'] > $item['expect_score'] ? 'green' : 'red' ?>"<?php }?>><?php echo $item['test_score'];?></td>
+                    <td width="20%"><?php echo $item['expect_score'];?></td>
+            </tr>
+        </table>
+   <?php } ?>
+<?php } ?>

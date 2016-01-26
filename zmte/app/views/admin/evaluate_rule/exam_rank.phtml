@@ -1,0 +1,37 @@
+<?php
+$this->load->view('common/header');?>
+
+<div id="body">
+  <div class="space">
+      <div class="subtitle">
+     	下载考试排名
+    </div>
+     <form name="frm_import" id="frm_import" method="POST" action="#" enctype="multipart/form-data">
+
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td class="altbg2">学科</td>
+        <td><?=$subject_id ? C('subject/' . $subject_id) : '所有学科'?></td>
+      </tr>
+    <tr class="altbg1">
+        <td>  选择考场</td>
+        <td class="altbg2">
+           <select name="place_id">
+             <option value="0" selected>所有考场</option>
+             <?php
+             foreach ($places as $v):
+             ?>
+             <option value="<?php echo $v['place_id'];?>"><?php echo $v['place_name'];?></option>
+             <?php endforeach;?>
+             </select>
+        </td>
+      </tr>
+    </table>  
+    <center>
+            <input type="submit" value=" 提交 " class="btn" />
+            <input type="button" value=" 返回" class="btn" onclick="location.href='/admin/evaluate_rule/index'"/>
+        </center>
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

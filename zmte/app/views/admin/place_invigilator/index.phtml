@@ -1,0 +1,105 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {
+    if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            if ( ! confirm('确定要执行该操作么？')) {
+                return false;
+            }
+        }
+        var action = $('#batch_op').find('option[value='+op+']').attr('op');
+        form.action = action;
+        return true;
+    }
+    return false;
+}
+
+</script>
+<div id="body">
+  <div class="space">
+    <form name="frm_list" action="<?=site_url('admin/place_invigilator/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+    <input type="hidden" name="place_id" value="<?=$place['place_id']?>" />
+    <div class="subtitle">
+      <?php if ($priv_manage) {?>
+      <?php if (!$place['no_start']) {?>
+           <a class="menu" href="###" style="color:#999;text-decoration:line-through;" title="该考场正在考试或已结束，无法做此操作">添加监考人员</a>
+	  <?php } else {?>
+	      <a class="menu" href="<?php echo site_url('admin/exam_invigilator/index/?place_id=' . $place['place_id']);?>">添加监考人员</a>
+	  <?php } ?>
+	  <?php } ?>
+     	 当前场次 已分配 监考人员列表
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="10" class="altbg2" style="text-align: center;">
+          考试：<a href="<?=site_url('admin/exam_place/index/'.$place['exam_id'])?>"><?=$place['exam_name']?></a>
+          --->
+          场次：<?=$place['place_name']?>
+    --->考试地点：<?=$place['address']?>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="5%">ID</td>
+        <td width="15%">姓名</td>
+        <td width="15%">Email</td>
+        <td>所在单位</td>
+        <td>状态</td>
+        <td width="20%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?php if ($priv_manage) {?><input type="checkbox" name="ids[]" value="<?=$val['id']?>" /><?php } ?><?=$val['id']?></td>
+        <td><?=$val['invigilator_name'];?></td>
+        <td><?=$val['invigilator_email'];?></td>
+        <td><?=$val['invigilator_memo']?></td>
+        <td><?php echo $val['invigilator_flag'] < 0 ? '<font color="red">已被删除到回收站</font>' : '<font color="green">正常</font>';?></td>
+        <td>
+        	<?php if ($priv_manage) {?>
+        	<?php if (!$place['no_start']) {?>
+            <font style="color:#999;text-decoration:line-through;" title="该考场正在考试或已结束，无法做此操作">删除</font>
+            <?php } else {?>
+            <!--<a href="<?php echo site_url('admin/place_invigilator/delete/' . $val['id']);?>" onclick="return confirm('您确定要将该监考人员从该考场剔除吗？');">剔除</a>-->
+            <a href="<?php echo site_url('admin/place_invigilator/delete/' . $val['id']);?>" onclick="return confirm('您确定要将该监考人员从该考场删除吗？');">删除</a>
+            <?php } ?>
+            <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="6">该考场可分配监考人员！</td>
+      </tr>
+      <?php endif; ?>
+      <?php if($pagination):?>
+      <tr class="altbg1">
+        <td colspan="2">
+          <?php if ($priv_manage) {?>
+          <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+          <?php if (!$place['no_start']) {?>
+          <select name="batch_op" id="batch_op" style="color:#999;text-decoration:line-through;">
+           <option value="">该考场正在考试或已结束，无法做此操作</option>
+          </select>
+          <?php } else {?>
+          <select name="batch_op" id="batch_op">
+           <option value="">-选择操作-</option>
+           <!--<option value="delete" op="<?=site_url('admin/place_invigilator/batch_delete')?>">批量剔除</option>-->
+           <option value="delete" op="<?=site_url('admin/place_invigilator/batch_delete')?>">批量删除</option>
+          </select>
+          <?php } ?>
+          <?php } ?>
+        </td>
+        <td colspan="4" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php endif;?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" /></center>
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

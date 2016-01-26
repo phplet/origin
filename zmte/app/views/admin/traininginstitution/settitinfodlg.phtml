@@ -1,0 +1,23 @@
+<div id="id_settitinfo_dlg" style="width:400px">
+<div class="cls_title"><?=$tit_info['tit_id'] ? '编辑' : '新增'?>培训机构类型<? if ($tit_info['tit_id']) echo('(ID:' . $tit_info['tit_id'] . ')'); ?></div>
+<table class="maintable" id="id_settitinfo_table" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="altbg1" width="35%">培训机构类型ID</td>
+    <td>
+      <input type="text" name="tit_id" value="<?=$tit_info['tit_id']?>" class="cls_field txtbox" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="altbg1">培训机构类型名称</td>
+    <td>
+      <input type="text" name="tit_name" value="<? Func::echo_s($tit_info['tit_name']); ?>" class="txtbox cls_field" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+</table>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="ajax_setTIT(<?=$tit_id?>, fnGetFormData('id_settitinfo_dlg'))">确定</button>
+<button type="button" onclick="fnCloseDialog('id_settitinfo_dlg')">取消</button>
+</div>
+</div>

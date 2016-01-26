@@ -1,0 +1,123 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<script language="javascript">
+function check_form(form)
+{
+	if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        }
+
+        form.action = $('#batch_op').find('option[value='+op+']').attr('op_url');
+        
+        return true;
+    }
+    return false;
+}
+</script>
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/demo_paper/index/')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><span>样卷报告生成情况</span></div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="5%"></td>
+        <td width="10%">考生ID</td>
+        <td width="10%">姓名</td>
+        <td width="10%">准考证号</td>
+        <td width="20%">所在学校</td>
+        <td width="10%">年级</td>
+        <td width="15%">测试时间</td>
+        <td>报告生成情况</td>
+      </tr>
+      <?php if(isset($student) && count($student)):?>
+	      <?php foreach($student as $val):?>
+	      <tr>
+	        <td><input type="checkbox" name="ids[]" value="<?=$val['exam_pid']?>_<?=$val['uid']?>"></td>
+	        <td><?=$val['uid']?></td>
+	        <td><?=$val['last_name']. $val['first_name']?></td>
+	        <td><?=$val['exam_ticket']?></td>
+	        <td><?=$val['school_name']?></td>
+	        <td><?=$val['grade']?></td>
+	        <td>
+	        	<?php if (isset($val['exam']) && count($val['exam'])):?>
+	        	
+		        	<table  border="0" cellspacing="0" cellpadding="0">
+		        	<?php foreach ($val['exam'] as $exam_pid => $exam ):?>
+			        	<?php foreach ($exam as $item ):?>
+			        		<tr>
+			        			<td style="border:none;"><?php echo $item['ctime']?></td>
+			        		</tr>
+			        	<?php endforeach;?>
+	        		<?php endforeach;?>
+	        		</table>
+        		<?php endif;?>
+	        </td>
+	        <td>
+	        	<?php if (isset($val['exam']) && count($val['exam'])):?>
+		        	<table  border="0" cellspacing="0" cellpadding="0">
+		        	<?php foreach ($val['exam'] as $exam_pid => $exam ):?>
+		        	<?php foreach ($exam as $exam_id => $item ):?>
+		        		<tr>
+		        			<td style="border:none;">
+		        				<?php echo $item['name']?> > 
+		        				<a class="ajax_loader" href="###" ajax="<?php echo site_url('admin/demo_paper/show_report/?exam_pid='.$exam_pid.'&uid='.$val['uid'].'&subject_id='.$item['subject_id']);?>">
+                      <font color="green">[查看报告]</font> 
+                    </a>
+                    <?php if ($priv_delete) {?>
+                    <a href="<?php echo site_url('admin/demo_paper/remove_report/?exam_pid='.$exam_pid.'&exam_id='.$exam_id.'&uid='.$val['uid'].'&subject_id='.$item['subject_id']);?>">
+                    <font color="red">[删除报告]</font>
+                    </a>
+                    <?php }?>
+		        			</td>
+		        		</tr>
+		        	<?php endforeach;?>
+	        		<?php endforeach;?>
+	        		</table>
+        		<?php endif;?>
+	        </td>
+	      </tr>
+	      <?php endforeach; ?>
+	      <tr class="altbg1">
+	        <td colspan="3">
+	        <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+	        <?php if ($priv_delete) {?>
+	        <select id="batch_op" name='type'>
+    	       <option value="">-选择操作-</option>
+               <option value="del" op_url="/admin/demo_paper/remove_report/">删除样卷报告</option>
+            </select>
+            <?php }?>
+	        </td>
+	        <td colspan="5" style="text-align:right"><?=$pagination?></td>
+	      </tr>     
+      <?php else: ?>
+      <tr>
+        <td colspan="7">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value="提交操作 " class="btn" /></center>
+  </div>
+  </form>
+  
+  <div class="space">
+    <form method="get" name="search_form" action="<?=site_url('admin/demo_paper/index/')?>">
+        <div class="space">
+            <div class="subtitle">搜索</div>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1" width="15%">考生ID</td>
+                    <td>
+                    	<input type="text" value="<?php echo $search['uid'] ? $search['uid'] : '';?>" name="uid"/>
+                    </td>
+                </tr>
+            </table>
+            <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <input type="button" value=" 重置 " class="btn" onclick="window.location.href='<?php echo site_url('admin/demo_paper/index');?>'"/>
+            </center>
+        </div>
+
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

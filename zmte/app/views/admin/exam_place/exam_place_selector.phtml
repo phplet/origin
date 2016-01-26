@@ -1,0 +1,51 @@
+<select  name='exam_pid' id='select_exam_pid'>
+</select>
+<select name='place_id' id='select_place_id'>
+	<option value="0">--请选择考试场次--</option>
+</select>
+<script>
+$(document).ready(function (){
+	var $_select_exam = $('#select_exam_pid'),
+		$_select_place = $('#select_place_id'),
+		_exam_id = parseInt('<?php echo isset($search['exam_pid']) ? $search['exam_pid'] : '0'; ?>') || 0,
+		_place_id = parseInt('<?php echo isset($search['place_id']) ? $search['place_id'] : '0';?>') || 0;
+
+	if (_exam_id > 0) {
+		get_places(_exam_id);
+	}
+	
+	$_select_exam.change(function () {
+		var $thiz = $(this),
+			exam_id = $thiz.val();
+		
+		if (exam_id == 0) {
+			get_places(0, 0);
+			return true;
+		}
+		get_places(exam_id);
+	});
+
+	function get_exams() {
+		$.get("<?php echo site_url('admin/exam_place/ajax_get_exams/' . (isset($search['exam_pid']) ? $search['exam_pid'] : '0'));?>/", function(result){
+			$_select_exam.html(result);
+		});
+	}
+	
+	function get_places(exam_id, place_id) {
+		exam_id = parseInt(exam_id) || 0;
+		if (exam_id <= 0) {
+			exam_id = _exam_id;
+		}
+		
+		if (place_id != 0) {
+			place_id = _place_id;
+		}
+		
+		$.get("<?php echo site_url('admin/exam_place/ajax_get_exam_place/');?>" + '/' + exam_id + '/' + place_id, function(result){
+			$_select_place.html(result);
+		});
+	}
+
+	get_exams();
+});
+</script>

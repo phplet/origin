@@ -1,0 +1,19 @@
+
+<h4>亲爱的会员：<?=$student['email']?>，您好！</h4>
+
+<p>感谢您注册新步伐测试报名系统。这是系统自动发送的邮件用于验证您的邮箱有效性。您可以用该邮箱作为用户名登录，或者重置密码。 </p>
+
+<p>请点击激活链接并完成验证。</p>
+<p>
+<a href="<?=site_url('student/index/validate/').'?code='.$hash?>" target="_blank">点击验证Email地址</a>
+
+
+<p>
+如果上述文字点击无效，请把下面网页地址复制到浏览器地址栏中打开：<a href="<?=site_url('student/index/validate/').'?code='.$hash?>" target="_blank"><?=site_url('student/index/validate/').'?code='.$hash?></a>
+</p>
+<br/>
+<br/>
+<div align="right" style="font-size:14px;">
+杭州择明教育科技<br/>
+择明，为你架起人和教育的链接！
+</div>

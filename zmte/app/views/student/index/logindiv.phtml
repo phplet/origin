@@ -1,0 +1,38 @@
+<div id="id_userlogin_dlg">
+<script type="text/javascript">
+function fnUserLogin()
+{
+    var param = fnGetFormData('id_userlogin_dlg');
+    if (param['ticket'].length < 1)
+    {
+        alert('请输入帐号');
+        return;
+    }
+    if (param['password'].length < 1)
+    {
+        alert('请输入密码');
+        return;
+    }
+    ajax_login(param);
+}
+</script>
+  <div class="cls_title">用户登录</div>
+  <div style="width:400px;padding:20px;">
+     <table style="width:100%;"> 
+     <tr>
+        <td style="height:30px">帐号</td>
+        <td><input type="text" class="cls_field" style="border:1px solid #A6CBE7;width:90%" name="ticket" placeholder="Email/准考证号/身份证号"/></td>
+     </tr>
+     <tr>
+        <td style="height:30px">密码</td>
+        <td><input type="password" class="cls_field" style="border:1px solid #A6CBE7;width:90%"  name="password" placeholder="请输入密码"/></td>
+     </tr>
+     </table>
+  </div>
+  <div class="cls_dialog_buttons">
+    <span style="float:left"><a href="<?=site_url('student/register/index')?>" target="_blank">注册</a>&nbsp;|&nbsp;
+    <a href="<?=site_url('student/index/forget')?>" target="_blank">忘记密码</a></span>
+    <button type="button" onclick="fnUserLogin()">登录</button>
+    <button type="button" onclick="fnCloseDialog('id_userlogin_dlg')">取消</button>
+  </div>
+</div>

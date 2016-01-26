@@ -1,0 +1,89 @@
+<?php $this->load->view('common/exam_header', array('page_title' => '重置密码'));?>
+<? static_css('register/style.css');?>
+<style type="text/css">
+.altbg2, .altbg2-r, .altbg2-bg {
+    background:#7eb8dd !important;
+}
+
+.altbg2-bg {
+    color:black !important;
+}
+
+.altbg1 {
+    background:#9cd5f9 !important;
+}
+</style>
+<div id="body">
+  <form id="form" class="form_data"  name="Frm_cpuser_info" method="POST" action="<?=site_url('student/index/resetpwd/').'?code='.$hash?>">
+  <input type="hidden" name="act" value="submit">
+  <div class="space">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr><td style="border:none;height:10px;"></td></tr>
+    <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+          <span class="altbg2-bg">修改密码</span>
+          <i class="altbg2-r"></i>
+        </td>
+      </tr>
+      <tr>
+          <td width="16%" height="50">新密码</td>        
+          <td>
+          	<input type="password" name="password" id="txt_password" class="txtbox">&nbsp;
+          	<span class="notice">*密码长度必须为6~20个字符</span><font class="error"></font>
+          </td>
+      </tr>
+      <tr>
+        <td height="50">新密码确认</td>        
+        <td>
+        	<input type="password" name="password_confirm" id="txt_password_confirm" class="txtbox">&nbsp;
+        	<span class="notice">*请再次输入您的新密码</span><font class="error"></font>	
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+  </center>   
+  </form>
+</div>
+<script type="text/javascript">  
+  $(document).ready(function () {
+      var check_form = function () {
+          var $txt_password = $('#txt_password'),
+              $txt_password_confirm = $('#txt_password_confirm'),
+              
+              txt_password = $txt_password.val(),
+              txt_password_confirm = $txt_password_confirm.val();
+
+          var is_success = true,
+          	   objs = [];
+
+          //验证密码规则
+          if ('string' === typeof (passwd_msg = is_password(txt_password))) {
+	            is_success = false;
+	            objs.push({msg:passwd_msg, obj:$txt_password});
+          }
+
+          if (!txt_password_confirm.length || txt_password != txt_password_confirm) {
+              is_success = false;
+              objs.push({msg:'两次密码输入不一致，请检查', obj:$txt_password_confirm});
+          }
+          
+          if (!is_success) {
+              show_error(objs);
+              return false;
+          }
+          
+          return true;
+      };
+      
+      $('#form').submit(function() {
+          if (!check_form()) {
+              return false;
+          }
+
+          return true;
+      });
+  });
+</script>
+<?php $this->load->view('common/exam_footer');?>

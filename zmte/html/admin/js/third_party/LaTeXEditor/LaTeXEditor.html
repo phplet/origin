@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html xml:lang="zh" lang="zh" dir="ltr">
+<head>
+<title>LaTeX 公式编辑器</title>
+<meta name="robots" content="index, nofollow" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-language" content="ZH" />
+<link rel='stylesheet' href='./css/latex.css'/>
+<!--[if lte IE 7]>
+<link rel='stylesheet' href='/sys/LaTeXEditor/css/latex_ie6.css'/>
+<![endif]-->
+<script type="text/javascript" src="../../lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery.textarea.js"></script>
+<script type='text/javascript' src='../MathJax/MathJax.js?config=TeX-MML-AM_HTMLorMML&locale=zh-hans'></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    showMathMenu: true,
+    showMathMenuMSIE: true,
+    MathMenu: {showLocale: false}
+});
+</script>
+<script type="text/javascript">
+var Preview = {
+  delay: 150,        // delay after keystroke before updating
+
+  preview: null,     // filled in by Init below
+  buffer: null,      // filled in by Init below
+
+  timeout: null,     // store setTimout id
+  mjRunning: false,  // true when MathJax is processing
+  oldText: null,     // used to check if an update is needed
+
+  //
+  //  Get the preview and buffer DIV's
+  //
+  Init: function () {
+    this.preview = document.getElementById("MathPreview");
+    this.buffer = document.getElementById("MathBuffer");
+  },
+
+  //
+  //  Switch the buffer and preview, and display the right one.
+  //  (We use visibility:hidden rather than display:none since
+  //  the results of running MathJax are more accurate that way.)
+  //
+  SwapBuffers: function () {
+    var buffer = this.preview, preview = this.buffer;
+    this.buffer = buffer; this.preview = preview;
+    buffer.style.visibility = "hidden"; buffer.style.position = "absolute";
+    preview.style.position = ""; preview.style.visibility = "";
+  },
+
+  //
+  //  This gets called when a key is pressed in the textarea.
+  //  We check if there is already a pending update and clear it if so.
+  //  Then set up an update to occur after a small delay (so if more keys
+  //    are pressed, the update won't occur until after there has been 
+  //    a pause in the typing).
+  //  The callback function is set up below, after the Preview object is set up.
+  //
+  Update: function () {
+    if (this.timeout) {clearTimeout(this.timeout)}
+    this.timeout = setTimeout(this.callback,this.delay);
+  },
+
+  //
+  //  Creates the preview and runs MathJax on it.
+  //  If MathJax is already trying to render the code, return
+  //  If the text hasn't changed, return
+  //  Otherwise, indicate that MathJax is running, and start the
+  //    typesetting.  After it is done, call PreviewDone.
+  //  
+  CreatePreview: function () {
+    Preview.timeout = null;
+    if (this.mjRunning) return;
+    var text = '\\[' + document.getElementById("MathInput").value + '\\]';
+    if (text === this.oldtext) return;
+    this.buffer.innerHTML = this.oldtext = text;
+    this.mjRunning = true;
+    MathJax.Hub.Queue(
+      ["Typeset",MathJax.Hub,this.buffer],
+      ["PreviewDone",this]
+    );
+  },
+
+  //
+  //  Indicate that MathJax is no longer running,
+  //  and swap the buffers to show the results.
+  //
+  PreviewDone: function () {
+    this.mjRunning = false;
+    this.SwapBuffers();
+  }
+
+};
+
+//
+//  Cache a callback to the CreatePreview action
+//
+Preview.callback = MathJax.Callback(["CreatePreview",Preview]);
+Preview.callback.autoReset = true;  // make sure it can run more than once
+
+</script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.panel').mouseover(function(){
+        $(this).css('overflow','visible');
+    }).mouseout(function(){
+        $(this).css('overflow','hidden');
+    });
+    $('area').click(function(){
+        var str = '';
+        var pos = 0;
+        var latex = $(this).attr('latex');
+        if ($(this).parent().attr('id') == 'matrix_map') {            
+            if (latex.indexOf('matrix') != -1) {
+                var inputStr = prompt("请输入行、列数，用逗号分割。（例如：2,3 表示两行三列）");
+                if ( inputStr != null && inputStr != "") {
+                    inputStr = inputStr.replace('，',',');
+                    var arr = inputStr.split(',');
+                    var n = parseInt(arr[0]);
+                    var m = parseInt(arr[1]);
+                    if (isNaN(n) || isNaN(m)) {
+                        return;
+                    }
+                    var tmp_arr = latex.split(',');
+                    for (i=0; i<n; i++) {
+                        for (j=0; j<m; j++) {
+                            str += " & ";
+                        }
+                        if (i < n-1) {
+                            str += " \\\\ \r\n";
+                        }
+                    }
+                    str = tmp_arr[0] + "\r\n" + str +"\r\n" + tmp_arr[1]+ "\r\n";
+                    pos = parseInt($(this).attr('pos'));
+                }
+            
+            } else if (latex.indexOf('binom') != -1) {
+                str = latex;
+                pos = 7;
+            } else {
+                var inputStr = prompt("请输入行数");
+                var n = parseInt(inputStr);
+                if ( isNaN(n) || n<1) {
+                    return;
+                }
+                var tmp_arr = latex.split(',');
+                for(i=0; i<n; i++) {
+                    if (latex.indexOf('cases') != -1)
+                        str += " & \\text{ if } x= ";
+                    else
+                        str += " &= ";
+                    if (i < n-1)
+                        str += " \\\\ \r\n";
+                }
+                str = tmp_arr[0] + "\r\n" + str +"\r\n" + tmp_arr[1]+ "\r\n";
+                pos = parseInt($(this).attr('pos'));
+            }
+            
+        } else {
+            str = latex;
+            if ($(this).attr('pos') != undefined) {
+                pos = $(this).attr('pos');
+            } else {
+                pos = str.indexOf('[]');
+                if (pos == -1) {
+                    pos = str.indexOf('{}');
+                    if (pos != -1) pos++;
+                }else {
+                    pos++;
+                }
+            } 
+        }
+        $('#MathInput').insertContent(str, pos);
+        Preview.Update();
+    });
+    $('#colors').change(function(){
+        var str = $(this).val();
+        var pos = str.length - 1;
+        $('#MathInput').insertContent(str, pos);
+        $(this)[0].selectedIndex=0;
+    });
+    $('#functions').change(function(){
+        var str = $(this).val() + ' ';
+        var pos = 0;
+        $('#MathInput').insertContent(str, pos);
+        $(this)[0].selectedIndex=0;
+    });
+    $('#clear_text').click(function(){
+        $('#MathInput').val('');
+    });
+    //$('td').click(function(){
+    //    $('#MathInput').val($(this).attr('alt'));
+    //});
+});
+</script>
+
+<center>
+<div id="wrap" class="wrap">
+<div id="hover"></div>
+<div class="toolbar_wrapper">
+  <div class="toolbar" style="z-index:23">
+    <div class="panel">
+    </div> 
+    <div style="height:0px;"></div>
+    <div class="panel">
+      <select id="colors" title="公式颜色" onchange="EqEditor.insert(this.value, this.value.length-1); this.selectedIndex=0">
+        <option value="">颜色...</option>
+        <option value="\color{Red} {}" style="color:Red">红</option>
+        <option value="\color{Green} {}" style="color:Green">绿</option>
+        <option value="\color{Blue} {}" style="color:Blue">蓝</option>
+        <option value="\color{Yellow} {}" style="color:Yellow">Yellow</option>
+        <option value="\color{Cyan} {}" style="color:Cyan">Cyan</option>
+        <option value="\color{Magenta} {}" style="color:Magenta">Magenta</option>
+        <option value="\color{Teal} {}" style="color:Teal">Teal</option>
+        <option value="\color{Purple} {}" style="color:Purple">Purple</option>
+        <option value="\color{DarkBlue} {}" style="color:DarkBlue">DarkBlue</option>
+        <option value="\color{DarkRed} {}" style="color:DarkRed">DarkRed</option>
+        <option value="\color{Orange} {}" style="color:Orange">Orange</option>
+        <option value="\color{DarkOrange} {}" style="color:DarkOrange">DarkOrange</option>
+        <option value="\color{Golden} {}" style="color:Golden">Golden</option>
+        <option value="\color{Pink} {}" style="color:Pink">Pink</option>
+        <option value="\color{DarkGreen} {}" style="color:DarkGreen">DarkGreen</option>
+        <option value="\color{Orchid} {}" style="color:Orchid">Orchid</option>
+        <option value="\color{Emerald} {}" style="color:Emerald">Emerald</option>
+      </select>
+    </div>
+    <div class="panel">
+      <select id="functions" title="Functions">
+        <option selected="selected" value="" style="color:#8080ff">Functions&hellip;</option>
+        <option value="\displaystyle">display style</option>
+        <optgroup label="Trig">
+            <option value="\sin">sin</option>
+            <option value="\cos">cos</option>
+            <option value="\tan">tan</option>
+            <option value="\csc">csc</option>
+            <option value="\sec">sec</option>
+            <option value="\cot">cot</option>
+            <option value="\sinh">sinh</option>
+            <option value="\cosh">cosh</option>
+            <option value="\tanh">tanh</option>
+            <option value="\coth">coth</option>
+        </optgroup> 
+        <optgroup label="Inverse Trig">
+            <option value="\arcsin">arcsin</option>
+            <option value="\arccos">arccos</option>
+            <option value="\arctan">arctan</option> 
+            <option value="\sin^{-1}">sin-1</option>
+            <option value="\cos^{-1}">cos-1</option>
+            <option value="\tan^{-1}">tan-1</option> 
+            <option value="\sinh^{-1}">sinh-1</option>
+            <option value="\cosh^{-1}">cosh-1</option>
+            <option value="\tanh^{-1}">tanh-1</option> 
+        </optgroup> 
+        <optgroup label="Logs">
+            <option value="\exp">exp</option>
+            <option value="\lg">lg</option>
+            <option value="\ln">ln</option>
+            <option value="\log">log</option>
+            <option value="\log_{e}">log e</option>
+            <option value="\log_{10}">log 10</option>
+        </optgroup>
+        <optgroup label="Limits">
+            <option value="\lim">limit</option>
+            <option value="\liminf">liminf</option>
+            <option value="\limsup">limsup</option>
+            <option value="\max">maximum</option>
+            <option value="\min">minimum</option>
+            <option value="\infty">infinite</option> 			
+        </optgroup>  
+        <optgroup label="Operators">
+            <option value="\arg">arg</option>
+            <option value="\det">det</option>
+            <option value="\dim">dim</option>
+            <option value="\gcd">gcd</option>
+            <option value="\hom">hom</option>
+            <option value="\ker">ker</option>
+            <option value="\Pr">Pr</option>
+            <option value="\sup">sup</option> 
+        </optgroup> 
+      </select>
+    </div>
+    <div class="panel">
+      <input type="button" class="lightbluebutton" value="例子" title="不同主题的常用公式" />
+    </div> 
+
+  </div>
+</div>
+        
+<div class="toolbar_wrapper">
+  <div class="toolbar" style="z-index:22">
+    <div class="panel" id="panel14" style="height:23px">
+      <img src="./images/style.gif" width="52" height="139" border="0" title="Style" alt="Style Panel" usemap="#style_map" />
+      <map name="style_map" id="style_map">
+        <area shape="rect" alt="\boldsymbol{\alpha\beta\gamma123}" title="Math Bold Greek" coords="0,0,50,20" latex="\boldsymbol{}" />
+        <area shape="rect" alt="\mathbf{Abc123}" title="Math Bold" coords="0,23,50,43" latex="\mathbf{}" />
+        <area shape="rect" alt="\mathit{Abc123}" title="Math Italic" coords="0,46,50,66" latex="\mathit{}" />
+        <area shape="rect" alt="\mathrm{Abc123}" title="Math Roman" coords="0,69,50,89" latex="\mathrm{}" />
+        <area shape="rect" alt="\mathfrak{Abc123}" title="Math Fraktur" coords="0,92,50,112" latex="\mathfrak{}" />
+        <area shape="rect" alt="\mathbb{Abc123}" title="Math Blackboard" coords="0,115,50,135" latex="\mathbb{}" />
+        <!--
+        <area shape="rect" alt="\textup{Abc 123}" title="Text Upright" coords="53,0,103,20" latex="\textup{}" />
+        <area shape="rect" alt="\textbf{Abc 123}" title="Text Bold" coords="53,23,103,43" latex="\textbf{}" />
+        <area shape="rect" alt="\textit{Abc 123}" title="Text Italic" coords="53,46,103,66" latex="\textit{}" />
+        <area shape="rect" alt="\textrm{Abc 123}" title="Text Roman" coords="53,69,103,89" latex="\textrm{}" />
+        <area shape="rect" alt="\textsl{Abc 123}" title="Text Slanted" coords="53,92,103,112" latex="\textsl{}" />
+        <area shape="rect" alt="\texttt{Abc 123}" title="Text Typewriter" coords="53,115,103,135" latex="\texttt{}" />
+        <area shape="rect" alt="\textsc{Abc 123}" title="Text Small Caps" coords="53,138,103,158" latex="\textsc{}" />
+        <area shape="rect" alt="\emph{Abc 123}" title="Text Emphasis" coords="53,161,103,181" latex="\emph{}" />
+        -->
+      </map>
+    </div>
+    <div class="panel" id="panel13" style="height:34px">
+      <img src="./images/spaces.gif" width="31" height="68" border="0" title="Spaces" alt="Spaces Panel" usemap="#spaces_map" />
+      <map name="spaces_map" id="spaces_map">
+        <area shape="rect" alt="\square\underline{\,}\square" title="thin space" coords="0,0,28,14" latex="\," />
+        <area shape="rect" alt="\square\underline{\:}\square" title="medium space" coords="0,17,28,31" latex="\:" />
+        <area shape="rect" alt="\square\underline{\;}\square" title="thick space" coords="0,34,28,48" latex="\;" />
+        <area shape="rect" alt="\square\!\square" title="negative space" coords="0,51,28,65" latex="\!" />
+      </map>
+    </div>
+    <div class="panel" id="panel4" style="height:34px">
+      <img src="./images/binary.gif" width="68" height="238" border="0" title="Binary" alt="Binary Panel" usemap="#binary_map" />
+      <map name="binary_map" id="binary_map">
+        <area shape="rect" latex="\pm" coords="0,0,14,14"/>
+        <area shape="rect" latex="\mp" coords="0,17,14,31"/>
+        <area shape="rect" latex="\times" coords="0,34,14,48"/>
+        <area shape="rect" latex="\ast" coords="0,51,14,65"/>
+        <area shape="rect" latex="\div" coords="0,68,14,82"/>
+        <area shape="rect" latex="\setminus" coords="0,85,14,99"/>
+        <area shape="rect" latex="\dotplus" coords="0,102,14,116"/>
+        <area shape="rect" latex="\amalg" coords="0,119,14,133"/>
+        <area shape="rect" latex="\dagger" coords="0,136,14,150"/>
+        <area shape="rect" latex="\ddagger" coords="0,153,14,167"/>
+        <area shape="rect" latex="\wr" coords="0,170,14,184"/>
+        <area shape="rect" latex="\diamond" coords="0,187,14,201"/>
+        <area shape="rect" latex="\circledcirc" coords="0,204,14,218"/>
+        <area shape="rect" latex="\circledast" coords="0,221,14,235"/>
+        <area shape="rect" latex="\cap" coords="17,0,31,14"/>
+        <area shape="rect" latex="\Cap" coords="17,17,31,31"/>
+        <area shape="rect" latex="\sqcap" coords="17,34,31,48"/>
+        <area shape="rect" latex="\wedge" coords="17,51,31,65"/>
+        <area shape="rect" latex="\barwedge" coords="17,68,31,82"/>
+        <area shape="rect" latex="\triangleleft" coords="17,85,31,99"/>
+        <area shape="rect" latex="\lozenge" coords="17,102,31,116"/>
+        <area shape="rect" latex="\circ" coords="17,119,31,133"/>
+        <area shape="rect" latex="\square" coords="17,136,31,150"/>
+        <area shape="rect" latex="\triangle" coords="17,153,31,167"/>
+        <area shape="rect" latex="\triangledown" coords="17,170,31,184"/>
+        <area shape="rect" latex="\ominus" coords="17,187,31,201"/>
+        <area shape="rect" latex="\oslash" coords="17,204,31,218"/>
+        <area shape="rect" latex="\circleddash" coords="17,221,31,235"/>
+        <area shape="rect" latex="\cup" coords="34,0,48,14"/>
+        <area shape="rect" latex="\Cup" coords="34,17,48,31"/>
+        <area shape="rect" latex="\sqcup" coords="34,34,48,48"/>
+        <area shape="rect" latex="\vee" coords="34,51,48,65"/>
+        <area shape="rect" latex="\veebar" coords="34,68,48,82"/>
+        <area shape="rect" latex="\triangleright" coords="34,85,48,99"/>
+        <area shape="rect" latex="\blacklozenge" coords="34,102,48,116"/>
+        <area shape="rect" latex="\bullet" coords="34,119,48,133"/>
+        <area shape="rect" latex="\blacksquare" coords="34,136,48,150"/>
+        <area shape="rect" latex="\blacktriangle" coords="34,153,48,167"/>
+        <area shape="rect" latex="\blacktriangledown" coords="34,170,48,184"/>
+        <area shape="rect" latex="\oplus" coords="34,187,48,201"/>
+        <area shape="rect" latex="\otimes" coords="34,204,48,218"/>
+        <area shape="rect" latex="\odot" coords="34,221,48,235"/>
+        <area shape="rect" latex="\cdot" coords="51,0,65,14"/>
+        <area shape="rect" latex="\uplus" coords="51,17,65,31"/>
+        <area shape="rect" latex="\bigsqcup" coords="51,34,65,48"/>
+        <area shape="rect" latex="\bigtriangleup" coords="51,51,65,65"/>
+        <area shape="rect" latex="\bigtriangledown" coords="51,68,65,82"/>
+        <area shape="rect" latex="\star" coords="51,85,65,99"/>
+        <area shape="rect" latex="\bigstar" coords="51,102,65,116"/>
+        <area shape="rect" latex="\bigcirc" coords="51,119,65,133"/>
+        <area shape="rect" latex="\bigoplus" coords="51,136,65,150"/>
+        <area shape="rect" latex="\bigotimes" coords="51,153,65,167"/>
+        <area shape="rect" latex="\bigodot" coords="51,170,65,184"/>
+      </map>
+    </div>
+    <div class="panel" id="panel16" style="height:34px">
+      <img src="./images/symbols.gif" width="68" height="136" border="0" title="Symbols" alt="Symbols Panel" usemap="#symbols_map" />
+      <map name="symbols_map" id="symbols_map">
+        <area shape="rect" latex="\therefore" title="therefore" coords="0,0,14,14"/>
+        <area shape="rect" latex="\because" title="because" coords="0,17,14,31"/>
+        <area shape="rect" latex="\cdots" title="horizontal dots" coords="0,34,14,48"/>
+        <area shape="rect" latex="\ddots" title="diagonal dots" coords="0,51,14,65"/>
+        <area shape="rect" latex="\vdots" title="vertical dots" coords="0,68,14,82"/>
+        <area shape="rect" latex="\S" title="section" coords="0,85,14,99"/>
+        <area shape="rect" latex="\P" title="paragraph" coords="0,102,14,116"/>
+        <area shape="rect" latex="\copyright" title="copyright" coords="0,119,14,133"/>
+        <area shape="rect" latex="\partial" title="partial" coords="17,0,31,14"/>
+        <area shape="rect" latex="\imath" coords="17,17,31,31"/>
+        <area shape="rect" latex="\jmath" coords="17,34,31,48"/>
+        <area shape="rect" latex="\Re" title="real" coords="17,51,31,65"/>
+        <area shape="rect" latex="\Im" title="imaginary" coords="17,68,31,82"/>
+        <area shape="rect" latex="\forall" coords="17,85,31,99"/>
+        <area shape="rect" latex="\exists" coords="17,102,31,116"/>
+        <area shape="rect" latex="\top" coords="17,119,31,133"/>
+        <area shape="rect" latex="\mathbb{P}" title="prime" coords="34,0,48,14"/>
+        <area shape="rect" latex="\mathbb{N}" title="natural" coords="34,17,48,31"/>
+        <area shape="rect" latex="\mathbb{Z}" title="integers" coords="34,34,48,48"/>
+        <area shape="rect" latex="\mathbb{I}" title="irrational" coords="34,51,48,65"/>
+        <area shape="rect" latex="\mathbb{Q}" title="rational" coords="34,68,48,82"/>
+        <area shape="rect" latex="\mathbb{R}" title="real" coords="34,85,48,99"/>
+        <area shape="rect" latex="\mathbb{C}" title="complex" coords="34,102,48,116"/>
+        <area shape="rect" latex="\angle" coords="51,0,65,14"/>
+        <area shape="rect" latex="\measuredangle" coords="51,17,65,31"/>
+        <area shape="rect" latex="\sphericalangle" coords="51,34,65,48"/>
+        <area shape="rect" latex="\varnothing" coords="51,51,65,65"/>
+        <area shape="rect" latex="\infty" coords="51,68,65,82"/>
+        <area shape="rect" latex="\mho" coords="51,85,65,99"/>
+        <area shape="rect" latex="\wp" coords="51,102,65,116"/>
+      </map>
+    </div>
+    <div class="panel" id="panel6" style="height:34px">
+      <img src="./images/foreign.gif" width="34" height="136" border="0" title="Foreign" alt="Foreign Panel" usemap="#foreign_map" />
+      <map name="foreign_map" id="foreign_map">
+        <area shape="rect" latex="\aa" coords="0,0,14,14"/>
+        <area shape="rect" latex="\ae" coords="0,17,14,31"/>
+        <area shape="rect" latex="\l" coords="0,34,14,48"/>
+        <area shape="rect" latex="\o" coords="0,51,14,65"/>
+        <area shape="rect" latex="\oe" coords="0,68,14,82"/>
+        <area shape="rect" latex="\ss" coords="0,85,14,99"/>
+        <area shape="rect" latex="\$" title="Dollar" coords="0,102,14,116"/>
+        <area shape="rect" latex="\cent" title="Cent" coords="0,119,14,133"/>
+        <area shape="rect" latex="\AA" coords="17,0,31,14"/>
+        <area shape="rect" latex="\AE" coords="17,17,31,31"/>
+        <area shape="rect" latex="\L" coords="17,34,31,48"/>
+        <area shape="rect" latex="\O" coords="17,51,31,65"/>
+        <area shape="rect" latex="\OE" coords="17,68,31,82"/>
+        <area shape="rect" latex="\SS" coords="17,85,31,99"/>
+        <area shape="rect" latex="\pounds" title="Pound" coords="17,102,31,116"/>
+        <area shape="rect" latex="\euro" title="Euro" coords="17,119,31,133"/>
+      </map>
+    </div>
+    <div class="panel" id="panel15" style="height:34px">
+      <img src="./images/subsupset.gif" width="34" height="153" border="0" title="Subsupset" alt="Subsupset Panel" usemap="#subsupset_map" />
+      <map name="subsupset_map" id="subsupset_map">
+        <area shape="rect" latex="\sqsubset" coords="0,0,14,14"/>
+        <area shape="rect" latex="\sqsubseteq" coords="0,17,14,31"/>
+        <area shape="rect" latex="\subset" coords="0,34,14,48"/>
+        <area shape="rect" latex="\subseteq" coords="0,51,14,65"/>
+        <area shape="rect" latex="\nsubseteq" coords="0,68,14,82"/>
+        <area shape="rect" latex="\subseteqq" coords="0,85,14,99"/>
+        <area shape="rect" latex="\nsubseteq" coords="0,102,14,116"/>
+        <area shape="rect" latex="\in" coords="0,119,14,133"/>
+        <area shape="rect" latex="\notin" coords="0,136,14,150"/>
+        <area shape="rect" latex="\sqsupset" coords="17,0,31,14"/>
+        <area shape="rect" latex="\sqsupseteq" coords="17,17,31,31"/>
+        <area shape="rect" latex="\supset" coords="17,34,31,48"/>
+        <area shape="rect" latex="\supseteq" coords="17,51,31,65"/>
+        <area shape="rect" latex="\nsupseteq" coords="17,68,31,82"/>
+        <area shape="rect" latex="\supseteqq" coords="17,85,31,99"/>
+        <area shape="rect" latex="\nsupseteqq" coords="17,102,31,116"/>
+        <area shape="rect" latex="\ni" coords="17,119,31,133"/>
+      </map>
+    </div>
+    <div class="panel" id="panel1" style="height:34px">
+      <img src="./images/accents.gif" width="34" height="119" border="0" title="Accents" alt="Accents Panel" usemap="#accents_map" />
+      <map name="accents_map" id="accents_map">
+        <area shape="rect" alt="a'" coords="0,0,14,14" latex="{}'" />
+        <area shape="rect" alt="\dot{a}" coords="0,17,14,31" latex="\dot{}" />
+        <area shape="rect" alt="\hat{a}" coords="0,34,14,48" latex="\hat{}" />
+        <area shape="rect" alt="\grave{a}" coords="0,51,14,65" latex="\grave{}" />
+        <area shape="rect" alt="\tilde{a}" coords="0,68,14,82" latex="\tilde{}" />
+        <area shape="rect" alt="\bar{a}" coords="0,85,14,99" latex="\bar{}" />
+        <area shape="rect" alt="\not{a}" coords="0,102,14,116" latex="\not{a}" />
+        <area shape="rect" alt="a''" coords="17,0,31,14" latex="{}''" />
+        <area shape="rect" alt="\ddot{a}" coords="17,17,31,31" latex="\ddot{}" />
+        <area shape="rect" alt="\check{a}" coords="17,34,31,48" latex="\check{}" />
+        <area shape="rect" alt="\acute{a}" coords="17,51,31,65" latex="\acute{}" />
+        <area shape="rect" alt="\breve{a}" coords="17,68,31,82" latex="\breve{}" />
+        <area shape="rect" alt="\vec{a}" coords="17,85,31,99" latex="\vec{}" />
+        <area shape="rect" alt="a^{\circ}" title="degrees" coords="17,102,31,116" latex="^{\\circ}" />
+      </map>
+    </div>
+    <div class="panel" id="panel2" style="height:34px">
+    <img src="./images/accents_ext.gif" width="25" height="170" border="0" title="Accents_ext" alt="Accents_ext Panel" usemap="#accents_ext_map" />
+    <map name="accents_ext_map" id="accents_ext_map">
+      <area shape="rect" alt="\widetilde{abc}" coords="0,0,22,14" latex="\widetilde{}" />
+      <area shape="rect" alt="\widehat{abc}" coords="0,17,22,31" latex="\widehat{}" />
+      <area shape="rect" alt="\overleftarrow{abc}" coords="0,34,22,48" latex="\overleftarrow{}" />
+      <area shape="rect" alt="\overrightarrow{abc}" coords="0,51,22,65" latex="\overrightarrow{}" />
+      <area shape="rect" alt="\overline{abc}" coords="0,68,22,82" latex="\overline{}" />
+      <area shape="rect" alt="\underline{abc}" coords="0,85,22,99" latex="\underline{}" />
+      <area shape="rect" alt="\overbrace{abc}" coords="0,102,22,116" latex="\overbrace{}" />
+      <area shape="rect" alt="\underbrace{abc}" coords="0,119,22,133" latex="\underbrace{}" />
+      <area shape="rect" alt="\overset{a}{abc}" coords="0,136,22,150" latex="\overset{}{}" />
+      <area shape="rect" alt="\underset{a}{abc}" coords="0,153,22,167" latex="\underset{}{}" />
+    </map>
+    </div>
+    <div class="panel" id="panel3" style="height:34px">
+    <img src="./images/arrows.gif" width="56" height="170" border="0" title="Arrows" alt="Arrows Panel" usemap="#arrows_map" />
+    <map name="arrows_map" id="arrows_map">
+      <area shape="rect" alt="x \mapsto x^2" title="\mapsto" coords="0,0,25,14" latex="\mapsto"/>
+      <area shape="rect" alt="\leftarrow" coords="0,17,25,31" latex="\leftarrow"/>
+      <area shape="rect" alt="\Leftarrow" coords="0,34,25,48" latex="\Leftarrow"/>
+      <area shape="rect" alt="\leftrightarrow" coords="0,51,25,65" latex="\leftrightarrow"/>
+      <area shape="rect" alt="\leftharpoonup" coords="0,68,25,82" latex="\leftharpoonup"/>
+      <area shape="rect" alt="\leftharpoondown" coords="0,85,25,99" latex="\leftharpoondown"/>
+      <area shape="rect" alt="\leftrightharpoons" coords="0,102,25,116" latex="\leftrightharpoons"/>
+      <area shape="rect" alt="\xleftarrow[text]{long}" coords="0,119,25,133" latex="\xleftarrow[]{}" />
+      <area shape="rect" alt="\overset{a}{\leftarrow}" coords="0,136,25,150" latex="\overset{}{\leftarrow}" />
+      <area shape="rect" alt="\underset{a}{\leftarrow}" coords="0,153,25,167" latex="\underset{}{\leftarrow}" />
+      <area shape="rect" alt="n \to" coords="28,0,53,14" latex="\to"/>
+      <area shape="rect" alt="\rightarrow" coords="28,17,53,31" latex="\rightarrow"/>
+      <area shape="rect" alt="\Rightarrow" coords="28,34,53,48" latex="\Rightarrow"/>
+      <area shape="rect" alt="\Leftrightarrow" coords="28,51,53,65" latex="\Leftrightarrow"/>
+      <area shape="rect" alt="\rightharpoonup" coords="28,68,53,82" latex="\rightharpoonup"/>
+      <area shape="rect" alt="\rightharpoondown" coords="28,85,53,99" latex="\rightharpoondown"/>
+      <area shape="rect" alt="\rightleftharpoons" coords="28,102,53,116" latex="\rightleftharpoons"/>
+      <area shape="rect" alt="\xrightarrow[text]{long}" coords="28,119,53,133" latex="\xrightarrow[]{}" />
+      <area shape="rect" alt="\overset{a}{\rightarrow}" coords="28,136,53,150" latex="\overset{}{\rightarrow}" />
+      <area shape="rect" alt="\underset{a}{\rightarrow}" coords="28,153,53,167" latex="\underset{}{\rightarrow}" />
+    </map>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar_wrapper">
+  <div class="toolbar" style="z-index:21">
+    <div class="panel" id="panel11" style="height:28px">
+    <img src="./images/operators.gif" width="168" height="140" border="0" title="Operators" alt="Operators Panel" usemap="#operators_map" />
+    <map name="operators_map" id="operators_map">
+      <area shape="rect" alt="x^a" title="superscript" coords="0,0,25,25" latex="^{}" />
+      <area shape="rect" alt="x_a" title="subscript" coords="0,28,25,53" latex="_{}" />
+      <area shape="rect" alt="x_a^b" coords="0,56,25,81" latex="'_{}^{}" />
+      <area shape="rect" alt="{x_a}^b" coords="0,84,25,109" latex="'{_{}}^{}" />
+      <area shape="rect" alt="_a^{b}\textrm{C}" title="_{a}^{b}\textrm{C}" coords="0,112,25,137" latex="_{}^{}\textrm{}" />
+      <area shape="rect" alt="\frac{a}{b}" title="fraction" coords="28,0,53,25" latex="\frac{}{}" />
+      <area shape="rect" alt="x\tfrac{a}{b}" title="tiny fraction" coords="28,28,53,53" latex="\tfrac{}{}" />
+      <area shape="rect" alt="\frac{\partial }{\partial x}" coords="28,56,53,81" latex="\frac{\partial }{\partial x}" />
+      <area shape="rect" alt="\frac{\partial^2 }{\partial x^2}" coords="28,84,53,109" latex="\frac{\partial^2 }{\partial x^2}" />
+      <area shape="rect" alt="\frac{\mathrm{d} }{\mathrm{d} x}" coords="28,112,53,137" latex="\frac{\mathrm{d} }{\mathrm{d} x}" />
+      <area shape="rect" alt="\int" coords="56,0,81,25" latex="\int "/>
+      <area shape="rect" alt="\int_a^b" title="\int_{}^{}" coords="56,28,81,53" latex="\int_{}^{}" />
+      <area shape="rect" alt="\oint" coords="56,56,81,81" latex="\oint " />
+      <area shape="rect" alt="\oint_a^b" title="\oint_{}^{}" coords="56,84,81,109" latex="\oint_{}^{}" />
+      <area shape="rect" alt="\iint_a^b" title="\iint_{}^{}" coords="56,112,81,137" latex="\iint_{}^{}" />
+      <area shape="rect" alt="\bigcap" coords="84,0,109,25" latex="\bigcap" />
+      <area shape="rect" alt="\bigcap_a^b" title="\bigcap_{}^{}" coords="84,28,109,53" latex="\bigcap_{}^{}" />
+      <area shape="rect" alt="\bigcup" coords="84,56,109,81" latex="\bigcup " />
+      <area shape="rect" alt="\bigcup_a^b" title="\bigcup_{}^{}" coords="84,84,109,109" latex="\bigcup_{}^{}" />
+      <area shape="rect" alt="\displaystyle \lim_{x \to 0}" title="\lim_{x \to 0}" coords="84,112,109,137" latex="\lim_{}" />
+      <area shape="rect" alt="\sum" coords="112,0,137,25" latex="\sum "/>
+      <area shape="rect" alt="\sum_a^b" title="\sum_{}^{}" coords="112,28,137,53" latex="\sum_{}^{}" />
+      <area shape="rect" alt="\sqrt{x}" title="\sqrt{}" coords="112,56,137,81" latex="\sqrt{}" />
+      <area shape="rect" alt="\sqrt[n]{x}" title="\sqrt[]{}" coords="112,84,137,109" latex="\sqrt[]{}" />
+      <area shape="rect" alt="\prod" coords="140,0,165,25" latex="\prod "/>
+      <area shape="rect" alt="\prod_a^b" title="\prod_{}^{}" coords="140,28,165,53" latex="\prod_{}^{}" />
+      <area shape="rect" alt="\coprod" coords="140,56,165,81" latex="\coprod "/>
+      <area shape="rect" alt="\coprod_a^b" title="\coprod_{}^{}" coords="140,84,165,109" latex="\coprod_{}^{}" />
+    </map>
+    </div>
+    <div class="panel" id="panel5" style="height:28px">
+      <img src="./images/brackets.gif" width="56" height="140" border="0" title="Brackets" alt="Brackets Panel" usemap="#brackets_map" />
+      <map name="brackets_map" id="brackets_map">
+        <area shape="rect" alt="\left (\: \right )" title="\left ( \right )" coords="0,0,25,25" latex="\left (  \right )" />
+        <area shape="rect" alt="\left [\: \right ]" title="\left ( \right )" coords="0,28,25,53" latex="\left [  \right ]" />
+        <area shape="rect" alt="\left\{\: \right\}" title="\left\{ \right\}" coords="0,56,25,81" latex="\left \{  \right \}" />
+        <area shape="rect" alt="\left |\: \right |" title="\left | \right |" coords="0,84,25,109" latex="\left |  \right |" />
+        <area shape="rect" alt="\left \{ \cdots \right." title="\left \{ \right." coords="0,112,25,137" latex="\left \{  \right." />
+        <area shape="rect" alt="\left \|\: \right \|" title="\left \| \right \|" coords="28,0,53,25" latex="\left \|  \right \|" />
+        <area shape="rect" alt="\left \langle \: \right \rangle" title="\left \langle \right \rangle" coords="28,28,53,53" latex="\left \langle  \right \rangle" />
+        <area shape="rect" alt="\left \lfloor \: \right \rfloor" title="\left \lfloor \right \rfloor" coords="28,56,53,81" latex="\left \lfloor  \right \rfloor" />
+        <area shape="rect" alt="\left \lceil \: \right \rceil" title="\left \lceil \right \rceil" coords="28,84,53,109" latex="\left \lceil  \right \rceil" />
+        <area shape="rect" alt="\left. \cdots \right \}" title="\left. \right \}" coords="28,112,53,137" latex="\left.  \right \}" />
+      </map>
+    </div>
+    <div class="panel" id="panel8" style="height:34px">
+      <img src="./images/greeklower.gif" width="68" height="136" border="0" title="Greeklower" alt="Greeklower Panel" usemap="#greeklower_map" />
+      <map name="greeklower_map" id="greeklower_map">
+        <area shape="rect" alt="\alpha" coords="0,0,14,14" latex="\alpha"/>
+        <area shape="rect" alt="\epsilon" coords="0,17,14,31" latex="\epsilon"/>
+        <area shape="rect" alt="\theta" coords="0,34,14,48" latex="\theta"/>
+        <area shape="rect" alt="\lambda" coords="0,51,14,65" latex="\lambda" />
+        <area shape="rect" alt="\pi" coords="0,68,14,82" latex="\pi"/>
+        <area shape="rect" alt="\sigma" coords="0,85,14,99" latex="\sigma"/>
+        <area shape="rect" alt="\phi" coords="0,102,14,116" latex="\phi"/>
+        <area shape="rect" alt="\omega" coords="0,119,14,133" latex="\omega"/>
+        <area shape="rect" alt="\beta" coords="17,0,31,14" latex="\beta"/>
+        <area shape="rect" alt="\varepsilon" coords="17,17,31,31" latex="\varepsilon"/>
+        <area shape="rect" alt="\vartheta" coords="17,34,31,48" latex="\vartheta"/>
+        <area shape="rect" alt="\mu" coords="17,51,31,65" latex="\mu" />
+        <area shape="rect" alt="\varpi" coords="17,68,31,82" latex="\varpi"/>
+        <area shape="rect" alt="\varsigma" coords="17,85,31,99" latex="\varsigma"/>
+        <area shape="rect" alt="\varphi" coords="17,102,31,116" latex="\varphi"/>
+        <area shape="rect" alt="\gamma" coords="34,0,48,14" latex="\gamma"/>
+        <area shape="rect" alt="\zeta" coords="34,17,48,31" latex="\zeta"/>
+        <area shape="rect" alt="\iota" coords="34,34,48,48" latex="\iota"/>
+        <area shape="rect" alt="\nu" coords="34,51,48,65" latex="\nu"/>
+        <area shape="rect" alt="\rho" coords="34,68,48,82" latex="\rho"/>
+        <area shape="rect" alt="\tau" coords="34,85,48,99" latex="\tau"/>
+        <area shape="rect" alt="\chi" coords="34,102,48,116" latex="\chi"/>
+        <area shape="rect" alt="\delta" coords="51,0,65,14" latex="\delta"/>
+        <area shape="rect" alt="\eta" coords="51,17,65,31" latex="\eta"/>
+        <area shape="rect" alt="\kappa" coords="51,34,65,48" latex="\kappa"/>
+        <area shape="rect" alt="\xi" coords="51,51,65,65" latex="\xi"/>
+        <area shape="rect" alt="\varrho" coords="51,68,65,82" latex="\varrho"/>
+        <area shape="rect" alt="\upsilon" coords="51,85,65,99" latex="\upsilon"/>
+        <area shape="rect" alt="\psi" coords="51,102,65,116" latex="\psi"/>
+      </map>
+    </div>
+    <div class="panel" id="panel9" style="height:34px">
+      <img src="./images/greekupper.gif" width="34" height="102" border="0" title="Greekupper" alt="Greekupper Panel" usemap="#greekupper_map" />
+      <map name="greekupper_map" id="greekupper_map">
+        <area shape="rect" alt="\Gamma" coords="0,0,14,14" latex="\Gamma"/>
+        <area shape="rect" alt="\Theta" coords="0,17,14,31" latex="\Theta"/>
+        <area shape="rect" alt="\Xi" coords="0,34,14,48" latex="\Xi"/>
+        <area shape="rect" alt="\Sigma" coords="0,51,14,65" latex="\Sigma"/>
+        <area shape="rect" alt="\Phi" coords="0,68,14,82" latex="\Phi"/>
+        <area shape="rect" alt="\Omega" coords="0,85,14,99" latex="\Omega"/>
+        <area shape="rect" alt="\Delta" coords="17,0,31,14" latex="\Delta"/>
+        <area shape="rect" alt="\Lambda" coords="17,17,31,31" latex="\Lambda" />
+        <area shape="rect" alt="\Pi" coords="17,34,31,48" latex="\Pi"/>
+        <area shape="rect" alt="\Upsilon" coords="17,51,31,65" latex="\Upsilon"/>
+        <area shape="rect" alt="\Psi" coords="17,68,31,82" latex="\Psi"/>
+      </map>
+    </div>
+    <div class="panel" id="panel12" style="height:34px">
+      <img src="./images/relations.gif" width="51" height="221" border="0" title="Relations" alt="Relations Panel" usemap="#relations_map" />
+      <map name="relations_map" id="relations_map">
+        <area shape="rect" alt="&lt;" latex="&lt;" coords="0,0,14,14"/>
+        <area shape="rect" alt="\leq" latex="\leq" coords="0,17,14,31"/>
+        <area shape="rect" alt="\leqslant" latex="\leqslant" coords="0,34,14,48"/>
+        <area shape="rect" alt="\nless" latex="\nless" coords="0,51,14,65"/>
+        <area shape="rect" alt="\nleqslant" latex="\nleqslant" coords="0,68,14,82"/>
+        <area shape="rect" alt="\prec" latex="\prec" coords="0,85,14,99"/>
+        <area shape="rect" alt="\preceq" latex="\preceq" coords="0,102,14,116"/>
+        <area shape="rect" alt="\ll" latex="\ll" coords="0,119,14,133"/>
+        <area shape="rect" alt="\vdash" latex="\vdash" coords="0,136,14,150"/>
+        <area shape="rect" alt="\smile" latex="\smile" title="smile" coords="0,153,14,167"/>
+        <area shape="rect" alt="\models" latex="\models" coords="0,170,14,184"/>
+        <area shape="rect" alt="\mid" latex="\mid" coords="0,187,14,201"/>
+        <area shape="rect" alt="\bowtie" latex="\bowtie" coords="0,204,14,218"/>
+        <area shape="rect" alt="&gt;" latex="&gt;" coords="17,0,31,14"/>
+        <area shape="rect" alt="\geq" latex="\geq" coords="17,17,31,31"/>
+        <area shape="rect" alt="\geqslant" latex="\geqslant" coords="17,34,31,48"/>
+        <area shape="rect" alt="\ngtr" latex="\ngtr" coords="17,51,31,65"/>
+        <area shape="rect" alt="\ngeqslant" latex="\ngeqslant" coords="17,68,31,82"/>
+        <area shape="rect" alt="\succ" latex="\succ" coords="17,85,31,99"/>
+        <area shape="rect" alt="\succeq" latex="\succeq" coords="17,102,31,116"/>
+        <area shape="rect" alt="\gg" latex="\gg" coords="17,119,31,133"/>
+        <area shape="rect" alt="\dashv" latex="\dashv" coords="17,136,31,150"/>
+        <area shape="rect" alt="\frown" latex="\frown" title="frown" coords="17,153,31,167"/>
+        <area shape="rect" alt="\perp" latex="\perp" coords="17,170,31,184"/>
+        <area shape="rect" alt="\parallel" latex="\parallel" title="parallel" coords="17,187,31,201"/>
+        <area shape="rect" alt="\Join" latex="\Join" coords="17,204,31,218"/>
+        <area shape="rect" alt="=" latex="=" coords="34,0,48,14"/>
+        <area shape="rect" alt="\doteq" latex="\doteq" coords="34,17,48,31"/>
+        <area shape="rect" alt="\equiv" latex="\equiv" title="equivalent" coords="34,34,48,48"/>
+        <area shape="rect" alt="\neq" latex="\neq" coords="34,51,48,65"/>
+        <area shape="rect" alt="\not\equiv" latex="\not\equiv" title="not equivalent" coords="34,68,48,82"/>
+        <area shape="rect" alt="\overset{\underset{\mathrm{def}}{}}{=}" latex="\overset{\underset{\mathrm{def}}{}}{=}" title="define" coords="34,85,48,99"/>
+        <area shape="rect" alt="\sim" latex="\sim" coords="34,102,48,116"/>
+        <area shape="rect" alt="\approx" latex="\approx" coords="34,119,48,133"/>
+        <area shape="rect" alt="\simeq" latex="\simeq" coords="34,136,48,150"/>
+        <area shape="rect" alt="\cong" latex="\cong" coords="34,153,48,167"/>
+        <area shape="rect" alt="\asymp" latex="\asymp" coords="34,170,48,184"/>
+        <area shape="rect" alt="\propto" latex="\propto" title="proportional to" coords="34,187,48,201"/>
+      </map>
+    </div>
+    <div class="panel" id="panel10" style="height:34px">
+      <img src="./images/matrix.gif" width="102" height="170" border="0" title="Matrix" alt="Matrix Panel" usemap="#matrix_map" />
+      <map name="matrix_map" id="matrix_map">
+<area shape="rect" alt="\begin{matrix} \cdots \\ \cdots \\ \end{matrix}" title="\begin{matrix} ... \end{matrix}" coords="0,0,31,31" latex="\begin{matrix},\end{matrix}" pos="16" />
+<area shape="rect" alt="\begin{pmatrix} \cdots \\ \cdots \end{pmatrix}" title="\begin{pmatrix} ... \end{pmatrix}" coords="0,34,31,65" latex="\begin{pmatrix},\end{pmatrix}" pos="17"/>
+<area shape="rect" alt="\begin{vmatrix} \cdots \\ \cdots \end{vmatrix}" title="\begin{vmatrix} ... \end{vmatrix}" coords="0,68,31,99" latex="\begin{vmatrix},\end{vmatrix}" pos='17'/>
+<area shape="rect" alt="\begin{Vmatrix} \cdots \\ \cdots \end{Vmatrix}" title="\begin{Vmatrix} ... \end{Vmatrix}" coords="0,102,31,133" latex="\begin{Vmatrix},\end{Vmatrix}" pos='17' />
+<area shape="rect" alt="\left.\begin{matrix} \cdots \\ \cdots \end{matrix}\right|" title="\left.\begin{matrix}... \end{matrix}\right|" coords="0,136,31,167" latex="\left.\begin{matrix},\end{matrix}\right|" pos='22' />
+
+<area shape="rect" alt="\begin{bmatrix} \cdots \\ \cdots \end{bmatrix}" title="\being{bmatrix} ... \end{bmatrix}" coords="34,0,65,31" latex="\begin{bmatrix},\end{bmatrix}" pos='17' />
+<area shape="rect" alt="\bigl(\begin{smallmatrix} \cdots \\ \cdots \end{smallmatrix}\bigr)" title="\bigl(\begin{smallmatrix} ... \end{smallmatrix}\bigr)" coords="34,34,65,65" latex="\bigl(\begin{smallmatrix},\end{smallmatrix}\bigr)" pos='27' />
+<area shape="rect" alt="\begin{Bmatrix} \cdots \\ \cdots \end{Bmatrix}" title="\begin{Bmatrix} ... \end{Bmatrix}" coords="34,68,65,99" latex="\begin{Bmatrix},\end{Bmatrix}" pos="17" />
+<area shape="rect" alt="\left\{\begin{matrix} \cdots \\ \cdots \end{matrix}\right." title="\begin{Bmatrix} ... \end{matrix}" coords="34,102,65,133" latex="\left\{\begin{matrix},\end{matrix}\right." pos="23" />
+<area shape="rect" alt="\left.\begin{matrix}
+\cdots \\ 
+\cdots
+\end{matrix}\right\}" title="\begin{matrix} ... \end{Bmatrix}" coords="34,136,65,167" latex="\left.\begin{matrix},\end{matrix}\right\}" pos="22"/>
+
+<area shape="rect" alt=" \binom{n}{r}" coords="68,0,99,31" latex="\binom{}{}" />
+<area shape="rect" alt="\begin{cases}..,x= \\..,x=\end{cases}" title="\begin{cases} ... \end{cases}" coords="68,34,99,65" latex="\begin{cases},\end{cases}" pos="15" />
+<area shape="rect" alt="\begin{align*} y&amp;=\cdots \\ &amp;+\cdots \end{align*}" title="\begin{align} ... \end{align}" coords="68,68,99,99" latex="\begin{align*},\end{align*}" pos="16"/>
+      </map>
+    </div>
+  </div>
+</div>
+
+<div id="input">
+<div><br/><strong>在这里编写您的公式</strong>
+<input type="button" class="lightbluebutton" id="clear_text" value="清除" title="清除编辑器窗口"/></div>
+<textarea name="MathInput" id="MathInput"  onkeyup="Preview.Update()" cols="80" rows="8"></textarea>
+
+</div>
+
+<br/><br/><strong>效果预览：</strong>
+<div id="MathPreview" style="border:1px solid; padding: 3px 0px 3px 0px; width:95%; margin-top:5px"></div>
+<div id="MathBuffer" style="border:1px solid; padding: 3px 0px 3px 0px; width:50%; margin-top:5px; 
+visibility:hidden; position:absolute; top:0; left: 0"></div>
+
+<script>
+Preview.Init();
+</script>
+
+<br/><br/><strong>常见例子：</strong>(右键-&gt;<span style="color:blue">『数式显示形式』</span>-&gt;<span style="color:blue">『TeX命令』</span>)
+
+<TABLE width="100%">
+<tr><td colspan="3" align="center">数学</td></tr>
+<TR>    
+    <TD>\[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]</TD>
+    <TD>\[\frac{\partial y}{\partial x}\frac{d}{dx}c^n=nx^{n-1}\]</TD>
+    <td>\[x = a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \frac{1}{a_3 + a_4}}}\]</td>
+</TR>
+<TR>
+    <TD>\[\frac{n!}{r!(n-r)!}{^n}C_r \]</TD>
+    <td>\[\sum_{i=1}^{n}{(X_i - \overline{X})^2}\]</td>
+    <TD>\[X_1, \cdots,X_n \]</TD>
+</TR>
+<TR>
+    <TD>
+\begin{pmatrix}
+ 1 & 0 \\ 
+ 0 & 1
+ \end{pmatrix}
+    </TD>
+    <TD>
+\begin{pmatrix}
+ a_{11} & a_{12} & a_{13}\\ 
+ a_{21} & a_{22} & a_{23}\\ 
+ a_{31} & a_{32} & a_{33}
+ \end{pmatrix}
+    </TD>
+    <TD>
+\begin{pmatrix}
+ a_{11} & \cdots & a_{1n}\\ 
+ \vdots & \ddots & \vdots\\ 
+ a_{m1} & \cdots & a_{mn}
+ \end{pmatrix}
+    </TD>
+</TR>
+<TR>
+    <TD>\[\overrightarrow{AB}\]</TD>
+    <TD>\[\overleftrightarrow{AB}\]</TD>
+    <TD>\[\widehat{AB}\]</TD>
+</TR>
+
+<tr><td colspan="3" align="center">化学</td></tr>
+<TR>
+    <TD>\[2H_2 + O_2 \xrightarrow{n,m}2H_2O\]</TD>
+    <TD>\[A\underset{b}{\overset{a}{\longleftrightarrow}}B\]</TD>
+    <TD>\[A\underset{0^{\circ}C }{\overset{100^{\circ}C}{\rightleftarrows}}B\]</TD>
+</TR>
+
+<tr><td colspan="3" align="center">物理</td></tr>
+<TR>
+    <TD>\[\vec{F}=m \frac{d \vec{v}}{dt} + \vec{v}\frac{dm}{dt}\]</TD>
+    <TD>\[\oint \vec{F} \cdot d\vec{s}=0\]</TD>
+    <TD>\[\vec{F}_g=-F\frac{m_1 m_2}{r^2} \vec{e}_r\]</TD>
+</TR>
+<TR>
+    <TD>\[\psi (t)=\hat{\psi}e^{i(\omega t \pm \theta)}\]</TD>
+    <TD>\[\sum_i \hat{\psi_i} cos(\alpha_i \pm \omega t)\]</TD>
+    <TD></TD>
+</TR>
+</TABLE>
+
+</div>
+
+<div style="height:10px;"></div>
+</center>
+</body>
+</html>

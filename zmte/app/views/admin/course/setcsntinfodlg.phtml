@@ -1,0 +1,30 @@
+<div id="id_setcsntinfo_dlg" style="width:400px">
+<div class="cls_title"><?=$csnt_info['csnt_id'] ? '编辑' : '新增'?>培训课程授课人数类别<? if ($csnt_info['csnt_id']) echo('(ID:' . $csnt_info['csnt_id'] . ')'); ?></div>
+<table class="maintable" id="id_setcsntinfo_table" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="altbg1" width="40%">培训课程授课人数类别ID</td>
+    <td>
+      <input type="text" name="csnt_id" value="<?=$csnt_info['csnt_id']?>" class="cls_field txtbox" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="altbg1">培训课程授课人数类别名称</td>
+    <td>
+      <input type="text" name="csnt_name" value="<? Func::echo_s($csnt_info['csnt_name']); ?>" class="txtbox cls_field" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="altbg1">备注</td>
+    <td>
+      <textarea name="csnt_memo" class="cls_field" style="width:90%;height:100px;"><? Func::echo_s($csnt_info['csnt_memo']); ?></textarea>
+       <span style="color:#f00"></span>
+    </td>
+  </tr>
+</table>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="ajax_setCSNT(<?=$csnt_id?>, fnGetFormData('id_setcsntinfo_dlg'))">确定</button>
+<button type="button" onclick="fnCloseDialog('id_setcsntinfo_dlg')">取消</button>
+</div>
+</div>

@@ -1,0 +1,126 @@
+<?php if (!empty($clss_score_proportion['data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+    $data = $clss_score_proportion['data'];
+    $flash_data = $clss_score_proportion['flash_data'];
+	?>
+
+    <?php if ($flash_data) {?>
+            <div id="flash_container_clss_sp_<?=$t_subject_id?>"  class="cls_row indent_25"></div>
+
+            <script type="text/javascript">
+                $(function () {
+                   $('#flash_container_clss_sp_<?=$t_subject_id?>').highcharts({
+                   chart: {
+                       type: 'line',
+                       height: '400',
+                   },
+                   title: {
+                       text: ''
+                   },
+                   xAxis: {
+                	   title: {
+                    	 <?
+                    	 $text = array();
+                    	 $prev_score = 0;
+                    	 $names = array_keys($clss_score_proportion['proportion']);
+                    	 krsort($names);
+                    	 $scores = $clss_score_proportion['scores'];
+                    	 krsort($scores);
+                    	 $scores[count($scores) - 1] = 0;
+                    	 foreach ($scores as $k => $score)
+                    	 {
+                    	     $text[] = $names[$k] . "：{$score}-" . (isset($scores[$k-1]) ? $scores[$k-1] : end($clss_score_proportion['fields']));
+                    	 }
+                    	 ?>
+          				 text: '分数段[<?=implode('　', $text)?>]'
+          			   },
+                	   categories: eval("("+'<?php echo json_encode($clss_score_proportion['fields']); ?>'+")"),
+                       lineWidth: 1,
+                       labels: {
+                           rotation : -45,//坐标旋转角度 为0：表示横放置
+                           align : 'right'
+                       },
+                       tickmarkPlacement: 'on',
+                       <?
+                       $color = array('green', 'blue', 'FFFF00', 'FF0000');
+                       $i = count($clss_score_proportion['scores']) - 1;
+                       ?>
+                       plotLines:[
+                            <?foreach ($clss_score_proportion['scores'] as $k => $v) {?>
+                            {
+                             color:'<?=$color[$k]?>',            
+                             dashStyle:'longdashdot',
+                             value:'<?=($v / $clss_score_proportion['step_score'] - 1)?>',
+                             width:1
+                       		}
+                       		<?=($i != $k ? ',' : '')?>
+                       		<? }?>
+                       ]
+                   },
+                   yAxis: {
+                  	  title: {
+          				 text: '人数比例%'
+          			  },
+                      lineWidth: 0,
+                      gridLineWidth :1,//默认是0，即在图上没有纵轴间隔线  
+                      min: 0,
+                      maxPadding: 0
+                   },
+                   tooltip: {
+                      shared: true
+                   },
+                   legend: {
+                	   layout: 'vertical',
+                       align: 'right',
+                       verticalAlign: 'middle',
+                       borderWidth: 0
+                   },
+                   colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+                   series: eval("("+'<?php echo json_encode($flash_data); ?>'+")")
+                   });
+               });
+            </script>
+        <?php } ?>
+        
+        <p class="cls_row cls_row font12 indent_25">注：本图以<?=$clss_score_proportion['step_score']?>分为步长划定分数区间，每个左开右闭区间内人数比例标示于区间右端点，最低点数值代表的人数比例包含0分人数。</p>
+        <p class="cls_row">&nbsp;</p>
+        
+        <ul class="cls_row indent_25" style="font-size: 14px">
+            <li>年级总人数：<span><?=$data['grd_students']?>人</span></li>
+            <li>班级总人数：<span><?=$data['cls_students']?>人</span></li>
+            <?php 
+            $names = array_keys($clss_score_proportion['proportion']);
+            ?>
+            <?php foreach ($names as $k => $name) {?>
+            <li>班级在全校<?=$name?>人数：<span><?=intval($data['cls_num_' . $k])?>人</span></li>
+            <?php }?>
+        </ul>
+        
+        <?php 
+        $prev_rate = 0;
+        $text = array();
+        $end_name = end($names);
+        foreach ($clss_score_proportion['proportion'] as $name => $rate) 
+        {
+            if ($prev_rate && $end_name != $name)
+            {
+                $text[] = "前{$prev_rate}%-{$rate}%为{$name}";
+            }
+            else if ($prev_rate && $end_name == $name)
+            {
+                $text[] = "后" . (100 - $prev_rate) ."%为{$name}";
+            }
+            else
+            {
+                $text[] = "前{$rate}%为{$name}";
+            }
+       
+            $prev_rate = $rate;
+        }
+        ?>
+        <?php if ($text) {?>
+        <p class="cls_row">&nbsp;</p>
+        <p class="mokuai-text cls_row font12">&emsp;&emsp;注：定义学校<?=implode('，', $text)?>。</p>
+       <?php }?>
+<?php } ?>

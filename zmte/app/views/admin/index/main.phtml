@@ -1,0 +1,19 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+    <div class="space">
+        <div class="subtitle">系统信息</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr id="trNewversion" style="display:none;"><td colspan="2">---</td></tr>
+            <tr><td class="altbg1">服务器解译引擎:</td><td><?=$server['software']?></td></tr>
+            <tr><td class="altbg1">PHP版本</td><td><?=$server['phpver']?></td></tr>
+            <tr><td class="altbg1">MySQL版本</td><td><?=$server['mysqlver']?></td></tr>
+            <tr><td width="200" class="altbg1">服务器时间:</td><td><?=$server['time']?></td></tr>
+            <tr><td class="altbg1">文件上传:</td><td><?=$server['upfile']?></td></tr>
+            <tr><td class="altbg1">全局变量 register_globals:</td><td><?=$server['register_globals']?></td></tr>
+            <tr><td class="altbg1">安全模式 safe_mode:</td><td><?=$server['safe_mode']?></td></tr>
+            <tr><td class="altbg1">图形处理 GD Library:</td><td><?=$server['gd']?></td></tr>
+            <tr><td class="altbg1">内存占用:</td><td>{memory_usage}</td></tr>
+        </table>
+    </div>        
+</div>
+<?php $this->load->view('common/footer');?>

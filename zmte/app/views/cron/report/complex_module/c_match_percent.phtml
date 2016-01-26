@@ -1,0 +1,23 @@
+<?php if (!empty($c_match_percent)) {?>
+    <?php $match_percent = $c_match_percent;?>
+    <h3 class="cls_row pipei"><?=$g_sort?>&nbsp;<?=$parent_module_name?>： <span class="cr"><?php echo $match_percent['match_percent'];?>%</span></h3>
+    <?php if (isset($match_percent['data'])):?>
+        <?php $count_num = 1; ?>
+        <?php foreach ($match_percent['data'] as $keys=>$item): ?>
+            <table class="cls_row cls_table <?php if($count_num == 1){echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_match_percent"<?php else: ?>ref_title_id="table_match_percent"<?php endif; ?>>
+                <tr>
+                    <?php $count = count($item)-1;?>
+                    <?php $width = round(80/$count);?>
+                    <?php foreach ($item as $key=>$val):?>
+                        <?php if ($key == 0):?>
+                       	    <th class="w168" width="20%"><?php echo $val;?></th>
+                        <?php else:?>
+                            <th width="<?php echo $width;?>%" <?php if ( is_numeric($val)):?>style="background-color:#DBEDF7;color:#323a45;"<?php endif; ?>><?php echo  $val;?></th>
+                        <?php endif;?> 
+                    <?php endforeach;?>	    
+                </tr>
+            </table>
+            <?php $count_num++; ?>
+        <?php endforeach;?>
+    <?php endif;?>
+<?php } ?>

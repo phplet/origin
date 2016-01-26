@@ -1,0 +1,128 @@
+<?php 
+/**
+ * 技术合并报告页面头部
+ */
+?>
+<!doctype html>
+<html lang="en-US" style="word-spacing:8px;letter-spacing:1px;">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 页脚页眉信息 -->
+    <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+    <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+    <meta type="student_name" content=""/>
+    <meta type="exam_time" content="科技引领风尚，教育开拓未来！"/>
+    <title>评估报告(技术)</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    <?php static_global(array(
+                        'js/jquery/jquery.js',
+          ));
+    ?>
+<script type="text/javascript">
+    $(function () {
+        //全局设置,省得每个都写
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            },
+            credits: {
+                enabled: false  //右下角不显示LOGO
+            },
+            chart: {
+                animation:false //关闭全部动画,使其在pdf中可以渲染到
+            },
+            title:{
+                style:{
+                    color:"#333"
+                }
+            },
+            legend:{
+                itemStyle:{
+                    color:"#333"
+                }
+            },
+            plotOptions: {
+                series: {
+                    animation: false    //关闭全部动画,使其在pdf中可以渲染到
+                }
+            }
+        });
+    });
+</script>
+<style>
+hr{
+    border:none;
+    border-bottom: 1px dotted #ccc;
+}
+
+span.level{
+    width:40px;
+    height:40px;
+    display:inline-block;
+}
+span.level1{
+    background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level1.gif');
+}
+span.level2{
+    background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level2.gif');
+}
+span.level3{
+    background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level3.gif');
+}
+	
+span.contrast_level{
+	
+	width:32px;
+	height:15px;
+	display:inline-block;
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/contrast_level.png');
+}
+span.contrast_level1{
+	background-position:32px 0;
+}
+span.contrast_level2{
+	background-position:72px 0;
+} 
+span.contrast_level3{
+    background-position:111px 0;
+}
+span.contrast_level4{
+	background-position:150px 0;
+}
+span.contrast_level5{
+	background-position:0 0;
+}
+
+div.cls_sort{position:absolute; top:3px; left:72%; z-index:1000; width:15px; height:47px; background:url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/sort.png');}
+div.cls_up {background-position:0 0;}
+div.cls_down{background-position:-15px 0;}
+.cls_txt_left {text-align:left}
+
+<?
+// 注意，这里一定要为840px, 左、右边距为20mm
+$g_real_page_width = "840px";
+$g_real_page_height = 1283;
+$g_padding_left = "20mm";
+$g_padding_right = "20mm";
+?>
+.cls_root {
+    width:<?=$g_real_page_width?>;
+    padding-left:<?=$g_padding_left?>;
+    padding-right:<?=$g_padding_right?>;
+    /*background-color:#cccccc;*/
+}
+.font12 {font-size: 12px;}
+</style>
+</head>
+
+<body>
+<div class="ceping cls_root">
+    <h1 class="cls_row" style="color:#323a45;">技术测评<?=$is_contrast ? '对比' : ''?>报告</h1>
+    <p style="text-align:center;font-size:18px;margin-top:10px;color:#323a45;" class="cls_row"><?php echo $className; ?></p>
+    <p style="text-align:center;font-size:14px;margin-top:10px;color:#323a45;" class="cls_row">
+        <?php if (isset($exam_time_custom)):?>
+            <?php echo $exam_time_custom; ?>
+        <?php else: ?>
+            考试时间：<?php echo $startTime; ?>，<?php echo $examStartTime; ?>-<?php echo $examEndTime; ?>
+        <?php endif; ?>
+    </p>

@@ -1,0 +1,286 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<style type="text/css">
+.display_none {
+	display:none;
+}
+a.red{
+	color:red;
+}
+</style>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    试题难易度管理
+    <?php if ($priv_manage) {?>
+    <a class="menu a_update_global" style="color:blue;font-weight:bold;" ajax="<?=site_url('admin/relate_class/update_global_difficulty/')?>" href="###">一键更新试题难易度(动态)</a>
+    <a class="menu a_update_global" style="color:blue;font-weight:bold;" ajax="<?=site_url('admin/relate_class/recover_default_difficulty/')?>" href="###">一键恢复初始难易度</a>
+    <?php } ?>
+    <a class="menu" href="<?=site_url('admin/question/index/')?>">试题列表</a>
+
+<a style="float:right" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">查询</a>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+      	<?php if (!$search['from_question_list']) {?>
+        <th width="5%">试题ID</th>
+        <th width="10%">试题</td>
+        <th width="5%">题型</th>
+        <th width="5%">科目</th>
+        <?php } ?>
+      	<?php if (!$search['from_question_list']) {?>
+        <th width="5%">年级</th>
+        <th width="8%">分类</th>
+        <th width="8%">文理属性</th>
+        <th width="10%">难易度（动态）</th>
+        <th width="10%">难易度（默认）</th>
+        <th width="7%">录入人员</th>
+        <th width="35%">操作</th>
+        <?php } else {?>
+        <th width="10%">年级</th>
+        <th width="10%">分类</th>
+        <th width="10%">文理属性</th>
+        <th width="10%">难易度（动态）</th>
+        <th width="10%">难易度（默认）</th>
+        <th width="10%">录入人员</th>
+        <th width="32%">操作</th>
+        <?php } ?>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+      	<?php if (!$search['from_question_list']) {?>
+        <td><?php /*?><input type="checkbox" name="ids[]" value="<?=$val['id']?>"><?php */ ?><?=$val['ques_id']?></td>
+        <td title="双击展开" class="ques_title"><div class="line_18"><a href="<?=site_url('admin/question/preview/'.$val['ques_id'])?>" target="_blank" title="点击预览"><?=strip_tags($val['title'])?></a></div></td>
+        <td><?=$val['type']?></td>
+        <td><?=$val['subject_name']?></td>
+        <?php } ?>
+        <td><?=$val['grade_name']?></td>
+        <td><?=$val['class_name']?></td>
+        <td><?=$val['subject_type_name']?></td>
+        <td><?=$val['difficulty']?></td>
+        <td><?=$val['copy_difficulty']?></td>
+        <td><?=$val['admin_name']?></td>
+        <td>
+            <?php if ($val['has_edit_power']) {?>
+        	<?php if($val['is_parent']):?>
+            <a href="<?=site_url('admin/question/group/'.$val['ques_id'])?>">管理试题</a> |
+            <?php /*?><a href="<?=site_url('admin/question/edit_group/'.$val['ques_id'])?>">编辑试题</a> |<?php */?>
+            <?php else:?>
+            <a href="<?=site_url('admin/question/preview/'.$val['ques_id'])?>" target="_blank">预览试题</a> |
+            <?php /*?><a href="<?=site_url('admin/question/edit/'.$val['ques_id'])?>">编辑试题</a> |<?php */?>
+            <?php endif;?>
+			<?php if($priv_manage){?>
+        	<a class="red" href="<?php echo site_url('admin/relate_class/recover_difficulty/?id=' . $val['id']);?>" onclick="return confirm('您确定要恢复该条记录的默认难易度么？');">恢复默认难易度</a> |
+        	<a class="a_edit_difficulty red" rel="<?php echo $val['id'];?>" id="a_edit_difficulty_<?php echo $val['id'];?>" href="###">设置动态难易度</a>
+			<?}?>
+        	<div class="edit_difficulty_box display_none" id="edit_difficulty_box_<?php echo $val['id'];?>">
+        		<form class="form_edit_difficulty" rel="<?php echo $val['id'];?>" action="<?php echo site_url('admin/relate_class/update_difficulty/');?>" method="post">
+        			<input type="hidden" name="id" value="<?php echo $val['id'];?>"/>
+        			<input type="text" class="txtbox4" name="difficulty" id="txt_edit_difficulty_<?php echo $val['id'];?>" value="<?php echo $val['difficulty'];?>"/>
+        			<input type="submit" value="保存" class="btn" style="margin-top:4px;"/>
+        			<input type="button" rel="<?php echo $val['id'];?>" id="btn_cancle_<?php echo $val['id'];?>" value="取消" class="btn btn_cancle_difficulty" />
+        		</form>
+			</div>
+		<?php } ?>
+		</td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="<?php echo !$search['from_question_list'] ? '11' : '7';?>" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="<?php echo !$search['from_question_list'] ? '11' : '7';?>">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+
+<div id="id_qry_dlg" style="display:none">
+        <div class="cls_title">搜索</div>
+  <form method="get" name="search_form" id="search_form" action="<?=site_url('admin/relate_class/index/')?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">试题ID</td>
+                <td><input type="text" name="ques_id" value="<?php echo $search['ques_id'];?>" id="txt_ques_id" class="txtbox" /></td>
+            </tr>
+            <?php /*?>
+            <tr>
+                <td class="altbg1">年级</td>
+                <td>
+                	<select name="grade_id" id="select_grade_id">
+	                    <option value="0">--请选择--</option>
+	                    <?php foreach ($grades as $k=>$grade) {?>
+	                    <option value="<?php echo $k;?>" <?php echo $search['grade_id'] == $k ? 'selected="selected"' : '';?>><?php echo $grade;?></option>
+	                    <?php } ?>
+                  	</select>
+				</td>
+            </tr>
+            <?php */?>
+            <tr>
+                <td class="altbg1">难易度（动态）</td>
+                <td>
+                	<input type="text" class="txtbox4" name="difficulty_start" id="txt_difficulty_start" value="<?php echo $search['difficulty_start'];?>"/> -
+                	<input type="text" class="txtbox4" name="difficulty_end" id="txt_difficulty_end" value="<?php echo $search['difficulty_end'];?>"/>
+				</td>
+            </tr>
+            <tr>
+                <td class="altbg1">难易度（默认）</td>
+                <td>
+                	<input type="text" class="txtbox4" name="copy_difficulty_start" id="txt_copy_difficulty_start" value="<?php echo $search['copy_difficulty_start'];?>"/> -
+                	<input type="text" class="txtbox4" name="copy_difficulty_end" id="txt_copy_difficulty_end" value="<?php echo $search['copy_difficulty_end'];?>"/>
+				</td>
+            </tr>
+            <?php /*?>
+            <tr>
+                    <td class="altbg1">类型</td>
+                    <td>
+                      <div id="class_list">
+                        <?php foreach($class_list as $val):?>
+                        <input type="checkbox" name="class_id[]" id="class_id<?=$val['class_id']?>" value="<?=$val['class_id']?>" <?=in_array($val['class_id'],$search['class_id'])?' checked':''?>/><label for="class_id<?=$val['class_id']?>"><?=$val['class_name']?></label>
+                        <?php endforeach;?>
+                      </div>
+                    </td>
+            </tr>
+            <?php */?>
+            <?php /*?>
+            <tr>
+                    <td class="altbg1">文理科:</td>
+                    <td>
+                      <div id="class_list">
+                        <?php foreach(array_filter($subject_types) as $k=>$val):?>
+                        <input type="checkbox" class="subject_type <?=($search['subject_type'] != '' && $search['subject_type'] == $k) ? 'checked':''?>" name="subject_type" id="subject_type<?=$k?>" value="<?=$k?>" <?=($search['subject_type'] != '' && $search['subject_type'] == $k) ? 'checked':''?>/><label for="subject_type<?=$k?>"><?=$val?></label>
+                        <?php endforeach;?>
+                        <script>
+							$(document).ready(function () {
+									$('input.subject_type').click(function () {
+										var $thiz = $(this);
+										if ($thiz.hasClass('checked')) {
+											$thiz.removeAttr('checked').removeClass('checked');
+											return true;
+										}
+
+										$thiz.addClass('checked').attr('checked', true).siblings().attr('checked', false).removeClass('checked');
+									});
+							});
+                        </script>
+                      </div>
+                    </td>
+            </tr>
+            <?php */?>
+	    	<tr>
+                <td style="text-align:center" class="altbg1" colspan="2"><input type="submit" value=" 搜索 " class="btn" /> <input type="button" value="重置 " class="btn" onclick="window.location.href='/admin/relate_class/index/'"/></td>
+            </tr>
+        </table>
+    </div>
+  </form>
+</div>
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+
+<script>
+$(document).ready(function(){
+	//展开试题
+	$('.ques_title').dblclick(function(){
+	       $(this).find('div').toggleClass('line_18');
+	});
+
+	//设置难易度
+	$('a.a_edit_difficulty').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#edit_difficulty_box_' + _id),
+	       	   $input = $('#txt_edit_difficulty_' + _id);
+
+       	   $thiz.hide();
+       	   $box.show();
+       	   $input.focus();
+	});
+	$('input.btn_cancle_difficulty').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#edit_difficulty_box_' + _id),
+	       	   $a = $('#a_edit_difficulty_' + _id),
+	       	   $input = $('#txt_edit_difficulty_' + _id);
+
+       	   $box.hide();
+       	   $input.val('');
+       	   $a.fadeIn();
+	});
+
+	$('form.form_edit_difficulty').submit(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $input = $('#txt_edit_difficulty_' + _id),
+	       	   difficulty = parseInt($input.val()) || 0;
+
+       	   if (difficulty < 1 || difficulty > 100) {
+           	  	alert('请填写正确的难易度，难易度区间为 1-100.');
+              	$input.focus();
+           	   return false;
+       	   }
+	});
+
+    $("#search_form").submit(function(){
+       var $difficulty_start = $('#txt_difficulty_start'),
+       	   $difficulty_end = $('#txt_difficulty_end'),
+
+           $copy_difficulty_start = $('#txt_copy_difficulty_start'),
+     	   $copy_difficulty_end = $('#txt_copy_difficulty_end'),
+
+      	   difficulty_start = parseInt($difficulty_start.val()) || 0,
+           difficulty_end = parseInt($difficulty_end.val()) || 0,
+      	   copy_difficulty_start = parseInt($difficulty_start.val()) || 0,
+           copy_difficulty_end = parseInt($difficulty_end.val()) || 0;
+
+       if (difficulty_start > 0 && difficulty_end > 0 && difficulty_start > difficulty_end) {
+           alert('动态难易度 结束值 必须 大于 起始值.');
+           $difficulty_end.focus();
+           return false;
+       }
+
+       if (copy_difficulty_start > 0 && copy_difficulty_end > 0 && copy_difficulty_start > copy_difficulty_end) {
+           alert('默认难易度 结束值 必须 大于 起始值.');
+           $copy_difficulty_end.focus();
+           return false;
+       }
+
+       return true;
+    });
+
+    //一键更新难易度、一键恢复初始难易度
+    $('a.a_update_global').click(function(){
+        if (!confirm("您确定要操作么？\n可能会花1-5分钟时间")) {
+        	return false;
+		}
+
+	    var $thiz = $(this),
+	    	ajax_url = $thiz.attr('ajax');
+
+	    UtilTiper.message.doing('正在更新，请稍等...');
+	    $.ajax({
+			url : ajax_url,
+			dataType : 'json',
+			type : 'post',
+			data : {},
+			timeout : 60000,
+			error: function (a, b, c) {
+				UtilTiper.message.error('更新失败，请重试.');
+			},
+			success : function (response) {
+				var code = response.code,
+					msg	= response.msg;
+
+				UtilTiper.message.loaded();
+				alert(msg);
+				setTimeout(function () {window.location.reload();}, 1000);
+			}
+		})
+	});
+
+});
+
+</script>

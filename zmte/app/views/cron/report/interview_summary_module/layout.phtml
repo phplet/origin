@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8"/>
+        <!-- 页脚页眉信息 -->
+        <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+        <meta type="create_time" content="报告生成时间 <?php echo time(); ?>"/>
+        <meta type="student_name" content="<?php echo $student_name; ?>"/>
+        <title>面试总结</title>
+        <?php
+            static_global('css/app/report/ceping.css', 'css');
+            static_global(array(
+    						'js/jquery/jquery.js',
+                            'js/app/report/highcharts.js',
+                            'js/app/report/highcharts-more.js',
+            ));
+
+            /* 表格分页 */
+            $g_real_page_height = 1283;
+            echo $this->load->view('report/table_auto_pager', array('g_real_page_height' => $g_real_page_height, 'studentName' => $student_name, 'examName' => $examName), true);
+            /* 全局计数 */
+            $GLOBALS['counter'] = 1;
+
+            /* config */
+            $subject_names = C('subject');
+            $grades = C('grades');
+            $awards_levels = C('awards_level');
+            $awards_type = C('awards_type');
+        ?>
+    </head>
+    <body>
+        <div class="ceping cls_root">
+
+            <h1><?php echo $student_name; ?>&nbsp;&nbsp;面试总结报告</h1>
+            <?php
+/*                 if (count($template_module['module']) > 0) {
+                    $counter = 1;
+                    foreach ($template_module['module'] as $key => $module) {
+                        if (count($module['children']) > 0) {
+                            foreach ($module['children'] as $k => $v) {
+                                $this->load->view('report/interview_module/' . $v['module_code']);
+                            }
+                        }
+                    }
+                } */
+            ?>
+
+            <!-- 1.各科面试得分情况 -->
+            <h3><?php echo $GLOBALS['counter']++; ?>.各科面试得分情况</h3>
+            <?php if (count($total) > 0): ?>
+                <?php 
+                    $auto_key = 0;
+                    $sum_total = 0;
+                    $sum_scroe = 0;
+                    $sum_actual = 0;
+                 ?>
+                <table class="pingyu">
+                    <tr>
+                        <th>学科名</td>
+                        <th>总分</th>
+                        <th>权重(%)</td>
+                        <th>实际得分</td>
+                        <th>实际权重得分</th>
+                    </tr>
+                    <?php foreach ($total as $subject_id => $item) {?>
+                        <?php 
+                            $auto_key++;
+                            $sum_total += $item['option_score'];
+                            $sum_scroe += $item['score'];
+                            $sum_actual += $item['actual'];
+                        ?>
+                        <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                            <td><?php echo $subject_names[$subject_id]; ?></td>
+                            <td><?php echo $item['option_score'] ? $item['option_score'] : 0; ?></td>
+                            <td><?php echo $item['weight'] ? $item['weight'] : 0; ?>%</td>
+                            <td><?php echo $item['score'] ? $item['score'] : 0; ?></td>
+                            <td><?php echo $item['actual'] ? $item['actual'] : 0; ?></td>
+                        </tr>
+                    <?php } ?>
+                    <tr>
+                        <td>总计</td>
+                        <td><?php echo $sum_total; ?></td>
+                        <td>100%</td>
+                        <td><?php echo $sum_scroe; ?></td>
+                        <td><?php echo $sum_actual; ?></td>
+                    </tr>
+                </table>
+            <?php else: ?>
+                <p>暂无数据！</p>
+            <?php endif ?>
+            <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+            <?php if (count($level_name) > 0): ?>
+                <h4>恭喜：您在本次面试中的评定等级为<?php echo $level_name ?>。</h4>
+            <?php else: ?>
+                <p>暂无数据！</p>
+            <?php endif ?>
+            <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+            <!-- 2.睿达杯获奖情况 -->
+            <h3><?php echo $GLOBALS['counter']++; ?>.2014睿达杯获奖情况</h3>
+            <?php if (count($ruidabei_result) > 0): ?>
+                <table class="pingyu">
+                    <tr>
+                        <th>奖项</td>
+                        <th>得分</th>
+                        <th>排名</th>
+                        <th>学科</td>
+                        <th>年级</td>
+                    </tr>
+                    <?php 
+                        $auto_key = 0;
+                    ?>
+                    <?php foreach ($ruidabei_result as $key => $item) {?>
+                        <?php if (empty($item['awards'])) { continue;} ?>
+                        <?php $auto_key++; ?>
+                        <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                            <td><?php echo $item['awards'] ? $item['awards'] : '*' ; ?></td>
+                            <td><?php echo $item['score'] ? $item['score'] : '*' ; ?></td>
+                            <td><?php echo $item['ranks'] ? $item['ranks'] : '*' ; ?></td>
+                            <td><?php echo $item['subject'] ? $item['subject'] : '*' ; ?></td>
+                            <td><?php echo $item['grade'] ? $item['grade'] : '*' ; ?></td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            <?php else: ?>
+                <p>暂无数据！</p>
+            <?php endif ?>
+            <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+            <!-- 3.学习与竞赛成绩 -->
+            <h3><?php echo $GLOBALS['counter']++; ?>.学习与竞赛成绩</h3>
+            <br/><p>目前所在学校：<?php echo $school_name; ?></p>
+            <br/><h4>历届学习成绩</h4>
+            <?php if (count($ranking_result) > 0): ?>
+                <table class="pingyu">
+                    <tr>
+                        <th>年级</td>
+                        <th>排名</th>
+                        <th>总人数</td>
+                    </tr>
+                    <?php 
+                        $auto_key = 0;
+                    ?>
+                        <?php foreach ($ranking_result as $key => $item) {?>
+                            <?php 
+                                $auto_key++;
+                            ?>
+                            <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                                <td><?php echo $grades[$item['grade_id']]; ?></td>
+                                <td><?php echo $item['ranking']; ?></td>
+                                <td><?php echo $item['totalnum']; ?></td>
+                            </tr>
+                        <?php } ?>
+                </table>
+            <?php else: ?>
+                <p>暂无数据！</p>
+            <?php endif ?>
+            <!-- ++++++++++++++++++++++++++++++++++++++++++++++++ -->
+            <br/><h4>竞赛获奖</h4>
+            <?php if (count($awards_result) > 0): ?>
+                <table class="pingyu">
+                    <tr>
+                        <th>竞赛(培训)名称</th>
+                        <!-- <th>奖项</th>
+                        <th>学科</th>
+                        <th>年级</th> -->
+                        <th colspan="3" style="text-algin:center;">获奖详情</th>
+                    </tr>
+                    <?php 
+                        $auto_key = 0;
+                    ?>
+                        <?php foreach ($awards_result as $key => $item) {?>
+                            <?php $auto_key++; ?>
+                            <?php if($item['typeid'] > 0): ?>
+                                <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                                    <td><?php echo $awards_type[$item['typeid']]; ?></td>
+                                    <td><?php echo $awards_levels[1][$item['awards']]; ?></td>
+                                    <td><?php echo $subject_names[$item['subject']]; ?></td>
+                                    <td><?php echo $grades[$item['grade']]; ?></td>
+                                </tr>
+                            <?php else: ?>
+                                <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                                    <td><?php echo $item['other_name']; ?></td>
+                                    <td colspan="3" ><?php echo $item['other_desc']; ?></td>
+                                </tr>                        
+                            <?php endif;?>
+                        <?php } ?>
+                </table>
+            <?php else: ?>
+                <p>暂无数据！</p>
+            <?php endif ?>
+           <br/>
+           <p class="mokuai-text cls_row" style="font-size:12px;">（注：项目三资料来自考生面试报名时所提交内容，信息准确性由本人负责，睿达杯组委会不对此信息负责。）</p>
+        </div>
+    </body>
+</html>

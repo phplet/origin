@@ -1,0 +1,286 @@
+<?php $this->load->view('common/header');?>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+        tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] },
+    menuSettings: {
+    zoom: "Hover",        //  when to do MathZoom
+    CTRL: false,         //    require CTRL for MathZoom?
+    ALT: true,          //    require Alt or Option?
+    CMD: false,          //    require CMD?
+    Shift: false,        //    require Shift?
+    zscale: "200%",      //  the scaling factor for MathZoom
+    font: "Auto",        //  what font HTML-CSS should use
+    context: "MathJax",  //  or "Browser" for pass-through to browser menu
+    mpContext: false,    //  true means pass menu events to MathPlayer in IE
+    mpMouse: false,      //  true means pass mouse events to MathPlayer in IE
+    texHints: true       //  include class names for TeXAtom elements
+  }
+
+  });
+</script>
+
+<?php static_global('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML');?>
+
+<style>
+
+body,td {
+	margin: 0px;
+	font: 16px Cambria;
+	text-align: left;
+}
+
+</style>
+<div id="body">
+  <div class="space">
+    <div class="subtitle"><?=$qtype[$row['type']]?>预览<?php if ($priv_manage) {?> [<a href="<?=site_url('admin/question/edit/'.$row['ques_id'])?>">编辑</a>]<?php } ?></div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">试题分类</td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">学科</td>
+            <td width="30%">
+              <?=$row['subject_name']?>
+              <?php
+                  if ($row['subject_id'] == 11)
+                  {
+                      $subject = C('subject');
+                      $subject_ids = explode(',', $row['subject_id_str']);
+                      $subject_str = '';
+                      foreach ($subject_ids as $s_id)
+                      {
+                          if ($s_id)
+                          {
+                              $subject_str .= " $subject[$s_id]";
+                          }
+                      }
+
+                      echo "[" . $subject_str . "]";
+                  }
+              ?>
+            </td>
+            <td width="10%" class="altbg1">年级</td>
+            <td>[<?=$row['start_grade']?>] - [<?=$row['end_grade']?>]</td>
+        </tr>
+        <?php if($row['type'] == 7): ?>
+        <tr>
+            <td width="10%" class="altbg1">翻译类型</td>
+            <td colspan="3">
+                <?php if($row['translation'] == 1): ?>
+                <span>中译英</span>
+                <?php else: ?>
+                <span>英译中</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <tr>
+            <?php if ($row['skill'] != '') {?>
+            <td width="10%" class="altbg1">技能</td>
+            <td width="30%"><?=$row['skill']?></td>
+            <?php } ?>
+            <td width="10%" class="altbg1">知识点</td>
+            <td <?php echo $row['skill'] == '' ? 'colspan="3"' : '';?> ><?=$row['knowledge']?></td>
+        </tr>
+        <?php if ($row['count_subject_method_tactics']) {?>
+        <tr>
+            <td width="10%" class="altbg1">方法策略</td>
+            <td colspan="3">
+            	<?=$row['method_tactic']?>
+            </td>
+        </tr>
+        <?php } ?>
+        <tr>
+            <td width="10%" class="altbg1">类型</td>
+            <td colspan="3">
+                <?php foreach($class_names as $grade_id => $arr):?>
+                <?=$grades[$grade_id]?>:<?=implode(' , ', $arr)?><br/>
+                <?php endforeach;?>
+            </td>
+        </tr>
+        <?php if ($q_tag) {?>
+        <tr>
+            <td width="10%" class="altbg1">标签</td>
+            <td colspan="3">
+            	<?=$q_tag?>
+            </td>
+        </tr>
+        <?php }?>
+
+        <!-- =========================== 试题显示 ============================== -->
+        <tr>
+            <td width="10%" class="altbg1">试题ID</td>
+            <td colspan="3">
+            	<?=$row['ques_id']?>
+            </td>
+        </tr>
+
+        <tr>
+            <td width="10%" class="altbg1">题目类型(真题、原创、模拟题)</td>
+            <td colspan="3">
+                <?php if ($row['is_original'] == 1): ?>
+                    <span>原创</span>
+                <?php elseif($row['is_original'] == 2): ?>
+                    <span>真题</span>
+                           <?php elseif($row['is_original'] == 3): ?>
+                    <span>模拟题</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+
+        <?php if ($row['is_original'] == 2): ?>
+            <tr>
+                <td width="10%" class="altbg1">附加信息</td>
+                <td colspan="3">
+                    <?php if (isset($row['exam_year']) && $row['exam_year'] > 0): ?>
+                        <p>年份: <?php echo $row['exam_year']; ?>   </p><br/>
+                    <?php endif ?>
+                    <?php if (isset($row['remark']) && !empty($row['exam_year'])): ?>
+                        <p>备注: <?php echo $row['remark']; ?></p><br/>
+                    <?php endif ?>
+                    <?php if (isset($row['relateds']) && !empty($row['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($row['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php elseif ($row['is_original'] == 1): ?>
+            <tr>
+                <td width="10%" class="altbg1">附加信息</td>
+                <td colspan="3">
+                    <?php if (isset($row['related']) && !empty($row['related'])): ?>
+                        <p>真题路径: <a href="<?php echo site_url('admin/question/preview/' . $row['related']) ?>"><?php echo $row['related']; ?></a></p>
+                    <?php endif; ?>
+                    <p>&nbsp;</p>
+                    <?php if (isset($row['relateds']) && !empty($row['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($row['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+
+                <?php elseif ($row['is_original'] ==3): ?>
+          <tr>
+                <td width="10%" class="altbg1">附加信息</td>
+                <td colspan="3">
+                    <?php if (isset($row['simulation']) ): ?>
+                        <p>来源: <?php echo $row['simulation']; ?>   </p><br/>
+                    <?php endif ?>
+
+                    <?php if (isset($row['relateds']) && !empty($row['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($row['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+                试题内容
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <?php
+                    // 类型
+                    $qtype = C('qtype');
+                    if (isset($qtype[$row['type']]))
+                    {
+                        echo '[<font class="font_4">'.$qtype[$row['type']].'</font>]';
+                    }
+                    else
+                    {
+                        echo '[<font class="font_4">未知题型</font>]';
+                    }
+
+                    // 换行
+                    echo '<br/>';
+
+                    // 将填空位置替换为input
+                    if ($row['type'] == 3)
+                    {
+                        echo preg_replace('/（[\s\d|&nbsp;]*）/','<input type="text">',str_replace('&nbsp;', ' ', $row['title']));
+                    }
+                    else
+                    {
+                        echo str_replace('&nbsp;', ' ', $row['title']);
+                    }
+                ?>
+
+                <?php if($row['picture']):?>
+                  <br/>
+                  <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$row['picture']?>" /></div>
+                <?php endif;?>
+                <br/>
+                <?php
+                    // 答案
+                    if ($row['type'] == 3)
+                    {
+                        foreach ($row['answer'] as $k => $v)
+                        {
+                            $mod = $k%5;
+
+                            $html = $mod ? "" : "</p>";
+
+                            $html .= $mod ? "" : "<p style='float:left; width:100%;'>";
+
+                            $html .= '<span style="float:left; display:block; margin-right:10px;">' . (count($row['answer']) > 1 ? $k+1 . "." : '') . '<input type="text" value="'.$v.'"/></span>&emsp;';
+                            echo $html;
+                        }
+
+                        echo "</p>";
+                    }
+                    else
+                    {
+                        echo '<ul style="list-style:none;">';
+
+                        foreach ($options as $k => $v)
+                        {
+                            echo '<li>';
+
+                            if ($v['is_answer'])
+                            {
+                                echo '<input type="checkbox" checked="checked"/>';
+                            }
+                            else
+                            {
+                                echo '<input type="checkbox"/>';
+                            }
+
+                            echo '<label>'.$v['option_name'].'</label>';
+
+                            if($v['picture'])
+                            {
+                                echo '<img src="'.__IMG_ROOT_URL__.$v['picture'].'" />';
+                            }
+
+                            echo '</li>';
+                        }
+
+                        echo '</ul>';
+                    }
+
+                ?>
+            </td>
+        </tr>
+
+
+        <!-- =========================== end ============================== -->
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

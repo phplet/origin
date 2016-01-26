@@ -1,0 +1,31 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/region/update')?>">
+  <input type="hidden" name="region_id" value="<?=$region['region_id']?>">
+  <input type="hidden" name="parent_id" value="<?=$region['parent_id']?>">
+  <div class="space">
+    <div class="subtitle">编辑地区名称</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">地区名称</td>        
+        <td>
+            <input type="text" id="region_name" name="region_name" class="txtbox" value="<?=$region['region_name']?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否显示</td>        
+        <td>
+            <?php echo form_checkbox('status', '1', $region['status']);?>
+            是否在下拉菜单中显示
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

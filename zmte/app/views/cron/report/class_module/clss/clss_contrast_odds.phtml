@@ -1,0 +1,8 @@
+<?php if ($clss_contrast_odds) {?>
+<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+<ul class="cls_row indent_25" style="font-size: 14px">
+    <li>本班在两次考试中的平均优胜率变化为：<span><?=$clss_contrast_odds['odds'] > 0 ? '+' : '' ?><?=$clss_contrast_odds['odds']?>%</span></li>
+</ul>
+<p class="cls_row">&nbsp;</p>
+<p class="mokuai-text cls_row font12">&emsp;&emsp;注：<?=$module_name?>为全班学生本次考试和上次考试的优胜率之差。</p>
+<?php }?>

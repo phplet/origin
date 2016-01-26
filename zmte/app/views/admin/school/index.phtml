@@ -1,0 +1,183 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js'));
+?>
+
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+<? /*
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+ */ ?>
+function fnRemoveSchoolBatch()
+{
+    var ids = fnGetCheckBoxValues('id_grid', "ids[]");
+    if (ids.length < 1)
+    {
+        alert('您没有选择任何记录');
+        return;
+    }
+
+    if (!confirm('确定删除所选记录吗？'))
+    {
+		return;
+    }
+    
+    ajax_removeSchool(ids);
+}
+</script>
+
+<div id="body">
+<? /*
+<form name="frm_list" action="<?=site_url('admin/school/delete_batch')?>" method="POST" onsubmit="return check_form(this)"> */ ?>
+  <div class="space">
+    <div class="subtitle">
+
+<a class="menu no-ajax" href="<?=site_url('admin/school/add')?>">添加学校</a>
+<a class="menu" href="javascript:void(0)" onclick="fnRemoveSchoolBatch()" style="float:right">批量删除</a>
+<a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')" style="float:right">查询</a>
+
+学校管理</div>  
+    <table id="id_grid" border="0" cellspacing="0" cellpadding="0">
+      <tr class="cls_title">
+        <td width="70" class="no-ajax">删?</td>
+        <td width="200">学校名称</te>
+        <td width="40">所在省份</td>
+        <td width="80">所在城市</td>
+        <td width="100">所在区县</td>
+        <td width="100">学校类别</td>
+        <td width="100">办学性质</td>
+        <td width="200"  class="no-ajax">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr class="tr_line" school_id="<?php echo $val['school_id'];?>" school_name="<?php echo $val['school_name'] . '(' . $val['province_name'] . '->' . $val['city_name'] . '->' . $val['area_name'] . ')';?>">
+      <td class="no-ajax"><input type="checkbox" name="ids[]" value="<?=$val['school_id']?>"><?=$val['school_id']?></td>
+        <td><?=$val['school_name']?></td>
+        <td><?=$val['province_name']?></td>
+        <td><?=$val['city_name']?></td> 
+        <td><?=$val['area_name']?></td> 
+        <td><?=$val['period']?></td>
+        <td><?if ($val['school_property']==1){?>民办<?}else{?>公办<?}?></td>
+        <td class="no-ajax">
+          <a href="<?=site_url('admin/school/edit/'.$val['school_id'])?>">编辑</a>
+          <a href="javascript:void(0)"  onclick="if (confirm('确定要删除么？')) ajax_removeSchool('<?=$val['school_id']?>');">删除</a>
+          <?php if ($has_class_manage_priv) {?>
+          <a href="<?=site_url('admin/school/classlist/'.$val['school_id'])?>">班级管理</a>
+          <?php }?>
+          <?php if ($has_teacher_manage_priv) {?>
+          <a href="<?=site_url('admin/school/teacherlist/'.$val['school_id'])?>">教师管理</a>
+          <?php }?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td class="no-ajax"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+<? /*
+<center class="no-ajax"><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center> */ ?>
+  </div>
+<? /*
+  </form>
+ */ ?>
+
+    <div id="id_qry_dlg" style="display:none">
+            <div class="cls_title">搜索符合条件的学校</div>
+    <form method="GET" name="search_form" action="<?=site_url('admin/school/index')?>">
+        <div class="space" style="margin:5px">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1">所属地区</td>
+                    <td>
+                      <select name="province" id="selProvinces" onchange="region.changed(this, 2, 'selCities');region.changed(document.getElementById('selCities'), 2, 'selAreas');">
+                        <option value="0">--请选择省--</option>
+                        <?php foreach($province_list as $val): ?>
+                        <option value="<?=$val['region_id']?>" <?=$val['region_id']==$param['province']?' selected="selected" ':''?>><?=$val['region_name']?></option>
+                        <?php endforeach; ?>
+                      </select>
+                      <select name="city" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                        <option value="0">--请选择市--</option>
+                        <?php foreach($city_list as $val): ?>
+                        <option value="<?=$val['region_id']?>" <?=$val['region_id']==$param['city']?' selected="selected" ':''?>><?=$val['region_name']?></option>
+                        <?php endforeach; ?>
+                      </select>
+                      <select name="area" id="selAreas">
+                        <option value="0">--请选择区县--</option>
+                        <?php foreach($area_list as $val): ?>
+                        <option value="<?=$val['region_id']?>" <?=$val['region_id']==$param['area']?' selected="selected" ':''?>><?=$val['region_name']?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">学校年段</td>
+                    <td>
+                        <?php foreach($grade_periods as $key => $val): ?>
+                        <input type="checkbox" name="grade_period[]" value="<?=$key?>" <?php if(in_array($key, $param['grade_period'])) echo 'checked';?>/> <?=$val?>
+                        <?php endforeach; ?>        
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">学校名称</td>
+                    <td><input type="text" name="keyword" value="<? Func::echo_s($param['keyword']); ?>" class="txtbox" /></td>
+                </tr>         
+            </table>
+            <center><input type="submit" value=" 搜索 " class="btn" />
+ 
+            <input type="button" value=" 重置 " class="btn" onclick="window.location.href='<?php echo site_url('admin/school') . '/index';?>'"/>
+           </center>
+        </div>
+
+        <input type="hidden" name="is_ajax"  value="<?php echo $is_ajax ? '1' : '0';?>"/>
+    </form>
+    </div>
+
+</div>
+
+<?php //以下作为异步获取学校信息处理(by qfb 2013-11-14) ?>
+<?php if ($is_ajax):?>
+<script type="text/javascript">
+  $(document).ready(function() {
+      //隐藏多余的元素
+      $('html, body').css('background-color', '#fff');
+      $('.no-ajax, #footer').hide();
+
+      $('.tr_line').each(function(){
+          $(this).unbind('mouseover')
+                 .bind('mouseover', function() {
+                      $(this).siblings().find('td').removeClass('mouseover');
+                      $(this).find('td').addClass('mouseover');
+
+                 }).unbind('click').click(function() {
+                    var $thiz = $(this),
+                        school_id = parseInt($thiz.attr('school_id')),
+                        school_name = $.trim($thiz.attr('school_name'));
+
+                    if (typeof parent.select_school_callback === 'function') {
+                        parent.select_school_callback(school_id, school_name);
+
+                    }
+                });
+      }).eq(0).mouseover();
+});
+</script>
+<?php endif; ?>
+<?php $this->load->view('common/footer');?>

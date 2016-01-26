@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8"/>
+        <!-- 页脚页眉信息 -->
+        <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+        <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+        <meta type="student_name" content="<?php echo $studentName; ?>"/>
+        <meta type="exam_time" content="<?php echo $examName; ?>"/>
+        <title>面试结果</title>
+        <?php
+            static_global('css/app/report/ceping.css', 'css');
+            static_global(array(
+    						'js/jquery/jquery.js',
+                            'js/app/report/highcharts.js',
+                            'js/app/report/highcharts-more.js',
+            ));
+
+            /* 表格分页 */
+            $g_real_page_height = 1283;
+            echo $this->load->view('report/table_auto_pager', array('g_real_page_height' => $g_real_page_height, 'sudentName' => $studentName, 'examName' => $examName), true);
+
+            /* 全局计数 */
+            $GLOBALS['counter'] = 1;
+        ?>
+    </head>
+    <body>
+        <div class="ceping cls_root">
+
+            <h1><?php echo $studentName; ?>&nbsp;&nbsp;<?php echo $subject_name; ?>面试结果报告</h1>
+            <?php
+                if (count($template_module['module']) > 0) {
+                    $counter = 1;
+                    foreach ($template_module['module'] as $key => $module) {
+                        if (count($module['children']) > 0) {
+                            foreach ($module['children'] as $k => $v) {
+                                $this->load->view('report/interview_module/' . $v['module_code']);
+                            }
+                        }
+                    }
+                }
+            ?>
+
+           <br/>
+           <p class="mokuai-text cls_row">注：为表达更加简明扼要，部分数据进行了取整等简化处理，由此可能造成相关数据的误差不影响评价结果。</p>
+        </div>
+    </body>
+</html>

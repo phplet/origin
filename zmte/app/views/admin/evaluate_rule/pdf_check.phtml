@@ -1,0 +1,26 @@
+<?php $this->load->view('common/header');?>
+<?php
+$current_module_url = site_url('/admin/evaluate_rule/pdf_check_c');
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+     	PDF生成检查
+    </div>
+     <form name="frm_import" id="frm_import" method="POST" action="<?=$current_module_url;?>" enctype="multipart/form-data">
+  <input type="hidden" name="id" value="<?php echo $id;?>" />
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td colspan="2" style="text-align:center;" class="altbg2">
+      机器标志：<input type="text" name="proc_id"> proc_id,整数
+        </td>
+      </tr>
+
+    </table>  <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </form>
+
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,159 @@
+<style type="text/css">
+    .maiev
+    {
+    	line-height:30px;
+    	/*text-indent:25px;*/
+    	display:block;
+
+    	background:#a6cbe7;
+    	font-weight:700;
+    	font-size:18px;
+    }
+    body,td {
+    	margin: 0px;
+    	font: 16px Cambria;
+    	text-align: left;
+    }
+
+    .maintable tr.bg td {
+    	background:#E5E5E5;
+    }
+    .cls_table tbody tr td{
+        padding-right:20px;
+        border:0px;
+        background:#A6CBE7;
+        font-weight:bold;
+        font-size:18px;
+    }
+</style>
+<?php
+/**
+ * 试题模板（选词填空）
+ */
+?>
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+<div class="cls_danxuan" id="question_change_box_<?php echo $etp_id; ?>">
+    <div class="cls_pagetitle"  <?php echo $is_single ? 'style="display: none;margin:0;"' : '';?>>四、选词填空, 每小题<font id="q_score_<?php echo $etp_id;?>_0">--</font>分，共<?php echo count($question_list);?>题）</div>
+    <div class="cls_question_list question_box">
+<?php } ?>
+
+		<?php $global_auto_key = 0; ?>
+    	<?php foreach ($question_list as $question) {?>
+    	<?php
+    		$sub_index = 1;
+    		$auto_key = auto_count();
+    		$question_id = $question['ques_id'];
+    		$picture = $question['picture'];
+		?>
+		<div class="cls_question_item undo" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>">
+			<div class="h4 cls_ques_question">第 <font id="q_index_<?php echo $etp_id;?>_<?php echo $question_id;?>"><?php echo $auto_key;?></font> 题 、 [<?php echo $qtype_name;?>]</div>
+
+			<div class="cls_question_tip fs16 auto_height_tip">
+			<?php
+                $info1_1 = array();
+                $info1_2 = array();
+                $title = explode('&nbsp;<br/>&nbsp;',$question['title']);
+				$search = array('<p>', '<br/></p>', '；');
+				$replace = array('', '', ';');
+				$title[1]= str_replace($search, $replace, $title[1]);
+				$title[1] = strip_tags($title[1]);
+				$title[1] = trim($title[1]);
+                $info1 = explode(';', $title[1]);
+
+				foreach($info1 as $key => $val)
+				{
+					if (!$val)
+					{
+						unset($info1[$key]);
+					}
+				}
+
+                if (count($info1) == 15)
+                {
+                    for ($i=0; $i<7; $i++)
+                    {
+                        $info1_1[] = $info1[$i];
+                    }
+
+                    for ($i=7; $i<15; $i++)
+                    {
+                        $info1_2[] = $info1[$i];
+                    }
+                }
+                else
+                {
+                    for ($i=0; $i < (int)(count($info1)/2); $i++)
+                    {
+                        $info1_1[] = $info1[$i];
+                    }
+
+                    for ($i=count($info1)/2; $i<count($info1); $i++)
+                    {
+                        $info1_2[] = $info1[$i];
+                    }
+                }
+            ?>
+
+             <div class="maiev">
+           <table class="cls_table">
+               <tbody>
+                   <tr>
+                   <?foreach($info1_1 as $val){?>
+                       <td><?=$val?>;</td>
+                   <?}?>
+                   </tr>
+                   <tr>
+                   <?foreach($info1_2 as $val){?>
+                       <td><?=$val?>;</td>
+                   <?}?>
+                   </tr>
+               </tbody>
+           </table>
+         </div>
+
+
+			</div>
+
+			<div class="cls_ques_answer q_group cls_eg_margin-top-5 cls_eg_choice word_wrap fs15">
+
+			<?php if (isset($title[0])) echo $title[0];?>
+
+				<?php if($picture):?>
+			        <div><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+		        <?php endif;?>
+			</div>
+			<div class="cls_question_tip_choice">
+			<table width="100%" class="cls_margin_left_10">
+			<tbody>
+			<tr>
+			<td>
+	    	<?php
+
+				foreach($question['children'] as $sub_question) {
+					$global_auto_key++;
+				    $sub_question_type = $sub_question['type'];
+				    $answer = trim(isset($sub_question['answer'][0]) ? $sub_question['answer'][0] : $sub_question['answer']);
+				    $sub_ques_id = $sub_question['ques_id'];
+				    $sub_etr_id = $sub_question['etr_id'];
+				    $picture = $sub_question['picture'];
+				    $sub_title = nl2br($sub_question['title']);
+			?>
+			<?php if ($sub_question_type == '6') {?>
+			<!-- 填空 -->
+			<div class="cls_tiankong  question_item padding_s <?php echo isset($sub_question['answer'])&&$sub_question['answer']<>''?'c_done':'c_undo';?>" etr_id="<?php echo $sub_etr_id;?>" p_id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="type_0_3_<?php echo $question_id;?>_<?php echo $global_auto_key;?>"><div class="h4 cls_ques_question cls_ques_answer fl"><?php echo $sub_index++;?>.<input type="text" ques_id="<?=$sub_ques_id?>" name="answer_<?=$sub_ques_id?>[]" class="input_answer   <?php echo isset($sub_question['answer'])&&$sub_question['answer']<>''?'sub_done':'sub_undo';?> type_0_3" p_ques_id="<?=$question_id?>" g_k="<?php echo $global_auto_key;?>"  value="<?=$sub_question['answer']?>">&nbsp;</div></div>
+			<?php } ?>
+			<?php } ?>
+			</td>
+	    	</tr>
+	       </tbody>
+	       </table>
+	       </div>
+
+			<div class="cls_question_tip"><input type="checkbox" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  class="question_mark" id="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>"><label for="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>">标记本题<em>（一般用于模棱两可的题） </em></label></div>
+		</div>
+		<?php } ?>
+
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+    </div>
+</div>
+<?php } ?>

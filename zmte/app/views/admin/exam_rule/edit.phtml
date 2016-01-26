@@ -1,0 +1,359 @@
+<?php $this->load->view('common/header');?>
+<?php
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+                        'js/jquery/plugin/blockUi.js'));
+
+    static_js(array('admin/question/question.js',
+                    'admin/exam_rule/exam_rule.js',
+                    'admin/exam_rule/exam_rule_validate.js',
+                    'admin/exam_rule/exam_rule_limit.js'));
+?>
+
+<script>
+var knowledge_ids = [<?=$rule['knowledge_ids']?>];
+var js_subject_id = '<?=$rule['subject_id']?>';
+var js_grade_id = '<?=$rule['grade_id']?>';
+var js_class_id = '<?=$rule['class_id']?>';
+var js_subject_type = '<?=$rule['subject_type']?>';
+var js_knowledge_ids = '<?=$rule['knowledge_ids']?>';
+var js_is_original = '<?=$rule['is_original']?>';
+
+var rule_num = <?=count($sub_rules)?>;
+
+var ajax_url_class = '<?=site_url('admin/common/question_class')?>';
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+var ajax_url_question_count = '<?=site_url('admin/common/question_count')?>';
+
+var ajax_url_qtype_count_init = '<?=site_url('admin/common/qtype_count_init')?>';
+var s_id = '<?=$rule['subject_id']?>';
+var grade_id = '<?=$rule['grade_id']?>';
+
+$(function(){
+	$('#subject_id').change(function(){
+		s_id = $('#subject_id').val();
+
+		if (s_id == 11)
+		{
+			$('#subject_id_list').show();
+		}
+		else
+		{
+			$('#subject_id_list').hide();
+		}
+
+		qtype_toggle(s_id)
+	});
+
+  $('#grade_id').change(function(){
+    grade_id = $('#grade_id').val();
+    primary_type(grade_id);
+  });
+
+	qtype_toggle(s_id);
+  primary_type(grade_id);
+});
+
+</script>
+
+<style>
+.subtable td{
+	border-bottom: 0px;
+    background:#fff;
+}
+.knowledge_rule{
+    padding-bottom:5px;
+}
+</style>
+<div id="body">
+
+  <form name="rule_form" class="validate" id="rule_form" method="POST" action="<?=site_url('admin/exam_rule/update')?>" onsubmit="return false;" >
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act=='edit'):?>
+  <input type="hidden" name="id" value="<?=$rule['rule_id']?>" />
+  <?php endif;?>
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>组题规则</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align: center;">
+                规则信息
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="80">规则名称</td>
+            <td colspan="3">
+              <input type="text" name="rule_name" class="txtbox" value="<?=$rule['rule_name']?>" />
+              <label for="rule_name" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="80">题目类型</td>
+            <td colspan="3">
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <?php $is_origin = @explode(',', $rule['is_original']);?>
+              <input type="checkbox" name="is_original[]" id="original" value="1" <?php if (isset($rule['is_original']) && in_array(1,$rule['is_original'])) echo 'checked="checked"'; ?>/>
+              <label for="original">原创</label>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <input type="checkbox" name="is_original[]" id="past_exam" value="2" <?php if (isset($rule['is_original']) && in_array(2,$rule['is_original'])) echo 'checked="checked"'; ?>/>
+              <label for="past_exam">真题</label>
+
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <input type="checkbox" name="is_original[]" id="past_simulation" value="3" <?php if (isset($rule['is_original']) && in_array(3,$rule['is_original'])) echo 'checked="checked"'; ?>/>
+              <label for="past_simulation">模拟题</label>
+
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span>(非必选项,为空则忽略题目类型)</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">学科</td>
+            <td width="50%">
+              <select name="subject_id" id="subject_id">
+              <option value="">=学科=</option>
+              <?php foreach($subjects as $k => $v):?>
+              <option value="<?=$k?>"<?=$k==$rule['subject_id']?' selected':''?>><?=$v?></option>
+              <?php endforeach;?>
+              </select>
+
+              <span id="subject_id_list" <?if ($rule['subject_id'] != 11): ?> style="display: none;" <?php endif;?>>
+              <?php
+                $subject_ids = !empty($subject_ids) ? $subject_ids : array();
+              ?>
+              <?php foreach($all_subjects as $key => $val): ?>
+                  <?php if ($key != 11):?>
+                    <input type="checkbox" name="subject_str[]" value="<?=$key?>" <? echo in_array($key, $subject_ids) ? 'checked': '';?>><?=$val?>
+                  <?php endif;?>
+              <?php endforeach; ?>
+              </span>
+            </td>
+            <td class="altbg1" rowspan="3" width="15%">试题数[关联] <button onclick="question_count(0)" class="btn2" type="button">计算</button></td>
+            <td rowspan="3"><span id="question_count_0" class="font_4"></span></td>
+        </tr>
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="grade_id" id="grade_id">
+              <option value="">=年级=</option>
+              <?php foreach($grades as $k => $v):?>
+              <option value="<?=$k?>"<?=$k==$rule['grade_id']?' selected':''?>><?=$v?></option>
+              <?php endforeach;?>
+              </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">类型</td>
+            <td>
+              <select name="class_id" id="class_id">
+              <option value="">=类型=</option>
+              <?php foreach($class_list as $val):?>
+              <option value="<?=$val['class_id']?>"><?=$val['class_name']?></option>
+              <?php endforeach;?>
+              </select>
+              <select name="subject_type" id="subject_type" style="display:none;" disabled>
+              <?php foreach(array_filter($subject_types) as $k => $v):?>
+              <option value="<?=$k?>"<?=$k==$rule['subject_type']?' selected':''?>><?=$v?></option>
+              <?php endforeach;?>
+              </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考试方式</td>
+            <td>
+              <select name="test_way" id="test_way">
+              <option value="">=考试方式=</option>
+              <?php $test_way = C('test_way');?>
+              <?php foreach($test_way as $key => $val):?>
+              <option value="<?=$key?>" <?php if ($key == $rule['test_way']){?>selected<?php }?>><?=$val?></option>
+              <?php endforeach;?>
+              </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">知识点范围</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="knowledge_id[]" value="" /></div>
+             <div id="knowledge_list"></div>
+             <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=$rule['knowledge_ids']?>" />
+             <button id="knowledge_select" class="btn2" type="button">点击选择</button>
+             <label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+            <td class="altbg1" width="15%">试题数[关联] <button onclick="question_count(1)" class="btn2" type="button">计算</button></td>
+            <td><span id="question_count_1" class="font_4"></span></td>
+        </tr>
+        <tr id="knowledge_rule_tr" >
+            <td class="altbg1">重点知识点</td>
+            <td colspan="3">
+             <div id="knowledge_rule_demo" style="display:none;">
+             <?php
+                $data['k'] = -1;
+                $data['sub_rule'] = array();
+                $this->load->view('exam_rule/sub_rule', $data);
+             ?>
+             </div>
+             <div id="knowledge_rule_list">
+             <?php foreach($sub_rules as $k=> $sub_rule):?>
+             <?php
+                for($i=0; $i<9; $i++) {
+                    if( ! isset($sub_rule['nums'][$i]))
+                        $sub_rule['nums'][$i] = 0;
+                }
+                $data['k'] = $k;
+                $data['sub_rule'] = $sub_rule;
+
+             ?>
+             <?php $this->load->view('exam_rule/sub_rule', $data);?>
+             <?php endforeach;?>
+             </div>
+
+             <div id="calculate_count" style="display:none;margin:5px;padding:5px;">
+              <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#f00;">
+                <tr>
+                    <td width="100">统计:</td>
+                    <?php $qtype = C('qtype');?>
+                    <?php foreach($qtype as $k => $v) {?>
+                    <?php if ($k > 9) break;?>
+                    <td class="subject_q_type_<?=$k?>"><?=$v?>:<span class="type_count font_4">0</span></td>
+                    <?php }?>
+                    <td>难(1-29):<span class="level_count font_4">0</span></td>
+                    <td>中(30-60):<span class="level_count font_4">0</span></td>
+                    <td>易(61-100):<span class="level_count font_4">0</span></td>
+                </tr>
+              </table>
+             </div>
+
+             <button id="knowledge_add" class="btn2" type="button">点击添加</button>
+             <label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">平均难易度</td>
+            <td colspan="3">
+              <input type="text" name="difficulty" class="txtbox5" value="<?=$rule['difficulty']?>" />
+              <label for="difficulty" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">题目数量</td>
+            <td colspan="3">
+              <?php foreach($qtype as $k => $v):?>
+              <?php if ($k > 9) break;?>
+              <SPAN class="subject_q_type_<?=$k?>">
+              <?=$v?>：<input type="text" name="ques_num[<?=$k?>]" class="txtbox5" value="<?=isset($rule['ques_num'][$k])?$rule['ques_num'][$k]:''?>" />
+              </SPAN>
+              <?php endforeach;?>
+              <label for="ques_num" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr class="subject_exam_rule_limit_3">
+            <td class="altbg1">题组组题限制</td>
+            <td colspan="3">
+               <table border="0" cellspacing="0" cellpadding="0" id="exam_rule_limit_0">
+               <tr>
+               <td width="100">难易度</td>
+               <td width="200">字数</td>
+               <td width="100">子题数</td>
+               <td width="100">总题数</td>
+               <td width="100">所需题数</td>
+               <td width="100">&nbsp;</td>
+               <td>&nbsp;</td>
+               </tr>
+
+               <?php if (isset($rule_limit[0]) && $rule_limit[0]) {?>
+                   <?php foreach ($rule_limit[0] as $key => $item) { ?>
+                   <tr sort='<?=$key+1?>'>
+                   <td>
+                   <input type="radio" value="3" name="difficulty_limit[<?=$key+1?>]" <?php if ($item['difficulty_level'] == 3) echo 'checked' ;?>>低
+                   <input type="radio" value="2" name="difficulty_limit[<?=$key+1?>]" <?php if ($item['difficulty_level'] == 2) echo 'checked' ;?>>中
+                   <input type="radio" value="1" name="difficulty_limit[<?=$key+1?>]" <?php if ($item['difficulty_level'] == 1) echo 'checked' ;?>>高
+                   </td>
+                   <td>
+                   <input type="text" name="word_limit_num_min[<?=$key+1?>]" class="txtbox5" value="<?=$item['word_num_min']?>" />
+                   -
+                   <input type="text" name="word_limit_num_max[<?=$key+1?>]" class="txtbox5" value="<?=$item['word_num_max']?>" />
+                   </td>
+                   <td>
+                   <input type="text" name="children_limit_num[<?=$key+1?>]" class="txtbox5" value="<?=$item['children_num']?>" />
+                   </td>
+                   <td>
+                   <font class="font_4" id="qtype_count_<?=$key+1?>"></font>
+                   </td>
+                   <td>
+                   <input type="text" name="ques_limit_num[]" class="txtbox5" value="<?=$item['ques_num']?>" />
+                   </td>
+                   <td><a href="javascript:void(0);" onclick="remove_exam_rule_limit($(this));">删除</a></td>
+                   <td><span class="font_4" id="err_qtype_count_<?=$key+1?>"></span></td>
+                   </tr>
+                   <?php }?>
+               <?php } else {?>
+                <tr sort='1'>
+                   <td>
+                   <input type="radio" value="3" name="difficulty_limit[1]">低
+                   <input type="radio" value="2" name="difficulty_limit[1]">中
+                   <input type="radio" value="1" name="difficulty_limit[1]">高
+                   </td>
+                   <td>
+                   <input type="text" name="word_limit_num_min[1]" class="txtbox5" value="" />
+                   -
+                   <input type="text" name="word_limit_num_max[1]" class="txtbox5" value="" />
+                   </td>
+                   <td>
+                   <input type="text" name="children_limit_num[1]" class="txtbox5" value="" />
+                   </td>
+                   <td>
+                   <font class="font_4" id="qtype_count_1"></font>
+                   </td>
+                   <td>
+                   <input type="text" name="ques_limit_num[]" class="txtbox5" value="" />
+                   </td>
+                   <td><a href="javascript:void(0);" onclick="remove_exam_rule_limit($(this));">删除</a></td>
+                   <td><span class="font_4" id="err_qtype_count_1"></span></td>
+                   </tr>
+               <?php }?>
+               </table>
+
+              <button onclick="set_exam_rule_limit('exam_rule_limit_0');" class="btn2" type="button">点击添加</button>
+              <span class="font_4" id="err_qtype_count"></span>
+            </td>
+        </tr>
+        <tr class="subject_exam_rule_limit_3">
+            <td class="altbg1">完形填空<br>组题限制</td>
+            <td colspan="3">
+                                    子题数：<input type="text" name="ques_children_num_4" class="txtbox6" value="<?=isset($rule_limit[4][0]['children_num']) ? $rule_limit[4][0]['children_num'] : ''?>" />
+            </td>
+        </tr>
+        <tr class="subject_exam_rule_limit_3">
+            <td class="altbg1">匹配题<br>组题限制</td>
+            <td colspan="3">
+                                    标签：<?php foreach ($q_tags[5] as $tags => $item) {?>
+                       <input type="radio" name="ques_tags[5]" class="txtbox6" value="<?=$tags?>" <?=(isset($rule_limit[5][0]['tags']) && $rule_limit[5][0]['tags'] == $tags) ? 'checked' : ''?>/><?=$item?>
+                       <?php }?>
+            </td>
+        </tr>
+        <tr class="subject_exam_rule_limit_3">
+            <td class="altbg1">选词填空<br>组题限制</td>
+            <td colspan="3">
+                                    标签：<?php foreach ($q_tags[6] as $tags => $item) {?>
+                       <input type="radio" name="ques_tags[6]" class="txtbox6" value="<?=$tags?>" <?=(isset($rule_limit[6][0]['tags']) && $rule_limit[6][0]['tags'] == $tags) ? 'checked' : ''?>/><?=$item?>
+                       <?php }?>
+            </td>
+        </tr>
+        <tr class="subject_exam_rule_limit_3">
+            <td class="altbg1">翻译题<br>组题限制</td>
+            <td colspan="3">
+              <label for="translation_c_e">中译英</label>
+              <input id="translation_c_e" name="translation_c_e" type="text" class="txtbox6" value="<?=isset($rule_limit[7][0]['translation_c_e']) ? $rule_limit[7][0]['translation_c_e'] : ''?>">
+              <label for="translation_e_c">英译中</label>
+              <input id="translation_e_c" name="translation_e_c" type="text" class="txtbox6" value="<?=isset($rule_limit[7][0]['translation_e_c']) ? $rule_limit[7][0]['translation_e_c'] : ''?>">
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center>
+    <input type="button" name="dosubmit" value=" 提交 " class="btn" onclick="submit_exam_rule(0);" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

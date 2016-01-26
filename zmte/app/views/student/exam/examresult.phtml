@@ -1,0 +1,182 @@
+<? $this->load->view('common/exam_header');?>
+<style type="text/css">
+.cls_exam_page {
+    display:table;
+    width:1000px;
+    min-height:400px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.cls_exam_page_left {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_right {
+    width:100px;
+    display:table-cell;
+}
+
+.cls_exam_page_center {
+    width:800px;
+    display:table-cell;
+}
+
+.cls_exam_page_center ul {
+    list-style:none;    
+    padding:0 10px 0 10px;
+}
+
+.cls_exam_page_center ul li {
+    height:34px
+}
+
+.cls_exam_item {
+    display:table;
+    width:100%;
+    padding:7px 0px 0px 4px;
+}
+
+.cls_exam_item_name {
+    display:table-cell;
+    width:50%;
+    font-size:1.0em;
+}
+
+.cls_exam_item_action {
+    display:table-cell;
+    width:50%;
+    font-size:0.9em;
+}
+.cls_exam_item_error {
+    display:table-cell;
+    width:100%;
+    font-size:0.9em;
+}
+.cls_pagetip {
+    border-bottom:1px dashed gray;
+    padding:4px;
+}
+</style>
+<? if ($uinfo['uid']) { ?>
+<div class="cls_pagetip">
+帐号余额: <?=$student['account']?><?=C('virtual_currency')['fullname']?> &nbsp; &nbsp; &nbsp; &nbsp;
+<? if (C('paycharge_enable')) { ?>
+<a target="_blank" href="<?=site_url('student/profile/pay')?>" style="color:red;text-decoration:underline">立即充值</a>
+<? } ?>
+
+<a style="float:right" href="<?=site_url('student/exam/index')?>">进入测评中心</a>
+</div>
+<? } ?>
+
+<div class="cls_exam_page">
+   <div class="cls_exam_page_center">
+     <ul>
+      <? if ($check_message) { ?>
+
+
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_error" align="center">
+          <?=$check_message['message']?>
+          </div>
+        </div>
+      </li>
+
+
+
+
+      <? for ($i = 1; $i < 10; $i++) { ?>
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name">&nbsp;</div>
+          <div class="cls_exam_item_action">&nbsp;</div>
+        </div>
+      </li>
+      <? } ?>
+
+
+
+
+      <? } else { ?>
+      <li style="background-color:#caeeff">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name"><b>考试场次</b></div>
+          <div class="cls_exam_item_action"><b>查看成绩报告</b></div>
+        </div>
+      </li>
+
+      <? if (!is_array($exam_result_list)) $exam_result_list = array(); foreach ($exam_result_list as $i => $val) { ?>
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name"><? Func::echo_s($val['exam_name']); ?></div>
+          <div class="cls_exam_item_action">
+          <? if (empty($val['list'])) { ?>
+          暂时没有成绩可供下载查看
+          <? } else { 
+                $bOpenNew = true;
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0') !== false 
+            && strpos($_SERVER['HTTP_USER_AGENT'], 'Touch') !== false)
+        {
+            $bOpenNew = false;
+        }
+?>
+            <? $app_path = dirname(APPPATH); $uid = StudentModel::studentLoginUID(); foreach ($val['list'] as $v2) { 
+                        $rule_id = $v2['id'];
+                        $subject_id = $v2['subject_id'];
+                        $html_file = file_exists("{$app_path}/cache/html/report/{$rule_id}/{$uid}/{$subject_id}.html");
+                        $pdf_file = file_exists("{$app_path}/cache/zip/report/{$rule_id}/{$uid}.zip");
+?>
+            <? if ($html_file || $pdf_file) { ?>
+                <a <? if ($bOpenNew) { ?>target="_blank"<? } ?> href="/student/index/down_file/<?=$v2['id']?>/<?=$v2['subject_id']?>/egapenolmthweiv"><? if ($v2['subject_id'] == 0) echo('总结'); else echo($v2['subject_name']); ?></a><?php if ($pdf_file){?>[<a href="/student/index/down_file/<?=$v2['id']?>/<?=$v2['subject_id']?>/fdpfopiznwod">PDF</a>]<? }} ?>
+            <? } ?>
+          <? } ?>
+          </div>
+        </div>
+      </li>
+      <? } ?>
+      <? if (!is_array($exam_free_list)) $exam_free_list = array(); $cnt = count($exam_result_list); foreach ($exam_free_list as $i => $exam_pid) { $val0 = $exam_free_map[$exam_pid][0]; ?>
+      <li style="background-color:<?=($cnt + $i) % 2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name"><? Func::echo_s($val0['exam_name']); ?></div>
+          <div class="cls_exam_item_action">
+<? foreach ($exam_free_map[$exam_pid] as $val) { ?>
+
+          <? if (empty($val['subject']) || $val['sfe_report_status'] < 2) { ?>
+<? /*暂时没有成绩可供查看 */ ?>
+          <? } else { ?>
+            <?php 
+                if (in_array(12, $val['subject']) 
+                    && in_array(18, $val['subject'])) 
+                {
+                    unset($val['subject'][array_search('18', $val['subject'])]);
+                }
+           ?>
+            <? foreach ($val['subject'] as $v2) { ?>
+                <a target="_blank" href="<?=site_url('student/exam/freereport')?>/<?=$val['sfe_uid']?>/<?=$val['sfe_exampid']?>/<?=$val['sfe_placeid']?>/<?=$v2?>"><?=$v2 == 12 ? '技术' : $subject[$v2]?></a>
+            <? } ?>
+          <? } ?>
+<? } ?>
+
+          </div>
+        </div>
+      </li>
+      <? } ?>
+
+
+
+      <? for ($i = $cnt + count($exam_free_list); $i < 10; $i++) { ?>
+      <li style="background-color:<?=$i%2 ? '#d4e9ea' : 'white'?>">
+        <div class="cls_exam_item">
+          <div class="cls_exam_item_name">&nbsp;</div>
+          <div class="cls_exam_item_action">&nbsp;</div>
+        </div>
+      </li>
+      <? } ?>
+
+     <? } ?>
+     </ul>
+   </div>
+</div>
+<? $this->load->view('common/exam_footer');?>

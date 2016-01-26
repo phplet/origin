@@ -1,0 +1,191 @@
+<!-- 展开版 -->
+<div class="cls_instruction" id="id_allifor" >
+	<table class="cls_top_content cls_top_table">
+		<tbody>
+			<tr class="cls_instr_item">
+			    <td class="cls_instr_name">考生姓名：</td>
+			    <td class="cls_instr_text"><strong><?php echo $student_info['truename'];?></strong></td>
+			    <td class="cls_instr_name">考试科目：</td>
+			    <td class="cls_instr_text">
+			    	<?php
+				    	$subject_name = @explode(',', $current_exam['subject_name']);
+						$subject_id = @explode(',', $current_exam['subject_id']);
+						$subjects = array_combine($subject_id, $subject_name);
+						$subjects = array_filter($subjects);
+						arsort($subjects);
+						$auto_key = 0;
+						$tmp_subjects = array_values($subjects);
+			    	?>
+			    	<?php if (count($subjects) > 1) {?>
+			    	<?php foreach ($subjects as $key=>$subject) {?>
+		            <input <?php echo $auto_key == 0 ? 'checked="checked"' : '';?> type="radio" name="mini_subject_1" class="mini_subject_radio mini_subject_<?php echo $key;?>" value="<?php echo $key;?>" id="chk_1_subject_<?php echo $key;?>"><label for="chk_1_subject_<?php echo $key;?>"><?php echo $subject;?></label>
+		            <?php $auto_key++;?>
+			    	<?php }?>
+			    	<?php } else {?>
+			    	<?php echo count($subjects) ? $tmp_subjects[0] : '--';?>
+			    	<?php }?>
+			    </td>
+			    <td class="cls_instr_name">考试时间：</td>
+			    <td class="cls_instr_text"><?php echo $current_exam['start_time'];?></td>
+			    <td class="cls_instr_image cls_instr_rowspan3" rowspan="4">
+			        <img width="116" height="138" src="<?php echo $student_info['picture'];?>" onerror="this.src='<?php echo __IMG_ROOT_URL__.'zeming/exam/head.gif'?>'"/>
+			    </td>
+			</tr>
+			<tr class="cls_instr_item">
+			    <td class="cls_instr_name">准考证号：</td>
+			    <td class="cls_instr_text"><?php echo $student_info['exam_ticket'];?></td>
+			    <td class="cls_instr_name">考试地点：</td>
+			    <td class="cls_instr_text cls_instr_colspan3" colspan="3"><?php echo $current_exam['address'];?></td>
+			</tr>
+			<tr class="cls_instr_item">
+			    <td class="cls_instr_name">所在学校：</td>
+			    <td class="cls_instr_text"><?php echo $student_info['school_name'];?></td>
+			    <td class="cls_instr_name">所在年级：</td>
+			    <td class="cls_instr_text"><?php echo $student_info['grade_name'];?></td>
+			</tr>
+			<tr class="cls_instr_item">
+				<?php
+					$total_scores = 0;//试卷总分
+					$total_ques_num = 0;//试卷总试题
+					foreach ($paper_info as $paper)  {
+						$total_scores += $paper['full_score'];
+						$total_ques_num += $paper['ques_num'];
+					}
+
+	        		$paper_first = array_values($paper_info);
+	        		$paper_first = count($paper_first) ? $paper_first[0] : array('ques_num' => '--');
+	        	?>
+			    <td class="cls_instr_name">试题总数：</td>
+			    <td class="cls_instr_text header_ques_num"><?php echo $total_ques_num > 0 ? $total_ques_num : '--';?> 题</td>
+			    <td class="cls_instr_name">试题总分：</td>
+			    <td class="cls_instr_text cls_instr_red header_full_score"><?php echo $total_scores > 0 ? $total_scores : '--';?> 分</td>
+			    <!--提交试卷 no.1-->
+			    <td class="cls_submit_btn cls_instr_name">
+			    	<a class="cls_submit_btn cls_button btn_finish" href="###" title="提交全学科试卷">提交全部试卷</a>
+			    </td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="cls_instr_msg">
+		<h4>考生须知：</h4>
+		<ul class="cls_instr_msgtext">
+			<?php $student_notice = trim($current_exam['student_notice']);?>
+			<?php $student_notice = $student_notice == '' ? '--' : $student_notice;?>
+			<li><?php echo $student_notice;?></li>
+		</ul>
+	</div>
+	<?php if ($current_exam['start_time'] <= date('Y-m-d H:i:s')) { ?>
+	<a href="###" class="cls_infor_btn cls_topinfobtn">收起全部信息<span id="time_left"></span><i class="cls_imgpng"></i></a>
+	<?php } ?>
+</div>
+
+<!-- 缩小版 -->
+<div class="cls_instruction" id="id_topifor" style="display: none;">
+	<table class="cls_top_content">
+	    <tbody>
+		    <tr class="cls_instr_item">
+		        <td class="cls_instr_name">开考时间：</td>
+		        <td class="cls_instr_text"><?php echo $current_exam['start_time'];?></td>
+		        <td class="cls_instr_name">考试科目：</td>
+		        <td class="cls_instr_text">
+		        	<?php $auto_key = 0; ?>
+		        	<?php if (count($subjects) > 1) {?>
+		            <?php foreach ($subjects as $key=>$subject) {?>
+		            <input <?php echo $auto_key == 0 ? 'checked="checked"' : '';?> name="mini_subject_2" type="radio" class="mini_subject_radio mini_subject_<?php echo $key;?>" value="<?php echo $key;?>" id="chk_2_subject_<?php echo $key;?>"><label for="chk_2_subject_<?php echo $key;?>"><?php echo $subject;?></label>
+			    	<?php $auto_key++;?>
+			    	<?php }?>
+			    	<?php } else {?>
+			    	<?php echo count($subjects) ? $tmp_subjects[0] : '--';?>
+			    	<?php } ?>
+		        </td>
+		        <td class="cls_instr_name">试题总数：</td>
+		        <td class="cls_instr_text header_ques_num"><?php echo $total_ques_num > 0 ? $total_ques_num : '--';?> 题</td>
+		        <td class="cls_instr_name">试题总分：</td>
+		        <td class="cls_instr_text cls_instr_red header_full_score"><?php echo $total_scores > 0 ? $total_scores : '--';?> 分</td>
+		        <!--提交试卷 no.2-->
+		        <td class="cls_submit_btn cls_instr_name">
+			    	<a class="cls_submit_btn cls_button btn_finish" href="###" title="提交全学科试卷">提交全部试卷</a>
+			    </td>
+			    <style type="text/css">
+			    	.cls_submit_btn{
+			    		border: 0px;
+			    		text-align: center;
+			    		min-width: 110px;
+			    		padding:5px;
+			    	}
+			    	.cls_submit_btn a.cls_button{
+			    		margin-left: 10px;
+			    		background: #7cb2dc;
+			    		border: medium none;
+			    		border-radius: 4px;
+			    		color: #fff;
+			    		display: block;
+			    		font-size: 14px;
+			    		font-weight: bold;
+			    		margin-top: 10px;
+			    		text-decoration: none;
+			    		text-shadow:1px 2px 2px #3780d4;
+			    		cursor: pointer;
+			    	}
+			    	.cls_instr_item{
+			    		width: 105px;
+			    	}
+			    	.cls_instr_text{
+			    		width: 156px;
+			    	}
+			    	.cls_top_table
+			    	{
+			    		width: 95%;
+			    	}
+			    	.cls_top_table .cls_instr_name
+			    	{
+			    		color:gray;
+			    	}
+			    	.cls_instr_image{
+			    		text-align: center;
+			    	}
+			    </style>
+		    </tr>
+		</tbody>
+	</table>
+	<a href="###" class="cls_infor_btn cls_allinfobtn">展开全部信息<i class="cls_imgpng"></i></a>
+</div>
+
+
+<script>
+//考试信息全局配置
+var subject_config = eval("("+'<?php echo json_encode($subjects);?>'+")");
+
+//考场信息与科目配置
+var exam_config = eval("("+'<?php echo json_encode(array_merge(str_replace(array("\r\n", "\r", "\n"),' ',$current_exam), array('paper_info' => $paper_info)));?>'+")");
+ //考生信息
+var student_info = {
+		'uid' : '<?php echo $this->session->userdata('exam_uid');?>',
+		'uname' : '<?php echo $student_info['truename'];?>'
+};
+
+var global_total_scores = parseInt('<?php echo $total_scores;?>');//总分
+var global_ques_num = parseInt('<?php echo $total_ques_num;?>');//总题数
+
+exam_count_down_config.endCallback = function () {
+	//强行交卷
+	if (window.force_to_submit) {
+		force_to_submit(function () {
+			unbind_onbeforunload();
+
+			//交卷完成提示
+			$.Zebra_Dialog('考试已经结束，系统将强制交卷！ 10秒后将自动关闭该页面.', {
+			    'type':     'question',
+			    'title':    '系统温馨提示',
+			    'buttons':  [],
+			    'onClose':  function(caption) {
+			    	//关闭
+	    		}
+		   });
+
+			setTimeout(function () {window.location.reload();}, 1000);
+		}, true);
+	}
+};
+</script>

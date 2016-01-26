@@ -1,0 +1,126 @@
+<?php $this->load->view('common/header');?>
+
+<script language='javascript'>
+var subject_id = <?=$question['subject_id']?>;
+var is_primary = '<?=$question['is_primary']?>';
+</script>
+
+<?php 
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js', 
+                        'js/jquery/plugin/validate/additional-methods.min.js',
+                        
+                        'js/jquery/plugin/blockUi.js',
+                        'js/jquery/plugin/jquery.json-2.4.min.js',
+                        		
+                        'js/jquery/plugin/validate/messages_zh.js',
+                        'js/third_party/ueditor/ueditor.config.question.js',
+                        'js/third_party/ueditor/ueditor.all.min.js',
+                        'js/third_party/ueditor/lang/zh-cn/zh-cn.js'));
+
+    static_js(array('admin/question/question.js', 
+    				'admin/question/question_validate.js',
+                    'admin/question/pic_delete.js'));
+?>
+
+<script>
+var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+var is_group = false;
+var group_type_ids = [<?=trim($question['group_type'],',')?>];
+var knowledge_ids = [<?=trim($question['knowledge'],',')?>];
+var knowledge_know_process = eval("("+'<?php echo json_encode($know_processes); ?>'+")");
+
+<?php if(!$question['is_primary']): ?>
+var ajax_url_group_type = '<?=site_url('admin/common/group_type_all')?>';
+var ajax_url_group_type_select = '<?=site_url('admin/common/group_type_select')?>';
+var ajax_url_group_type_init = '<?=site_url('admin/common/group_type_init')?>';
+<?php else: ?>
+var ajax_url_knowledge = '<?=site_url('admin/common/knowledge_all')?>';
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+<?php endif; ?>
+
+</script>
+
+<script>
+$(document).ready(function(){
+    $('input:radio[name=qtype]').unbind('click').click(function(){
+        toggle_qtype();
+    });
+    toggle_qtype();
+});
+</script>
+<style>
+.height_light {
+    border:1px solid #f00;
+    padding:2px 0 2px 0;
+    margin:2px 0 2px 0;
+}
+.div_option{
+    border-bottom:1px solid #CCCCFF;
+    padding:5px;
+}
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question_external/update_match_question')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'edit'):?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+  <input type="hidden" name="parent_id" value="<?=$question['parent_id']?>" />  
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'编辑'?>匹配题子题</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                题目信息 [<font class="font_4">选填</font>]
+            </td>
+        </tr>
+        <tr style="display: none;">
+        	<td>
+        		<input type="hidden" name="subject_id" id="subject_id" value="<?php echo $question['subject_id'];?>"/>
+        	</td>
+        </tr>
+        <?php if($question['subject_id'] == 3 && $question['is_primary']): ?>
+          <tr>
+            <td class="altbg1">知识点</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;">
+              <input type="checkbox" name="knowledge_id[]" value="" />
+            </div>
+             <div id="knowledge_list"></div>
+             <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=trim($question['knowledge'],',')?>" />
+             <button id="knowledge_select" class="btn2" type="button">点击选择</button>
+             <font color="red">*</font>
+             <label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php else: ?>
+        <tr>
+            <td class="altbg1" width="12%">信息提取方式</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="group_type_id[]" value="" /></div>
+             <div id="group_type_list"></div>
+             <input type="hidden" name="group_type_ids" id="group_type_ids" value="<?=trim($question['group_type'],',')?>" />
+             <button id="group_type_select" class="btn2" type="button">点击选择</button><font color="red">*</font>
+             <label for="group_type_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <tr>
+            <td class="altbg1">答案</td>
+            <td>
+                <textarea id="input_answer" name="input_answer" style="width:300px;height:80px;" required title="请填写匹配题答案"><?=$question['answer']?></textarea>
+                <label for="input_answer" class="error" style="display:none"></label>
+               <span style="display: none;"><input type="radio" name="qtype" value="5" id="qtype5" checked="checked"/></span>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

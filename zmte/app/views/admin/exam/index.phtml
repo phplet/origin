@@ -1,0 +1,188 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<style>
+tr.exam_pid{
+	background:#eee;
+}
+tr.exam_pid td{
+	border-bottom: 1px solid #ccc;
+}
+</style>
+<script>
+$(function(){
+    $('a.folder').click(function(){
+        var pid = $(this).attr('pid');
+        $('#exams_'+pid).toggle();
+        $(this).html($(this).html()=='[-]'?'[+]':'[-]');
+    });
+})
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    <?php if ($priv_manage) {?>
+    <a class="menu" href="<?=site_url('admin/exam/down_exam')?>">成绩下载</a>
+    <a class="menu ajax_loader" href="###" name="添加考试期次" ajax="<?=site_url('admin/exam/add')?>">添加考试期次</a>
+    <a class="menu" href="<?=C('exam_host_name')?>/exam/index/index?clear_cache=1" target="_blank">清除机考期次缓存</a>
+    <a class="menu" href="<?=C('exam_host_name')?>/exam/index/index?clear_cache=2" target="_blank">清除机考所有缓存</a>
+    <?php } ?>
+    考试期次管理</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="30">ID</td>
+        <td>考试名称</td>
+        <td width="60">年级</td>
+        <td width="80">类型</td>
+        <td width="80">文理科</td>
+        <td width="80">创建人</td>
+        <td width="80">模式</td>
+        <td width="120">录入时间</td>
+        <td width="50">状态</td>
+        <td>操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <?php
+            $exam_type = $val['exam_type'];
+            $exam_name = $val['exam_name'];
+            $subject_type = $val['subject_type'];
+            $exam_pid = $val['exam_id'];
+            
+            $has_manage_permissions = false;
+            $has_manage_permissions1 = false;
+            if ($is_super_user 
+                || $login_admin_id == $val['creator_id'])
+            {
+                $has_manage_permissions = true;
+            }
+            
+            if ($is_super_user
+                || $login_admin_id == $val['creator_id']
+                || in_array($login_admin_id, $val['managers']))
+            {
+                $has_manage_permissions1 = true;
+            }
+      ?>
+      <tr class="altbg2 exam_pid">
+        <td><?=$val['exam_id']?></td>
+        <td>
+          <a href="javascript://" class="folder" pid="<?=$val['exam_id']?>">[-]</a>
+          <?=$exam_name?>
+        </td>
+        <td><?=$val['grade_name']?></td>
+        <td><?=$val['class_name']?></td>
+        <td></td>
+        <td><?=$admin_list[$val['creator_id']]?></td>
+        <td><?=$exam_type == '1' ? '单题模式' : '全篇模式';?></td>
+        <td><?=$val['addtime']?></td>
+        <td><?=$val['state']?></td>
+        <td <?if ($has_manage_permissions) {?>width="390"<?}?>>
+          <?php if (!in_array($exam_pid, $demo_exams)) {?>
+              <?php if ($has_manage_permissions1) {?>
+                      <?php if ($priv_manage ){?>
+                          <?php if ($has_manage_permissions) {?>
+                               <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/edit/'.$val['exam_id'])?>">编辑</a>
+                              <?php if (!empty($val['subjects'])) {?>
+                                    <font style="color:#999;text-decoration:line-through;" title="该考试期次下已分配考试学科，不能删除！">删除</font>
+                              <?php } else {?>
+                                    <a href="<?=site_url('admin/exam/delete/'.$val['exam_id'])?>" onclick="return confirm('您确定要删除么？');">删除</a>
+                              <?php }?>
+                          <?php }?>
+                          <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/add_subject/'.$val['exam_id'])?>">添加学科</a>
+                      <?php } ?>
+                      
+                      <?php if ($has_manage_permissions) {?>
+                          <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam_place/index/'.$val['exam_id'])?>">考场分配</a>
+                      <?php }?>
+                           
+                      <span style="padding:1px;border:1px dotted #333;">
+            	          <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam_student_result/index/?exam_pid='.$val['exam_id'])?>">考生成绩</a>
+            	          <?php if ($priv_manage && $has_manage_permissions) {?>
+            	          <a href="<?=site_url('admin/exam_student_result/generate/' . $val['exam_id'])?>" onclick="return confirm('确定要操作么？\n 可能需要花费1~3分钟')">生成成绩</a>
+            	          <?php } ?>
+                      </span>
+                      
+                       <?php if ($has_manage_permissions) {?>       
+                          <?php /*?><a href="">统计信息</a><?php */ ?>
+                              
+                          <?php if (isset($val['is_publish']) && $val['is_publish']) {?>
+                              <a href="<?=site_url('admin/exam/exam_result_publish/?type=0&exam_pid='.$val['exam_id'])?>">取消公布</a>
+                          <?php } else {?>
+                              <a href="<?=site_url('admin/exam/exam_result_publish/?type=1&exam_pid='.$val['exam_id'])?>">公布成绩</a>
+                          <?php }?>
+                          <a href="<?=site_url('admin/kyxm/report/'.$val['exam_id'])?>" target="_blank">下载学生名单</a>
+                      <?php }?>
+                  <?php }?>
+              <?php } else { ?>
+                  <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/edit/'.$val['exam_id'])?>">编辑</a>
+                  <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/add_subject/'.$val['exam_id'])?>">添加学科</a>
+                  <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam_place/index/'.$val['exam_id'])?>">考场分配</a>
+                  <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam_student_result/index/?exam_pid='.$val['exam_id'])?>">考生成绩</a>
+                  <a href="###" class="ajax_loader" ajax="<?=site_url('admin/question/update_demo_question/'.$val['exam_id'])?>">更新MINI测真题</a>
+              <?php } ?>
+        </td>
+      </tr>
+      <?php if(!empty($val['subjects'])):?>
+      <tbody id="exams_<?=$val['exam_id']?>">
+      <?php foreach($val['subjects'] as $k => $sub):?>
+      <tr>
+        <td><?=$sub['exam_id']?></td>
+        <td>　<?=count($val['subjects'])-1>$k?'├':'└'?>　　<?=$sub['subject']?></td>
+        <td><?=$sub['grade_name']?></td>
+        <td><?=$sub['class_name']?></td>
+        <td><?=$sub['subject_type']?></td>
+        <td><?=$admin_list[$sub['creator_id']]?></td>
+        <td><?=$exam_type == '1' ? '单题模式' : '全篇模式';?></td>
+        <td><?=$sub['addtime']?></td>
+        <td></td>
+        <td>
+        <?php
+        $has_manage_permissions2 = false;
+        if ($is_super_user
+            || $login_admin_id == $val['creator_id']
+            || $login_admin_id == $sub['creator_id'])
+        {
+            $has_manage_permissions2 = true;
+        }
+        ?>
+          <?php if ($has_manage_permissions2) {?>
+              <?php if (!in_array($exam_pid, $demo_exams)) {?>
+                      <?php if ($priv_manage) {?>
+                          <?php if (!$sub['has_tested']) {?>
+                              <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/edit_subject/'.$sub['exam_id'])?>">编辑</a>
+                              <a href="<?=site_url('admin/exam/delete/'.$sub['exam_id'])?>" onclick="return confirm('您确定要删除么？');">删除</a>
+                          <?php } else { ?>
+                              <font style="color:#999;text-decoration:line-through;" title="该科目已经被考生考过 或者 正在被考中,因此无法编辑">编辑</font>
+                              <font style="color:#999;text-decoration:line-through;" title="该科目已经被考生考过 或者 正在被考中,因此无法删除">删除</font>
+                          <?php } ?>
+                      <?php } ?>
+                      
+                      <a class="ajax_loader" href="###"ajax="<?=site_url('admin/subject_paper/index/'.$sub['exam_id'])?>">试卷列表</a>
+              <?php } else {?>
+                  <?php if (!$sub['has_tested']) {?>
+                        <a href="###" class="ajax_loader" ajax="<?=site_url('admin/exam/edit_subject/'.$sub['exam_id'])?>">编辑</a>
+                  <?php } else {?>
+                        <font style="color:#999;text-decoration:line-through;" title="该科目已经被考生考过 或者 正在被考中,因此无法编辑">编辑</font>
+                  <?php } ?>
+                  <a class="ajax_loader" href="###" ajax="<?=site_url('admin/subject_paper/index/'.$sub['exam_id'])?>">试卷列表</a>
+              <?php }?>
+              <a href="<?=site_url('admin/exam/update_questions_cache/'.$sub['exam_id'])?>">更新试题缓存</a>
+          <?php }?>
+        </td>
+      </tr>
+      <?php endforeach;?>
+      </tbody>
+      <?php endif;?>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"></td>
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="12">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

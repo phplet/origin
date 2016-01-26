@@ -1,0 +1,44 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(document).ready(function(){
+    $("#paper_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            paper_name: "required"
+        },
+        messages: {
+            paper_name: "请填写试卷名称"
+        }
+    });
+});
+
+</script>
+<div id="body">
+  <form name="paper_form" class="validate" id="paper_form" method="POST" action="<?=site_url('admin/paper/update')?>" onsubmit="return false;">
+  <input type="hidden" name="paper_id" value="<?=$paper['paper_id']?>" />
+  <input type="hidden" name="back_url" value="<?=$back_url?>" />
+  <div class="space">
+    <div class="subtitle">试卷名称修改</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="altbg1">试卷名称</td>
+            <td>
+              <input type="text" name="paper_name" class="txtbox" value="<?=$paper['paper_name']?>" />
+              <label for="paper_name" class="error" style="display:none"></label>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,85 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+    $vc = C('virtual_currency');
+?>
+
+<style>
+.score_rank_td div{
+	line-height:30px;
+	height:30px;
+	padding-top:6px;
+}
+</style><?php static_global(array('js/datepicker/wdatepicker.js','js/jquery/plugin/blockUi.js'));?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">产品交易明细列表</div>
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="20%">产品名称</td>
+        <td width="10%">产品类型</td>
+        <td width="20%">交易账号</td>
+        <td width="20%">产品定价</td>
+        <td width="20%">交易金额</td>
+        <td width="10%">交易时间</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$val['p_name']?></td>        
+        <td><?=$val['pc_name']?></td>
+        <td><?=$val['exam_ticket']?> / <?=$val['fullname']?></td> 
+        <td><?=$val['p_price']?> / <?=$val['p_price_pushcourse']?> <?=$vc['fullname']?></td>
+        <td><?=bcsub(0, $val['tr_trade_amount'], 0)?><?=$vc['fullname']?></td>
+        <td><?=date('Y-m-d H:i', $val['tr_createtime'])?></td> 
+      </tr>
+
+      <?php endforeach; ?>
+      <tr class="altbg1">
+
+
+        <td colspan="6" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="6">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+      
+     <tr>
+      	<td colspan="6">
+      		 <!-- 下一步 -->
+		     <center> 
+			    <input type="button" name="" value=" 返回 " onclick="window.history.go(-1)" class="btn next_step" />
+			  </center> 
+      	</td>
+      </tr>
+    </table>
+
+
+    
+     
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+   
+</div>
+
+<?php $this->load->view('common/footer');?>
+

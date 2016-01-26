@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<style type="text/css">
+table.pop_dialog_table {
+    border-collapse: collapse;
+    margin: auto;
+    table-layout: fixed;
+    background: rgba(0, 0, 0, .45);
+    border-radius: 7px;
+    background-color: #8b8b8b\9
+    }
+
+table.pop_dialog_table em {
+    font-style: normal
+}
+
+td.pop_topleft, td.pop_topright, td.pop_bottomleft, td.pop_bottomright {
+    height: 10px;
+    overflow: hidden;
+    padding: 0 !important;
+    width: 10px !important
+}
+
+td.pop_content {
+    background-color: #FFF;
+    padding: 0
+}
+
+td.pop_content.morpadding_bluebg {
+    padding: 10px;
+    background-color: #d2d9e6
+}
+
+td.pop_content h2 {
+    background: #3777bc;
+    border: 1px solid #005eac;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    *zoom: 1
+}
+
+td.pop_content h2 span {
+    display: block;
+    padding: 4px 10px 5px
+}
+
+td.pop_content h2 a.floatright {
+    float: right
+}
+
+td.pop_content .dialog_content {
+    background: #fff;
+    border: 1px solid #005eac;
+    border-top-width: 0
+}
+
+td.pop_content .dialog_body p {
+    color: #333
+}
+
+td.pop_content .dialog_body a, td.pop_content .dialog_body a:visited {
+    color: #005eac;
+    font-size: 12px;
+
+}
+
+td.pop_content .dialog_content.borderblue {
+    border: 1px #8598c0 solid
+}
+
+td.pop_content .dialog_body {
+    padding: 10px;
+    position: relative;
+    zoom: 1
+}
+
+td.pop_content .no_padding {
+    padding: 0
+}
+
+td.pop_content .dialog_buttons input {
+    line-height: 16px;
+    background-color: #005eac !important;
+    background-image: none !important;
+    border-color: #b8d4e8 #124680 #124680 #b8d4e8 !important;
+    border-style: solid;
+    border-width: 1px;
+    color: #fff
+}
+
+td.pop_content .dialog_buttons input.gray {
+    border: 1px solid;
+    border-color: #fff #848484 #848484 #fff !important;
+    background: #f0f0f0 !important;
+    color: #333 !important
+}
+
+td.pop_content .share_popup {
+    padding: 0
+}
+
+td.pop_content .dialog_summary {
+    background: #f2f2f2;
+    padding: 8px 10px;
+    border-bottom: 1px solid #ccc
+}
+
+td.pop_content .dialog_summary p.centertext {
+    margin: 30px;
+    text-align: center;
+    line-height: 20px
+}
+
+td.pop_content .dialog_summary ul.classlist {
+    list-style: none
+}
+
+td.pop_content .dialog_summary ul.classlist li {
+    list-style: none;
+    height: 25px;
+    line-height: 25px
+}
+
+td.pop_content .dialog_summary ul.classlist li input.floatleft {
+    background: 0;
+    float: left;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: 7px
+}
+
+td.pop_content .dialog_summary ul.classlist li .gray {
+    color: #b4b4b4
+}
+
+td.pop_content .dialog_summary.higher {
+    height: 100px;
+    padding: 10px
+}
+
+td.pop_content .dialog_buttons {
+    background: #f0f5f8;
+    padding: 8px;
+    text-align: right;
+    border-top: 1px solid #ccc
+}
+
+td.pop_content .dialog_buttons.alignleft {
+    text-align: left
+}
+
+td.pop_content .dialog_buttons input {
+    margin-left: 5px;
+    padding: 2px 15px;
+    _padding: 2px 10px
+}
+
+td.pop_content .dialog_buttons_left_msg {
+    float: left
+}
+
+td.pop_content .loading {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #f7f7f7
+}
+
+td.pop_content input, td.pop_content select {
+    vertical-align: middle
+}
+
+td.pop_content p {
+    margin-bottom: 1ex
+}
+
+.dialogtips {
+    padding: 4px;
+    background-color: #feffcf;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 370px
+}
+
+* html .dialogtips {
+    left: auto;
+    right: 0
+}
+
+.contextual_dialog .generic_dialog_popup {
+    width: 360px
+}
+
+.contextual_dialog .contextual_arrow, .contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle.gif);
+    background-repeat: no-repeat;
+    height: 12px;
+    position: relative;
+    top: 1px
+}
+
+.contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle_rev.gif)
+}
+
+.contextual_dialog .contextual_arrow span, .contextual_dialog .contextual_arrow_rev span {
+    display: none
+}
+
+.contextual_dialog h2 {
+    color: #000;
+    padding-bottom: 4px
+}
+
+.contextual_dialog .contextual_dialog_content {
+    background-color: #f0f0f0;
+    border: 1px solid #b7b7b7;
+    border-bottom: 2px solid #005eac;
+    line-height: 15px;
+    padding: 8px 10px 10px
+}
+
+.contextual_dialog .dialog_buttons {
+    padding-top: 10px
+}
+
+.contextual_dialog .dialog_buttons input {
+    margin-right: 10px
+}
+
+.errorDialog td.pop_content h2 {
+    background: #ffebe8;
+    border: 0;
+    border-bottom: 1px solid #AAA;
+    color: #333
+}
+
+.errorDialog td.pop_content h2 span {
+    padding: 6px 10px 7px
+}
+
+.errorDialog td.pop_content {
+    border: 1px solid #ee7c90
+}
+
+.errorDialog td.pop_content .dialog_content {
+    border: 0
+}
+
+.errorDialog td.pop_content .dialog_content .dialog_body {
+    padding: 15px
+}
+
+ul.square_bullets {
+    color: #005eac;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: square;
+    padding-left: 20px
+}
+
+.share-intro p {
+    table-layout: fixed;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden
+}
+
+.share_popup .tabs {
+    padding-top: 15px;
+    border-bottom: 1px solid #898989
+}
+
+.share_popup .toggle_tabs {
+    list-style: none;
+    width: 360px;
+    margin: 0 auto
+}
+
+.share_popup .toggle_tabs li {
+    float: left;
+    background: #f1f1f1 url(http://a.xnimg.cn/img/toggle_tab_bg.gif) repeat-x 0 1px
+}
+
+.share_popup .toggle_tabs li a {
+    border: solid #898989;
+    border-width: 1px;
+    border-left: 0;
+    padding: 3px 15px;
+    display: block;
+    color: #333;
+    margin-bottom: -1px
+}
+
+.share_popup .toggle_tabs li a.selected {
+    color: #fff !important;
+    background: #6d84b4;
+    border-color: #005eac;
+    text-decoration: none
+}
+
+.share_popup .toggle_tabs li.first a {
+    border: 1px solid #898989
+}
+
+.share_popup .toggle_tabs li.first a.selected {
+    border-color: #005eac #5973a9
+}
+
+.share_popup .toggle_tabs li.middle a {
+    border: 1px solid #898989;
+    border-left: 0
+}
+
+.share_popup .toggle_tabs li.middle a.selected {
+    border-color: #005eac #5973a9
+}
+
+td.pop_content h2 a {
+    float: right;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a.close-button {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a:hover {
+    color: #fff
+}
+
+.share_popup .share_header {
+    position: relative
+}
+
+#popShare .poplogin {
+    width: 500px;
+    margin: 0 auto
+}
+
+.share_popup .title-share {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bolder;
+    background: url(http://a.xnimg.cn/img/newsfeed/share.gif) no-repeat left center
+}
+
+.share_send, .share_post {
+    background: #f7f7f7 none repeat scroll 0;
+    padding-top: 15px
+}
+
+.share-preview {
+    background: #f7f7f7
+}
+
+.share_fields {
+    padding-bottom: 10px
+}
+
+.composer_fields dt {
+    float: left;
+    margin: 0;
+    padding: 0 10px 0 20pt;
+    text-align: right;
+    width: 65px
+}
+
+.composer_fields dd {
+    float: left;
+    margin: 0 0 10px;
+    width: 300px;
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all
+}
+
+.composer_fields dd#dd_privacy_field {
+    margin: 0
+}
+
+.composer_fields textarea {
+    height: 50px;
+    margin: 0;
+    overflow: auto
+}
+
+.composer_fields label {
+    color: #666;
+    font-weight: 700;
+    padding-top: 4px;
+    display: block
+}
+
+.attachment_stage {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc
+}
+
+.s-message .share-footer {
+    display: block;
+    height: 23px;
+    line-height: 23px;
+    float: right;
+    _margin-top: 3px;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    padding-left: 0
+}
+
+.s-message .share-footer span {
+    color: #888;
+    _margin-top: 4px;
+    display: block;
+    float: left
+}
+
+.s-message a.m-editor-emo {
+    display: block;
+    width: 30px;
+    height: 23px;
+    line-height: 23px;
+    padding-left: 25px;
+    background-image: url(http://a.xnimg.cn/imgpro/minieditor/action_btn.png);
+    background-position: 0 -23px;
+    background-repeat: no-repeat;
+    outline: 0;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    float: left
+}
+
+.attachment_stage_area {
+    overflow: hidden;
+    padding: 8px 3px 7px 8px
+}
+
+.message-fields .share-title, .message-fields .share-description {
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1
+}
+
+.share-body h3 {
+    font-weight: normal
+}
+
+.share-title {
+    font-weight: 700;
+    color: #555;
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1;
+    overflow: hidden
+}
+
+.music-summary {
+    margin-top: 5px
+}
+
+.share_info.share-with-pic {
+    margin-left: 115px
+}
+
+.share_thumb {
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 5px
+}
+
+.share_thumb img {
+    border: 3px solid #fff
+}
+
+.share-description {
+    line-height: 18px;
+    color: gray
+}
+
+.share-description span {
+    color: #333
+}
+
+.share-description a {
+    margin-right: 3px
+}
+
+.share_buttons {
+    text-align: center;
+    padding: 0 60px 10px 0
+}
+
+.share_buttons input {
+    margin: 0 5px
+}
+
+.share_popup div.tokenizer, .share_popup input.inputtext, .share_popup textarea {
+    width: 295px;
+    border: 1px solid #8496ba
+}
+
+.share_popup input.inputtext, .share_popup textarea {
+    padding: 5px 0 5px 3px
+}
+
+.share-popup-abstract .share-popup-figure {
+    float: left;
+    margin-right: 10px;
+    _display: inline
+}
+
+.share-popup-abstract .share-abs-title {
+    color: #005dac !important;
+    font-weight: bolder
+}
+
+.share-popup-abstract .share-abs-content {
+    color: #808080 !important
+}
+
+.share-success {
+    width: 410px;
+    padding: 10px 0
+}
+
+.share-success-tip {
+    width: 100px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more {
+    width: 300px;
+    text-align: center;
+    font-size: 12px;
+    border-left: 1px solid #cee1ee;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more p {
+    margin-top: 10px
+}
+
+td.pop_content .dialog_body h1.general {
+    font-size: 15px;
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.altbox {
+    color: #999;
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px #e0e0e0 solid
+}
+
+td.pop_content .dialog_body p.namefilter {
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.namefilter label {
+    color: #999;
+    font-weight: 700
+}
+
+td.pop_content .dialog_body p.namefilter .inputtext {
+    width: 200px
+}
+
+td.pop_content .dialog_body #list-results .selector {
+    height: 200px;
+    margin-bottom: 15px
+}
+
+table.pop_dialog_table.w515 {
+    width: 515px
+}
+#univlist,#searchSchoolList,#highSchoolList {
+    position: absolute;
+    width: 606px;
+    z-index: 9999
+}
+
+#univlist_provinces {
+    border-bottom: 1px solid #005eac
+}
+
+#univlist p label {
+    font-weight: lighter;
+    color: #333
+}
+
+#univlist p .input-text {
+    width: 190px;
+    background: #fff url(http://a.xnimg.cn/imgpro/bg/cs_navtop.png?timestamp=091222) no-repeat scroll left -175px
+}
+
+#univlist_provinces td {
+    vertical-align: middle;
+    color: #808080;
+    text-align: center;
+    font-size: 13px
+}
+
+#univlist_provinces a {
+    font-size: 12px;
+    display: block;
+    text-decoration: none
+}
+
+#univlist_provinces td.activetab a {
+    background: #005eac;
+    color: #fff
+}
+
+#univlist_provinces:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_provinces {
+    *zoom: 1
+}
+
+#univlist_univs {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#univlist_univs:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_univs {
+    *zoom: 1
+}
+
+#univlist_univs li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#univlist_univs li.univ {
+    width: 112px
+}
+
+#univlist_univs li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#searchlist_school {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#searchlist_school:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#searchlist_school {
+    *zoom: 1
+}
+
+#searchlist_school li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#searchlist_school li.univ {
+    width: 112px
+}
+
+#searchlist_school li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#univlist .operation a {
+    margin-right: 180px
+}
+
+#uniList {
+    width: 612px
+}
+
+.popup-wrapper {
+    border: 10px solid #d8dfea;
+    position: absolute;
+    z-index: 9999;
+    overflow: hidden
+}
+
+.popup-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: mask();
+    width: 3000px;
+    height: 3000px;
+    display: hidden
+}
+
+.popup-content {
+    border: 1px solid #005eac;
+    background: #f7f7f7;
+    padding: 6px;
+    overflow: hidden;
+    zoom: 1
+}
+
+#popup-country {
+    font: 13px sans-serif;
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    margin-left: -36px;
+}
+
+#popup-country li {
+    float: left;
+    line-height: 26px!important;
+    padding: 0 4px 0 5px;
+    background: url(http://a.xnimg.cn/img/popup_country_separator.gif) no-repeat right 50%;
+    _border: 0
+}
+
+* html #popup-country li {
+    background-position: 0 40%
+}
+
+#popup-country li a {
+    word-break: keep-all;
+    _line-height: 26px
+}
+
+#popup-country li#c_0,#popup-country li#c_13 {
+    background: 0
+}
+
+#popup-country li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-country li.active a {
+    font-weight: bold;
+    color: #000
+}
+
+#popup-country li.active a:hover {
+    text-decoration: none
+}
+
+#popup-province,#popup-province-hs {
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 3px
+}
+
+#popup-province li,#popup-province-hs li {
+    font-size: 12px;
+    float: left;
+    width: 33px;
+    text-align: center;
+    _border: 0
+}
+
+#popup-province li a,#popup-province-hs li a {
+    height: 18px;
+    line-height: 18px
+}
+
+li.active a,li.active a {
+    background: #005eac;
+    color: #fff!important
+}
+
+#popup-province li.active a:hover,#popup-province-hs li.active a:hover {
+    text-decoration: none
+}
+
+#popup-province li a,#popup-province-hs li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-province li#p_0_3,#popup-province li#p_0_20,#popup-province li#p_0_26,#popup-province li#p_0_9 {
+    width: 44px
+}
+
+#popup-province-hs li#hsp_0_5,#popup-province-hs li#hsp_0_8,#popup-province-hs li#hsp_0_22,#popup-province-hs li#hsp_0_25 {
+    width: 44px
+}
+
+#popup-unis,#popup-unis-hs {
+    list-style: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 200px;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 10px 0 10px 10px;
+    margin: 5px 0
+}
+
+#popup-unis li,#popup-unis-hs li {
+    float: left;
+    width: 160px;
+    padding: 4px 12px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) no-repeat 0 9px
+}
+
+#popup-unis li a:hover,#popup-unis-hs li a:hover {
+    background: #005eac;
+    color: #FFF;
+    text-decoration: none
+}
+
+* html #popup-unis li {
+    height: 1.3em
+}
+
+#uniList .canbutton {
+    float: right
+}
+
+.module-popupcity {
+    background-color: #fff;
+    padding: 3px 8px;
+    border: 1px solid #c3c3c3;
+    overflow: hidden;
+    zoom: 1;
+    margin: 5px 0
+}
+
+.module-popupcity li {
+    list-style: none;
+    margin-right: 5px;
+    height: 18px;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    word-break: keep-all;
+    line-height: 18px
+}
+
+.module-popupcity li.active {
+    _border: 0
+}
+
+.module-qulist {
+    background-color: #fff;
+    overflow: hidden;
+    zoom: 1;
+    padding: 3px 8px;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-qulist li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 5px;
+    float: left;
+    word-break: keep-all;
+    height: 18px;
+    line-height: 18px;
+    _border: 0
+}
+
+.module-qulist li a {
+    white-space: nowrap
+}
+
+.module-schoollist {
+    background-color: #fff;
+    height: 200px;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-schoollist li {
+    float: left;
+    list-style: none;
+    display: block;
+    width: 170px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    padding-left: 10px;
+    margin-right: 5px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) left 10px no-repeat
+}
+
+.module-schoollist li.active {
+    _border: 0
+}
+
+</style>
+<table class="pop_dialog_table">
+<tbody>
+<tr>
+    <td class="pop_topleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_topright"></td>
+</tr>
+<tr>
+<td class="pop_border"></td>
+<td class="pop_content"><h2><span>选择学校</span><a style="display:none;" class="close-button" href="#nogo"
+                                                onclick="return false;">关闭</a></h2>
+
+<div class="dialog_content">
+<div class="dialog_body">
+<div id="univlist" style="position: static;">
+<div><p id="filter_univ"><label for="school_search_input">搜索 : </label><input class="input-text"
+                                                                              id="school_search_input"
+                                                                              type="text"
+                                                                              autocomplete="off">
+</p>
+<ul id="popup-country">
+    <li id="p_0_1"><a>北京</a>
+    </li>
+    <li id="p_0_2"><a>上海</a>
+    <li id="p_0_2"><a>上海</a>
+    </li>
+    <li id="p_0_3" class="active"><a>黑龙江</a>
+    </li>
+    <li id="p_0_4"><a>吉林</a>
+    </li>
+    <li id="p_0_5"><a>辽宁</a>
+    </li>
+    <li id="p_0_6"><a>天津</a>
+    </li>
+    <li id="p_0_7"><a>安徽</a>
+    </li>
+    <li id="p_0_8"><a>江苏</a>
+    </li>
+    <li id="p_0_9"><a>浙江</a>
+    </li>
+    <li id="p_0_10"><a>陕西</a>
+    </li>
+    <li id="p_0_11"><a>湖北</a>
+    </li>
+    <li id="p_0_12"><a>广东</a>
+    </li>
+    <li id="p_0_13"><a>湖南</a>
+    </li>
+    <li id="p_0_14"><a>甘肃</a>
+    </li>
+    <li id="p_0_15"><a>四川</a>
+    </li>
+    <li id="p_0_16"><a>山东</a>
+    </li>
+    <li id="p_0_17"><a>福建</a>
+    </li>
+    <li id="p_0_18"><a>河南</a>
+    </li>
+    <li id="p_0_19"><a>重庆</a>
+    </li>
+    <li id="p_0_20"><a>云南</a>
+    </li>
+    <li id="p_0_21"><a>河北</a>
+    </li>
+    <li id="p_0_22"><a>江西</a>
+    </li>
+    <li id="p_0_23"><a>山西</a>
+    </li>
+    <li id="p_0_24"><a>贵州</a>
+    </li>
+    <li id="p_0_25"><a>广西</a>
+    </li>
+    <li id="p_0_26"><a>内蒙古</a>
+    </li>
+    <li id="p_0_27"><a>宁夏</a>
+    </li>
+    <li id="p_0_28"><a>青海</a>
+    </li>
+    <li id="p_0_29"><a>新疆</a>
+    </li>
+    <li id="p_0_30"><a>海南</a>
+    </li>
+    <li id="p_0_31"><a>西藏</a>
+    </li>
+    <li id="p_0_32"><a>香港</a>
+    </li>
+    <li id="p_0_33"><a>澳门</a>
+    </li>
+    <li id="p_0_34"><a>台湾</a>
+    </li>
+</ul>
+<ul id="popup-province">
+    <li id="c_0" class=" active"><a>哈尔滨市</a></li>
+    <li id="c_7"><a>齐齐哈尔市</a></li>
+    <li id="c_6"><a>鹤岗市</a></li>
+    <li id="c_5"><a>双鸭山市</a></li>
+    <li id="c_1"><a>鸡西市</a></li>
+    <li id="c_2"><a>大庆市</a></li>
+    <li id="c_8"><a>伊春市</a></li>
+    <li id="c_4"><a>牡丹江市</a></li>
+    <li id="c_3"><a>佳木斯市</a></li>
+    <li id="c_9"><a>七台河市</a></li>
+    <li id="c_10"><a>黑河市</a></li>
+    <li id="c_11"><a>绥化市</a></li>
+    <li id="c_12"><a>大兴安岭地区</a></li>
+</ul>
+<ul id="popup-unis">
+<li id="u_1001"><a id="sch_1001" href="1001"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">清华大学</a></li>
+<li id="u_1002"><a id="sch_1002" href="1002"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京大学</a></li>
+<li id="u_1003"><a id="sch_1003" href="1003"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国人民大学</a>
+</li>
+<li id="u_1004"><a id="sch_1004" href="1004"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京航空航天大学</a>
+</li>
+<li id="u_1005"><a id="sch_1005" href="1005"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京邮电大学</a>
+</li>
+<li id="u_1006"><a id="sch_1006" href="1006"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京师范大学</a>
+</li>
+<li id="u_1007"><a id="sch_1007" href="1007"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国传媒大学</a>
+</li>
+<li id="u_1008"><a id="sch_1008" href="1008"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京语言大学</a>
+</li>
+<li id="u_1009"><a id="sch_1009" href="1009"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京科技大学</a>
+</li>
+<li id="u_1010"><a id="sch_1010" href="1010"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国农业大学</a>
+</li>
+<li id="u_1011"><a id="sch_1011" href="1011"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京理工大学</a>
+</li>
+<li id="u_1012"><a id="sch_1012" href="1012"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京林业大学</a>
+</li>
+<li id="u_1013"><a id="sch_1013" href="1013"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京交通大学</a>
+</li>
+<li id="u_1014"><a id="sch_1014" href="1014"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国矿业大学（北京）</a>
+</li>
+<li id="u_1015"><a id="sch_1015" href="1015"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京信息科技大学</a>
+</li>
+<li id="u_1016"><a id="sch_1016" href="1016"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工业大学</a>
+</li>
+<li id="u_1017"><a id="sch_1017" href="1017"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京化工大学</a>
+</li>
+<li id="u_1018"><a id="sch_1018" href="1018"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国政法大学</a>
+</li>
+<li id="u_1019"><a id="sch_1019" href="1019"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">对外经贸大学</a>
+</li>
+<li id="u_1020"><a id="sch_1020" href="1020"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央民族大学</a>
+</li>
+<li id="u_1021"><a id="sch_1021" href="1021"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国地质大学（北京）</a>
+</li>
+<li id="u_1022"><a id="sch_1022" href="1022"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国科学院大学</a>
+</li>
+<li id="u_1023"><a id="sch_1023" href="1023"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京中医药大学</a>
+</li>
+<li id="u_1024"><a id="sch_1024" href="1024"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都经济贸易大学</a>
+</li>
+<li id="u_1025"><a id="sch_1025" href="1025"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央财经大学</a>
+</li>
+<li id="u_1026"><a id="sch_1026" href="1026"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北方工业大学</a>
+</li>
+<li id="u_1027"><a id="sch_1027" href="1027"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国石油大学（北京）</a>
+</li>
+<li id="u_1028"><a id="sch_1028" href="1028"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">外交学院</a></li>
+<li id="u_1029"><a id="sch_1029" href="1029"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都师范大学</a>
+</li>
+<li id="u_1030"><a id="sch_1030" href="1030"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央戏剧学院</a>
+</li>
+<li id="u_1031"><a id="sch_1031" href="1031"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国青年政治学院</a>
+</li>
+<li id="u_1032"><a id="sch_1032" href="1032"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京外国语大学</a>
+</li>
+<li id="u_1033"><a id="sch_1033" href="1033"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">华北电力大学（北京）</a>
+</li>
+<li id="u_1034"><a id="sch_1034" href="1034"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国人民公安大学</a>
+</li>
+<li id="u_1035"><a id="sch_1035" href="1035"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京协和医学院</a>
+</li>
+<li id="u_1036"><a id="sch_1036" href="1036"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京体育大学</a>
+</li>
+<li id="u_1037"><a id="sch_1037" href="1037"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工商大学</a>
+</li>
+<li id="u_1038"><a id="sch_1038" href="1038"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京联合大学</a>
+</li>
+<li id="u_1039"><a id="sch_1039" href="1039"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都医科大学</a>
+</li>
+<li id="u_1040"><a id="sch_1040" href="1040"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">国际关系学院</a>
+</li>
+<li id="u_1041"><a id="sch_1041" href="1041"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央美术学院</a>
+</li>
+<li id="u_1042"><a id="sch_1042" href="1042"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京电子科技学院</a>
+</li>
+<li id="u_1043"><a id="sch_1043" href="1043"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国劳动关系学院</a>
+</li>
+<li id="u_1044"><a id="sch_1044" href="1044"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中华女子学院</a>
+</li>
+<li id="u_1045"><a id="sch_1045" href="1045"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京建筑大学</a>
+</li>
+<li id="u_1046"><a id="sch_1046" href="1046"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京印刷学院</a>
+</li>
+<li id="u_1047"><a id="sch_1047" href="1047"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京石油化工学院</a>
+</li>
+<li id="u_1048"><a id="sch_1048" href="1048"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首钢工学院</a></li>
+<li id="u_1049"><a id="sch_1049" href="1049"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京农学院</a></li>
+<li id="u_1050"><a id="sch_1050" href="1050"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都体育学院</a>
+</li>
+<li id="u_1051"><a id="sch_1051" href="1051"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京第二外国语学院</a>
+</li>
+<li id="u_1052"><a id="sch_1052" href="1052"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京物资学院</a>
+</li>
+<li id="u_1053"><a id="sch_1053" href="1053"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京警察学院</a>
+</li>
+<li id="u_1054"><a id="sch_1054" href="1054"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央音乐学院</a>
+</li>
+<li id="u_1055"><a id="sch_1055" href="1055"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国戏曲学院</a>
+</li>
+<li id="u_1056"><a id="sch_1056" href="1056"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京舞蹈学院</a>
+</li>
+<li id="u_1057"><a id="sch_1057" href="1057"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京城市学院</a>
+</li>
+<li id="u_1058"><a id="sch_1058" href="1058"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京电影学院</a>
+</li>
+<li id="u_1059"><a id="sch_1059" href="1059"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京服装学院</a>
+</li>
+<li id="u_1060"><a id="sch_1060" href="1060"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">青岛教育学院</a>
+</li>
+<li id="u_1061"><a id="sch_1061" href="1061"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京体育职业学院</a>
+</li>
+<li id="u_1062"><a id="sch_1062" href="1062"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国人民解放军装甲兵工程学院</a>
+</li>
+<li id="u_1067"><a id="sch_1067" href="1067"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国石油勘探开发研究院</a>
+</li>
+<li id="u_1068"><a id="sch_1068" href="1068"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京生命科学研究所</a>
+</li>
+<li id="u_1069"><a id="sch_1069" href="1069"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国电影资料馆</a>
+</li>
+<li id="u_1070"><a id="sch_1070" href="1070"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工商大学嘉华学院</a>
+</li>
+<li id="u_1071"><a id="sch_1071" href="1071"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都师范大学科德学院</a>
+</li>
+<li id="u_1072"><a id="sch_1072" href="1072"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工业大学耿丹学院</a>
+</li>
+<li id="u_1074"><a id="sch_1074" href="1074"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京联合大学广告学院</a>
+</li>
+<li id="u_1075"><a id="sch_1075" href="1075"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京邮电大学世纪学院</a>
+</li>
+<li id="u_1076"><a id="sch_1076" href="1076"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京国际商务学院</a>
+</li>
+<li id="u_1078"><a id="sch_1078" href="1078"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国林业科学研究院</a>
+</li>
+<li id="u_1079"><a id="sch_1079" href="1079"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京航空材料研究院</a>
+</li>
+<li id="u_1080"><a id="sch_1080" href="1080"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京京海研修学院</a>
+</li>
+<li id="u_1081"><a id="sch_1081" href="1081"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京高等电力专科学校</a>
+</li>
+<li id="u_1082"><a id="sch_1082" href="1082"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国空间技术研究院</a>
+</li>
+<li id="u_1083"><a id="sch_1083" href="1083"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京企业管理研修学院 </a>
+</li>
+<li id="u_1084"><a id="sch_1084" href="1084"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">现代软件学院</a>
+</li>
+<li id="u_1085"><a id="sch_1085" href="1085"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">国家检察官学院</a>
+</li>
+<li id="u_1086"><a id="sch_1086" href="1086"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国中医科学院</a>
+</li>
+<li id="u_1087"><a id="sch_1087" href="1087"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京国家会计学院</a>
+</li>
+<li id="u_1088"><a id="sch_1088" href="1088"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京华夏管理学院</a>
+</li>
+<li id="u_1089"><a id="sch_1089" href="1089"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中日友好临床医学研究所</a>
+</li>
+<li id="u_1090"><a id="sch_1090" href="1090"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京京城学院</a>
+</li>
+<li id="u_1091"><a id="sch_1091" href="1091"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">长江商学院</a></li>
+<li id="u_1092"><a id="sch_1092" href="1092"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国水利水电科学研究院</a>
+</li>
+<li id="u_1093"><a id="sch_1093" href="1093"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国国际经济学院</a>
+</li>
+<li id="u_1094"><a id="sch_1094" href="1094"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京卫生职业学院</a>
+</li>
+<li id="u_1095"><a id="sch_1095" href="1095"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市农工商联合总公司职工大学</a>
+</li>
+<li id="u_1096"><a id="sch_1096" href="1096"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京新圆明职业学院</a>
+</li>
+<li id="u_1097"><a id="sch_1097" href="1097"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">公安部管理干部学院</a>
+</li>
+<li id="u_1098"><a id="sch_1098" href="1098"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">华北电业联合职工大学</a>
+</li>
+<li id="u_1099"><a id="sch_1099" href="1099"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">民航管理干部学院</a>
+</li>
+<li id="u_1100"><a id="sch_1100" href="1100"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国记协职工新闻学院</a>
+</li>
+<li id="u_1101"><a id="sch_1101" href="1101"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京大学医学部</a>
+</li>
+<li id="u_1102"><a id="sch_1102" href="1102"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京政法职业学院</a>
+</li>
+<li id="u_1103"><a id="sch_1103" href="1103"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京信息职业技术学院</a>
+</li>
+<li id="u_1104"><a id="sch_1104" href="1104"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京现代职业技术学院</a>
+</li>
+<li id="u_1105"><a id="sch_1105" href="1105"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京现代音乐研修学院</a>
+</li>
+<li id="u_1106"><a id="sch_1106" href="1106"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京戏曲艺术职业学院</a>
+</li>
+<li id="u_1107"><a id="sch_1107" href="1107"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京锡华国际经贸职业学院</a>
+</li>
+<li id="u_1108"><a id="sch_1108" href="1108"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京盛基艺术学校</a>
+</li>
+<li id="u_1109"><a id="sch_1109" href="1109"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京培黎职业学院</a>
+</li>
+<li id="u_1110"><a id="sch_1110" href="1110"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京农业职业学院</a>
+</li>
+<li id="u_1111"><a id="sch_1111" href="1111"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京科技职业学院</a>
+</li>
+<li id="u_1112"><a id="sch_1112" href="1112"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京科技经营管理学院</a>
+</li>
+<li id="u_1113"><a id="sch_1113" href="1113"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京经贸职业学院</a>
+</li>
+<li id="u_1114"><a id="sch_1114" href="1114"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京经济技术职业学院</a>
+</li>
+<li id="u_1115"><a id="sch_1115" href="1115"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京京北职业技术学院</a>
+</li>
+<li id="u_1116"><a id="sch_1116" href="1116"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京交通职业技术学院</a>
+</li>
+<li id="u_1117"><a id="sch_1117" href="1117"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京吉利大学</a>
+</li>
+<li id="u_1118"><a id="sch_1118" href="1118"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京汇佳职业学院</a>
+</li>
+<li id="u_1119"><a id="sch_1119" href="1119"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工业职业技术学院</a>
+</li>
+<li id="u_1120"><a id="sch_1120" href="1120"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工商管理专修学院</a>
+</li>
+<li id="u_1121"><a id="sch_1121" href="1121"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京电子科技职业学院</a>
+</li>
+<li id="u_1122"><a id="sch_1122" href="1122"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京财贸职业学院</a>
+</li>
+<li id="u_1123"><a id="sch_1123" href="1123"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京北大方正软件技术学院</a>
+</li>
+<li id="u_1124"><a id="sch_1124" href="1124"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北大资源美术学院</a>
+</li>
+<li id="u_1125"><a id="sch_1125" href="1125"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京人文大学</a>
+</li>
+<li id="u_1126"><a id="sch_1126" href="1126"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京高等秘书学院</a>
+</li>
+<li id="u_1127"><a id="sch_1127" href="1127"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京应用技术大学</a>
+</li>
+<li id="u_1128"><a id="sch_1128" href="1128"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国防卫科技学院</a>
+</li>
+<li id="u_1129"><a id="sch_1129" href="1129"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国音乐学院</a>
+</li>
+<li id="u_1130"><a id="sch_1130" href="1130"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国信息大学</a>
+</li>
+<li id="u_1131"><a id="sch_1131" href="1131"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京青年政治学院</a>
+</li>
+<li id="u_1132"><a id="sch_1132" href="1132"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京财经专修学院</a>
+</li>
+<li id="u_1133"><a id="sch_1133" href="1133"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京经济管理职业学院</a>
+</li>
+<li id="u_1134"><a id="sch_1134" href="1134"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京美国英语语言学院</a>
+</li>
+<li id="u_1135"><a id="sch_1135" href="1135"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国管理软件学院</a>
+</li>
+<li id="u_1136"><a id="sch_1136" href="1136"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">财政部财政科学研究所</a>
+</li>
+<li id="u_1137"><a id="sch_1137" href="1137"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北大资源学院</a>
+</li>
+<li id="u_1138"><a id="sch_1138" href="1138"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">现代管理大学</a>
+</li>
+<li id="u_1139"><a id="sch_1139" href="1139"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京民族大学</a>
+</li>
+<li id="u_1140"><a id="sch_1140" href="1140"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市劳动保障职业学院</a>
+</li>
+<li id="u_1141"><a id="sch_1141" href="1141"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市建设职工大学</a>
+</li>
+<li id="u_1142"><a id="sch_1142" href="1142"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市房地产职工大学</a>
+</li>
+<li id="u_1143"><a id="sch_1143" href="1143"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市汽车工业总公司职工大学</a>
+</li>
+<li id="u_1144"><a id="sch_1144" href="1144"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市西城经济科学大学</a>
+</li>
+<li id="u_1145"><a id="sch_1145" href="1145"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市丰台区职工大学</a>
+</li>
+<li id="u_1146"><a id="sch_1146" href="1146"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京广播电视大学</a>
+</li>
+<li id="u_1147"><a id="sch_1147" href="1147"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京教育学院</a>
+</li>
+<li id="u_1148"><a id="sch_1148" href="1148"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市东城区职工业余大学</a>
+</li>
+<li id="u_1149"><a id="sch_1149" href="1149"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市总工会职工大学</a>
+</li>
+<li id="u_1150"><a id="sch_1150" href="1150"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市海淀区职工大学</a>
+</li>
+<li id="u_1151"><a id="sch_1151" href="1151"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市崇文区职工大学</a>
+</li>
+<li id="u_1152"><a id="sch_1152" href="1152"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京宣武红旗业余大学</a>
+</li>
+<li id="u_1153"><a id="sch_1153" href="1153"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市石景山区业余大学</a>
+</li>
+<li id="u_1154"><a id="sch_1154" href="1154"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市朝阳区职工大学</a>
+</li>
+<li id="u_1155"><a id="sch_1155" href="1155"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京市机械工业局职工大学</a>
+</li>
+<li id="u_1156"><a id="sch_1156" href="1156"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京医药集团职工大学</a>
+</li>
+<li id="u_1157"><a id="sch_1157" href="1157"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京劳动保障职业学院</a>
+</li>
+<li id="u_1158"><a id="sch_1158" href="1158"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京社会管理职业学院</a>
+</li>
+<li id="u_1159"><a id="sch_1159" href="1159"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中南海业余大学</a>
+</li>
+<li id="u_1160"><a id="sch_1160" href="1160"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京演艺专修学院</a>
+</li>
+<li id="u_1161"><a id="sch_1161" href="1161"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京兴华大学</a>
+</li>
+<li id="u_1162"><a id="sch_1162" href="1162"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京新园明职业学院</a>
+</li>
+<li id="u_1163"><a id="sch_1163" href="1163"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央党校研究生院</a>
+</li>
+<li id="u_1164"><a id="sch_1164" href="1164"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国社科院</a></li>
+<li id="u_1165"><a id="sch_1165" href="1165"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京旅游专修学院</a>
+</li>
+<li id="u_1166"><a id="sch_1166" href="1166"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">东方文化艺术学院</a>
+</li>
+<li id="u_1167"><a id="sch_1167" href="1167"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都联合职工大学</a>
+</li>
+<li id="u_1168"><a id="sch_1168" href="1168"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国农业科学院</a>
+</li>
+<li id="u_1169"><a id="sch_1169" href="1169"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京影视研修学院</a>
+</li>
+<li id="u_1170"><a id="sch_1170" href="1170"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">国家法官学院</a>
+</li>
+<li id="u_1171"><a id="sch_1171" href="1171"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京建设大学</a>
+</li>
+<li id="u_1172"><a id="sch_1172" href="1172"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京金融学院</a>
+</li>
+<li id="u_1173"><a id="sch_1173" href="1173"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京黄埔大学</a>
+</li>
+<li id="u_1174"><a id="sch_1174" href="1174"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中瑞酒店管理学院</a>
+</li>
+<li id="u_1175"><a id="sch_1175" href="1175"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国建筑设计研究院</a>
+</li>
+<li id="u_1176"><a id="sch_1176" href="1176"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京文理研修学院</a>
+</li>
+<li id="u_1177"><a id="sch_1177" href="1177"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京当代艺术学院</a>
+</li>
+<li id="u_1178"><a id="sch_1178" href="1178"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京大学国际法学院</a>
+</li>
+<li id="u_1179"><a id="sch_1179" href="1179"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京交通运输职业学院</a>
+</li>
+<li id="u_1180"><a id="sch_1180" href="1180"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国艺术研究院</a>
+</li>
+<li id="u_1181"><a id="sch_1181" href="1181"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京工业大学通州分校</a>
+</li>
+<li id="u_1182"><a id="sch_1182" href="1182"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京八维研修学院</a>
+</li>
+<li id="u_1183"><a id="sch_1183" href="1183"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央党校继续教育学院</a>
+</li>
+<li id="u_1184"><a id="sch_1184" href="1184"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中央广播电视大学</a>
+</li>
+<li id="u_1185"><a id="sch_1185" href="1185"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">门头沟区委党校</a>
+</li>
+<li id="u_1186"><a id="sch_1186" href="1186"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">电信科学技术研究院</a>
+</li>
+<li id="u_1187"><a id="sch_1187" href="1187"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">首都经济贸易大学密云分校 </a>
+</li>
+<li id="u_1188"><a id="sch_1188" href="1188"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京有色金属研究总院研究生部</a>
+</li>
+<li id="u_1189"><a id="sch_1189" href="1189"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">国家行政学院</a>
+</li>
+<li id="u_1191"><a id="sch_1191" href="1191"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京交通管理干部学院</a>
+</li>
+<li id="u_1192"><a id="sch_1192" href="1192"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中共北京市委党校（北京行政学院）</a>
+</li>
+<li id="u_1193"><a id="sch_1193" href="1193"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国疾病预防控制中心</a>
+</li>
+<li id="u_1194"><a id="sch_1194" href="1194"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国舰船研究院</a>
+</li>
+<li id="u_1195"><a id="sch_1195" href="1195"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">空军指挥学院</a>
+</li>
+<li id="u_1196"><a id="sch_1196" href="1196"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">北京大学国家发展研究院</a>
+</li>
+<li id="u_1197"><a id="sch_1197" href="1197"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">解放军医学院</a>
+</li>
+<li id="u_1199"><a id="sch_1199" href="1199"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国社会科学院研究生院</a>
+</li>
+<li id="u_1202"><a id="sch_1202" href="1202"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中国铁道科学研究院 </a>
+</li>
+<li id="u_1999"><a id="sch_1999" href="1999"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">朝阳二外</a></li>
+<li id="u_2000"><a id="sch_2000" href="2000"
+                   onclick="return XN.ui.schoolSelector.getResult(this);">中北国际演艺学校</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="dialog_buttons"><input type="button" class=" input-submit" value="关闭" dialog="1"></div>
+</div>
+</td>
+<td class="pop_border"></td>
+</tr>
+<tr>
+    <td class="pop_bottomleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_bottomright"></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

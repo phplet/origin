@@ -1,0 +1,68 @@
+body {
+	padding:0;
+	margin:0; 
+	font-size:10.5pt;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+.wrap { margin:0 auto; max-width:1020px; min-width:600px; }
+
+p { margin:2px 0; }
+
+
+#hover { padding:2px; position:absolute; display:none; z-index:50; background-color:#FFFFCC; border:1px solid #999999; }
+
+#input { margin:0 auto; }
+
+.top { margin:0 auto; padding:2px 0; width:95%;  }
+.bottom { border-bottom:1px solid #9a9a9a; }
+
+.toolbar_wrapper { text-align:center; }
+.toolbar { position:relative; padding-top:2px; }
+.panel { display:inline-block; padding:0px 3px; overflow:hidden; vertical-align:top; }
+
+a, a:visited { color:#280092; text-decoration:none; }
+a:visited:hover, a:link:hover { color: #ff6501; text-decoration:underline }
+a img { border:0 none; }
+
+#MathInput { height:80px; font-size:12pt; border:1px solid #8FB6BD; width:95% }
+#MathInput:focus { background-color:#FFFFCC; }
+
+#intro { position:absolute; margin-left:30px; color:#FF6600; font-size:16px; }
+
+.yellowbox { width:430px; border:1px solid #dddddd; background-color:#FFFFCC; padding:5px; margin:5px auto; }
+
+#toolbar_example { clear:left; }
+
+select 
+{
+	font-family:"lucida grande", tahoma, verdana, arial, sans-sarif;
+    font-size:11px;
+	background-color:#FFFFFF;
+	border:1px solid #8FB6BD;
+	height:18px;
+}
+
+/* ------- Button formating ------ */
+	
+.bluebutton, .lightbluebutton, .greybutton {
+  border-style: solid;
+	border-width:1px;
+  border-top-color: #D9DFEA;
+  border-left-color: #D9DFEA;
+  border-bottom-color: #0e1f5b;
+  border-right-color: #0e1f5b;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-family: "lucida grande", tahoma, verdana, arial, sans-serif; 
+  text-align: center; 
+	cursor:pointer;
+	/*cursor:hand;*/
+	padding:1px 4px;
+	margin:0;
+}
+
+.lightbluebutton { background-color:#4068AE; }
+.bluebutton { background-color:#003794; }
+.greybutton { background-color:#888888; }
+.orange { color: #FF6600; }

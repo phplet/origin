@@ -1,0 +1,258 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+                        'js/jquery/plugin/validate/additional-methods.min.js',
+                        'js/jquery/plugin/validate/messages_zh.js',
+                        'js/jquery/plugin/blockUi.js',
+    					'js/third_party/ueditor/ueditor.config.question.js',
+                        'js/third_party/ueditor/ueditor.all.min.js',
+                        'js/third_party/ueditor/lang/zh-cn/zh-cn.js',
+                        'js/datepicker/wdatepicker.js'));
+
+    static_js(array('admin/question/question.js',
+                    'admin/question/question_validate.js',
+                    'admin/question/pic_delete.js'));
+?>
+
+<script>
+var is_group  = true;
+
+//解决ueditor编辑器放table里在360兼容模式下显示不了。
+$(function() {
+	var editor = UE.getEditor('editor_question');
+	window.question_editor = editor;
+
+	var editor1 = UE.getEditor('editor_question_options',{
+		initialFrameHeight:200
+	});
+	window.question_editor = editor1;
+
+	// 真题附加信息
+    $('#is_original').change(function () {
+
+        var value = $(this).val();
+
+        $('#exam_question_extras').hide();
+        $('#exam_question_related').hide();
+        $('#exam_question_simulation').hide();
+
+        if (value == 2)
+        {
+          $('#exam_question_extras').show();
+        }
+        else if (value == 1)
+        {
+          $('#exam_question_related').show();
+        }
+        else if (value == 3)
+        {
+            $('#exam_question_simulation').show();
+          }
+    });
+
+  // 验证真题是否存在
+  $('#related').blur(function(){
+    var val = $('#related').val();
+    if (val != '') {
+      $.post('<?=site_url('admin/question/validate_related')?>',{related:val},function(data){
+        if (data == 'false') {
+          alert('真题路径错误！(试题ID填写错误或试题类型不为真题)');
+          $('#related').focus();
+        };
+      });
+    };
+  });
+
+});
+</script>
+<style>
+    .height_light {
+        border:1px solid #f00;
+        padding:2px 0 2px 0;
+        margin:2px 0 2px 0;
+    }
+    .gray_input {
+        color:#ccc;
+    }
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question_external/update_diction')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'add'):?>
+  <input type="hidden" name="relate_group" value="<?=$relate_group?>" />
+  <input type="hidden" name="relate_ques_id" value="<?=$relate_ques_id?>" />
+  <?php else:?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+    <div style="position:absolute;top:-1000px;">
+      <input type="checkbox" id="class_id_validate" name="class_id_validate" value="1" />
+    </div>
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>选词填空题干</div>
+    <table class="maintable"  border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">题目信息</td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">学科</td>
+            <td>
+              <select name="subject_id" id="subject_id">
+                <option value="">--请选择--</option>
+                <?php foreach($subjects as $key => $val): ?>
+                <?php if ($key == 3) {?>
+                <option value="<?=$key?>" selected><?=$val?></option>
+                <?php }?>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="subject_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="start_grade" id="start_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['start_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              -
+              <select name="end_grade" id="end_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['end_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="grade_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">类型</td>
+            <td>
+             <div style="color:#f00;padding:5px;">提示：首尾年级必须选择相应类型。被选择的类型必须填写难易度。难易度参考值：容易[X>60],中等[30≤X≤60],难[X<30]。</div>
+             <div id="class_list">
+               <?php foreach($grades as $key => $val):?>
+                <div id="grade<?=$key?>_class" <?php if(empty($relate_class[$key])):?>style="display:;"<?php endif;?>>
+                <?=$key>6?'　':''?><?=$val?>:
+                <?php $class_list = isset($all_grade_class[$key])?$all_grade_class[$key]:array();?>
+                <?php foreach($class_list as $cid => $class):?>
+                <input type="checkbox" name="class_id[<?=$key?>][<?=$cid?>]" id="grade<?=$key?>_class<?=$cid?>" value="<?=$cid?>" <?php if(isset($relate_class[$key][$cid])):?>checked<?php endif;?>/><label for="grade<?=$key?>_class<?=$cid?>"><?=$class['class_name']?></label>
+                <input type="text" class="txtbox5 gray_input" name="difficulty[<?=$key?>][<?=$cid?>]" value="<?=isset($relate_class[$key][$cid]['difficulty'])?$relate_class[$key][$cid]['difficulty']:'难易度'?>"/>
+                <?php if($key>=11 && in_array($cid,array(2,3))):?>
+                <select name="subject_type[<?=$key?>][<?=$cid?>]">
+                <?php foreach(array_filter($subject_types) as $k => $v):?>
+                 <option value="<?=$k?>"<?php if(isset($relate_class[$key][$cid]['subject_type']) AND $relate_class[$key][$cid]['subject_type']==$k):?> selected<?php endif;?>><?=$v?></option>
+                <?php endforeach;?>
+                </select>
+                <?php endif;?>
+                <?php endforeach;?>
+                </div>
+               <?php endforeach;?>
+             </div>
+             <label for="class_id_validate" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考试方式</td>
+            <td>
+              <?php 
+              $test_way = C('test_way');
+              foreach ($test_way as $key => $val)
+              {
+              ?>
+              <input type="checkbox" value="<?=$key?>" name="test_way[]" id="test_way[<?=$key?>]" <?php if ($question['test_way'] == $key || $question['test_way'] == 3) {?>checked<?php }?>><label for="test_way[<?=$key?>]"><?=$val?></label> 
+              <?php }?>
+                &nbsp;&nbsp;
+              <span style="color:#f00">*</span>
+              <label class="error" style="display:none" for="test_way[]"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">题目类型(真题、原创、模拟题)</td>
+            <td>
+              <select name="is_original" id="is_original">
+                <option value="1">原创</option>
+              </select>
+              <?php if ($question['is_original'] == 2): ?>
+                <span id="exam_question_extras">
+              <?php else: ?>
+                <span id="exam_question_extras" style="display: none;">
+              <?php endif ?>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <label for="exam_year">年份：</label>
+                <input type="text" id="exam_year" class="txtbox2" name="exam_year" onclick="WdatePicker({dateFmt:'yyyy'});" value="<?php echo $question['exam_year'] ?>" readonly/> <span>请点击选择年份</span>
+                <p><label for="remar">备注：</label></p>
+                <textarea name="remark" id="remark" cols="100" rows="5"><?php echo $question['remark']; ?></textarea>
+              </span>
+
+              <?php /** 真题路径 */ ?>
+              <?php if ($question['is_original'] == 1): ?>
+                <span id="exam_question_related" style="display: none;">
+              <?php else: ?>
+                <span id="exam_question_related" style="display: none;">
+              <?php endif ?>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <label for="related">真题路径：</label>
+                <input type="text" id="related" class="txtbox2" name="related" value="<?php echo $question['related']; ?>"/>
+                <span>真题路径必须为已录入的真题</span>
+              </span>
+
+                <?php if ($question['is_original'] == 3): ?>
+                <span id="exam_question_simulation">
+              <?php else: ?>
+                <span id="exam_question_simulation" style="display: none;">
+              <?php endif ?>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                   <p><label for="simulation">来源：</label></p>
+                       <textarea name="simulation" id="simulation" cols="100" rows="5"><?php echo $question['simulation']; ?></textarea>
+
+                  <span style="color:#f00">*</span><label for="simulation" class="error" style="display:none"></label>
+              </span>
+
+
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">标签</td>
+            <td>
+             <?php foreach ($q_tags as $key => $item) {?>
+             <?php $checked = ($key == $question['tags']) ? 'checked="checked"' : '';?>
+             <INPUT type="radio" name="q_tag" id="q_tag<?=$key?>" value="<?=$key?>" <?=$checked?> />
+             <?=$item?>&emsp;
+             <?php }?>
+             <SCRIPT type="text/javascript">
+          	     if ($('input:radio[name=q_tag]:checked').val() == null)
+          	     {
+            	     $('#q_tag1').attr('checked',true);
+                 }
+             </SCRIPT>
+            </td>
+        </tr>
+        <?php $info = explode('&nbsp;<br/>&nbsp;',$question['title'])?>
+        <tr>
+            <td class="altbg1">题目</td>
+            <td>
+				<script id="editor_question" name="title" type="text/plain" style="width:700px;height:320px;"><?=$info[0]?></script>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">选词</td>
+            <td>
+				<script id="editor_question_options" name="options" type="text/plain" style="width:700px;height:320px;"><?=isset($info[1]) ? $info[1] : ''?></script>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <center>
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

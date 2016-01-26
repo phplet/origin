@@ -1,0 +1,109 @@
+<?php
+    $this->load->view('common/header');
+    static_js(array(
+        'third_party/ueditor/ueditor.config.js',
+        'third_party/ueditor/ueditor.all.min.js',
+        'third_party/ueditor/lang/zh-cn/zh-cn.js',
+        'third_party/ueditor/ueditor_mathmleditor.js',
+        'third_party/ueditor/ueditor_latexeditor.js',
+        'third_party/layer/layer.min.js'
+    ));
+?>
+
+<div id="space">
+    <div class="subtitle">
+    </div>
+    <form name="frm_cpuser_list" action="#" method="POST" id="do_audit">
+        <div class="space">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr class="altbg1">
+                    <td style="padding:15px;">
+                        <input type="hidden" name="ques_id" value="<?php echo $ques_id; ?>">
+                        <input type="radio" name="check" id="pass" value="1" <?php if($question['check'] == 1){ echo 'checked="checked"';} ?>/>
+                        <label for="pass">通过</label>
+                        <span>&nbsp;&nbsp;</span>
+                        <input type="radio" name="check" id="nopass" value="-1" <?php if($question['check'] == -1){ echo 'checked="checked"';} ?>/>
+                        <label for="nopass">不通过</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:15px;<?php if($question['check'] != -1):?>display:none;<?php endif; ?>" id="comment_container">
+                        <p>请输入理由！</p>
+                        <script id="comment" name="comment" type="text/plain" style="width:700px;height:320px;"></script>
+                    </td>
+                </tr>
+            </table>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="text-align: center;color:#f00">
+                        <input type="submit" value=" 确定 " class="btn" />
+                        <input type="button" value=" 取消 " id="close_button" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function(){
+        var editor = UE.getEditor('comment');
+        editor.ready(function() {
+            editor.execCommand('serverparam', {
+                'dirName': "<?php echo $question['ques_id'] ? $question['ques_id'] : 0;?>"
+            });
+        });
+
+        // 关闭当前窗口
+        var index = parent.layer.getFrameIndex(window.name); //获取当前窗体索引
+        $('#close_button').on('click', function(){
+            parent.layer.close(index); //执行关闭
+        });
+
+        // 如果未通过，显示未通过理由输入框
+        $(':radio[name="check"]').change(function(){
+            if ($(this).val() == -1) {
+                $('#comment_container').show();
+            } else {
+                $('#comment_container').hide();
+            }
+        });
+
+        // 添加试题到试卷中
+        $('#do_audit').submit(function(){
+            var check = $(':radio[name="check"]:checked').val() || 0;
+            var content = editor.getContent();
+
+            if (check == 0) {
+                alert('请选择是否审核通过！');
+                return false;
+            }
+
+            if (check == -1 && content == '') {
+                alert('请填写未通过的理由');
+                return false;
+            }
+
+            $.ajax({
+                url: "<?=site_url('admin/question_audit/do_audit')?>",
+                data: $('#do_audit').serialize(),
+                type: 'POST',
+                success: function(data){
+                    var data = $.parseJSON(data);
+
+                    if (data.status == 1) {
+                        parent.window.location.reload();
+                    } else {
+                        alert('审核失败！');
+                    }
+
+                    parent.layer.close(index);
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

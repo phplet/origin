@@ -1,0 +1,112 @@
+<?php if (isset($tci_difficulty['difficulty']['internal']) && count($tci_difficulty['difficulty']['internal'])) {?>
+    <?php 
+		$tci_difficulty['difficulty'] = isset($tci_difficulty['difficulty']) ? $tci_difficulty['difficulty'] : array();
+		$tci_difficulty['exams'] = isset($tci_difficulty['exams']) ? $tci_difficulty['exams'] : array();
+		$tci_difficulty['exam_names'] = array_keys($tci_difficulty['exams']);
+	?>
+
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    
+    <?php $diff_internal = isset($tci_difficulty['difficulty']['internal']) ? $tci_difficulty['difficulty']['internal'] : array(); ?>
+    <?php $diff_external = isset($tci_difficulty['difficulty']['external']) ? $tci_difficulty['difficulty']['external'] : array(); ?>
+
+    <table class="cls_row table_header indent_25" id="table_sci_diff_num">
+        <tr>
+            <?php $first_th_width = '20';?>
+            <?php $count_data = count($tci_difficulty['exam_names']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($tci_difficulty['exam_names']));?>
+            <th width="<?=$first_th_width;?>%">题型题数\考试名称</th>
+            <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                <th width="<?=$left_p_width;?>%"><?php echo $exam_name;?></th>
+            <?php }?>
+        </tr>
+    </table>
+
+    <?php if (count($diff_internal)) {?>
+        <!-- 内部难易度和题型 -->
+        <?php $auto_key  = 0;?>
+        <?php foreach ($diff_internal as $q_type) {?>
+            <?php if(strpos($q_type, '题数') === false){ continue; } ?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_diff"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width;?>%"><?php echo $q_type;?></th>
+                    <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width;?>%">
+                            <?php echo isset($tci_difficulty['exams'][$exam_name]) && isset($tci_difficulty['exams'][$exam_name][$q_type]) ? round($tci_difficulty['exams'][$exam_name][$q_type]) : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+        
+    <?php if (count($diff_external)) {?>
+        <!-- 外部难易度和题型-->
+        <?php foreach ($diff_external as $q_type) {?>
+            <?php if(strpos($q_type, '题数') === false){ continue; } ?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_diff"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width;?>%"><?php echo $q_type;?></th>
+                    <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width;?>%">
+                            <?php echo isset($tci_difficulty['exams'][$exam_name]) && isset($tci_difficulty['exams'][$exam_name][$q_type]) ? $tci_difficulty['exams'][$exam_name][$q_type]  : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+
+    <p class="cls_row">&nbsp;&nbsp;</p>
+
+    <table class="cls_row table_header indent_25" id="table_sci_diff">
+        <tr>
+            <?php $first_th_width = '20';?>
+            <?php $count_data = count($tci_difficulty['exam_names']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($tci_difficulty['exam_names']));?>
+            <th width="<?=$first_th_width;?>%">题型难易度\考试名称</th>
+            <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                <th width="<?=$left_p_width;?>%"><?php echo $exam_name;?></th>
+            <?php }?>
+        </tr>
+    </table>
+
+    <?php if (count($diff_internal)) {?>
+        <!-- 内部难易度和题型 -->
+        <?php $auto_key = 2;?>
+        <?php foreach ($diff_internal as $q_type) {?>
+            <?php if(strpos($q_type, '题数') !== false){ continue; } ?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_diff"<?php }?>>
+                <tr <?php if(($auto_key/3)%2 == 0){ echo 'class="bgc"'; }?>>
+                    <th width="<?=$first_th_width;?>%"><?php echo $q_type;?></th>
+                    <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width;?>%">
+                            <?php echo isset($tci_difficulty['exams'][$exam_name]) && isset($tci_difficulty['exams'][$exam_name][$q_type]) ? round($tci_difficulty['exams'][$exam_name][$q_type]) : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+        
+    <?php if (count($diff_external)) {?>
+        <!-- 外部难易度和题型-->
+        <?php foreach ($diff_external as $q_type) {?>
+            <?php if(strpos($q_type, '题数') !== false){ continue; } ?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_diff"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width;?>%"><?php echo $q_type;?></th>
+                    <?php foreach ($tci_difficulty['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width;?>%">
+                            <?php echo isset($tci_difficulty['exams'][$exam_name]) && isset($tci_difficulty['exams'][$exam_name][$q_type]) ? $tci_difficulty['exams'][$exam_name][$q_type]  : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+<?php } ?>

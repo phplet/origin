@@ -1,0 +1,70 @@
+<?php echo $this->load->view('common/header.phtml', array('render_simple' => true, 'page_title' =>$current_exam['exam_name']));?>
+<style>
+*{padding:0;margin:0;}
+html{
+	background:#fff;
+}
+.close_div {
+	margin: 100px auto 0;
+    padding: 50px;
+    background-color: #ffc;
+    border: 1px solid #dedede;
+	font-size:14px;
+	font-family: "微软雅黑";
+	text-align: center;
+	overflow: hidden;
+}
+strong{
+	color:blue;
+}
+.timer{
+	line-height:24px;
+	height:24px;
+	font-weight:bold;
+	font-size:18px;
+	padding-bottom:10px;
+	color:red;
+}
+.cls_copyright{
+    text-align: center;
+    margin-top: 20px;
+	position: relative;
+}
+.cls_copyright_main {
+    margin-left: 16px;
+}
+.cls_copyright_tm{
+    font-size: 10px;
+    position: absolute;
+    font-style: normal;
+    font-family:tahoma;
+}
+.tip{
+	color:green;
+	font-size:16px;
+	margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+	<div class="close_div">
+
+		<p class="timer" id="id_statusbar_clock"></p>
+                <strong><?php echo $current_exam['exam_name'];?></strong> 考试
+                <!--<strong> <?php echo $current_exam['address'];?></strong> 场次（<strong><?php echo $current_exam['address'];?></strong> 地点）-->
+                <strong> <?php echo $current_exam['place_name'];?></strong> 场次（<strong><?php echo $current_exam['address'];?></strong> 地点）
+		<strong><?php echo $current_exam['subject_name'];?></strong> 科目考试
+	</div>
+
+	<?php echo $this->load->view('common/copyright');?>
+</body>
+<?php static_js(array('front/count_down.js'));?>
+<script type="text/javascript">
+exam_count_down_config.endT = '<?php echo $end_time;?>';
+exam_count_down_config.endText = '距离该场考试结束还有 ';
+exam_count_down_config.endCallback = function () {
+	//window.location.href = '<?php echo site_url('exam/index/index');?>';
+};
+</script>
+<?php echo $this->load->view('common/count_down.phtml');?>
+</html>

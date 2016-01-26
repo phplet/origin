@@ -1,0 +1,25 @@
+<?php if (count($ss_technology_match_percent)) {?>
+	<h3 class="cls_row"><?=$g_sort+1?>&nbsp;合计目标匹配度<?php if (!$ss_technology_match_percent['contrast_exam_id']) {?>：<span class="cr"><?=$ss_technology_match_percent['percent'] > 100 ? 100 : $ss_technology_match_percent['percent']?>%</span><?php }?></h3>
+	<?php $count_num = 1; ?>
+	<?php if (!$ss_technology_match_percent['contrast_exam_id'] && isset($ss_technology_match_percent['data'])):?>
+	    <?php $last_data = array_values($ss_technology_match_percent['data'][3])?>
+	    <?php $except_data = array_values($ss_technology_match_percent['data'][2])?>
+		<?php foreach ($ss_technology_match_percent['data'] as $keys => $item): ?>
+		   	<table class="cls_row indent_25 cls_table <?php if($count_num == 1){ echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_match_percent"<?php else: ?><?php if (!$no_paging) {?>ref_title_id="table_match_percent"<?php }?><?php endif; ?>>
+		       	<tr>
+		       	    <?php $item = array_values($item);?>
+			       	<?php foreach ($item as $key => $val):?>
+			       	    <?php if ($last_data[$key] || $keys == 0) {?>
+    				   		<<?=is_numeric($val) ? 'td' : 'th'?> width="20%" <?php if ($keys == 1 && is_numeric($val) && $val != $except_data[$key]) {?>style="color:<?=$val > $except_data[$key] ? "green" : 'red'?>"<?php }?>>
+    				   		<?php echo $val;?>
+    				   		</<?=is_numeric($val) ? 'td' : 'th'?>>
+				   		<?php } else {?>
+				   		   <td>-</td>
+				   		<?php }?>
+				   	<?php endforeach;?>	 
+		       	</tr>
+		    </table>
+		    <?php $count_num++; ?>
+		<?php endforeach;?>
+	<?php endif;?>
+<?php } ?>

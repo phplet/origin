@@ -1,0 +1,73 @@
+<?php if ($clstd_contrast_method_tactic['contrast_method_tactic']) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php $contrast_method_tactic = $clstd_contrast_method_tactic['contrast_method_tactic'];?>
+    <?php $tr_name = array('相同方法策略', '本班本次考试', '本班上次考试');?>
+    
+    <?php foreach ($contrast_method_tactic as $keys => $item) {?>
+        <?php foreach ($item as $key => $value) {?>
+            <?php $width = 80 / count($value);?>
+            <? if ($key !== 2) { ?>
+            <table class="cls_row cls_table indent_25 <?php if($key === 0){ echo 'table_header';} ?>">
+            <? } ?>
+               	<tr>
+               	    <th width="20%"><?php echo $tr_name[$key];?></th>
+               	    <?php foreach ($value as $k => $val) {?>
+               	        <?php if ($key > 0) {?>
+        		   		 <td width="<?=$width?>%" <?php if ($key == 1 && $val != $item[2][$k]) {?>style="position:relative"<?php }?>>
+        		   		 <?php echo $val;?>%
+        		   		 <?php if ($key == 1 && is_numeric($val) && $val != $item[2][$k]) {?>
+        		   		     <div class="<?php if ($val > $item[2][$k]){?>cls_sort cls_up<?php } elseif ($val < $item[2][$k]) {?>cls_sort cls_down<?php }?>"></div>
+        		   		 <?php }?>
+        		   		 </td>
+        		   		 <?php } else {?>
+        		   		 <th width="<?=$width?>%"><?php echo $val;?></th>
+        		   		 <?php }?>
+        		   	<?php }?>
+               	</tr>
+            <? if ($key !== 1) { ?>
+            </table>
+            <? } ?>
+        <?php }?>
+        <?php if (!$keys) {?><p class="cls_row">&nbsp;</p><?php }?>
+    <?php }?>
+    
+    <p class="mokuai-text cls_row font12" style="padding-left:25px">注：表中数据为得分率对比。</p>
+
+    <?php
+        $clstd_method_tactic = array(); 
+        if (isset($clstd_contrast_method_tactic['new_method_tactic']))
+        {
+            $clstd_method_tactic = $clstd_contrast_method_tactic['new_method_tactic'];
+        }
+    ?>
+    
+    <?php if (!empty($clstd_method_tactic['data'])) {?>
+        <?php 
+    		$clstd_method_tactic['fields'] = isset($clstd_method_tactic['fields']) ? $clstd_method_tactic['fields'] : array();
+    	?>
+    
+            <?php if (count($clstd_method_tactic['data'])) {?>
+               <table class="mb10 cls_row table_header indent_25" id="table_contrast_clstd_mt_c">
+                    <tr>
+                        <th width="25%">新的方法策略</th>
+                        <?php foreach ($clstd_method_tactic['fields'] as $val) {?>
+                        <th width="25%"><?=$val?></th>
+                        <?php }?>
+                    </tr>
+                </table>
+                
+                <?php $auto_key  = 0;?>
+                <?php foreach ($clstd_method_tactic['data'] as $key => $item) {?>
+                <?php $auto_key++;?>
+                <table class=" cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_contrast_clstd_mt_c"<?php }?>>
+                    <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                        <th width="25%"><?=$key?></th>
+                        <?php foreach ($item as $k => $val) {?>
+                        <td width="25%" <?if ($k == 0 && $val != end($item)) {?>style="color:<?=$val > end($item) ? 'green' : 'red'?>"<?php }?>><?=$val?></td>
+                        <?php }?>
+                    </tr>
+                </table>
+            <?php } ?>
+            <?php } ?>
+    <?php } ?>
+<?php }?>

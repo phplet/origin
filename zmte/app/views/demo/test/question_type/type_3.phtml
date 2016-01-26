@@ -1,0 +1,56 @@
+<?php
+/**
+ * 试题模板（填空）
+ */
+?>
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+<div class="cls_tiankong" id="question_change_box_<?php echo $etp_id; ?>">
+	<div class="cls_pagetitle"  <?php echo $is_single ? 'style="display: none;margin:0;"' : '';?>>三、填空题（从下列各题的备选答案中选出一个正确答案。答案选错或未选者，该题不得分。每小题<font id="q_score_<?php echo $etp_id;?>_3">--</font>分，共<?php echo count($question_list);?>题）</div>
+	<div class="cls_question_list question_box">
+<?php } ?>
+		<?php foreach ($question_list as $question) {?>
+    	<?php
+			$title = nl2br($question['title']);
+			$question_id = $question['ques_id'];
+			$etr_id = $question['etr_id'];
+        	$answer = $question['answer'];
+			$picture = $question['picture'];
+			$answer1 = isset($question['answer']) ? $question['answer'] : $question['answer'];
+			
+			$input = "&nbsp;<input type='text' ques_id='{$question_id}' name='answer_{$question_id}[]' class='input_answer sub_undo type_3' />";
+            
+			$sub_title1 =array();
+			$sub_title1 = explode($input,$question['title']);
+			$length =count($sub_title1);
+			$s_title='';
+			$i=0;
+			foreach ($sub_title1 as $key =>$val)
+			{
+			    $i++;
+			    if($i<$length)
+			        $s_title.=$val."&nbsp;<input type='text' ques_id='{$question_id}' name='answer_{$question_id}[]' class='input_answer sub_undo type_3'  value='$answer1[$key]'/>";
+			    else
+			        $s_title.=$val;
+			}
+			 
+			$sub_title1 = nl2br($s_title);
+		?>
+		<div class="cls_question_item question_item undo type_3_<?php echo $question_id; ?>" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  etr_id="<?php echo $etr_id;?>" id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>">
+             <div class="h4 cls_ques_question"> 
+				第 <font id="q_index_<?php echo $etp_id;?>_<?php echo $question_id;?>"><?php echo auto_count();?></font> 题、[<?php echo $qtype_name;?>] <?php echo $sub_title1;?>
+	
+			 </div>
+			 <?php if($question['picture']):?>
+             <div class="cls_ques_answer">
+				<br/>
+				<div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+             </div>
+			<?php endif;?>
+             <div class="cls_question_tip"><input type="checkbox" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  class="question_mark" id="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>"/><label for="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>">标记本题<em>（一般用于模棱两可的题） </em></label></div>
+		</div>
+		<?php } ?>
+		
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+	</div>
+</div>
+<?php } ?>

@@ -1,0 +1,33 @@
+<?php
+/**
+ * 诊断及建议 --相同知识点强弱点分布情况
+ */
+?>
+<?php if (count($clss_contrast_difficulty['data'])) {?>
+<?php 
+$data = $clss_contrast_difficulty['data'];
+?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+        <?php if ($data) {?>
+            
+            <table class="cls_row table_header indent_25">
+                <?php foreach ($data as $key => $val) {?>
+                <tr>
+                    <?php foreach ($val as $k => $v) {?>
+                    <<?=is_numeric($v) ? 'td' : 'th'?> width="25%" <?php if(is_numeric($v) && $key%2 == 1 && $v > -1 && $data[$key+1][$k] > -1 && $v != $data[$key+1][$k]) {?>style="position:relative;"<?php }?>>
+                    <?php if ($v > -1) {?>
+                    <?=$v?>
+                    <?php } else {?>
+                    -
+                    <?php }?>
+                    
+                    <?php if (is_numeric($v) && $key%2 == 1 && $v > -1 && $data[$key+1][$k] > -1 && $v != $data[$key+1][$k]) {?>
+				   	<div class="<?php if ($v > $data[$key+1][$k]){?>cls_sort cls_up<?php } else {?>cls_sort cls_down<?php }?>"></div>
+        		   	<?php }?>
+                    </<?=is_numeric($v) ? 'td' : 'th'?>>
+                    <?php }?>
+                </tr>
+                <?php }?>
+            </table>
+        <?php }?>
+<?php } ?>

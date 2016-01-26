@@ -1,0 +1,337 @@
+<?php $this->load->view('common/header');?>
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+    static_js(array('common/schools.js'));
+?>
+
+<script type="text/javascript">
+var school_ids_count = 0;
+var sch_obj;
+
+$(function(){
+	$('#btn_add_school_id').click(function(){
+		fn_set_school_id();
+	});
+
+	$(document).on('click', 'li[id^=u_]', function(){	
+		sch_obj.val($(this).attr('id').split('_')[1]);
+	});
+});
+
+function fn_set_school_id()
+{
+	school_ids_count++;
+    var html = '<p style="margin-bottom:5px;">EXCEL中学校名称：<input type="text" name="school_key['+school_ids_count+']" id="school_key['+school_ids_count+']">';
+        html += ' 学校ID：<input type="text" name="school_ids['+school_ids_count+']" id="school_ids['+school_ids_count+']" onfocus="school_select($(this));" readonly>';
+        html += ' <input class="add" type="button" value="删除" onclick="$(this).parent().remove();" style="margin-left:10px;"></p>';
+    $('#td_school_ids').append(html);
+}
+
+function school_select(obj)
+{
+	sch_obj = obj;
+	
+    if ($('#select_grade_id').val() == 0)
+    {
+		return false;
+    }
+    
+    $("#scroll_s").css("display","block");
+    
+	region_province(0,0,0,0);//初始化弹出层
+
+	$("#school_search_input").val(obj.prev().val());
+}
+</script>
+<div id="body">
+  <form name="frm_import" id="frm_import" method="POST" action="<?=site_url('admin/place_student/import_student_save');?>" enctype="multipart/form-data" onsubmit="return validata_import();">
+  <input type="hidden" name="place_id" value="<?php echo $place_id;?>" />
+    <div class="space">
+        <div class="subtitle">批量导入学生</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+            <td colspan="10" class="altbg2" style="text-align: center;">
+                          考试：<a href="<?=site_url('admin/exam_place/index/'.$exam['exam_id'])?>"><?=$exam['exam_name']?></a> --->  场次：<?=$exam['place_name']?>  考试地点：<?=$exam['address']?>
+            </td>
+          </tr>
+		  <tr>
+                <td class="altbg1" width="200">考场地址</td>
+                <td>
+                  <?=$exam['school_name']?>
+                  <input type="hidden" name="school_id" value="<?=$exam['school_id']?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">年级</td>
+                <td>
+                    <?=$grade[$exam['grade_id']]?>
+                    <input type="hidden" name="grade_id" id="select_grade_id" value="<?=$exam['grade_id']?>" />
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">是否自动分配试卷</td>
+                <td>
+                <input type="radio" name="auto_set_paper" id="auto_set_paper_1" value="1"> <label for="auto_set_paper_1">是</label>
+                <input type="radio" name="auto_set_paper" id="auto_set_paper_0" value="0"> <label for="auto_set_paper_0">否</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">学生信息开始行</td>
+                <td>
+                    <input type="text" name="start_line" id="start_line" value=''/>
+                    <span style="color:#f00">*</span> <span style="color:red;" id="_start_line">学生信息开始行。例如： 2，必填</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1" width="200">学校所在列</td>
+                <td>
+                  <input type="text" name="school_column" id="school_column"> 
+                  <span style="color:#AAAAAA;" id="_school_column">学校所在列，例如： 2。可选（注：只有设置学校对应学校ID才有效）</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1" width="200">学校对应的学校ID</td>
+                <td id="td_school_ids">
+                <p style="margin-bottom:5px;">
+                    <input class="add" type="button" value="添加" style="margin-left:10px;" id="btn_add_school_id">
+                    <span style="color:#AAAAAA;" id="_school_notice">学校对应的学校ID，可选</span>
+                </p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">准考证号所在列</td>
+                <td>
+                    <input type="text" name="exam_ticket_column" id="exam_ticket_column" value=''/>
+                    <span style="color:#f00">*</span> <span style="color:red;" id="_exam_ticket_column">准考证号所在列。例如： 1，必填</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">姓名所在列</td>
+                <td>
+                    <input type="text" name="fullname_column" id="fullname_column" value=''/>
+                    <span style="color:#f00">*</span> <span style="color:red;" id="_fullname_column">姓名所在列。例如： 2，必填</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">电话号码所在列</td>
+                <td>
+                    <input type="text" name="mobile_column" id="mobile_column" value=''/>
+                    <span style="color:#AAAAAA;" id="_mobile_column">电话号码所在列,例如： 2。可选</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">导入的工作表</td>
+                <td>
+                    <input type="text" name="import_table" id="import_table" value=''/>
+                     <span style="color:#AAAAAA;" id="_import_table">导入第几张工作表，不填则表示导入所有的工作表，多张表用“,”隔开，如：2或1,2,5。可选</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">文件</td>
+                <td>
+                    <input type="file" name="file" class="txtbox" id="file"/>
+                    <span style="color:#f00">*</span> <span style="color:red;" id="_file_select"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">上传说明</td>
+                <td style="padding:10px;">
+                    <p>1.支持Excel 2003、Excel 2007、Excel 2010、Excel 2013 版本</p>
+                    <p>2.最大文件上传尺寸为10Mb</p>
+                    <p>3.准考证号，学生姓名不能为空</p>
+                    <p>4.导入时如果当前行发生错误，将跳过当前行继续导入</p>
+                    <p>5.重复导入时，如果已经存在记录，则跳过导入学生步骤</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">导入模板下载</td>
+                <td>
+                    <a href="<?php echo base_url('file/import_student.xlsx'); ?>">点击下载</a>
+                </td>
+            </tr>
+        </table>
+        <center>
+            <input type="submit" value=" 提交 " class="btn" />
+            <input type="button" name="back" value=" 返回 " onclick="location.href='<?=site_url('admin/place_student/index/'.$place_id)?>'" class="btn" />
+        </center>
+    </div>
+  </form>
+</div>
+<script>
+function validata_import()
+{
+	var check_result = true;
+	var start_line = $('#start_line').val();
+	if (!start_line || isNaN(start_line) || start_line < 1)
+    {
+        $('#_start_line').html('请输入学生信息在Excel文件开始的行且必须为数字');
+        check_result = false;
+    }
+	else
+	{
+		$('#_start_line').html('');
+	}
+
+	var school_column = $('#school_column').val();
+	if (school_column)
+	{
+		if (isNaN(school_column) || school_column < 1)
+		{
+			 $('#_school_column').css('color','red').html('请输入学校在Excel文件的列且必须为数字');
+		     check_result = false;
+	    }
+		else
+		{
+			$('#_school_column').html('学校所在列，例如： 2。可选（注：只有设置学校对应学校ID才有效）');
+		}
+    }
+
+	var _school_notice = '';
+	var _set_school_ids = false;
+    $('input[name^=school_key]').each(function(){
+        if (!$(this).val() || isNaN($(this).next().val()))
+        {
+        	_school_notice = '请输入学校名称或学校对应的ID';
+            return;
+        }
+
+        _set_school_ids = true;
+    });
+    
+    if (_school_notice)
+    {
+    	$('#_school_notice').css('color','red').html(_school_notice);
+    	check_result = false;
+    }
+    else
+    {
+    	$('#_school_notice').css('color','#AAAAAA').html('学校对应的学校ID，可选');
+    }
+        
+    var exam_ticket_column = $('#exam_ticket_column').val();
+    if (!exam_ticket_column || isNaN(exam_ticket_column) || exam_ticket_column < 1)
+    {
+        $('#_exam_ticket_column').html('请输入准考证号在Excel文件的列且必须为数字');
+        check_result = false;
+    }
+    else
+    {
+    	$('#_exam_ticket_column').html('');
+    }
+
+    var fullname_column = $('#fullname_column').val();
+	if (!fullname_column || isNaN(fullname_column) || fullname_column < 1)
+    {
+        $('#_fullname_column').html('请输入姓名在Excel文件的列且必须为数字');
+        check_result = false;
+    }
+	else
+	{
+		$('#_fullname_column').html('');
+	}
+
+	var mobile_column = $('#mobile_column').val();
+	if (mobile_column)
+	{
+	    if (isNaN(mobile_column) || mobile_column < 1)
+	    {
+	    	$('#_mobile_column').css('color','red').html('请输入电话号码在Excel文件的列且必须为数字');
+	        check_result = false;
+		}
+	    else
+	    {
+	    	$('#_mobile_column').css('color','#AAAAAA').html('电话号码所在列,例如： 2。可选');
+		}
+	}
+    
+    if (fullname_column && exam_ticket_column 
+    	&& fullname_column == exam_ticket_column)
+    {
+    	$('#_fullname_column').html('姓名和准考证号在Excel文件中不能为同一列');
+    	check_result = false;
+    }
+    else if (fullname_column && exam_ticket_column 
+        	&& fullname_column != exam_ticket_column)
+    {
+    	$('#_fullname_column').html('');
+    }
+
+    if (mobile_column && (mobile_column == fullname_column || mobile_column == exam_ticket_column || mobile_column == school_column))
+    {
+    	$('#_mobile_column').css('color','red').html('Excel文件中的电话号码不能与其他信息在同一列');
+    	check_result = false;
+    }
+    else
+    {
+    	$('#_mobile_column').css('color','#AAAAAA').html('电话号码所在列,例如： 2。可选');
+    }
+
+    if (school_column && (school_column == fullname_column || school_column == exam_ticket_column || school_column == mobile_column))
+    {
+    	$('#_school_column').css('color','red').html('Excel文件中的学校不能与其他信息在同一列');
+    	check_result = false;
+    }
+    else
+    {
+    	if (_set_school_ids && !school_column)
+        {    
+        	$('#_school_column').css('color','red').html('请输入学校在Excel文件的列且必须为数字');
+        	check_result = false;
+        }
+        else
+        {
+        	$('#_school_column').css('color','#AAAAAA').html('学校所在列，例如： 2。可选（注：只有设置学校对应学校ID才有效）');
+        }
+    }
+
+    var import_table = $('#import_table').val();
+    if (import_table)
+    {
+        var reg = /^[\d,]*$/;
+        if (!reg.test(import_table))
+        {
+        	$('#_import_table').css('color','red').html('请确认导入第几张工作表，导入多张工作表用英文逗号隔开');
+        	check_result = false;
+        }
+        else
+        {
+        	$('#_import_table').css('color','#AAAAAA').html('导入第几张工作表，不填则表示导入所有的工作表，多张表用“,”隔开，如：2或1,2,5。可选');
+        }
+    }
+    else
+    {
+    	$('#_import_table').css('color','#AAAAAA').html('导入第几张工作表，不填则表示导入所有的工作表，多张表用“,”隔开，如：2或1,2,5。可选');
+    }
+
+    if (!$('#file').val())
+    {
+        $('#_file_select').html('请选择Excel文件');
+        check_result = false;
+    }
+    else
+    {
+    	$('#_file_select').html('');
+    }
+
+    var msg = '';
+    if (!import_table)
+    {
+    	msg = "确定导入excel中的所有工作表吗？";
+    }
+    else
+    {
+    	msg = "确定导入excel中的第"+import_table+"张工作表吗？";
+    }
+
+    if (check_result && confirm(msg))
+    {
+        return true;
+    }
+
+    return false;
+}
+</script>
+
+<?php $this->load->view('common/footer');?>
+<?php $this->load->view('student/school_selector');?>

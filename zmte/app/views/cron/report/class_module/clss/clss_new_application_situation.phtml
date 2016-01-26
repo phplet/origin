@@ -1,0 +1,74 @@
+<?php
+/**
+ * 诊断及建议 --强弱点分布情况
+ */
+?>
+<?php if (count($clss_new_application_situation['data'])) {?>
+<?php 
+$data = $clss_new_application_situation['data'];
+
+$contrast_data = array();
+if (isset($clss_new_application_situation['contrast_data']))
+{
+    $contrast_data = $clss_new_application_situation['contrast_data'];
+    unset($clss_new_application_situation['contrast_data']);
+}
+?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+        <?php if ($contrast_data) {?>
+            <?php foreach ($contrast_data as $item) {?>
+            <table class="cls_row table_header indent_25">
+                <?php foreach ($item as $key => $val) {?>
+                <tr>
+                    <?php foreach ($val as $k => $v) {?>
+                    <<?=is_numeric($v) ? 'td' : 'th'?> width="25%" <?php if(is_numeric($v) && $key == 1 && $v > -1 && $item[2][$k] > -1 && $v != $item[2][$k]) {?>style="position:relative;"<?php }?>>
+                    <?php if ($v > -1) {?>
+                    <?=$v?>
+                    <?php } else {?>
+                    -
+                    <?php }?>
+                    
+                    <?php if (is_numeric($v) && $key == 1 && $v > -1 && $item[2][$k] > -1 && $v != $item[2][$k]) {?>
+				   	<div class="<?php if ($v > $item[2][$k]){?>cls_sort cls_up<?php } else {?>cls_sort cls_down<?php }?>"></div>
+        		   	<?php }?>
+                    </<?=is_numeric($v) ? 'td' : 'th'?>>
+                    <?php }?>
+                </tr>
+                <?php }?>
+            </table>
+            <p class="cls_row">&nbsp;</p>
+            <?php }?>
+        <?php }?>
+        <?php if ($data) {?>
+        <table class="cls_row table_header indent_25" id="table_clss_ss_2">
+            <tr>
+                <th width="25%" rowspan="2">知识点\认知过程</th>
+                <th width="25%" colspan="2">记忆</th>
+                <th width="25%" colspan="2">理解</th>
+                <th width="25%" colspan="2">应用</th>
+            </tr>
+            <tr>
+                <th width="12.5%">本班</th>
+                <th width="12.5%">全校</th>
+                <th width="12.5%">本班</th>
+                <th width="12.5%">全校</th>
+                <th width="12.5%">本班</th>
+                <th width="12.5%">全校</th>
+            </tr>
+        </table>
+        <?php }?>
+        
+        <?php $auto_key = 0;?>
+        <?php foreach ($data as $k_name => $item) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clss_ss_2"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <td width="25%"><?php echo $k_name;?></td>
+                    <?php for ($kp = 1; $kp <= 3; $kp++) {?>
+                    <td width="12.5%" <?php if ($item[0]['kp_'.$kp] > -1 && $item[0]['kp_'.$kp] != $item[1]['kp_'.$kp]) {?>style="color:<?=$item[0]['kp_'.$kp] > $item[1]['kp_'.$kp] ? 'green' : 'red'?>"<?php }?>><?=$item[0]['kp_'.$kp] > -1 ? $item[0]['kp_'.$kp] . '%' : '&nbsp;'?></td>
+                    <td width="12.5%"><?=$item[1]['kp_'.$kp] > -1 ? $item[1]['kp_'.$kp] . '%' : '&nbsp;'?></td>
+                    <?php }?>
+                </tr>
+            </table>
+        <?php } ?>
+<?php } ?>

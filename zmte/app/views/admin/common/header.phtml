@@ -1,0 +1,32 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><?php echo isset($title) ? $title : (C('webconfig')['site_name'] . '测评'); ?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<?php static_css('admin.css');?>
+<?php if (isset($load_dialog_css) && $load_dialog_css === true) {?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<style>
+.ZebraDialog .ZebraDialog_Icon {
+        padding-left: 0px;
+}
+.ZebraDialog .ZebraDialog_Body {
+        padding:10px;
+}
+</style>
+
+<?php }?>
+<?php static_global('js/jquery/jquery.js');?>
+<?php static_js('common/common.js');?>
+<?php static_global('js/all.css', 'css');?>
+<?php static_global('js/all.js');?>
+<script type="text/javascript">
+/*$(document).ready(function() {
+	//$('div.subtitle').append('<a href="javascript:window.history.back();" style="border:1px dotted #333;color:blue;font-weight:bold;padding:2px;margin-left:5px;">返回上一页</a>');
+});*/
+<? if ($ajaxScript = get_instance()->_ajaxScript) echo($ajaxScript); ?>
+</script>
+</head>
+<body>

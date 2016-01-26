@@ -1,0 +1,92 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/datepicker/wdatepicker.js');?>
+
+<div id="body">
+
+  <form name="frm_info" action="<?=site_url('admin/interview_question/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+        <span>评分项管理</span>
+        <a class="menu" href="<?=site_url('admin/evaluation_option/add')?>">添加评分项</a>
+      </div>  
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr class="altbg1">
+          <td width="5%">ID</td>
+          <td>题目</td>
+          <td width="10%">总分</td>
+          <td width="10%">状态</td>
+          <td width="15%">录入时间</td>
+          <td width="15%">操作</td>
+        </tr>
+        <?php if($options):?>
+          <?php foreach($options as $val):?>
+            <tr>
+              <td>
+                <?php echo $val['id'];?>
+              </td>
+              <td class="ques_title">
+                <div class="line_18"><?=$val['title']?></div>
+              </td>
+              <td><?=$val['score']?></td>
+              <td>
+                <?php if ($val['status'] == 1): ?>
+                  <span style="color:green">启用</span>
+                <?php else: ?>
+                  <span style="color:red">禁用</span>
+                <?php endif ?>
+              </td>
+              <td><?=date('Y-m-d H:i:s',$val['createtime'])?></td>
+              <td>
+                <a href="<?=site_url('admin/evaluation_option/update/'.$val['id'])?>">编辑</a>
+                <a href="<?=site_url('admin/evaluation_option/delete/'.$val['id'])?>" onclick="return confirm('您确定要移除么？');">删除</a>
+                <?php if ($val['status'] == 1): ?>
+                  <a href="<?=site_url('admin/evaluation_option/disabled/'.$val['id'])?>">禁用</a>
+                <?php else: ?>
+                  <a href="<?=site_url('admin/evaluation_option/enabled/'.$val['id'])?>">启用</a>
+                <?php endif ?>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+        <tr>
+          <td colspan="9">暂无记录！</td>
+        </tr>
+        <?php endif; ?>
+
+        <tr class="altbg1">
+          <td colspan="2">
+          </td>
+          <td colspan="7" style="text-align:right"><?=$pagination?></td>
+        </tr>
+
+      </table>
+    </div>
+  </form>
+
+  <!-- ++++++++++++++++ search ++++++++++++++++++ -->
+  <form method="get" name="search_form" action="<?=site_url('admin/evaluation_option/index')?>">
+    <div class="space">
+        <div class="subtitle">搜索评分项</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">录入时间</td>
+                <td>
+                    <input type="text" id="begin_time" name="begin_time" class="txtbox4" value="<?=$search['begin_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'<?php echo date('Y-m-d'); ?>'});"> - 
+                    <input type="text" id="end_time" name="end_time" class="txtbox4" value="<?=$search['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'<?php echo date('Y-m-d'); ?>'});">
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">关键字</td>
+                <td><input type="text" name="keyword" value="<?=$search['keyword']?>" class="txtbox" /></td>
+            </tr>         
+        </table>
+        <center>
+        <input type="submit" value=" 搜索 " class="btn" />
+        <input type="button" value=" 重置 " class="btn" onclick="window.location.href='<?php echo site_url('admin/evaluation_option/index')?>' "/>
+        </center>
+    </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

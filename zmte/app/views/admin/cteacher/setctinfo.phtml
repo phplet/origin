@@ -1,0 +1,148 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnSaveCTInfo()
+{
+    var param = fnGetFormData('id_ct_form');
+    if ($.trim(param['ct_name']) == '')
+    {
+        alert('培训教师名称不可为空');
+        return;
+    }
+    if (param['grade_id_str'] == '')
+    {
+        alert('请选择年级');
+        return;
+    }
+    if (param['subject_id_str'] == '')
+    {
+        alert('请选择学科');
+        return;
+    }
+    ajax_setCT(param);
+}
+
+function fnShowCCDialog()
+{
+    $("#id_selccid_iframe").get(0).contentWindow.fnClearSelection();
+    fnShowDialog('id_selccid_dlg');
+}
+
+
+function fnAddCTItem()
+{
+    var param = $("#id_selccid_iframe").get(0).contentWindow.fnSelItem();
+    if (param.length < 1)
+    {
+        alert('请至少选择一个培训课程');
+        return;
+    }
+    var obj;
+    for (var i = 0; i < param.length; i++)
+    {
+        obj = $("#id_cc_list input.ccid_" + param[i]['cc_id']);
+        if (obj.size() > 0)
+        {
+            for (var j = obj.size() - 1; j > -1; j--)
+            {
+                obj.get(j).checked = true;
+            }
+        }
+        else
+        {
+            $("#id_cc_list").append('<label>&nbsp;<input type="checkbox" name="cct_ccid_str" class="cls_field ccid_' + param[i]['cc_id'] + '" value="' 
+                + param[i]['cc_id'] + '" checked="checked"/>' + param[i]['ti_name'] + ' ' + param[i]['cors_name'] + (param[i]['tc_name'] == '' ? ('(ID:' + param[i]['cc_id'] + ')') : ('(校区:' + param[i]['tc_name'] + ')')) +  '</label>');
+        }
+    }
+}
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle"><?=$ct_info['ct_id'] ? '编辑': '新增'?>培训教师<? if ($ct_info['ct_id']) echo('(ID:' . $ct_info['ct_id'] . ')'); ?>
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnSaveCTInfo()">保存</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/cteacher/ctlist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">重新载入</button>
+      </div>
+    </div>
+    <div id="id_ct_form">
+    <table class="maintable" id="id_ct_table" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">教师名称</td>
+        <td width="35%">
+          <input type="hidden" name="ct_id" value="<?=$ct_info['ct_id']?>" class="cls_field"/>
+          <input type="text" name="ct_name" value="<? Func::echo_s($ct_info['ct_name']); ?>" class="txtbox cls_field"/>
+           <span style="color:#f00">*</span>
+        </td>
+        <td class="altbg1" width="15%">联系方式</td>
+        <td width="35%">
+           <input type="text" name="ct_contact" value="<? Func::echo_s($ct_info['ct_contact']); ?>" class="cls_field txtbox"/>
+           <span style="color:#f00"></span>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="altbg1">年级</td>
+        <td colspan="3">
+        <? $ctg_arr = array(); foreach ($cteacher_gradeid as $v) $ctg_arr[] = $v['ctg_gradeid'];  ?>
+        <? foreach ($grade_map as $gradeid => $gradename) { ?>
+        <label><input type="checkbox" name="grade_id_str" value="<?=$gradeid?>" class="cls_field" <? if (in_array(0, $ctg_arr) || in_array($gradeid, $ctg_arr)) echo('checked="checked"'); ?>/><?=$gradename?></label>
+        <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">学科</td>
+        <td colspan="3"><? $cts_arr = array(); foreach ($cteacher_subjectid as $v) $cts_arr[] = $v['cts_subjectid']; ?>
+        <? foreach ($subject_map as $subjectid => $subjectname) { ?>
+        <label><input type="checkbox" name="subject_id_str" value="<?=$subjectid?>" class="cls_field" <? if (in_array(0, $cts_arr) || in_array($subjectid, $cts_arr)) echo('checked="checked"'); ?>/><?=$subjectname?></label>
+        <? } ?>
+        </td>
+      </tr>
+
+
+        <tr>
+           <td class="altbg1">状态</td>
+           <td colspan="3">
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="1" <?=$ct_info['ct_flag'] == 1 ? 'checked="checked"' : ''?>/>启用</label>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="0" <?=$ct_info['ct_flag'] == '0' ? 'checked="checked"' : ''?>/>禁用</label>
+                 <? if ($ct_info['ct_id']) { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="-1" <?=$ct_info['ct_flag'] == -1 ? 'checked="checked"' : ''?>/>已删</label>
+                 <? } ?>
+                 <? if ($ct_info['ct_flag'] > 1) { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="<?=$ct_info['ct_flag']?>" checked="checked">待审</label>
+                 <? } else { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="<?=time()?>">待审</label>
+                 <? } ?>
+           </td>
+        </tr>
+        <tr>
+           <td class="altbg1">关联课程</td>
+           <td colspan="3">
+               <div id="id_cc_list">
+<? if ($cteacher_cclist) foreach ($cteacher_cclist as $cc_item) { ?>
+<label>&nbsp;<input type="checkbox" name="cct_ccid_str" class="cls_field ccid_<?=$cc_item['cc_id']?>" value="<?=$cc_item['cc_id']?>" checked="checked"/><? Func::echo_s($cc_item['ti_name']); ?> <? Func::echo_s($cc_item['cors_name']); ?> <? if ($cc_item['tc_name']) Func::echo_s('(校区:'.$cc_item['tc_name'].')'); else echo('(ID:' . $cc_item['cc_id'] . ')'); ?></label>
+<? } ?>
+</div>
+               <button type="button" onclick="fnShowCCDialog()">选择课程</button>
+           </td>
+        </tr>
+        <tr>
+          <td class="altbg1">简介</td>
+          <td colspan="3"><textarea name="ct_memo" class="cls_field" style="width:90%;height:200px"><? Func::echo_s($ct_info['ct_memo']); ?></textarea></td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div id="id_selccid_dlg" style="display:none;width:1000px">
+<div class="cls_title">请选择培训课程</div>
+<iframe src="<?=site_url('admin/course/selcorscampuslist?multisel=1')?>" id="id_selccid_iframe" style="width:100%;border-width:0px;height:500px;" frameborder="0">
+</iframe>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="fnAddCTItem()">添加</button>
+<button type="button" onclick="fnCloseDialog('id_selccid_dlg')">关闭</button>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

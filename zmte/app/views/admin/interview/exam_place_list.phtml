@@ -1,0 +1,106 @@
+<div class="space">
+    <div class="subtitle">
+        <span class="menu" style="padding-top:5px;">
+            <a href="javascript://" class="close"><img src="<?=__HTML_URL__?>images/no.gif" /></a>
+        </span>
+        <span>考试期次选择</span>
+        <a href="javascript:void(0)" id="exam_select_all" style="color:red;">[全选/反选]</a>
+    </div>
+    <div style="max-height:300px;_height:300px;overflow:auto;">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:0px;width:780px;">
+            <?php if($list):?>
+                <?php if (count($list) < 2): ?>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="exam_id" id="exam_<?=$list[0]['exam_id']?>" class="exam_option" value="<?=$list[0]['exam_id']?>" <?php if($list[0]['flag']){echo 'disabled="disabled"';} ?> />
+                            <label for="exam_<?=$list[0]['exam_id']?>" <?php if($list[0]['flag']){echo 'style="color:#ccc"';} ?> ><?php echo $list[0]['exam_name']; ?></label>
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach($list as $key =>$row):?>
+                        <?php if ($key%2 == 0): ?>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="exam_id" id="exam_<?=$row['exam_id']?>" class="exam_option" value="<?=$row['exam_id']?>" <?php if($row['flag']){echo 'disabled="disabled"';} ?> />
+                                    <label for="exam_<?=$row['exam_id']?>" <?php if($row['flag']){echo 'style="color:#ccc"';} ?> ><?php echo $row['exam_name']; ?></label>
+                                </td>
+                        <?php else: ?>
+                                <td>
+                                    <input type="checkbox" name="exam_id" id="exam_<?=$row['exam_id']?>" class="exam_option" value="<?=$row['exam_id']?>"  <?php if($row['flag']){echo 'disabled="disabled"';} ?> />
+                                    <label for="exam_<?=$row['exam_id']?>" <?php if($row['flag']){echo 'style="color:#ccc"';} ?> ><?php echo $row['exam_name']; ?></label>
+                                </td>
+                            </tr>
+                        <?php endif ?>
+                    <?php endforeach; ?>
+                <?php endif ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2" style="text-align: center;color:#f00">暂无考试期次</td>
+                </tr>
+            <?php endif;?>
+        </table>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="background:#A6CBE7;text-align: center;color:#f00">
+                <input type="button" id="knowledge_confirm" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " class="btn close" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function(){
+
+        // 全选/反选
+        var exam_select_all_off = false;
+        $('#exam_select_all').click(function(){
+            if (!exam_select_all_off) {
+                $('.exam_option').prop("checked", true);
+                exam_select_all_off = true;
+            } else {
+                $('.exam_option').prop("checked", false);
+                exam_select_all_off = false;
+            }
+        });
+
+        // 初始化
+        var init_exam_ids = function(){
+            $('#exam_ids input:checked').each(function(){
+                var exam_id = $(this).val();
+                $('.exam_option[value="' + exam_id + '"]').prop("checked", true);
+            });
+        }
+
+        init_exam_ids();
+
+        $('#knowledge_confirm').click(function(){
+            var selected = [];
+            var checkbox = $('input:checked[name=exam_id]');
+
+            for (var i=0; i<checkbox.length; i++) {
+                if (checkbox[i].checked == true) {                   
+                    var kid = checkbox[i].value;
+                    var kname = $(checkbox[i]).parent().find('label').html();
+                    item = [kid,kname];
+                    selected.push(item);
+                } 
+            }
+
+            if (selected.length == 0) {
+                alert('请选择考试期次！');
+                return;
+            }
+
+            var string = '';
+
+            for (i=0; i<selected.length; i++) {
+                string += '<input type="checkbox" name="exam_id[]" ' + 'id="exam' + selected[i][0] + '"' + '" value="' + selected[i][0] + '" checked /><label for="exam' + selected[i][0] + '">' + selected[i][1] + '</label><br/>';
+            }
+
+            $('#exam_ids').html(string);         
+            $.unblockUI();
+        });
+    });
+</script>

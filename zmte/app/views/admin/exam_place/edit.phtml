@@ -1,0 +1,193 @@
+<?php $this->load->view('common/header');?>
+<?php 
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js', 
+                        'js/jquery/plugin/validate/additional-methods.js', 
+                        'js/datepicker/wdatepicker.js'));
+?>
+
+<script>
+
+$(document).ready(function(){
+    $("#place_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            place_name: "required",
+            place_index: "required",
+            <?php if ($parent['exam_isfree'] == '0') {?>
+            school_id: "required",
+            address: "required",
+            <?php }?>
+            //ip: {required:true,ipv4:true},
+           // ip: {required:true},
+            start_time: "required",
+            end_time: {required:true,greater:'#start_time'}
+        },
+        groups:{
+            exam_time:"start_time end_time"
+        },
+        messages: {
+            place_name: "请输入场次名称",
+            place_index: "请选择场次序号",
+            <?php if ($parent['exam_isfree'] == '0') {?>
+            school_id: "请选择学校",
+            address: "请填写考场地址",
+            <?php }?>
+            //ip: {required:'请填写考场IP',ipv4:'请填写有效的IP地址'},
+            //ip: {required:'请填写考场IP'},
+            start_time: "请选择开始时间",
+            end_time: {required:'请选择结束时间',greater:'结束时间要大于开始时间'}
+        }
+    });
+
+    $('#school_id').change(function(){
+    	fnSchoolChange();
+    })
+
+    fnSchoolChange();
+});
+
+function fnSchoolChange()
+{
+	var _sel_school_id = $('#school_id').val();
+	var _schcls_id = <?=$place['place_schclsid']?>;
+	var _school_id = <?=$place['school_id']?>;
+	var $thiz = $('#place_schclsid');
+	
+	$thiz.children('option[class^=schcls]').hide();
+	$thiz.children('option[class="schcls_'+_sel_school_id+'"]').show();
+	if (_sel_school_id == _school_id)
+	{
+		$thiz.val(_schcls_id);
+	}
+	else
+	{
+		$thiz.val(0);
+	}
+}
+</script>
+<div id="body">
+  <form name="place_form" class="validate" id="place_form" method="POST" action="<?=site_url('admin/exam_place/update')?>" onsubmit="return false;">
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <input type="hidden" name="place_id" value="<?=$place['place_id']?>" />
+  <input type="hidden" name="exam_pid" value="<?=$place['exam_pid']?>" />
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>考试场次</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                <?=$parent['exam_name']?>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1"  width="15%">场次名称</td>
+            <td>
+              <input type="text" name="place_name" class="txtbox" value="<?=$place['place_name']?>" style="width:400px;height:30px;"/>
+              <label for="place_name" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php /*?>
+        <tr>
+            <td class="altbg1">场次</td>
+            <td>
+              <select name="place_index">
+              <option value="">=请选择=</option>
+              <?php for($i=1; $i<=3; $i++):?>
+              <option value="<?=$i?>"<?=$i==$place['place_index']?' selected':''?>>第<?=$i?>场</option>
+              <?php endfor;?> 
+              </select>
+            </td>
+        </tr>
+        <?php */?>
+        <tr>
+            <td class="altbg1">学校</td>
+            <td>
+              <select name="school_id" id="school_id">
+              <option value="">=请选择学校=</option>
+              <?php foreach($schools as $val):?>
+              <option value="<?=$val['school_id']?>"<?=$val['school_id']==$place['school_id']?' selected':''?>><?=$val['school_name']?>(总人数：<?=$val['nums']?>)</option>
+              <?php endforeach;?> 
+              </select>
+            </td>
+        </tr>
+        <?php if (isset($class) && $class) {?>
+        <tr>
+            <td class="altbg1">班级</td>
+            <td>
+              <select name="place_schclsid" id="place_schclsid">
+              <option value="0">=请选择班级=</option>
+              <?php foreach($class as $val) {?>
+              <option value="<?=$val['schcls_id']?>" class="schcls_<?=$val['schcls_schid']?>"><?=$val['schcls_name']?></option>
+              <?php }?>
+            </td>
+        </tr>
+        <?php }?>
+        <tr>
+            <td class="altbg1"  width="15%">考试地址</td>
+            <td>
+              <input type="text" name="address" class="txtbox" value="<?=$place['address']?>" /> 
+              <label for="address" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1"  width="15%">考场IP</td>
+            <td>
+            <?php 
+                $ips = explode(',', $place['ip']);
+                $place_ip = array();
+                foreach ($ips as $ip)
+                {
+                    if ($ip)
+                    {
+                        $place_ip[] = $ip;
+                    }
+                }
+                
+                $place_ip_str = implode("\r\n", $place_ip);
+            ?>
+              <textarea name='ip' class="txtbox2" rows="4"><?=$place_ip_str?></textarea> 
+              <label for="ip" class="error" style="display:none"></label>
+              <div>每一行代表一个IP</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1"  width="15%">考试时间</td>
+            <td>
+              <input type="text" name="start_time" id="start_time" class="txtbox2" value="<?=$place['start_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" readonly/>
+              - 
+              <input type="text" name="end_time" class="txtbox2" value="<?=$place['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" readonly/>
+              <label for="exam_time" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1"  width="15%">自定义学科时间说明</td>
+            <td>
+                <?php $exam_time_custom_str = ''; ?>
+                <?php if (!empty($place['exam_time_custom']) && count($place['exam_time_custom']) >= 1) {
+                        foreach ($place['exam_time_custom'] as $key => $value){
+                            $exam_time_custom_str .= $key . ":" . $value . "\n";
+                        }
+                    } 
+                ?>
+                <textarea name="exam_time_custom" id="exam_time_custom" style="height: 150px;width: 600px;"><?php echo $exam_time_custom_str; ?></textarea>
+                <p>&nbsp;&nbsp;</p>
+                <p>说明：“自定义学科时间说明”属性为文本属性，其格式为每一行一个学科，每行格式为“[学科]：[文字]”，其中冒号为英文格式。其中文字，格式为任意，一般写“2015年12月12日 考试时间 13:00 - 14:00 时长60分钟”类似字样，用于在生成评估报告时使用。
+                </p>
+                <p>比如： =============</p>
+                <p>数学：2015年12月12日 考试时间 13:00 - 14:00 时长60分钟</p>
+                <p>历史：2015年12月12日 考试时间 8:00 - 10:00 时长120分钟</p>
+                <p>语文：2015年12月13日 考试时间 13:00 - 14:00 时长60分钟</p> 
+                <p>=============</p>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,69 @@
+<!-- 课程推送机构声誉排序推送  -->
+<?php 
+if (!empty($pc_reputation['courses'])) 
+{
+    $data = $pc_reputation;
+    $region = $pc_reputation['address'];
+?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php $i = 1;?>
+    <?php foreach ($data['courses'] as $item) {?>
+    <table class="cls_row cls_table indent_25 cls_tab_bg_<?=$i?>">
+        <?php if ($item['cors_cmid'] == 1) {?>
+                <tr class="bgc4">
+                    <td width="10%">推荐课程</td>
+                    <td colspan='3' width="40%" class="cls_txt_left"><?=$item['cors_name']?>（<?=$item['ti_name']?>）</td>
+                </tr>
+                <tr>
+                    <td width="10%">授课老师</td>
+                    <td class="cls_txt_left"><?=implode('，', $data['course_teacher'][$item['cc_id']])?></td>
+                    <td width="10%">授课范围</td>
+                    <td width="40%" class="cls_txt_left">
+                        <?=implode('，', $data['course_range']['subject'][$item['cors_id']])?>，<?=implode('，', $data['course_range']['grade'][$item['cors_id']])?>
+                    </td>
+                </tr>
+                <tr class="bgc4">
+                    <td width="10%">课程收费</td>
+                    <td class="cls_txt_left"><?php if ($item['cc_price'] > 0) {?><?=$item['cc_price']?><?} else {?>待咨询<?php }?></td>
+                    <td width="10%">授课方式</td>
+                    <td class="cls_txt_left"><?=$data['cors_stunumtype'][$item['cors_stunumtype']]?>授课</td>
+                </tr>
+                <tr>
+                    <td width="10%">授课地点</td>
+                    <td width="40%" class="cls_txt_left"><?=$region[$item['cc_provid']]?><?=$region[$item['cc_cityid']]?><?=$region[$item['cc_areaid']]?><?=$item['cc_addr']?></td>
+                    <td width="10%">联系方式</td>
+                    <td width="40%" class="cls_txt_left"><?=$item['cc_ctcphone']?></td>
+                </tr>
+                <tr class="bgc4">
+                    <td width="10%">课程简介</td>
+                    <td colspan="3" class="cls_txt_left"><?=$item['cors_memo']?></td>
+                </tr>
+        <?php } else {?>
+                <tr class="bgc4">
+                    <td width="10%">推荐课程</td>
+                    <td width="40%" class="cls_txt_left"><?=$item['cors_name']?>（<?=$item['ti_name']?>）</td>
+                    <td width="10%">授课方式</td>
+                    <td class="cls_txt_left"><?=$data['cors_stunumtype'][$item['cors_stunumtype']]?>授课</td>
+                </tr>
+                <tr>
+                    <td width="10%">课程时间</td>
+                    <td class="cls_txt_left"><?php if ($item['cc_begindate'] && $item['cc_enddate']) {?><?=$item['cc_begindate']?>-<?=$item['cc_enddate']?><?php }?> <?=$item['cc_classtime']?></td>
+                    <td width="10%">课程收费</td>
+                    <td class="cls_txt_left"><?php if ($item['cc_price'] > 0) {?><?=$item['cc_price']?><?} else {?>待咨询<?php }?></td>
+                </tr>
+                <tr class="bgc4">
+                    <td width="10%">上课地址</td>
+                    <td width="40%" class="cls_txt_left"><?=$region[$item['cc_provid']]?><?=$region[$item['cc_cityid']]?><?=$region[$item['cc_areaid']]?><?=$item['cc_addr']?></td>
+                    <td width="10%">联系方式</td>
+                    <td width="40%" class="cls_txt_left"><?=$item['cc_ctcphone']?></td>
+                </tr>
+                <tr>
+                    <td width="10%">课程简介</td>
+                    <td colspan="3" class="cls_txt_left"><?=$item['cors_memo']?></td>
+                </tr>
+        <?php }?>
+        </table>
+        <p class="cls_row">&nbsp;&nbsp;</p>
+        <?php $i++;?>
+    <?php }?>
+<?php }?>

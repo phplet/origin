@@ -1,0 +1,184 @@
+<?php echo $this->load->view('common/header', array('render_no_style' => true));?>
+<?php static_css(array('invigilate.css'));?>
+<style>
+.cls_login_form_item label {
+	width: 69px;
+}
+.cls_login_form {
+	padding: 20px 0 0 0px;
+}
+.cls_copyright{
+    text-align: center;
+    margin-top: 20px;
+	width:93%;
+}
+</style>
+<body>
+<div id="id_jk_body" class="cls_jk_body">
+	<!-- header -->
+    <div class="cls_jk_pos">
+        <div class="cls_jk_top">
+            <?php echo $this->load->view('common/copyright_system_name.phtml', array('is_invigilator' => true));?>
+        </div>
+        <div class="cls_jk_header clearfix">
+            <ul class="cls_jk_info clearfix fl_l">
+            	<li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试期次：</span>
+                	<span class="cls_jk_info_text fl_l">
+                		<?php $count_exam = count($exams);?>
+		                <?php if (!$count_exam) {?>
+						--
+						<?php } else if ($count_exam == 1) {?>
+						<?php 	echo $exams[0]['exam_name'];?>
+						<input type="hidden" value="<?php echo $exams[0]['exam_id'];?>" id="exam_id"/>
+						<?php } else {?>
+		                <select class="cls_form_option" id="exam_id">
+		                	<?php foreach ($exams as $key=>$exam)  {?>
+		                    <option value="<?php echo $exam['exam_id'];?>"
+										<?php echo $key == 0 ? 'selected="selected"' : '';?>><?php echo $exam['exam_name'];?></option>
+		                    <?php } ?>
+		                </select>
+						<?php }?>
+                	</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">场次：</span>
+                	<span class="cls_jk_info_text fl_l">
+                		<?php if (!$count_exam) {?>
+			            	--
+			            	<?php } else {?>
+			            	<?php $count_places = 0;?>
+			            	<?php foreach ($exams as $key=>$exam)  {?>
+			            	<?php 
+			            			$exam_id = $exam['exam_id'];
+			            			$places = $exam['place'];
+			            			$count_places = count($places);
+			            			if (!count($places)) {
+										echo '--';
+										continue;
+									}
+			            	?>
+			            	<span id="hidden_exam_<?php echo $exam_id;?>" class="display_none hidden_exam_span place_select"></span> 
+			            	<select exam_id="<?php echo $exam_id;?>" id="place_<?php echo $exam_id;?>" class="cls_form_option place_select place_id  <?php echo ($count_exam > 1 && $key == '0') ? '' : 'display_none';?>">
+			            	<?php foreach ($places as $place) {
+									$place_id = $place['place_id'];
+									$place_name = $place['place_name'];
+									$start_time = $place['start_time'];
+									$end_time = $place['end_time'];
+									
+									$place['start_time'] = date('Y-m-d H:i:s', $start_time);
+									$place['end_time'] = date('Y-m-d H:i:s', $end_time);
+									
+									//附加其他属性
+									$place['exam_name'] = $exam['exam_name'];//考试名称
+									$place['introduce'] = $exam['introduce'];//考试说明
+									$place['invigilate_notice'] = $exam['invigilate_notice'];//考生须知
+									$place['exam_type'] = $exam['exam_type'];//
+									
+									//附加考试科目
+									$subjects = isset($exam['subject'][$place_id]) ? $exam['subject'][$place_id] : array();
+									$subject_names = array();
+									$subject_ids = array();
+									foreach ($subjects as $subject) {
+										$subject_names[] = $subject['subject_name'];
+										$subject_ids[] = $subject['subject_id'];
+									}
+									
+									$place['subject_name'] = implode(',', $subject_names);//考试科目
+									$place['subject_id'] = implode(',', $subject_ids);//科目ID
+									$place['exam_id'] = $exam['exam_id'];//期次id
+							?>
+			                    <option value='<?php echo json_encode($place);?>'><?php echo $place_name;?></option>
+			                <?php 	} ?>
+			                </select>
+			                <?php } ?>
+			                <?php } ?>
+			                <input type="hidden" id="hidden_place" value="" />
+                	</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">科目：</span>
+                	<span class="cls_jk_info_text fl_l" id="subject_span">
+                		--
+                	</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考生人数：</span>
+                	<span class="cls_jk_info_text fl_l" id="student_amount_span">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试开始时间：</span>
+                	<span class="cls_jk_info_text fl_l" id="start_time_span">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试结束时间：</span>
+                	<span class="cls_jk_info_text fl_l" id="end_time_span">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">学校：</span>
+                	<span class="cls_jk_info_text fl_l" id="school_span">--</span>
+                </li>
+                <li class="cls_jk_info_item clearfix fl_l">
+                	<span class="cls_jk_info_name fl_l">考试地点：</span>
+                	<span class="cls_jk_info_text fl_l" style="width:497px"  id="address_span">--</span>
+                </li>
+                <li>
+                	<div class="cls_countTime fl_l"  style="margin-left:25%;height:34px;">
+						<i class="cls_ico" style="margin-top:2px;"></i>
+						<strong id="id_statusbar_clock" class="cls_countTime_main">正在初始化考试计时器...</strong>
+					</div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="cls_login_containt clearfix">
+            <div class="cls_login_main fl_l">
+                <div class="cls_login_title">监考人员登录</div>
+                <form action="" method="post" id="id_login" name="" ajaxurl="">
+                    <ul class="cls_login_form">
+                        <li class="cls_login_form_item clearfix">
+                            <label class="fl_l" for="id_xwb_ticket">邮箱:</label>
+                            <input name="" id="txt_email" name="email" class="fl_l w-200 cls_login_input login_account" value="" placeholder="邮箱帐号" type="">
+                        </li>
+                        <li class="cls_login_form_item clearfix"><label class="fl_l" for="id_xwb_password">登录密码:</label>
+                            <input id="txt_passwd" name="password" class="fl_l w-200 cls_login_input login_pwd" placeholder="登录密码" type="password">
+                            <!-- <a href="" class="forgetpassword fl_l">忘记密码</a> -->
+                        </li>
+                    </ul>
+                    <div class="cls_login_button clearfix">
+                        <input class="cls_login_btn cls_button fl_l" type="button" name="submit" id="btn_login" value="登录系统">
+                    </div>
+                </form>
+            </div>
+            <div class="cls_msg clearfix fl_l">
+                <span class="cls_form_lable">[注意事项]:</span>
+                <ul class="cls_form_text cls_form_textear">
+                    <li id="invigilate_notice_li">--</li>
+                </ul>
+            </div>
+        </div>
+	</div>
+</div>
+<div class="cls_copyright">&copy; <?php echo date('Y');?> <?=C('company_shortname')?><i class="cls_copyright_tm" style="top:-3px;"></i> <span class="cls_copyright_main">保留所有权利</span></div>
+</body>
+<script>
+    var check_login_url = '<?php echo site_url('exam/invigilate/check_login');?>',
+    	index_url = '<?php echo site_url('exam/invigilate/index');?>';
+
+    var count_exam = parseInt('<?php echo $count_exam;?>'),
+		count_places = parseInt('<?php echo $count_places;?>'),
+		current_time = '<?php echo date('Y-m-d H:i:s');?>';
+	
+	exam_count_down_config = { 
+      		'startText' : '距离考试开始时间还有 ',
+      		'startCallback':function () {setTimeout(function () {window.location.reload();}, 2000)},
+      		'endText' : '距离考试结束时间还有 ',
+      		'endCallback':function () {setTimeout(function () {window.location.reload();}, 30000)},
+      		'eText' : '本场考试已经结束!',
+      		'currentTime':'<?php echo date('Y-m-d H:i:s');?>'
+		};
+</script>
+<?php static_js(array('front/count_down.js'));?>
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+<?php static_js(array('front/invigilate/login.js'));?>
+</html>

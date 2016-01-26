@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+<?php static_css('notice.css');?>
+
+</head>
+
+<body>
+<div class="cls_msgn">
+  <div class="cls_pos clearfix">
+    <div class="fl_l cls_msgn_or cls_msg_<?=$msg_type?'success':'error'?>"></div>
+    <div class="fl_l">
+        <div class="cls_msgtitle"><span class="cls_msgico"> </span><?=$message?></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

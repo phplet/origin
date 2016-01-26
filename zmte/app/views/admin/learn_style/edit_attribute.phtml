@@ -1,0 +1,83 @@
+<?php 
+/**
+ * 后台管理->素质相关管理->学习风格管理
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/learn_style/save_attribute')?>">
+  <input type="hidden" name="lsattr_learnstyleid" value="<?=$learnstyle['learnstyle_id']?>" />
+  <div class="space">
+  
+    <div class="subtitle"><?=$info ? '编辑' : '新增'?>学习风格</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">学习风格</td>
+        <td>
+            <input type="text" class="txtbox" name="lsattr_name" id="lsattr_name" value="<?=$info['lsattr_name']?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">风格属性</td>
+        <td>
+        <?php if ($info) {?>
+            <input type="radio" id="lsattr_value_1" value="1" disabled <?=$info['lsattr_value'] == 1 ? ' checked' : ''?>><label for="lsattr_value_1">正向</label>
+            <input type="radio" id="lsattr_value_2" value="2" disabled <?=$info['lsattr_value'] == 2 ? ' checked' : ''?>><label for="lsattr_value_2">反向</label>
+            <input type="hidden" value="<?=$info['lsattr_value']?>" name="lsattr_value">
+        <?php } else {?>
+            <input type="radio" id="lsattr_value_1" value="1" name="lsattr_value" checked><label for="lsattr_value_1">正向</label>
+            <input type="radio" id="lsattr_value_2" value="2" name="lsattr_value"><label for="lsattr_value_2">反向</label>
+        <label class="error" for="lsattr_value"></label>
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">定义</td>        
+        <td>
+            <textarea id="lsattr_define" name="lsattr_define" class="txtbox"><?=$info['lsattr_define']?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">建议</td>        
+        <td>
+            <textarea id="lsattr_advice" name="lsattr_advice" class="txtbox"><?=$info['lsattr_advice']?></textarea>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	lsattr_name : {
+	    		required : true
+		    },
+		    lsattr_value : {
+		    	required : true,
+		    	min : 1,
+		    	max : 2
+			}
+	    },
+	    messages: {
+	    	lsattr_name : "请输入学习风格",
+	    	lsattr_value : '请选择风格属性'
+	    }
+	});
+})
+</script>
+
+<?php $this->load->view('common/footer');?>

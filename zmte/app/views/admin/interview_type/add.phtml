@@ -1,0 +1,35 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/interview_type/create')?>">
+  <div class="space">
+    <div class="subtitle">添加面试考点</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">上级考点</td>        
+        <td>
+            <select name="pid">
+                <option value="0">一级考点</option>
+                <?php foreach($list as $val):?>
+                <?php if(empty($val['pid'])):?>
+                <option value="<?=$val['type_id']?>"><?=$val['type_name']?></option>
+                <?php endif;?>
+                <?php endforeach;?>
+            </select>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">考点名称</td>        
+        <td>
+            <input type="text" id="type_name" name="type_name" class="txtbox" value="">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

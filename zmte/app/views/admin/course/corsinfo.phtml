@@ -1,0 +1,367 @@
+<?php $this->load->view('common/header');?>
+<?php
+// 根路径
+echo "<script>root_url = '" . rtrim(site_url(''), '/') . "';</script>";
+static_global(array('js/jquery/plugin/blockUi.js',
+        'js/jquery/plugin/jquery.json-2.4.min.js'));
+?>
+<script type="text/javascript">
+var _course_region = <?=json_encode($cors_region)?>;
+
+function fnOnCampusClick(obj)
+{
+    $(obj).parent().addClass("current").siblings().removeClass('current');
+    var name = $(obj).attr('name');
+    $('#id_cc_' + name).show().siblings().hide();
+}
+
+function fnOnCampusClick2(obj)
+{
+    var name = $(obj).val();
+    $('#id_cc_' + name).show().siblings().hide();
+}
+
+function fnCourseRegion(parent_id, obj, level)
+{
+	obj = obj || $('#addr_provid');
+	level = level || 1;
+	if (level == 1)
+	{ 
+		level_name = '省份';
+	}
+	else if (level == 2)
+	{
+		level_name = '城市';
+	}
+	else if (level == 3)
+	{
+		level_name = '区域';
+	}
+	
+	var html = '<option value="0">'+level_name+'-全部</option>';
+	for(var i = 0; i < _course_region.length; i++)
+	{
+		if (parent_id == _course_region[i]['parent_id'])
+		{
+			html += "<option value='"+_course_region[i]['region_id']+"'>"+_course_region[i]['region_name']+"</option>";
+		}
+	}
+
+	obj.html(html);
+
+	if (level == 2)
+	{
+		html = '<option value="0">区域-全部</option>';
+		for(var i = 0; i < _course_region.length; i++)
+		{
+			if (parent_id == _course_region[i]['parent_id'])
+			{
+				html += "<option value='"+_course_region[i]['region_id']+"'>"+_course_region[i]['region_name']+"</option>";
+			}
+		}
+		$('#addr_areaid').html(html);
+	}
+
+	fnOnChangeCourseCampus();
+}
+
+function fnOnChangeCourseCampus()
+{
+	var provid = $('#addr_provid').val();
+	var cityid = $('#addr_cityid').val();
+	var areaid = $('#addr_areaid').val();
+
+	var region_str = 'region';
+	if (provid > 0)
+	{
+		region_str += '_' + provid;
+	}
+
+	if (cityid > 0)
+	{
+		region_str += '_' + cityid;
+	}
+	
+	if (areaid > 0)
+	{
+		region_str += '_' + areaid;
+	}
+
+	$("select option[class^='region']").hide();
+	$("select option[class^='"+region_str+"']").show();
+
+	var $thiz = $('select[class="cls_campus"]');
+	var new_campus = $thiz.children('option[class^="'+region_str+'"]').first().val();
+	$thiz.val(new_campus);
+	fnOnCampusClick2($thiz);
+}
+
+<? if ($cors_info['cors_cmid'] != 1) { ?>
+var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+var knowledge_ids = [<?=implode(',', array_keys($know_processes))?>];
+var knowledge_know_process = eval("("+'<?=json_encode($know_processes)?>'+")");
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+
+//初始化知识点
+function init_knowledge()
+{
+    var subject_id = <?=array_keys($cors_subjectid[$cors_info['cors_id']])[0]?>;
+
+    if (subject_id == 11)
+    {
+    	subject_id = '';
+    	$("span[id=subject_id_list] input[name='subject_str[]']:checked").each(function(){
+            subject_id += ',' + $(this).val();
+    	});
+
+    	if (subject_id.length > 0)
+        {
+            subject_id = subject_id.substr(1);
+        }
+    }
+
+    var input_knowledge_ids = $('#knowledge_ids').val();
+    var _is_question_mode = typeof is_question_mode != 'undefined' ? is_question_mode : 0;
+    var _knowledge_know_process = typeof knowledge_know_process != 'undefined' ? knowledge_know_process : {};
+    if (input_knowledge_ids)
+    {
+        $.post(
+            ajax_url_knowledge_init,
+            {subject_id:subject_id,knowledge_ids:input_knowledge_ids},
+            function(data)
+            {
+                var str = '';
+                var know_process_cache = {};
+                for (var i=0; i<data.length; i++)
+                {
+                    var parent = data[i]['children'];
+                    str += '<div><span class="font_4" pkid="'+data[i]['id']+'">'+data[i]['knowledge_name']+'('+data[i]['ques_num']+'['+data[i]['relate_ques_num']+'])</span>：';
+                    for (j=0; j<parent.length; j++)
+                    {
+                        var checked = in_array(parent[j]['id'], knowledge_ids) ? ' checked' : '';
+                        var knowledge_id = parent[j]['id'];
+                        var know_process_str = '';
+                        if (_is_question_mode && _knowledge_know_process[knowledge_id])
+                        {
+                            var kp = _knowledge_know_process[knowledge_id]['kp'],
+                                kp_name = _knowledge_know_process[knowledge_id]['name'];
+                            if (kp > 0)
+                            {
+                                know_process_cache[knowledge_id] = kp;
+                                know_process_str = '<input type="hidden" name="know_process[' + knowledge_id + ']" value="' + kp + '"/>(认知过程：' + kp_name + ')';
+                            }
+                        }
+                        str += '<input type="checkbox" disabled="disabled" name="knowledge_id[]" id="knowledge'+parent[j]['id']+'" value="'+parent[j]['id']+'"'+checked+' /><label for="knowledge'+parent[j]['id']+'">'+parent[j]['knowledge_name']+'('+parent[j]['ques_num']+'['+parent[j]['relate_ques_num']+'])' + know_process_str + '</label>';
+                    }
+                    str += '</div><hr/>';
+                }
+
+                if (!$.isEmptyObject(know_process_cache))
+                {
+                    know_process_cache = $.toJSON(know_process_cache);
+                    str += '<div style="display:none;" id="k_know_process">' + know_process_cache + '</div>';
+                }
+
+                $('#knowledge_list').html(str);
+            },
+            'json'
+        );
+    }
+}
+
+$(function(){
+	init_knowledge();
+});
+<? } ?>
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">查看课程(ID:<?=$cors_info['cors_id']?>)
+      <div class="cls_toolbar">
+<? 
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('course_setcorsinfo', false); 
+if ($bPrivEdit) { 
+?>
+      <button type="button" onclick="location.href='<?=site_url('admin/course/setcorsinfo/' . $cors_info['cors_id'])?>'">编辑</button>
+<? } ?>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/corslist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <div id="id_cors_form">
+    <table class="maintable" id="id_cors_table" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">课程名称</td>
+        <td width="35%"><span><? Func::echo_s($cors_info['cors_name']); ?></span>
+        </td>
+        <td class="altbg1" width="15%">所属培训机构</td>
+        <td width="35%"><span id="id_ti_name"><? Func::echo_s($cors_info['ti_name']); ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">授课模式</td>
+        <td><span id="id_cm_name"><? Func::echo_s($cors_info['cm_name']); ?></span>
+        </td>
+        <td class="altbg1">班级类别</td>
+        <td><span><? Func::echo_s($cors_info['csnt_name']); ?></span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">年级</td>
+        <td colspan="3"><? if (isset($cors_gradeid[$cors_info['cors_id']])) foreach ($cors_gradeid[$cors_info['cors_id']] as $k => $v) { ?>
+        <label><?=$grade_map[$k]?></label>
+        <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">学科</td>
+        <td colspan="3"><? if (isset($cors_subjectid[$cors_info['cors_id']])) foreach ($cors_subjectid[$cors_info['cors_id']] as $k => $v) { ?>
+        <label><?=$subject_map[$k]?></label>
+        <? } ?>
+        </td>
+      </tr>
+     <tr>
+       <td class="altbg1">考试类型</td>
+       <td colspan="3"><? if (isset($cors_classid[$cors_info['cors_id']])) foreach ($cors_classid[$cors_info['cors_id']] as $k => $v) { ?>
+       <label><?=$classid_map[$k]?></label>
+        <? } ?>
+       </td>
+     </tr>
+<? if ($cors_info['cors_cmid'] != 1) { ?>
+     <tr>
+       <td class="altbg1">知识点</td>
+       <td colspan="3">
+          <div style="position: absolute; top: -1000px; left: 200px;">
+	  <input type="checkbox" name="knowledge_id[]" value="" />
+	  </div>
+	  <div id="knowledge_list"></div>
+          <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=implode(',', array_keys($know_processes))?>"/>
+	  <label for="knowledge_id[]" class="error" style="display: none"></label>
+          <label><input type="checkbox" disabled="disabled" name="kid_all" value="1" <? if ($kid_all) echo('checked="checked"'); ?> class="cls_field"/>[全部学科]</label>
+      </td>
+     </tr>
+<? } ?>
+      <tr>
+        <td class="altbg1">网址</td>
+        <td><span><? Func::echo_s($cors_info['cors_url']); ?></span></td>
+           <td class="altbg1">状态</td>
+           <td><? if ($cors_info['cors_flag'] > 1) echo('待审'); else if ($cors_info['cors_flag'] == '0') echo('禁用'); else if ($cors_info['cors_flag'] == 1) echo('启用'); else if ($cors_info['cors_flag'] == -1) echo('已删'); ?>
+          </td>
+        </tr>
+      <tr>
+        <td class="altbg1">添加时间</td>
+        <td><span><?=$cors_info['cors_addtime']?> (<?=$cors_info['cors_adduname']?>)</span></td>
+        <td class="altbg1">修改时间</td>
+        <td><span><?=$cors_info['cors_lastmodify']?></span></td>
+        </tr>
+
+      </table>
+    </div>
+
+<? /***************  校区列表模式开始 ***********************************/ ?>
+   <div>
+        <ul class="subtab">
+            <? if (false) { foreach ($cc_info as $k => $cc_row) { ?>
+            <li <? if ($k < 1) echo('class="current"'); ?> ><a href="javascript:void(0)" onclick="fnOnCampusClick(this)" class="cls_campus" name="table_<?=$k?>" id="menu_<?=$k?>" style="z-index:0"><? if ($cc_row['cc_tcid']) Func::echo_s($cc_row['tc_name']); else echo('校区' . ($k + 1)); ?></a></li>
+            <? } }?>
+            
+            <li><a>
+            <select id="addr_provid" onchange="fnCourseRegion($(this).val(), $('#addr_cityid'), 2);">
+            <option value="0">省份-全部</option>
+            <?php foreach ($cors_region as $item) {?>
+            <?php if ($item['parent_id'] == 1) {?>
+            <option value="<?=$item['region_id']?>"><?=$item['region_name']?></option>
+            <?php }?>
+            <?php }?>
+            </select>
+            </a></li>
+            
+            <li><a>
+            <select id="addr_cityid" onchange="fnCourseRegion($(this).val(), $('#addr_areaid'), 3);">
+            <option value="0">城市-全部</option>
+            </select>
+            </a></li>
+            
+            <li><a>
+            <select id="addr_areaid" onchange="fnOnChangeCourseCampus();">
+            <option value="0">区域-全部</option>
+            </select>
+            </a></li>
+            
+            <li><a>
+            <select class="cls_campus" onchange="fnOnCampusClick2($(this));">
+            <? foreach ($cc_info as $k => $cc_row) { ?>
+            <option value="table_<?=$k?>" class="region_<?=$cc_row['cc_provid']?>_<?=$cc_row['cc_cityid']?>_<?=$cc_row['cc_areaid']?>"><? if ($cc_row['cc_tcid']) Func::echo_s($cc_row['tc_name']); else echo('校区' . ($k + 1)); ?></option>
+            <?php }?>
+            </select>
+            </a></li>
+        </ul>
+   </div>
+   <div id="id_cc_form">
+       <? $cnt = count($cc_info); for ($k = 0; $k < $cnt; $k++) { ?>
+
+
+       <table class="maintable cls_field_table" id="id_cc_table_<?=$k?>" border="0" cellspacing="0" cellpadding="0" <? if ($k > 0) echo('style="display:none"'); ?>>
+          <tbody>
+          <tr>
+            <td class="altbg1" width="15%">校区</td>
+            <td colspan="3"><? Func::echo_s($cc_info[$k]['tc_name']); ?></td>
+          </tr>
+          <tr>
+            <td class="altbg1" width="15%">授课教师</td>
+             <td width="35%"><div class="cteacher_list" style="border-bottom:1px solid black">
+<? if (isset($cteacher_list[$cc_info[$k]['cc_id']])) foreach ($cteacher_list[$cc_info[$k]['cc_id']] as $cct_ctid => $item) { ?>
+<label><input type="checkbox" disabled="disabled" name="cct_ctid_str" class="cls_field ctid_<?=$cct_ctid?>" value="<?=$cct_ctid?>" checked="checked"/><? Func::echo_s($item['ct_name']); ?></label>
+<? } ?>
+</div></td>
+            <td class="altbg1" width="15%">教师来源</td>
+            <td width="35%"><? Func::echo_s($cc_info[$k]['ctf_name']); ?></td>
+          </tr>
+          <tr>
+            <td class="altbg1">课程时间</td>
+            <td colspan="3"><? Func::echo_s($cc_info[$k]['cc_classtime']); ?></td>
+          </tr>
+          <tr>
+            <td class="altbg1">课程周期</td>
+            <td colspan="3"><? if ($cc_info[$k]['cc_startanytime']) { ?>随时开课<? } else if ($cc_info[$k]['cc_begindate']) { ?>从<b><?=$cc_info[$k]['cc_begindate']?></b>到<b><?=$cc_info[$k]['cc_enddate']?></b><? } ?></td>
+          </tr>
+          <tr>
+            <td class="altbg1">总计课时</td>
+            <td><?=$cc_info[$k]['cc_hours']?>课时</td>
+            <td class="altbg1">课程收费</td>
+            <td><?=$cc_info[$k]['cc_price']?>元</td>
+          </tr>
+         <tr>
+           <td class="altbg1">上课地址</td>
+           <td colspan="3"><?=$cc_info[$k]['cc_provname']?> / <?=$cc_info[$k]['cc_cityname']?> / <?=$cc_info[$k]['cc_areaname']?>  <? Func::echo_s($cc_info[$k]['cc_addr']); ?></td>
+             </tr>
+             <tr>
+               <td class="altbg1">联系人</td>
+               <td><? Func::echo_s($cc_info[$k]['cc_ctcperson']); ?></td>
+               <td class="altbg1">联系电话</td>
+               <td><? Func::echo_s($cc_info[$k]['cc_ctcphone']); ?></td>
+             </tr>
+           </tbody>
+       </table>
+
+
+       <? } ?>
+   </div>
+<? /***************  校区列表结束 ***********************************/ ?>
+
+
+
+     <div id="id_cors_form_1">
+       <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+         <tr>
+           <td class="altbg1" width="15%">课程简介</td>
+           <td colspan="3"><? Func::echo_s($cors_info['cors_memo']); ?></td>
+         </tr>
+       </table>
+     </div>
+  </div>
+</div>
+
+</div>
+<?php $this->load->view('common/footer');?>

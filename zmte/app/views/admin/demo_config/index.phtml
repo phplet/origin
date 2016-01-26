@@ -1,0 +1,72 @@
+<?php
+$this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/demo_config/delete')?>" method="get" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle">
+        <a class="menu" href="<?=site_url('admin/demo_config/update_cache')?>">更新配置缓存</a>
+        <a class="menu" href="<?=site_url('admin/demo_config/edit')?>">添加配置</a>
+        MINI测配置管理
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td>删?</td>
+        <td>ID</td>
+        <td>名称</td>
+        <td>年级</td>
+        <td>考试期次</td>
+        <td>考试学科</td>
+        <td>添加时间</td>
+        <td>修改时间</td>
+        <td>操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['dec_id']?>"></td>
+        <td><?=$val['dec_id']?></td>
+        <td><?=$val['dec_name']?></td>
+        <td><?=$grades[$val['dec_grade_id']]?></td>
+        <td><?=$val['exam_name']?></td>
+        <td>
+        <?php if (isset($val['exam_subject'])) {?>
+            <?php foreach ($val['exam_subject'] as $item) {?>
+            <?php echo $subjects[$item['subject_id']];?>&emsp;
+            <?php }?>
+        <?php }?>
+        </td>
+        <td><?php echo date('Y-m-d H:i', $val['dec_date_create']);?></td>
+        <td><?php echo date('Y-m-d H:i', $val['dec_date_modify']);?></td>
+        <td>
+          <a href="<?=site_url('admin/demo_config/update_demo_paper/'.$val['dec_exam_pid'])?>">更新试卷</a>
+          <a href="<?=site_url('admin/demo_config/edit/'.$val['dec_id'])?>">编辑</a>
+          <a href="<?=site_url('admin/demo_config/delete/'.$val['dec_id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></center>
+  </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

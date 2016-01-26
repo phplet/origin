@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-US" style="word-spacing:8px;letter-spacing:1px;">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 页脚页眉信息 -->
+    <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+    <meta type="create_time" content="报告生成时间 <?=date('Y-m-d H:i:s')?>"/>
+    <meta type="student_name" content="<?=$results['stu_fullname']?>"/>
+    <meta type="exam_time" content="科技引领风尚，教育开拓未来！"/>
+    <title><?=$results['stu_fullname']?><?=$results['subject_name']?>成绩报告单</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    <?php static_global(array(
+                        'js/jquery/jquery.js',
+          ));
+    ?>
+<style>
+<?
+// 注意，这里一定要为840px, 左、右边距为20mm
+$g_real_page_width = "840px";
+$g_real_page_height = 1283;
+$g_padding_left = "20mm";
+$g_padding_right = "20mm";
+?>
+.cls_root {
+    width:<?=$g_real_page_width?>;
+    padding-left:<?=$g_padding_left?>;
+    padding-right:<?=$g_padding_right?>;
+    /*background-color:#cccccc;*/
+}
+.font12 {font-size: 12px;}
+
+.cls_root .table_header {
+    border-left: 1px solid #000;
+    min-height: 35px;
+    background: none;
+    border-collapse:separate;
+}
+
+.cls_root .border_top {
+	border-top: 1px solid #000;
+}
+
+td {
+    padding: 5px 12px;
+    margin: 0;
+    border-bottom: 1px solid #000;
+    border-right: 1px solid #000;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+<div class="ceping cls_root">
+<h2 class="cls_row" style="color:#323a45;"><?=$results['exam_name'];?>成绩报告单</h2>
+<p class="cls_row">&nbsp;</p>
+<table class="mb10 cls_row table_header border_top">
+    <tr>
+    <td colspan="6"><b>成绩信息</b></td>
+    </tr>
+    <tr>
+        <td width="10%">姓名</td>
+        <td width="20%"><?=$results['stu_fullname']?></td>
+        <td width="10%">学校</td>
+        <td width="35%"><?=$results['stu_schname']?></td>
+        <td width="10%" rowspan="2">成绩等级</td>
+        <td width="15%" rowspan="2"><?=$results['level_results']?></td>
+    </tr>
+    <tr>
+        <td>学科</td>
+        <td><?=$results['subject_name']?></td>
+        <td>考号</td>
+        <td><?=$results['exam_ticket']?></td>
+    </tr>
+</table>
+<table class="cls_row table_header">
+    <tr>
+    <td colspan="6"><b>诊断信息</b></td>
+    </tr>
+    <tr>
+        <td width="85%">项目</td>
+        <td width="15%">层级</td>
+    </tr>
+</table>
+<?php 
+$levels = array('Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ');
+?>
+<?php if ($question) {?>
+<table class="cls_row table_header">
+    <?php $first = true;?>
+    <?php foreach ($question as $level => $item) {?>
+    <tr>
+        <?php if ($first) {?>
+        <td width="10%" rowspan="<?=count($question)?>">试题<br/>得分</td>
+        <?php }?>
+        <td width="75%"><?php if (!$item) {?>-<?php } else {?>第<?=implode('，', $item)?>题<?php }?></td>
+        <td width="15%"><?=$levels[$level-1]?></td>
+    </tr>
+    <?php $first = false;?>
+    <?php }?>
+</table>
+<?php }?>
+
+<?php if ($knowledge) {?>
+<table class="cls_row table_header">
+    <?php $first = true;?>
+    <?php foreach ($knowledge as $level => $item) {?>
+    <tr>
+        <?php if ($first) {?>
+        <td width="10%" rowspan="<?=count($knowledge)?>">学科<br/>知识</td>
+        <?php }?>
+        <td width="75%"><?php if (!$item) {?>-<?php } else {?><?=implode('，', $item)?><?php }?></td>
+        <td width="15%"><?=$levels[$level-1]?></td>
+    </tr>
+    <?php $first = false;?>
+    <?php }?>
+</table>
+<?php }?>
+
+<?php if ($method_tactic) {?>
+<table class="cls_row table_header">
+    <?php $first = true;?>
+    <?php foreach ($method_tactic as $level => $item) {?>
+    <tr>
+        <?php if ($first) {?>
+        <td width="10%" rowspan="<?=count($method_tactic)?>">方法<br/>策略</td>
+        <?php }?>
+        <td width="75%"><?php if (!$item) {?>-<?php } else {?><?=implode('，', $item)?><?php }?></td>
+        <td width="15%"><?=$levels[$level-1]?></td>
+    </tr>
+    <?php $first = false;?>
+    <?php }?>
+</table>
+<?php }?>
+
+<?php if ($group_type) {?>
+<table class="cls_row table_header">
+    <?php $first = true;?>
+    <?php foreach ($group_type as $level => $item) {?>
+    <tr>
+        <?php if ($first) {?>
+        <td width="10%" rowspan="<?=count($group_type)?>">信息<br/>提取<br/>方式</td>
+        <?php }?>
+        <td width="75%"><?php if (!$item) {?>-<?php } else {?><?=implode('，', $item)?><?php }?></td>
+        <td width="15%"><?=$levels[$level-1]?></td>
+    </tr>
+    <?php $first = false;?>
+    <?php }?>
+</table>
+<?php }?>
+
+<p class="cls_row font12">说明：1、学科知识点、方法策略、信息提取方式与各学科考试相对应。</p>
+<p class="cls_row font12">&emsp;&emsp;&emsp;2、“层级”反映某考试在全校学生中的相对水平，Ⅲ级为平均水平，Ⅲ级以上再分为Ⅱ级、Ⅰ级，Ⅲ级以下再分为Ⅳ级、Ⅴ级。</p>
+<p class="cls_row font12">&emsp;&emsp;&emsp;3、考试结果会受多方因素影响，该诊断信息仅对当次考试进行评估，作为下一步学习时参考。</p>
+
+<?php static_global(array(
+						'js/app/report/highcharts.js',
+));?>
+<?php echo $this->load->view('report/table_auto_pager', array('g_real_page_height' => $g_real_page_height));?>
+</div>
+</body>
+</html>

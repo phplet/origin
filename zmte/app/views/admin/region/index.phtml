@@ -1,0 +1,63 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+
+
+<script language="javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_cpuser_list" action="<?=site_url('admin/region/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><a class="menu" href="<?=site_url('admin/region/add/'.$region['region_id'])?>">添加下级地区</a><a class="menu" href="<?=site_url('admin/region/export')?>">更新地区下拉框</a>地区管理【当前地区：
+        <?php foreach($region_parents as $k => $parent): ?>
+        <?php echo $k ? ' -> ':''; ?>
+        <a href="<?=site_url('admin/region/index/'.$parent['region_id'])?>"><?=$parent['region_name']?></a>
+        <?php endforeach; ?>】</div>  
+    <table id="id_grid" border="0" cellspacing="0" cellpadding="0">
+      <tr class="cls_title">
+        <td width="20">删?</td>
+        <td width="60">ID</td>
+        <td width="100">地区名</td>
+        <td width="60">状态</td>
+        <td width="200">操作</td>
+      </tr>
+      <?php if($region_children):?>
+      <?php foreach($region_children as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['region_id']?>"></td>
+        <td><?=$val['region_id']?></td>
+        <td><a href="<?=site_url('admin/region/index/'.$val['region_id'])?>"><?=$val['region_name']?></a></td>
+        <td><?php echo $val['status'] ? '开放' : '关闭';?></td>
+        <td>
+          <a href="<?=site_url('admin/region/edit/'.$val['region_id'])?>">编辑</a>
+          <a href="<?=site_url('admin/region/delete/'.$val['region_id'])?>"  onclick="return confirm('确定要删除么？');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>
+  </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

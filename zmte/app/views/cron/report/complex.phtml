@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 页脚页眉信息 -->
+    <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+    <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+    <meta type="student_name" content="<?php echo $studentName; ?>"/>
+    <meta type="exam_time" content="<?php echo $examName; ?>"/>
+    <title>综合</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    
+    <?php static_global(array(
+						'js/jquery/jquery.js',
+		  ));
+	?>
+	<?
+    // 注意，这里一定要为840px, 左、右边距为20mm
+    $g_real_page_width = "840px";
+    $g_real_page_height = 1283;
+    $g_padding_left = "20mm";
+    $g_padding_right = "20mm";
+    ?>
+	<style>
+	.mokuai-text{margin:0; padding:0}
+	.center {border:1px solid #ccc; margin:0; padding:0; margin-top:-1px;}
+	.cls_root {
+        width:<?=$g_real_page_width?>;
+        padding-left:<?=$g_padding_left?>;
+        padding-right:<?=$g_padding_right?>;
+    }
+	</style>
+    <?php echo $this->load->view('report/table_auto_pager', array('g_real_page_height'=>$g_real_page_height));?>
+</head>
+<body>
+<div class="ceping cls_root">
+    <h1><?php echo $studentName; ?>&nbsp;&nbsp;测评总结报告</h1>
+
+    <?php $g_num = 0;?>
+    
+    <!--各科综合的方法策略运用情况start-->
+    <?php if (!empty($mothod_tactic)) {?>
+    <?php 
+    	$mothod_tactic['subjects'] = isset($mothod_tactic['subjects']) ? $mothod_tactic['subjects'] : array();
+    	$mothod_tactic['method_tactics'] = isset($mothod_tactic['method_tactics']) ? $mothod_tactic['method_tactics'] : array();
+    	$mothod_tactic['data'] = isset($mothod_tactic['data']) ? $mothod_tactic['data'] : array();
+    	$mothod_tactic['comment'] = isset($mothod_tactic['comment']) ? $mothod_tactic['comment'] : array();
+    ?>
+    <?php 
+    	//加工flash数据
+    	$zf_flash_data = array();
+    	if (count($mothod_tactic['data']))
+    	{
+	    	foreach ($mothod_tactic['data'] as $k=>$item)
+	    	{
+	    		$zf_flash_data[] = array('name' => $k, 'data' => array_values($item));
+	    	}
+    	}
+    	
+    	$mothod_tactic['data'] = $zf_flash_data;
+    ?>
+    
+    <h3><?echo ++$g_num;?>.各科综合的方法策略运用情况</h3>
+	<div class="center">
+		<div id="container_zf" style="page-break-before:auto"></div>
+	</div>
+    <table class="pingyu">
+    	<?php $auto_key = 0;?>
+    	<?php foreach ($mothod_tactic['comment'] as $item) {?>
+        <?php $auto_key++;?>
+        <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+            <td><?php echo $item;?></td>
+        </tr>
+        <?php } ?>
+    </table>
+    <?php }?>
+    <!--各科综合的方法策略运用情况end-->
+    
+    
+	<!--各学科在总体1和总体2的相对位置 strat-->
+	<?php if (!empty($subject_relate_position)) {?>
+	<?php 
+		$show_tip = is_string($subject_relate_position);
+		$tip_content = $subject_relate_position;
+		
+		if (!$show_tip)
+		{
+	    	$subject_relate_position['subjects'] = isset($subject_relate_position['subjects']) ? $subject_relate_position['subjects'] : array();
+	    	$subject_relate_position['data'] = isset($subject_relate_position['data']) ? $subject_relate_position['data'] : array();
+	    	$subject_relate_position['summary'] = array_keys($subject_relate_position['data']);
+	    	foreach ($subject_relate_position['data'] as $key => $item)
+	    	{
+	    	    $subject_relate_position['data'][ '我VS'.$key] = $item;
+	    	    unset($subject_relate_position['data'][$key]);
+	    	}
+	    	
+	    	//加工flash数据
+	    	$ld_flash_data = array();
+	    	if (count($subject_relate_position['data']))
+	    	{
+	    		foreach ($subject_relate_position['data'] as $k=>$item)
+	    		{
+	    			$ld_flash_data[] = array('name' => $k, 'data' => array_values($item), 'pointPlacement' => 'on');
+	    		}
+	    	}
+	    	 
+	    	$subject_relate_position['data'] = $ld_flash_data;
+    ?>
+    <?php
+        /** 判断学科数量 生成标题*/
+        $title = '';
+        
+        if (count($subject_relate_position['summary']) <= 2)
+        {
+            $title = "各学科得分在 “".implode(' 和 ', $subject_relate_position['summary'])."” 的相对位置";
+        }
+        elseif (count($subject_relate_position['summary']) > 2)
+        {
+            $lastValue = array_pop($subject_relate_position['summary']);
+            $title = "各学科得分在 “".implode('、', $subject_relate_position['summary'])."和".$lastValue."” 的相对位置";
+        }
+    ?>
+    
+    <h3><?echo ++$g_num;?>.	<?php echo $title;?></h3>
+    <div class="center">
+        <div id="container_ld" style="page-break-before:auto"></div>
+    </div>
+	<?php  } else {?>
+    <h3><?echo ++$g_num;?>.	<?php echo $tip_content;?></h3>
+	<?php } ?>
+	<?php }?>
+	
+   <?php if (!empty($match_percent)) {?>
+   <h3 class="pipei"><?echo ++$g_num;?>. 权重满分率： <span class="cr"><?php echo $match_percent['match_percent'];?>%</span></h3>
+   <?php if (isset($match_percent['data'])):?>
+        <?php $count_num = 1; ?>
+       <?php foreach ($match_percent['data'] as $keys=>$item): ?>
+	       <table class="cls_row cls_table" <?php if($count_num == 1): ?>id="table_sci_k"<?php else: ?>ref_title_id="table_sci_k"<?php endif; ?>>
+	           <tr>
+	           <?php $count = count($item)-1;?>
+	           <?php $width = 80/$count?>
+	           <?php foreach ($item as $key=>$val):?>
+		           <?php if ($key == 0):?>
+		           	   	<th class="w168" width="20%"><?php echo $val;?></th>
+		           <?php else:?>
+			          	<th width="<?php echo $width;?>%" <?php if ( is_numeric($val)):?>style="background-color:#FFF;"<?php endif; ?>><?php echo  $val;?></th>
+		           <?php endif;?> 
+			   <?php endforeach;?>	    
+	           </tr>
+	        </table>
+            <?php $count_num++; ?>
+        <?php endforeach;?>
+    <?php endif;?>
+   <?php } ?>
+   
+   <br>
+       <p class="mokuai-text cls_row">
+                注：为表达更加简明扼要，部分数据进行了取整等简化处理，由此可能造成相关数据的误差不影响评价结果。
+       </p>
+    <!--各学科在总体1和总体2的相对位置 end-->
+</div>
+<?php static_global(array(
+						'js/app/report/highcharts.js',
+						'js/app/report/highcharts-more.js',
+));?>
+<script type="text/javascript">
+	//全局设置,省得每个都写
+	Highcharts.setOptions({
+		global: {
+			useUTC: false
+		},
+		credits: {
+			enabled: false	//右下角不显示LOGO
+		},
+		chart: {
+			animation:false	//关闭全部动画,使其在pdf中可以渲染到
+		},
+        title:{
+            style:{
+                color:"#333"
+            }
+        },
+        legend:{
+            itemStyle:{
+                color:"#333"
+            }
+        },
+		plotOptions: {
+			series: {
+				animation: false	//关闭全部动画,使其在pdf中可以渲染到
+			}
+		}
+	});
+
+	<?php if (!empty($mothod_tactic)) {?>
+    //各科综合的方法策略运用情况
+    $('#container_zf').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            //text: '各科综合的方法策略运用情况'
+            text: ''
+        },
+        //colors: ['#000000','#000000','#000000','#000000'],	//柱状图的颜色
+        xAxis: {
+            categories: eval("("+'<?php echo json_encode($mothod_tactic['method_tactics']); ?>'+")"),
+            labels: {
+				rotation : -45,//坐标旋转角度 为0：表示横放置
+				align : 'right'
+				/* style: {
+					fontSize: '13px',
+					fontFamily: 'Verdana, sans-serif'
+				} */
+			}	
+        },
+        yAxis: {
+        	title: {
+				text: ''
+			},
+            tickPixelInterval:72	//y轴坐标值的密度,单位是像素，y轴默认值72，x轴默认值100
+        },
+        plotOptions : {
+            column : {
+                pointPadding: 0,//柱子之间的间隔(会影响到柱子的大小)
+                //pointWidth: 2,		//柱子的大小(会影响到柱子的大小)
+                dataLabels: {
+                    enabled: true,
+                    formatter: function() {
+                        if (this.y != null)
+                        {
+                            return String(this.y);
+                        }
+                        else
+                        {
+                            return '';
+                        }
+                    },
+                    style: {
+                        fontSize: '8px',
+                    },
+                    crop: false,
+                    overflow: 'none',
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: eval("("+'<?php echo json_encode($mothod_tactic['data']); ?>'+")")
+        /*series: [{
+            name: '语文',
+            data: [97.33]
+        }]*/
+        
+    });
+    <?php }?>
+
+    <?php if (!empty($subject_relate_position) && empty($show_tip)) {?>
+    //雷达图
+    $('#container_ld').highcharts({
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+        title: {
+            // text: '<?php echo $title;?> '
+            text: ''
+        },
+        //colors: ['#000000','#000000'],	//柱状图的颜色
+        plotOptions: {
+            line: {
+                enableMouseTracking: false	//关闭动画特效,使其在pdf中线条不会变粗
+            }
+        },
+        pane: {
+            size: '80%'
+        },
+        xAxis: {
+            categories: eval("("+'<?php echo json_encode($subject_relate_position['subjects']); ?>'+")"),
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: {
+        	title: {
+				text: ''
+			},
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0,
+            max: 1,
+            maxPadding: 0,
+            tickInterval: 0.5
+        },
+        tooltip: {
+            shared: true,
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+        },
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+        series: eval("("+'<?php echo json_encode($subject_relate_position['data']); ?>'+")")
+        /*
+        series: [{
+            name: '在总体1的位置',
+            data: [10, 9, 8, 7, 6],
+            pointPlacement: 'on'
+        }, {
+            name: '在总体2的位置',
+            data: [5, 4, 3, 2, 1],
+            pointPlacement: 'on'
+        }]
+        */
+    });
+    <?php } ?>
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<?php $this->load->view('common/header');?>
+<style>
+<!--
+p.subject_p{
+	height:30px;
+	padding-top:5px;
+}
+-->
+</style>
+<div id="body">   
+  <form id="frm_add" name="Frm_info" method="POST" action="<?=site_url('admin/subject_category/save')?>">
+  <input type="hidden" name="id" value="<?=$detail['id']?>" />
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <div class="space">
+    <div class="subtitle"><?php echo $act == 'add' ? '添加' : '编辑';?>方法策略分类</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">方法策略分类名称</td>        
+        <td>
+            <input type="text" id="txt_name" name="name" class="txtbox" value="<?=$detail['name']?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学科</td>        
+        <td id="subject_td">
+        	<?php $auto_key = 0;?>
+        	<?php foreach ($detail['subjects'] as $row) {?>
+        	<p class="subject_p"> 
+	        	<select name="subject_id[]">
+	        	<option value="">== 请选择学科 ==</option>
+	            <?php foreach ($subjects as $k=>$v) {?>
+	            <option value="<?php echo $k;?>" <?php echo $row['subject_id'] == $k ? 'selected="selected"' : '';?>><?php echo $v;?></option>
+	            <?php } ?>
+	        	</select>
+	        	<?php if ($auto_key == 0) {?>
+	        	<input type="button" value="添加" class="add_item" />
+	        	<input type="button" value="删除" class="delete_item" style="display: none"/>
+	        	<?php } else {?>
+	        	<input type="button" value="删除" class="delete_item" />
+	        	<?php } ?>
+        	<?php $auto_key++;?>
+        	</p>
+        	<?php } ?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>
+
+
+<script>
+$(document).ready(function () {
+	$('.add_item').unbind('click').bind('click', function () {
+		var $clone = $('p.subject_p').first().clone();
+		
+		$clone.find('.add_item').hide();
+		$clone.find('.delete_item').show();
+		$clone.find('select').find("option").eq(0).attr("selected", true);
+		
+		$('#subject_td').append($clone);
+		
+		delete_item();
+	});
+
+	function delete_item()
+	{
+		$('.delete_item').unbind('click').bind('click', function () {
+			$(this).parent().remove();
+		});
+	}
+
+	delete_item();
+
+	//表单提交验证
+	$('#frm_add').submit(function () {
+		var msg = [];
+
+		var $name = $('#txt_name');
+		
+		if ($.trim($name.val()) == '') {
+			msg.push('名称不能为空');
+		}
+
+		//学科
+		var no_subject = true;
+		$('#subject_td').find('select').each(function () {
+			if ($(this).val() > 0) {
+				no_subject = false;
+				return false;
+			}
+		});
+
+		if (no_subject) {
+			msg.push('请选择学科');
+		}
+
+		if (msg.length) {
+			alert(msg.join("\n"));
+			return false;
+		}
+
+		return true;
+	});
+});
+</script>

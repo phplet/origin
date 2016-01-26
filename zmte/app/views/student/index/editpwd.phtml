@@ -1,0 +1,98 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_cpuser_info" id="form" method="POST" class="form_data" action="<?=site_url('student/index/editpwd')?>">
+  <div class="space">
+    <div class="subtitle">修改密码</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr><td style="border:none;height:10px;"></td></tr>
+    <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+          <span class="altbg2-bg">修改密码</span>
+          <i class="altbg2-r"></i>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%"  class="altbg1">原密码</td>        
+        <td>
+			<input type="password" name="oldpwd" id="txt_old_password" class="txtbox">&nbsp;
+	        <span class="notice">*请输入旧密码</span><font class="error"></font>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">新密码</td>        
+        <td>
+        	<input type="password" name="newpwd" id="txt_password" class="txtbox">&nbsp;
+        	<span class="notice">*密码长度必须为6~20个字符</span><font class="error"></font>
+		</td>
+      </tr>
+      <tr>
+        <td class="altbg1">确认新密码</td>        
+        <td>
+        	<input type="password" name="newpwd_confirm" id="txt_password_confirm" class="txtbox">&nbsp;
+        	<span class="notice">*请再次输入密码</span><font class="error"></font>
+		</td>
+      </tr>
+       <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+          <td colspan="2" style="text-align:center;border:none;">
+             <center> 
+              <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+              &nbsp;&nbsp;
+              <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+            </center>  
+          </td>
+        </tr>
+        <tr><td style="border:none;height:10px;"></td></tr>
+    </table>
+  </div> 
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>
+
+<script type="text/javascript">  
+  $(document).ready(function () {
+      var check_form = function () {
+          var $txt_password = $('#txt_password'),
+              $txt_old_password = $('#txt_old_password'),
+              $txt_password_confirm = $('#txt_password_confirm'),
+              
+              txt_password = $txt_password.val(),
+              txt_password_confirm = $txt_password_confirm.val();
+              txt_old_password = $txt_old_password.val();
+
+          var is_success = true,
+          	   objs = [];
+
+          if (!txt_old_password.length) {
+              is_success = false;
+              objs.push({msg:'原密码不能为空', obj:$txt_old_password});
+          }
+
+          //验证密码规则
+          if ('string' === typeof (passwd_msg = is_password(txt_password))) {
+	            is_success = false;
+	            objs.push({msg:passwd_msg, obj:$txt_password});
+          }
+
+          if (!txt_password_confirm.length || txt_password != txt_password_confirm) {
+              is_success = false;
+              objs.push({msg:'两次密码输入不一致，请检查', obj:$txt_password_confirm});
+          }
+          
+          if (!is_success) {
+              show_error(objs);
+              return false;
+          }
+          
+          return true;
+      };
+      
+      $('#form').submit(function() {
+          if (!check_form()) {
+              return false;
+          }
+
+          return true;
+      });
+  });
+</script>

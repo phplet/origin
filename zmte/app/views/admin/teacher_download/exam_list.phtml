@@ -1,0 +1,162 @@
+<?php
+    $this->load->view('common/header');
+    static_js(array('third_party/layer/layer.min.js'));
+?>
+
+<div id="space">
+    <div class="subtitle">
+        <a href="javascript:void(0)" id="select_all" style="color:red;">[全选/反选]</a>
+    </div>
+    <form name="frm_cpuser_list" action="#" method="POST" onsubmit="return check_form(this)">
+        <div class="space">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr class="altbg1">
+                    <td width="10%">&nbsp;&nbsp;ID</td>
+                    <td>考试期次</td>
+                    <td width="10%">年级</td>
+                    <td width="10%">类型</td>
+                    <td width="15%">添加时间</td>
+                    <td width="10%">状态</td>
+                </tr>
+                <?php if(count($list) > 0):?>
+                    <?php foreach($list as $val):?>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="exam_id" vv="exam_<?=$val['exam_id']?>" name="exam_id_c" value="<?=$val['exam_id']?>" />
+                                <?=$val['exam_id']?>
+                                <input type="hidden" name="exam_ids[]" value="<?=$val['exam_id']?>" />
+                            </td>
+                            <td class="title"><?=$val['exam_name']?></td>
+                            <td><?=$val['grade_name']?></td>
+                            <td><?=$val['class_name']?></td>
+                            <td><?=$val['addtime']?></td>
+                            <td><?=$val['state']?></td>
+                         </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="10">暂无记录！</td>
+                    </tr>
+                <?php endif; ?>
+                <tr class="altbg1">
+                    <td colspan="6" style="text-align:right"><?=$pagination?></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="text-align: center;color:#f00">
+                <input type="button" id="add_exam" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " id="close_button" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+function unique(data){
+	data = data || [];
+	var a = {};
+	len = data.length;
+	for (var i=0; i<len;i++){
+	var v = data[i];
+	if (typeof(a[v]) == 'undefined'){
+	a[v] = 1;
+	}
+	};
+	data.length=0;
+	for (var i in a){
+	data[data.length] = i;
+	}
+	return data;
+	} 
+
+
+    $(document).ready(function(){
+
+        // 初始化试题是否被选中
+        var questions = parent.$('.exam_id');
+        if(questions.length > 0) {
+            for (var i = 0; i < questions.length; i++) {
+                var ques_id = $(questions[i]).val();
+                $('.exam_id[value="' + ques_id + '"]').prop("checked", true);
+            };
+        }
+
+        // 全选/反选
+        var checkbox = $('input:checkbox');
+        var option_select_all_off = false;
+        $('#select_all').click(function(){
+
+            if (!option_select_all_off) {
+                $('.exam_id').prop("checked", true);         
+                option_select_all_off = true;
+
+                // 所有已经添加的试题
+                var checkbox_done = parent.$('.exam_id');
+                var checkbox_done_id = [];
+                var checkbox_done_text = [];
+                if (checkbox_done.length > 0) {
+                    for (var i = 0; i < checkbox_done.length; i++) {
+                       checkbox_done_id.push($(checkbox_done[i]).val());
+    
+                    };
+                };
+
+                //添加未添加的
+                for (var i = 0; i < checkbox.length; i++) {
+
+                	if ($.inArray($(checkbox[i]).val(), checkbox_done_id) > -1) {
+                          continue;
+                     };
+                        var str='<p class="exam_' + $(checkbox[i]).val() + '"><input id="exam_' + $(checkbox[i]).val() + '" type="checkbox" checked="checked" name="exam_id[]" class="exam_id" value="' +$(checkbox[i]).val() +'" itext="' +$(checkbox[i]).val() +'"/><label for="exam_' +$(checkbox[i]).val()+ '">' + $(checkbox[i]).parent().next().text() + '</label></p>' ;
+                        parent.$('#relate_exam').append(str);    
+                	
+                }
+                
+            } else {
+                $('.exam_id').prop("checked", false);
+                option_select_all_off = false;
+                //删除已添加的
+                for (var i = 0; i < checkbox.length; i++) {
+                    parent.$('.'+$(checkbox[i]).attr('vv')).remove();
+                }
+            }
+
+         	
+           
+        });
+
+        // 关闭当前窗口
+        var index = parent.layer.getFrameIndex(window.name); //获取当前窗体索引
+        $('#close_button').on('click', function(){
+            parent.layer.close(index); //执行关闭
+        });
+
+
+        $('.exam_id').click(function(){
+        	var tips = this.checked ? true : false;
+        	if(tips==false)
+        	{
+            	
+        		parent.$('.'+$(this).attr('vv')).remove();
+        	}
+        	else
+        	{
+                var str='<p class="exam_' + $(this).val() + '"><input id="exam_' + $(this).val() + '" type="checkbox" checked="checked" name="exam_id[]" class="exam_id" value="' +$(this).val() +'" itext="' +$(this).val() +'"/><label for="exam_' +$(this).val() + '">' + $(this).parent().next().text() + '</label></p>' ;
+                parent.$('#relate_exam').append(str);    
+        	}
+        	
+        	}
+       );
+        
+        // 添加考试期次到列表中
+        $('#add_exam').click(function(){
+            // 待添加试题
+            parent.layer.close(index);
+        });
+    });
+</script>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

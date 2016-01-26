@@ -1,0 +1,169 @@
+<?php echo $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            var notice = '';
+            if (op == 'remove') {
+              notice = '移除之后无法再恢复，';
+            }
+            if (confirm(notice + '您确定要执行该操作么？')) {
+                var action = $('#batch_op').find('option[value='+op+']').attr('op');
+
+                form.action = action;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+</script>
+
+<div id="body">
+  <form name="frm_invigilator_list" action="" method="POST" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+        <?php if ($priv_manage) {?>
+        <a class="menu" href="<?=site_url('admin/comparison_type/add')?>">添加对比信息类型</a>
+        <?php } ?>
+        <a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">查询</a>
+
+
+        <?php if ($mode == 'trash'): ?>
+                      回收站  - <a href="<?php echo site_url('admin/comparison_type/index');?>">[评估-对比信息类型]</a>
+        <?php else : ?>
+       	评估-对比信息类型  - <a href="<?php echo site_url('admin/comparison_type/index/trash');?>">[回收站]</a>
+        <?php endif; ?>
+      </div>  
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+          <tr class="altbg1">
+            <th width="80">ID</th>
+            <th>分类名称</th>
+            <th width="150">学科</th>
+            <th width="100">年级</th>
+            <th width="100">类型</th>            
+            <th width="200">创建时间</th>
+            <th width="50">状态</th>
+            <th width="200">操作</th>
+          </tr>
+
+          <?php if ($list):?>
+          <?php foreach($list as $val):?>
+          <?php
+            $val['class_name'] = isset($class_list[$val['class_id']]['class_name']) ? $class_list[$val['class_id']]['class_name'] : '--';
+            $val['subject_name'] = isset($subjects[$val['subject_id']]) ? $subjects[$val['subject_id']] : '--';
+            $val['grade_name'] = isset($grades[$val['grade_id']]) ? $grades[$val['grade_id']] : '--';
+          ?>
+          <tr>
+            <td><?php if ($priv_manage) {?><input type="checkbox" name="ids[]" value="<?=$val['cmp_type_id']?>"><?php } ?><?=$val['cmp_type_id']?></td>
+            <td><?=$val['cmp_type_name']?></td>            
+            <td><?=$val['subject_name']?></td>
+            <td><?=$val['grade_name']?></td> 
+            <td><?=$val['class_name']?></td>  
+            <td><?=date('Y-m-d H:i:s', $val['addtime'])?></td> 
+            <td><img src="<?php echo __HTML_URL__;?>images/<?php echo $val['cmp_type_flag']==1?'yes':'no';?>.gif" /></td> 
+            <td>
+            	<?php if ($priv_manage) {?>
+                <a href="<?=site_url('admin/comparison_type/edit/'.$val['cmp_type_id'])?>">编辑</a>
+                <?php if ($mode == 'trash'): ?>
+                <a href="<?=site_url('admin/comparison_type/do_action/'.$val['cmp_type_id'].'/restore')?>">还原</a>
+                <a href="<?=site_url('admin/comparison_type/do_action/'.$val['cmp_type_id'].'/remove')?>" onclick="return confirm('删除后不能恢复，您确认要删除么？')">移除</a>
+                
+                <?php else: ?>
+                <?php if ($val['cmp_type_flag']==1): ?>
+                <a href="<?=site_url('admin/comparison_type/do_action/'.$val['cmp_type_id'].'/off')?>">禁用</a>  
+				<?php else: ?>
+				<a href="<?=site_url('admin/comparison_type/do_action/'.$val['cmp_type_id'].'/on')?>">启用</a>
+                <?php endif;?>
+                <a href="<?=site_url('admin/comparison_type/do_action/'.$val['cmp_type_id'].'/delete')?>"> 删除</a>                 
+            	<?php endif;?>
+            	|
+            	<?php } ?>
+            	<a href="<?php echo site_url('admin/comparison_info/index/'.$val['cmp_type_id']);?>">对比信息</a>
+            </td>
+          </tr>
+          <?php endforeach;?>
+          <?php else: ?>
+          <tr>  
+              <td colspan="8" align="center">暂无记录.</td>
+          </tr>          
+          <?php endif; ?>
+          <tr class="altbg1">
+            <td colspan="3">
+              <?php if ($priv_manage) {?>
+              <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <?php if ($mode == 'trash'):?>
+               <option value="restore" op="<?=site_url('admin/comparison_type/do_batch/restore')?>">批量还原</option>
+               <option value="remove" op="<?=site_url('admin/comparison_type/do_batch/remove')?>">批量移除</option>
+               <?php else:?>               
+               <option value="on" op="<?=site_url('admin/comparison_type/do_batch/on')?>">批量启用</option>
+               <option value="off" op="<?=site_url('admin/comparison_type/do_batch/off')?>">批量禁用</option>
+               <option value="delete" op="<?=site_url('admin/comparison_type/do_batch/delete')?>">批量删除</option>
+			   <?php endif;?>
+              </select>
+              <?php } ?>
+            </td>
+            <td colspan="5" style="text-align:right"><?=$pagination?></td>
+          </tr> 
+        </tbody>
+      </table>
+      <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>
+    </div>
+  </form>
+
+<div id="id_qry_dlg" style="display:none;min-width:400px">
+        <div class="cls_title">搜索对比信息分类</div>
+   <form method="get" name="search_form" action="<?php echo site_url('admin/comparison_type/index/'.$mode);?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1" width="15%">考试学科</td>
+                <td>
+                  <select name="subject_id">
+                  	<option value="">=请选择=</option>
+                  	<?php foreach ($subjects as $key => $val):?>
+                  	<option value="<?php echo $key;?>"<?php echo $key==$search['subject_id']?' selected':'';?>><?php echo $val?></option>
+                  	<?php endforeach;?>
+                  </select>
+                </td>
+            </tr>        
+            <tr>
+                <td class="altbg1">考试年级</td>
+                <td>
+                  <select name="grade_id">
+                  	<option value="">=请选择=</option>
+                  	<?php foreach ($grades as $key => $val):?>
+                  	<option value="<?php echo $key;?>"<?php echo $key==$search['grade_id']?' selected':'';?>><?php echo $val?></option>
+                  	<?php endforeach;?>
+                  </select>
+                </td>
+            </tr>        
+            <tr>
+                <td class="altbg1">考试类型</td>
+                <td>
+                  <select name="class_id">
+                  	<option value="">=请选择=</option>
+                  	<?php foreach ($class_list as $val):?>
+                  	<option value="<?php echo $val['class_id'];?>"<?php echo $val['class_id']==$search['class_id']?' selected':'';?>><?php echo $val['class_name'];?></option>
+                  	<?php endforeach;?>
+                  </select>
+                </td>
+            </tr>
+        </table>
+        <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <input type="button" value=" 重置 " class="btn" onclick="window.location.href='<?php echo site_url('admin/comparison_type/index');?>'"/>
+        </center>
+    </div>
+  </form>
+</div>
+
+</div>
+<?php echo $this->load->view('common/footer');?>

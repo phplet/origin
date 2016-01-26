@@ -1,0 +1,20 @@
+
+<h4>亲爱的会员：<?=$student['email']?>，您好！</h4>
+
+<p>您于<?=date('Y-m-d H:i')?>提交了密码重置申请，请在半个小时内设置新密码。如果不是您本人申请，请忽略该邮件。</p>
+
+<p>请点击下面的链接重置登录密码。</p>
+<p>
+<a href="<?=site_url('student/index/resetpwd/').'?code='.$hash?>" target="_blank">请点击重置登录密码。</a>
+
+<p>
+如果上述文字点击无效，请把下面网页地址复制到浏览器地址栏中打开：<a href="<?=site_url('student/index/resetpwd/').'?code='.$hash?>" target="_blank"><?=site_url('student/index/resetpwd/').'?code='.$hash?></a>
+</p>
+
+<br/>
+<br/>
+<div align="right" style="font-size:14px;">
+杭州择明教育科技<br/>
+择明，为你架起人和教育的链接！
+</div>
+

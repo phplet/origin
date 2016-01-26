@@ -1,0 +1,54 @@
+<?php if (isset($clsci_method_tactic['method_tactic']['internal']) && count($clsci_method_tactic['method_tactic']['internal'])) {?>
+	<?php 
+		$clsci_method_tactic['method_tactic'] = isset($clsci_method_tactic['method_tactic']) ? $clsci_method_tactic['method_tactic'] : array();
+		$clsci_method_tactic['exams'] = isset($clsci_method_tactic['exams']) ? $clsci_method_tactic['exams'] : array();
+		$clsci_method_tactic['exam_names'] = array_keys($clsci_method_tactic['exams']);
+	?>
+
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+	<table class="cls_row table_header indent_25" id="table_sci_mt">
+        <tr>
+        	<?php $first_th_width = '20';?>
+            <th width="<?php echo $first_th_width;?>%">方法策略\考试名称</th>
+            <?php $count_data = count($clsci_method_tactic['exam_names']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($clsci_method_tactic['exam_names']));?>
+            <?php foreach ($clsci_method_tactic['exam_names'] as $exam_name) {?>
+            <th width="<?=$left_p_width?>%"><?php echo $exam_name;?></th>
+            <?php }?>
+        </tr>
+    </table>
+    
+    <?php $mt_internal = isset($clsci_method_tactic['method_tactic']['internal']) ? $clsci_method_tactic['method_tactic']['internal'] : array(); ?>
+    <?php $mt_external = isset($clsci_method_tactic['method_tactic']['external']) ? $clsci_method_tactic['method_tactic']['external'] : array(); ?>
+    
+    <?php if (count($mt_internal)) {?>
+        <!-- 内部方法策略 -->
+        <?php $auto_key  = 0;?>
+        <?php foreach ($mt_internal as $mt_name) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_mt"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $mt_name . '(%)';?></th>
+                    <?php foreach ($clsci_method_tactic['exam_names'] as $exam_name) {?>
+                        <td width="<?=$left_p_width?>%"><?php echo isset($clsci_method_tactic['exams'][$exam_name]) && isset($clsci_method_tactic['exams'][$exam_name][$mt_name]) ? round($clsci_method_tactic['exams'][$exam_name][$mt_name]) : '0';?></td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+    
+    <?php if (count($mt_external)) {?>
+    	<!-- 外部方法策略-->
+        <?php foreach ($mt_external as $mt_name) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_mt"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?php echo $first_th_width;?>%"><?php echo $mt_name . '(%)';?></th>
+                    <?php foreach ($clsci_method_tactic['exam_names'] as $exam_name) {?>
+                        <td width="<?php echo $left_p_width;?>%"><?php echo isset($clsci_method_tactic['exams'][$exam_name]) && isset($clsci_method_tactic['exams'][$exam_name][$mt_name]) ? round($clsci_method_tactic['exams'][$exam_name][$mt_name]) : '0';?></td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+<?php } ?>

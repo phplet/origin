@@ -1,0 +1,215 @@
+<?php 
+$this->load->view('common/header');?>
+<script type="text/javascript">
+function check_form()
+{
+	var is_submit = true;
+    $("select[name^='template_id']").each(function(){
+    	if ($(this).val() < 1)
+        {
+        	$(this).next().html('请选择模板');
+        	is_submit = false;
+        }
+    	else
+    	{
+    		$(this).next().html('');
+        }
+	});
+	
+    return is_submit;
+}
+</script>
+
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/evaluate_rule/general/' . $rule['id'])?>" onsubmit="return check_form();">
+  <div class="space">
+    <div class="subtitle">选择报告模板</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <?php if ($rule['generate_subject_report']) {?>
+      <tr>
+        <td width="16%" class="altbg1">学生报告模板</td>        
+        <td>
+            <?php if ($rule['subject_id'] < 1) {?>
+                                                总结：<select name="template_id[<?php echo $rule['subject_id']?>]" id="template_id<?php echo $rule['subject_id']?>">
+                <option value='0'>请选择学生报告模板</option>
+                <?php foreach ($template_list as $item) {?>
+                    <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                <?php }?>
+                </select>
+                <span style="color: red;" id='err_txt[<?php echo $subject_id?>]'></span>
+                
+                <?php 
+                $rule_subject = explode(',', $rule['subject_percent']);
+                $subject = array();
+                foreach ($rule_subject as $val)
+                {
+                    $subject_id = current(explode(':', $val));
+                    //if ($subject_id == 11)
+                    //{
+                        //continue;
+                    //}
+                    
+                    $subject[] = $subject_id;
+                }
+                
+                foreach ($subjects as $subject_id => $subject_name) 
+                {
+                    if (!in_array($subject_id, $subject))
+                    {
+                        continue;
+                    }
+                ?>
+                    <p style="line-height: 35px;">
+                    <?php echo $subject_name;?>：<select name="template_id[<?php echo $subject_id?>]" id="template_id[<?php echo $subject_id?>]">
+                    <option value='0'>请选择学生报告模板</option>
+                    <?php foreach ($subject_template_list as $item) {?>
+                        <?php 
+                            if (in_array($subject_id, array_filter(explode(',', $item['template_subjectid'])))
+                                || !$item['template_subjectid'])
+                            {
+                        ?>
+                            <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                        <?php }?>
+                    <?php }?>
+                    </select>
+                    <span style="color: red;" id='err_txt[<?php echo $subject_id?>]'></span>
+                    </p>
+                <?php }?>
+            <?php } else {?>
+                <select name="template_id[<?php echo $rule['subject_id']?>]" id="template_id[<?php echo $rule['subject_id']?>]">
+                <option value='0'>请选择学生报告模板</option>
+                <?php foreach ($template_list as $item) {?>
+                    <?php 
+                        if (in_array($rule['subject_id'], array_filter(explode(',', $item['template_subjectid'])))
+                            || !$item['template_subjectid'])
+                        {
+                    ?>
+                    <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                    <?php }?>
+                <?php }?>
+                </select>
+                <span style="color: red;" id='err_txt[<?php echo $rule['subject_id']?>]'></span>
+            <?php }?>
+        </td>
+        </tr>
+        <?php }?>
+        <?php if ($rule['generate_class_report']) {?>
+        <tr>
+        <td width="16%" class="altbg1">班级报告模板</td>        
+        <td>
+            <?php if ($rule['subject_id'] < 1) {?>
+                <?php 
+                $rule_subject = explode(',', $rule['subject_percent']);
+                $subject = array();
+                foreach ($rule_subject as $val)
+                {
+                    $subject_id = current(explode(':', $val));
+                    $subject[] = $subject_id;
+                }
+                
+                foreach ($subjects as $subject_id => $subject_name) 
+                {
+                    if (!in_array($subject_id, $subject))
+                    {
+                        continue;
+                    }
+                ?>
+                    <p style="line-height: 35px;">
+                    <?php echo $subject_name;?>：<select name="template_id[cls_<?php echo $subject_id?>]" id="template_id[cls_<?php echo $subject_id?>]">
+                    <option value='0'>请选择班级报告模板</option>
+                    <?php foreach ($class_template_list as $item) {?>
+                        <?php 
+                            if (in_array($subject_id, array_filter(explode(',', $item['template_subjectid'])))
+                                || !$item['template_subjectid'])
+                            {
+                        ?>
+                            <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                        <?php }?>
+                    <?php }?>
+                    </select>
+                    <span style="color: red;" id='err_txt[cls_<?php echo $subject_id?>]'></span>
+                    </p>
+                <?php }?>
+            <?php } else {?>
+                <select name="template_id[cls_<?php echo $rule['subject_id']?>]" id="template_id[cls_<?php echo $rule['subject_id']?>]">
+                <option value='0'>请选择班级报告模板</option>
+                <?php foreach ($class_template_list as $item) {?>
+                    <?php 
+                        if (in_array($rule['subject_id'], array_filter(explode(',', $item['template_subjectid'])))
+                            || !$item['template_subjectid'])
+                        {
+                    ?>
+                    <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                    <?php }?>
+                <?php }?>
+                </select>
+                <span style="color: red;" id='err_txt[cls_<?php echo $rule['subject_id']?>]'></span>
+            <?php }?>
+            </td>
+        </tr>
+        <?php }?>
+        <?php if ($rule['generate_teacher_report']) {?>
+        <tr>
+        <td width="16%" class="altbg1">教师报告模板</td>        
+        <td>
+            <?php if ($rule['subject_id'] < 1) {?>
+                <?php 
+                $rule_subject = explode(',', $rule['subject_percent']);
+                $subject = array();
+                foreach ($rule_subject as $val)
+                {
+                    $subject_id = current(explode(':', $val));
+                    $subject[] = $subject_id;
+                }
+                
+                foreach ($subjects as $subject_id => $subject_name) 
+                {
+                    if (!in_array($subject_id, $subject))
+                    {
+                        continue;
+                    }
+                ?>
+                    <p style="line-height: 35px;">
+                    <?php echo $subject_name;?>：<select name="template_id[teacher_<?php echo $subject_id?>]" id="template_id[teacher_<?php echo $subject_id?>]">
+                    <option value='0'>请选择教师报告模板</option>
+                    <?php foreach ($teacher_template_list as $item) {?>
+                        <?php 
+                            if (in_array($subject_id, array_filter(explode(',', $item['template_subjectid'])))
+                                || !$item['template_subjectid'])
+                            {
+                        ?>
+                            <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                        <?php }?>
+                    <?php }?>
+                    </select>
+                    <span style="color: red;" id='err_txt[teacher_<?php echo $subject_id?>]'></span>
+                    </p>
+                <?php }?>
+            <?php } else {?>
+                <select name="template_id[teacher_<?php echo $rule['subject_id']?>]" id="template_id[teacher_<?php echo $rule['subject_id']?>]">
+                <option value='0'>请选择班级报告模板</option>
+                <?php foreach ($teacher_template_list as $item) {?>
+                    <?php 
+                        if (in_array($rule['subject_id'], array_filter(explode(',', $item['template_subjectid'])))
+                            || !$item['template_subjectid'])
+                        {
+                    ?>
+                    <option value='<?=$item['template_id']?>'><?=$item['template_name']?></option>
+                    <?php }?>
+                <?php }?>
+                </select>
+                <span style="color: red;" id='err_txt[teacher_<?php echo $rule['subject_id']?>]'></span>
+            <?php }?>
+            </td>
+        </tr>
+        <?php }?>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

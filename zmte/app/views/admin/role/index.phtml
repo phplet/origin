@@ -1,0 +1,55 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+}
+</script>
+
+
+<div id="body">
+  <form name="frm_cpuser_list" action="<?=site_url('admin/cpuser/index')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle">
+    	<a class="menu" href="<?=site_url('admin/role/add')?>">添加角色</a>角色管理
+	</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="20%">角色名</td>
+        <td>备注</td>
+        <td width="20%">管理</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$val['role_name']?></td>
+        <td><?=$val['remark']?></td>
+        <td>
+            <a href="<?=site_url('admin/role/edit/'.$val['role_id'])?>">编辑</a>
+            <a href="###" class="ajax_loader" name="权限设置" ajax="<?=site_url('admin/role/priv/'.$val['role_id'])?>">权限设置</a>
+            <?php if($val['is_delete']):?>
+            <a href="<?=site_url('admin/role/delete/'.$val['role_id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+            <?php else: ?>
+            <font style="color:#999;text-decoration:line-through;" title="该角色已经分配给管理用户,因此无法操作">删除</font>
+            <?php endif;?>
+                   <a href="<?=site_url('admin/cpuser/index/?role='.$val['role_id'])?>">
+            相关用户</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="3" style="text-align:right"><?=$pagination?></td>
+      </tr>      
+      <?php else: ?>
+      <tr>
+        <td colspan="3">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <!--<center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>-->
+  </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

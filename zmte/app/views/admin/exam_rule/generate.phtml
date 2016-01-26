@@ -1,0 +1,133 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+var paper_num = 0;
+var exam_id = 0;
+var method = 'new';
+$(document).ready(function(){
+    // 表单验证
+    $("#rule_form").validate({
+        submitHandler:function(form){
+            paper_num = parseInt(form.paper_num.value.trim());
+            exam_id = form.exam_id.value;
+            method = $('input[name=method]:checked').val();
+            if (isNaN(paper_num) || paper_num<1 || ! exam_id || !method) {
+                return;
+            }
+
+            $('#dosubmit').toggleClass('btn_gray').attr('disabled',true);
+            $('#result_status').html('正在生成试卷...');
+            setTimeout(generate, 500);
+        },
+        rules: {
+            exam_id:'required',
+            paper_num: {
+                required:true,
+                range:[0,10]
+            }
+        },
+        messages: {
+            exam_id:'请选择考试期次',
+            paper_num: {
+                required:'请填写要生成的试卷数量',
+                range:'请填写1-10的数字'
+            }
+        }
+    });
+});
+
+function generate() {
+    if (paper_num>0) {
+        paper_num--;
+        $.when(
+            $.post(
+                '<?=site_url('admin/exam_rule/generate/'.$rule['rule_id'])?>',{exam_id:exam_id,method:method},
+                function(data){
+                    if (data.success == false)
+                        data.msg = '<font class="font_4">'+data.msg+'</font>';
+                    $('#result_div').append(data.msg+'<br/>');
+
+                    //发现有重复的试卷，不再继续生成
+                    if (data.code == '-2' || data.code == '-1') {
+                    	paper_num = 0;
+                    }
+                },
+                'json'
+            )
+        ).then(function(){generate()});
+    } else {
+        $('#result_status').html('==试卷生成结束==<br/><a href="<?=site_url('admin/paper/index/')?>/'+exam_id+'">查看试卷列表</a>');
+        $('#dosubmit').toggleClass('btn_gray').attr('disabled',false);
+    }
+}
+
+</script>
+
+<div id="body">
+  <form name="rule_form" class="validate" id="rule_form" method="POST" action="<?=site_url('admin/exam_rule/generate/'.$rule['rule_id'])?>" onsubmit="return false;">
+  <div class="space">
+    <div class="subtitle">生成试卷</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                规则信息
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="15%">规则名称</td>
+            <td>
+              <?=$rule['rule_name']?>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="15%">考试期次</td>
+            <td>
+             <select name="exam_id">
+              <option value="">=请选择考试期次=</option>
+              <?php foreach($exam_list as $exam):?>
+              <option value="<?=$exam[0]?>"><?=$exam[2]?>(<?=$subject[$exam[3]]?>)</option>
+              <?php endforeach;?>
+             </select>
+             <label for="exam_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">生成方式</td>
+            <td>
+              <input type="radio" name="method" id="method_new" value="new" checked /><label for="method_new">分组优先</label>
+              <input type="radio" name="method" id="method_old" value="old" /><label for="method_old">随机选题</label>
+              <label for="method" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">生成试卷数</td>
+            <td>
+              <input type="text" name="paper_num" class="txtbox5" value="" />
+              <label for="paper_num" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tbody id="result_tbody">
+            <tr>
+                <td colspan="2" class="altbg2" style="text-align: center;">
+                    生成结果
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: left;height:30px;">
+                    <div id="result_div"></div>
+                    <div id="result_status"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  <center>
+    <input type="submit" id="dosubmit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

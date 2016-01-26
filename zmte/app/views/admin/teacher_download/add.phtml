@@ -1,0 +1,226 @@
+<?php 
+    echo $this->load->view('common/header');
+    $detail = isset($detail) ? $detail : array();
+    $mode = isset($mode) ? $mode : 'add';
+?>
+
+<div id="body">
+  <form id="form" method="POST" action="<?php echo site_url('admin/teacher_download') . '/save/';?>" >
+    <input type="hidden" name="id" value="<?php echo isset($detail['id']) ? $detail['id'] : '0'; ?>" />
+    <div class="space">
+      <div class="subtitle"><?php echo $mode == 'add' ? '添加' : '编辑'; ?> “评估报告教师信息” </div>
+
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="16%" class="altbg1">电子邮箱：</td>        
+          <td>
+            <input type="text" placeholder="请输入电子邮箱" autocomplete="off" name="email" id="txt_email" value="<?php echo isset($detail['email'])? $detail['email'] : '';?>" class="txtbox"> 
+            <span style="color:#f00">*</span>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <?php if($mode == 'add') { ?>
+          <tr>
+            <td class="altbg1">密码</td>      
+            <td>
+            	<input type="password" placeholder="请输入密码" autocomplete="off"  name="password" id="txt_password" value="<?php echo isset($detail['password'])? $detail['password'] : '';?>" class="txtbox"> 
+            	<i style="color:#f00">*</i>
+              <span class="notice">密码长度必须为6~20个字符</span>
+              <font class="error"></font>
+            </td>
+          </tr>
+          <tr>
+            <td class="altbg1">确认密码</td>        
+            <td>
+              <input type="password" placeholder="请重新输入密码" autocomplete="off" name="password_confirm" id="txt_password_confirm" class="txtbox" value="<?php echo isset($detail['password_confirm']) ? $detail['password_confirm'] : '';?>"> 
+              <span style="color:#f00">*</span>
+              <font class="error"></font>
+            </td>
+          </tr>
+        <?php } ?>
+        <tr>
+          <td class="altbg1">姓名：</td>        
+          <td>
+            <input type="text" placeholder="请输入姓名" id="txt_name" name="name" value="<?php echo isset($detail['name'])  ? $detail['name'] : '';?>" class="txtbox">
+            <span style="color:#f00">*</span>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">所在单位：</td>        
+          <td>
+            <input type="text" placeholder="请输入 所在单位" id="txt_memo" name="memo" value="<?php echo isset($detail['memo']) ? $detail['memo'] : '';?>" class="txtbox"/>
+            <span style="color:#f00">*</span>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">手机号码：</td>        
+          <td>
+            <input type="text" placeholder="请输入 手机号码" id="cellphone" name="cellphone" value="<?php echo isset($detail['cellphone'])  ? $detail['cellphone'] : '';?>" class="txtbox"/>
+            <span style="color:#f00">*</span>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">电话号码：</td>        
+          <td>
+            <input type="text" placeholder="请输入 电话号码" id="telephone" name="telephone" value="<?php echo isset($detail['telephone']) ? $detail['telephone'] : '';?>" class="txtbox"/>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">关联期次：</td>        
+          <td >
+            <button onclick="select_exams();" class="btn2" type="button">点击选择</button>
+            <div id="relate_exam">
+            <?php if (count($detail['exams']) > 0): ?>
+                <?php foreach ($detail['exams'] as $key => $value): ?>
+                    <p class="exam_<?php echo $value['exam_id'] ?>">
+                        <input id="exam_<?php echo $value['exam_id'] ?>" type="checkbox" checked="checked" name="exam_id[]" class="exam_id" itext="<?php echo $value['exam_name']; ?>" value="<?php echo $value['exam_id'] ?>">
+                        <label for="exam_<?php echo $value['exam_id'] ?>"><?php echo $value['exam_name']; ?></label>
+                    </p>
+                    
+                <?php endforeach ?>
+            <?php endif ?></div>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">学科：</td>        
+          <td>
+            <input type="checkbox" id="select_all" name="" value="">
+            <label for="select_all">全部</label>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <?php foreach ($subjects as $key => $value): ?>
+                <input type="checkbox" <?php if (!empty($old_subjects) && in_array($key, $old_subjects)) { echo 'checked="checked"';}?> class="subjects" id="subject_<?php echo $key; ?>" name="subjects[]" value="<?php echo $key; ?>">
+                <label for="subject_<?php echo $key; ?>"><?php echo $value; ?></label>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <?php endforeach ?>
+            <p>&nbsp;&nbsp;</p>
+            <p>1.可下载报告以考试期次对应的评估规则下存在的报告为准</p>
+            <p>2.不存在总结学科,只存在总结报告（根据所有学科生成）</p>
+            <font class="error"></font>
+          </td>
+        </tr>
+      </table>
+    </div>
+  <center> 
+    <input type="submit"  value=" <?php echo $mode == 'add' ? '保存' : '保存修改'; ?> " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<?php static_global('js/datepicker/wdatepicker.js');?>
+<?php static_js(array('third_party/layer/layer.min.js')); ?>
+<script type="text/javascript">
+
+    function select_exams() {
+        $.layer({
+            type: 2,
+            border: [0],
+            title: '选择试题',
+            shadeClose: true,
+            closeBtn:  [0, true],
+            iframe: {src : '<?php echo site_url("admin/teacher_download/select_exams"); ?>'},
+            area: ['900px', '600px']
+        });
+    }
+
+  $(document).ready(function () {
+      $('#txt_email').focus();
+
+      var bind_flag_notice = function () {
+          $('#flag_no').click(function(){
+              if (!confirm('被禁用的 监考人员帐号 将无法在机考系统中登录，是否继续?')) {
+                  $('#flag_no').attr('checked', 'checked');
+                  return false;
+              }
+          });
+      };
+
+      bind_flag_notice();
+
+      var check_form = function () {
+
+          var $email = $('#txt_email'),
+              $txt_memo = $('#txt_memo'),
+              $txt_name = $('#txt_name'),
+              $cellphone = $('#cellphone'),
+              $telephone = $('#telephone'),
+              $select_school_id = $('#select_school_id');
+
+          var email = $.trim($email.val()),
+              txt_memo = $.trim($txt_memo.val()),
+              txt_name = $.trim($txt_name.val()),
+              cellphone = $.trim($cellphone.val()),
+              telephone = $.trim($telephone.val()),
+              select_school_id = parseInt($.trim($select_school_id.val()), 10);
+        
+          var is_success = true,
+              objs = [];
+
+          if (!email.length || !is_email(email)) {
+              is_success = false;
+              objs.push({msg:'请填写正确的邮箱地址.', obj:$email});
+          }
+
+          var mode = '<?php echo $mode;?>';
+          var $txt_password = $('#txt_password'),
+              $txt_password_confirm = $('#txt_password_confirm'),
+              txt_password = $txt_password.val(),
+              txt_password_confirm = $txt_password_confirm.val();
+
+          //验证密码规则
+          if ('string' === typeof (passwd_msg = is_password(txt_password))) {
+              is_success = false;
+              objs.push({msg:passwd_msg, obj:$txt_password});
+          }
+
+          if (!txt_password_confirm.length || txt_password != txt_password_confirm) {
+              is_success = false;
+              objs.push({msg:'两次密码输入不一致，请检查.', obj:$txt_password_confirm});
+          }
+
+          if (!txt_name.length) {
+              is_success = false;
+              objs.push({msg:'姓名不能为空.', obj:$txt_name});
+          }
+
+          if (!txt_memo.length) {
+              is_success = false;
+              objs.push({msg:'所在单位不能为空.', obj:$txt_memo});
+          }
+
+          if (!cellphone.length) {
+              is_success = false;
+              objs.push({msg:'手机号码不能为空.', obj:$cellphone});
+          }         
+         
+          if (!is_success) {
+              show_error(objs);
+              return false;
+          }
+          
+          return true;
+      };
+      
+      $('#form').submit(function() {
+        
+          if (!check_form()) 
+          {
+              return false;
+          }
+
+          return true;
+      });
+
+      // 全选学科
+      $('#select_all').click(function(){
+        $('.subjects').prop("checked", $(this).prop("checked"));
+      });
+
+  });
+</script>
+<?php echo $this->load->view('common/footer');?>

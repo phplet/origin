@@ -1,0 +1,630 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'preview'));?>
+<div id="body">
+  <div class="space">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+        	<td colspan="4" class="altbg2" style="text-align:left;">
+        		<span class="altbg2-bg">
+        			<strong>基本信息</strong>
+        		</span>
+          		<i class="altbg2-r"></i>
+        		<span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/basic')?>">修改</a>]</span>
+        	</td>
+        </tr>
+        <tr>
+            <td width="16%" class="altbg1">真实姓名</td>
+            <td width="26%">
+              <?=$student['last_name']?> <?=$student['first_name']?>
+              <?php if($uid): ?>
+              (准考证号码：<?=$student['exam_ticket']?>)
+              <?php endif; ?>
+            </td>
+            <td width="16%" class="altbg1" rowspan="4">头像</td>
+            <td rowspan="4"><img src="<?=$uinfo['avatar_url']?>" height="100"/></td>
+        </tr>
+        <tr>
+            <td class="altbg1">性别</td>
+            <td><?=$student['sex']==1 ? '男' : '女'?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">身份证号码</td>
+            <td><?=$student['idcard']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">出生日期</td>
+            <td><?=$student['birthday']?></td>
+        </tr>
+        <!--<?php /*
+        <tr>
+            <td class="altbg1">所在地区</td>
+            <td><?=$student['region_text']?></td>
+        </tr>
+        */ ?>-->
+        <tr>
+            <td class="altbg1">年级</td>
+            <td><?=$student['grade_name']?></td>
+            <td class="altbg1">手机</td>
+            <td><?=$student['mobile']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">Email</td>
+            <td><?=$student['email']?></td>
+            <td class="altbg1">所在学校</td>
+            <td><?=$student['school_name']?></td>
+        </tr>
+    </table>
+
+
+    <table class="maintable" id="table_base" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+        	<td colspan="4" class="altbg2" style="text-align:left;">
+        		<span class="altbg2-bg">
+        			<strong>学习概况</strong>
+        		</span>
+          		<i class="altbg2-r"></i>
+        		<span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/basic')?>">修改</a>]</span>
+        	</td>
+        </tr>
+        <tr>
+            <td width="16%" class="altbg1">邮编</td>
+            <td width="26%"><?=$student['zipcode']?></td>
+            <td width="16%" class="altbg1">家庭地址</td>
+            <td><?=$student['address']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1" rowspan="3">课外培训机构</td>
+            <td colspan="3">参加的培训机构:
+            <? if ($student['no_tiid'] != 1) { ?>
+            <b>培训机构: </b><?=Func::echo_s($student['ti_name'])?> <? if ($student['ti_flag'] > 1) echo(' - (审核中)'); ?>
+            <b>培训课程: </b><?=Func::echo_s($student['cors_name'])?> <? if ($student['cors_cmid'] == 1) { ?>(一对一授课)<? } ?> <? if ($student['ti_flag'] > 1) echo(' - (审核中)'); ?>
+            <b>授课教师: </b><?=Func::echo_s($student['sbc_teachers'])?>
+            <? } ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3">可接受的授课模式:
+            <? foreach ($stunumtype_list as $v) { ?>
+            <label><input disabled="disabled" type="checkbox" name="sbs_stunumtype[]" value="<?=$v['csnt_id']?>" <? if (in_array($v['csnt_id'], $student['sbs_stunumtype'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['csnt_name'])?><? if ($v['csnt_memo']) { ?>(<?=Func::echo_s($v['csnt_memo'])?>)<? } ?></label>
+            <? } ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">希望辅导难度:
+            <? foreach ($class_list as $v) { ?>
+            <label><input disabled="disabled" type="checkbox" name="sbclassid_classid[]" value="<?=$v['class_id']?>" <? if (in_array($v['class_id'], $student['sbclassid_classid'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['class_name'])?></label>
+            <? } ?>
+            </td>
+        </tr>
+
+    </table>
+<? /*
+    <table class="maintable" id="table_awards" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+        	<td colspan="4" class="altbg2" style="text-align: left;">
+        		  <span class="altbg2-bg">
+        			 <strong>学习成绩</strong>
+        		  </span>
+          		<i class="altbg2-r"></i>
+          		<span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/awards')?>">修改</a>]</span>
+        	</td>
+        </tr>
+        <tr>
+            <td width="16%" class="altbg1">学习成绩</td>
+            <td width="26%">
+            <?php if($score_ranks): ?>
+            <?php foreach($score_ranks as $k => $rank): ?>
+             <?=$grades[$rank['grade_id']]?> ： <?=$rank['ranking']?> / <?=$rank['totalnum']?><br/>
+            <?php endforeach; ?>
+            <?php endif;?>
+            </td>
+            <td width="16%" class="altbg1" rowspan="4">其他竞赛奖项</td>
+            <td rowspan="4" valign="top">
+               <?php if(isset($awards_list[0])):?>
+               <?php foreach($awards_list[0] as $key => $val):?>
+               <div>
+               <?php if($key):?><div class="role"></div><?php endif;?>
+               名称：<?=$val['other_name']?><br/>
+               获奖情况：<?=$val['other_desc']?>
+               </div>
+               <?php endforeach; ?>
+               <?php endif; ?>
+            </td>
+        </tr>
+      <?php foreach(C('awards_type') as $type_id => $type_name):?>
+      <tr>
+        <td class="altbg1"><?=$type_name?>成绩</td>
+        <td>
+            <?php if(isset($awards_list[$type_id])):?>
+            <?php foreach($awards_list[$type_id] as $val):?>
+            <div>
+             <?=$subject_list[$val['subject']]?>
+             <?=$awards_levels[$type_id][$val['awards']]?>
+             <?=$grades[$val['grade']]?>
+            </div>
+            <?php endforeach;?>
+            <?php endif;?>
+        </td>
+      </tr>
+      <?php endforeach;?>
+
+
+
+
+ <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+        	<td colspan="4" class="altbg2" style="text-align: left;">
+        		  <span class="altbg2-bg">
+        			 <strong>学考选考</strong>
+        		  </span>
+          		<i class="altbg2-r"></i>
+          		<span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/awards')?>">修改</a>]</span>
+        	</td>
+        </tr>
+
+            <tr>
+        <td width="16%" class="altbg1" >是否在实验班<span style="color:#f00;position:relative;top:3px;"> * </span></td>
+        <td  class="score_rank_td">
+
+
+            <div>
+              <span>
+                 <?php if($xuekao_xuankao['is_in_class']==1): ?>是<?php endif;?>
+                &nbsp;
+               <?php if($xuekao_xuankao['is_in_class']==0): ?>否<?php endif;?>
+              </span>
+
+            </div>
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+            <tr>
+        <td width="16%" class="altbg1" >你参加走班教学的科目<span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td  class="score_rank_td">
+
+
+            <?php
+                $subject_class = unserialize($xuekao_xuankao['subject_class']);
+            ?>
+            <div>
+              <span>
+              <?php foreach ($subjects as $k => $v):?>
+
+                 <?php if( !empty($subject_class)&&in_array($k, $subject_class)&&is_array($subject_class)): ?>
+                 <?php echo $v;?>
+                 <?php endif;?>
+
+
+               <?php endforeach;?>
+
+
+            </div>
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+  <tr>
+        <td width="16%" class="altbg1" >
+
+目前已经确定参加选考科目
+
+        <span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td  class="score_rank_td">
+
+
+            <?php
+                $subject_in = unserialize($xuekao_xuankao['subject_in']);
+                if(!empty($subject_in)):
+            ?>
+            <div>
+              <span >
+              <?php foreach ($subjects as $k => $v):?>
+
+                <?php if( !empty($subject_in)&&in_array($k, $subject_in)&&is_array($subject_in)): ?>
+                <?php echo $v;?>
+                <?php endif;?>
+               <?php endforeach;?>
+</span>
+            </div>
+            <?php else:?>
+            无
+            <?php endif;?>
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+  <tr>
+        <td width="16%" class="altbg1" >
+
+
+
+目前已经确定不参加选考科目
+
+        <span style="color:#f00;position:relative;top:3px;"> </span></td>
+        <td  class="score_rank_td">
+
+
+            <?php
+                $subject_not = unserialize($xuekao_xuankao['subject_not']);
+                if(!empty($subject_in)):
+            ?>
+
+            <div>
+              <span>
+              <?php foreach ($subjects as $k => $v):?>
+
+               <?php if( !empty($subject_not)&&in_array($k, $subject_not)&&is_array($subject_not)): ?><?php echo $v;?><?php endif;?>
+               <?php endforeach;?>
+</span>
+
+            </div>
+
+  <?php else:?>
+            无
+            <?php endif;?>
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+      <tr>
+        <td width="16%" class="altbg1" >第一次参加的选考科目及成绩<span style="color:#f00;position:relative;top:3px;"> </span></td>
+        <td class="score_rank_td" id="TbData">
+            <?php
+            $subject_first = unserialize($xuekao_xuankao[subject_first]);
+
+            if(!empty($subject_first['subject_id'])): ?>
+            <?php $auto_key = 0;
+            ?>
+            <?php foreach($subject_first['subject_id'] as $k => $rank): ?>
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>学科:
+
+                    <?php foreach($subjects as $kk => $v): ?>
+                    <?php if($rank==$kk):?><?=$v?><?php endif;?>
+                    <?php endforeach; ?>
+
+			                分数:<?=$subject_first['fenshu'][$k]?>
+
+时间:
+<?=$subject_first['shijian'][$k]?>
+
+
+              </span>
+
+            </div>
+            <?php endforeach; ?>
+            <?php endif;?>
+
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+
+            <tr>
+        <td width="16%" class="altbg1" >第二次参加的选考科目及成绩<span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td  class="score_rank_td">
+            <?php
+            $subject_two = unserialize($xuekao_xuankao[subject_two]);
+            if(!empty($subject_two['subject_id'])): ?>
+            <?php $auto_key = 0;
+            ?>
+            <?php foreach($subject_two[subject_id] as $k => $rank): ?>
+
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>学科:
+
+                    <?php foreach($subjects as $kk => $v): ?>
+                      <?php if($rank==$kk) echo $v;?>
+                    <?php endforeach; ?>
+                </select>
+			                 分数:<?=$subject_two['fenshu'][$k]?>
+			                  时间:<?=$subject_two['shijian'][$k]?>
+              </span>
+
+            </div>
+
+            <?php endforeach; ?>
+            <?php endif;?>
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+
+            <tr>
+        <td width="16%" class="altbg1" >已经参加的学科科目及成绩<span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td  class="score_rank_td">
+            <?php
+            $subject_finish = unserialize($xuekao_xuankao[subject_finish]);
+
+             if(!empty($subject_finish[subject_id])): ?>
+            <?php $auto_key = 0;
+
+            ?>
+            <?php foreach($subject_finish[subject_id] as $k => $rank): ?>
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>学科:
+
+                    <?php foreach($subjects as $kk => $v): ?>
+                   <?php if($rank==$kk) echo $v;?>
+                    <?php endforeach; ?>
+
+
+成绩等级:
+
+                    <?php foreach($ranks as $kk => $v): ?>
+                    <?php if($subject_finish[rank][$k]==$kk) echo $v;?>
+                    <?php endforeach; ?>
+
+              </span>
+
+            </div>
+
+            <?php endforeach; ?>
+            <?php endif;?>
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+
+
+    </table>
+
+    <table class="maintable" id="table_practice" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+      	<td colspan="4" class="altbg2" style="text-align: left;">
+      		<span class="altbg2-bg">
+        		<strong>社会实践</strong>
+        	</span>
+          	<i class="altbg2-r"></i>
+          	<span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/practice')?>">修改</a>]</span>
+      	</td>
+      </tr>
+      <tr>
+        <td width="5%" class="altbg1">考察研究</td>
+        <td width="26%" >
+            <?=isset($practice['investigate'])?$practice['investigate']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">便民环保</td>
+        <td>
+            <?=isset($practice['environment'])?$practice['environment']:''?>
+        </td>
+      </tr>
+      <tr>
+         <td class="altbg1">文娱宣传</td>
+        <td>
+            <?=isset($practice['art'])?$practice['art']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">勤工俭学</td>
+        <td>
+            <?=isset($practice['work'])?$practice['work']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">其他</td>
+        <td>
+            <?=isset($practice['other'])?$practice['other']:''?>
+        </td>
+      </tr>
+    </table>
+
+    <table class="maintable" id="table_student_wish" border="0" cellspacing="0" cellpadding="0">
+     <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+      	<td colspan="4" class="altbg2" style="text-align:left;">
+      		<span class="altbg2-bg">
+        		<strong>学生意愿</strong>
+        	</span>
+          	<i class="altbg2-r"></i>
+          	<span style="float:right;color:#000;"> [<a href="<?=site_url('student/profile/wish')?>">修改</a>]</span>
+      	</td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">音乐</td>
+        <td width="26%" >
+            <?=isset($student_wish['music'])?$student_wish['music']:''?>
+        </td>
+        <td  width="16%"  class="altbg1">升学途经</td>
+        <td>
+            <?=isset($student_wish['upmethod'])?$student_wish['upmethod']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">体育</td>
+        <td>
+            <?=isset($student_wish['sport'])?$student_wish['sport']:''?>
+        </td>
+        <td rowspan="3" class="altbg1">发展意愿</td>
+        <td rowspan="3">
+            <?=isset($student_wish['wish'])?$student_wish['wish']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">美术</td>
+        <td>
+            <?=isset($student_wish['painting'])?$student_wish['painting']:''?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">其他</td>
+        <td>
+            <?=isset($student_wish['other'])?$student_wish['other']:''?>
+        </td>
+      </tr>
+              <tr>
+        <td class="altbg1" >
+
+您目前对大学中最感兴趣的专业大类
+        </td>
+        <td >
+         <?php
+                $student_wish[spec] = unserialize($student_wish['spec']);
+                if( !empty($student_wish[spec])):
+            ?>
+         <?php foreach ($specs as $k => $v):?>
+
+
+                 <?php if( !empty($student_wish[spec])&&in_array($k, $student_wish[spec])&&is_array($student_wish[spec])): ?> <?php echo $v;?><?php endif;?>
+
+               <?php endforeach;?>
+               <?php else:?>
+               暂无
+               <?php endif;?>
+
+
+        </td>
+      </tr>
+    </table>
+
+    <table class="maintable" id="table_parent_wish" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+        <td colspan="4" class="altbg2" style="text-align: left;">
+      	   <span class="altbg2-bg">
+             <strong>家长意愿</strong>
+            </span>
+            <i class="altbg2-r"></i>
+      		  <span style="float:right;color:#000;">[<a href="<?=site_url('student/profile/pwish')?>">修改</a>]</span>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1" rowspan="2">家庭背景</td>
+        <td width="26%" rowspan="2">
+            <?php foreach(C('family_bg') as $k => $v):?>
+            <?php if(strpos(','.$parent_wish['family_bg'].',', ','.$k.',')!==false):?>
+                <?php if ($parent_wish['family_bg'] == 99):?>
+                    <?php echo $parent_wish['other_bg'];?>
+                <?php else:?>
+                    <?=$v?><br/>
+                <?php endif;?>
+            <?php endif;?>
+            <?php endforeach;?>
+        </td>
+        <td  width="16%" class="altbg1">升学途经</td>
+        <td>
+            <?=$parent_wish['upmethod']?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">发展意愿</td>
+        <td>
+            <?=$parent_wish['wish']?>
+        </td>
+      </tr>
+              <tr>
+
+        <td class="altbg1" >家庭背景 <span style="color:#f00;position:relative;top:3px;">*</span></td>
+         <?php
+                $parent_wish[family_bg_qt] = unserialize($parent_wish['family_bg_qt']);
+            ?>
+
+        <td >
+            <p>户籍性质：     <?php if($parent_wish[family_bg_qt][huji]==1):?>农村户口<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][huji]==2):?>城市户口<?php endif;?>
+
+
+                </select></p>
+                 <p>&nbsp;</p>
+
+            <p>生活环境:
+         <?php if(!empty($parent_wish[family_bg_qt][shenghuohuanjing])&&
+            $parent_wish[family_bg_qt][shenghuohuanjing]==1) echo ' 与父母同住';
+
+            ?>
+           <?php if($parent_wish[family_bg_qt][shenghuohuanjing]==2) echo ' 与其他监护人';?>
+
+            </p>
+            <p>&nbsp;</p>
+
+            <?php if($parent_wish[family_bg_qt][shenghuohuanjing]==1){?>
+            <p id="pwish_shenghuohuanjing3"  >
+            父亲学历 :   <?php if($parent_wish[family_bg_qt][fxueli]==1):?>小学及以下<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][fxueli]==2):?>初中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][fxueli]==3):?>高中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][fxueli]==4):?>大专<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][fxueli]==5):?>本科<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][fxueli]==6):?>研究生<?php endif;?>
+
+
+                母亲学历:  <?php if($parent_wish[family_bg_qt][mxueli]==1):?>小学及以下<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][mxueli]==2):?>初中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][mxueli]==3):?>高中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][mxueli]==4):?>大专<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][mxueli]==5):?>本科<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][mxueli]==6):?>研究生<?php endif;?>
+            </p><p>&nbsp;</p>
+            <?php }else{?>
+            <p id="pwish_shenghuohuanjing4">监护人   <?php echo $parent_wish[family_bg_qt][jian_age];?>
+
+                性别: <?php if($parent_wish[family_bg_qt][jian_sex]==1):?>男<?php endif;?>
+        <?php if($parent_wish[family_bg_qt][jian_sex]==2):?>女<?php endif;?>
+                </select>
+
+
+
+                学历: <?php if($parent_wish[family_bg_qt][jian_xueli]==1):?>小学及以下<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][jian_xueli]==2):?>初中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][jian_xueli]==3):?>高中<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][jian_xueli]==4):?>大专<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][jian_xueli]==5):?>本科<?php endif;?>
+            <?php if($parent_wish[family_bg_qt][jian_xueli]==6):?>研究生<?php endif;?>
+            </p>
+<?php }?>
+
+        </td>
+      </tr>
+      </table>
+
+ */?>
+    <table class="maintable" id="table_base" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+         <td  colspan="4" style="border:none;text-align:center;">
+            <?php if(empty($uid)): ?>
+            <input type="button" value=" 提交信息 " onclick="location='<?=site_url('student/profile/submit')?>'" class="btn" />
+            <?php endif; ?>
+         </td>
+      </tr>
+      <tr><td style="border:none;height:10px;"></td></tr>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/profile_footer');?>

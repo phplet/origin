@@ -1,0 +1,13 @@
+<tr>
+    <td class="altbg1">考试方式</td>
+    <td>
+            <?php $test_way = C('test_way'); ?>
+            <?php foreach ($test_way as $key => $val):?>
+                <input type="checkbox" value="<?=$key?>" name="test_way[]" id="test_way[<?=$key?>]" <?php if ($question['test_way'] == $key || $question['test_way'] == 3) { echo "checked='checked'";}?>>
+                <label for="test_way[<?=$key?>]"><?=$val?></label>
+            <?php endforeach; ?>
+        &nbsp;&nbsp;
+        <span style="color:#f00">*</span>
+        <label class="error" style="display:none" for="test_way[]"></label>
+    </td>
+</tr>

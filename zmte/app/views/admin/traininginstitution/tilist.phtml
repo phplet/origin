@@ -1,0 +1,158 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js'));
+?>
+<?php $this->load->view('recycle/recycle.phtml');?>
+
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveTI(ti_id_str)
+{
+    if (ti_id_str == '')
+    {
+        alert('您没有选择任何要删除的记录');
+        return;
+    }
+    if (!confirm('您确认要删除所选记录么?'))
+    {
+        return;
+    }
+    ajax_removeTI(ti_id_str);
+}
+</script>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('traininginstitution_settiinfo', false); 
+$bPrivRemove = $CI->check_power_new('traininginstitution_removeti', false);
+$bPrivAdd = $CI->check_power_new('traininginstitution_addtiinfo', false);
+$bPrivImport = $CI->check_power_new('traininginstitution_import_titc_excel', false);
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">培训机构列表
+        
+      <div class="cls_toolbar">
+      <button type="button" onclick="fnShowDialog('id_qry_dlg')">查询</button>
+<? if ($bPrivAdd) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/addtiinfo')?>'">新增</button>
+<? } ?>
+<? if ($bPrivImport) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/import_titc_excel')?>'">导入</button>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+      <button type="button" onclick="fnRemoveTI(fnGetCheckBoxValues('body', 'ti_id'))">删除</button>
+<? } ?>
+      <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" border="0" cellspacing="0" cellpadding="0" id="id_grid">
+      <tr class="cls_title">
+        <td width="20"><input type="checkbox" onchange="fnSelAll('id_grid', 'ti_id', this.checked)"/></td>
+        <td width="40">ID</td>
+        <td width="80">名称</td>
+        <td width="60">类型</td>
+        <td width="40">优先级</td>
+        <td width="120">省/市/区</td>
+        <td width="100">地址</td>
+        <td width="40" align="right">学员数</td>
+        <td width="40" align="right">声誉值</td>
+        <td width="40" align="right">合作度</td>
+        <td width="40" align="right">校区数量</td>
+        <td width="120">添加时间</td>
+        <td width="60">添加人员</td>
+        <td width="40">状态</td>
+        <td width="100">操作</td>
+      </tr>
+      <? if(!empty($ti_list)) { ?>
+      <? foreach($ti_list as $v) { ?>
+      <tr>
+        <td><input type="checkbox" name="ti_id" value="<?=$v['ti_id']?>"/></td>
+        <td><?=$v['ti_id']?></td>
+        <td><? Func::echo_s($v['ti_name']); ?></td>
+        <td><? Func::echo_s($v['tit_name']); ?></td>
+        <td><? Func::echo_s($v['tipt_name']); ?></td>
+        <td><? Func::echo_s($v['ti_provname']); ?> /
+        <? Func::echo_s($v['ti_cityname']); ?> /
+        <? Func::echo_s($v['ti_areaname']); ?></td>
+        <td><? Func::echo_s($v['ti_addr']); ?></td>
+        <td><?=$v['ti_stumax']?></td>
+        <td><?=$v['ti_reputation']?></td>
+        <td><?=$v['ti_cooperation']?></td>
+        <td><?=$v['ti_campusnum']?></td>
+        <td><?=$v['ti_addtime']?></td>
+        <td><?=$v['ti_adduname']?></td>
+        <td><?  if ($v['ti_flag'] < 0) echo('已删'); 
+                else if ($v['ti_flag'] == '0') echo('禁用'); 
+                else if ($v['ti_flag'] == 1) echo('启用'); 
+                else if ($v['ti_flag'] > 1) echo('待审'); ?></td>
+        <td>
+          <a href="<?=site_url('admin/traininginstitution/tiinfo/' . $v['ti_id'])?>">查看</a>
+<? if ($bPrivEdit) { ?>
+          <a href="<?=site_url('admin/traininginstitution/settiinfo/' . $v['ti_id'])?>">编辑</a>
+<? } ?>
+          <a href="<?=site_url('admin/traininginstitution/tclist/' . $v['ti_id'])?>">校区列表</a>
+<? if ($bPrivRemove) { ?>
+          <a href="javascript:void(0)" onclick="fnRemoveTI('<?=$v['ti_id']?>')">删除</a>
+<? } ?>
+        </td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+    <? $this->load->view('common/paginator', Fn::paginator($ti_list_count));?>
+  </div>
+</div>
+
+<div id="id_qry_dlg" style="display:none">
+<div class="cls_title">搜索培训机构</div>
+  <form method="GET" id="id_qry_form" name="search_form" action="<?=site_url('admin/traininginstitution/tilist')?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">培训机构名称</td>
+                <td>
+                <input type="text" name="ti_name" value="<? Func::echo_s($param['ti_name']); ?>" class="txtbox"/>
+                </td>
+            </tr>  
+            <tr>
+                <td class="altbg1">所属地区</td>
+                <td>
+                  <select name="ti_provid" id="selProvinces" onchange="region.changed(this, 2, 'selCities');region.changed(document.getElementById('selCities'), 2, 'selAreas');">
+                    <option value="0">--请选择省--</option>
+                    <? foreach ($province_list as $val) { ?>
+                    <option value="<?=$val['region_id']?>" <? if ($val['region_id'] == $param['ti_provid']) echo('selected="selected"'); ?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                  <select name="ti_cityid" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                    <option value="0">--请选择市--</option>
+                    <? foreach ($city_list as $val) { ?>
+                    <option value="<?=$val['region_id']?>" <? if ($val['region_id'] == $param['ti_cityid']) echo('selected="selected"'); ?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                  <select name="ti_areaid" id="selAreas">
+                    <option value="0">--请选择区县--</option>
+                    <? foreach ($area_list as $val) { ?>
+                    <option value="<?=$val['region_id']?>" <? if ($val['region_id'] == $param['ti_areaid']) echo('selected="selected"'); ?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+  </form>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="document.getElementById('id_qry_form').submit()">确定</button>
+<button type="button" onclick="fnCloseDialog('id_qry_dlg')">取消</button>
+</div>
+</div>
+
+
+<?php $this->load->view('common/footer');?>

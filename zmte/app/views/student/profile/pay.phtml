@@ -1,0 +1,59 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'transaction'));?>
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+<?php static_global(array('js/common/common.js'));?>
+<br/>
+<div id="body">
+  <div class="space">
+     <form method="post" id="search_form" name="search_form" action="<?=site_url('/student/profile/paying/')?>">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td colspan="3" class="altbg2" style="text-align: left;">
+              <span class="altbg2-bg">帐号充值(<?php echo $student['last_name']?><?php echo $student['first_name']?>)</span>
+              <i class="altbg2-r"></i>
+            </td>
+          </tr>
+          <tr>
+            <td class="altbg1">充值金额</td>
+            <td>
+               <input type="text" id="begin_time" name="begin_time" class="txtbox3" value="<?=$search['begin_time']?>" >元（RMB）
+               <span class="notice">*必须为大于零的数字</span><font class="error"></font>
+               <input type="button" id="btn_submit" value="充值 " class="btn" />
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function (){
+    $('#btn_submit').unbind('click').bind('click', function (){
+        var $txt_account = $('#begin_time'), nubmer = $txt_account.val(), is_success = true,objs = [];
+        var v = parseFloat(nubmer);
+        if (isNaN(v) || nubmer <= 0)
+        {
+      	    is_success=false;
+      	    objs.push({msg:'请输入正确的数值,只允许输入大于零的数字!', obj:$txt_account});
+        }
+        if (!is_success)
+        {
+            show_error(objs);
+            return false;
+        }
+        $('#search_form').submit();
+    });
+});
+</script>
+<?php $this->load->view('common/profile_footer');?>

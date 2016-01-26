@@ -1,0 +1,59 @@
+<?php $this->load->view('common/header');?>
+<?php 
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js', 
+                        'js/jquery/plugin/validate/additional-methods.js'));
+?>
+
+<script>
+
+$(document).ready(function(){
+    $("#add_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+        	exam_id: "required"
+        },
+        messages: {
+        	exam_id: "请选择学科"
+        }
+    });
+});
+
+</script>
+<div id="body">
+  <form name="add_form" class="validate" id="add_form" method="POST" action="<?=site_url('admin/place_subject/save')?>" onsubmit="return false;">
+  <input type="hidden" name="place_id" value="<?=$place['place_id']?>" />
+  <input type="hidden" name="exam_pid" value="<?=$exam['exam_id']?>" />
+  <div class="space">
+    <div class="subtitle">添加场次学科</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+	        <td colspan="2" class="altbg2" style="text-align: center;">
+			          考试：<a href="<?=site_url('admin/exam_place/index/'.$exam['exam_id'])?>"><?=$exam['exam_name']?></a>
+			    --->
+			          场次：<?=$place['place_name']?>
+			    --->考试地点：<?=$place['address']?>
+	        </td>
+	      </tr>
+        <tr>
+            <td class="altbg1" width="5%">学科</td>
+            <td>
+              <select name="exam_id">
+              <option value="">=请选择=</option>
+              <?php foreach ($exam_subjects as $val) {?>
+              <option value="<?=$val['exam_id']?>"><?=$subjects[$val['subject_id']]?></option>
+              <?php } ?> 
+              </select>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

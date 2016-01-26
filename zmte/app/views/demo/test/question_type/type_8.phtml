@@ -1,0 +1,72 @@
+<?php
+/**
+ * 试题模板（阅读填空题）
+ */
+?>
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+<div class="cls_danxuan" id="question_change_box_<?php echo $etp_id; ?>">
+    <div class="cls_pagetitle"  <?php echo $is_single ? 'style="display: none;margin:0;"' : '';?>>八、阅读填空题, 每小题<font id="q_score_<?php echo $etp_id;?>_0">--</font>分，共<?php echo count($question_list);?>题）</div>
+    <div class="cls_question_list question_box">
+<?php } ?>
+
+        <?php $global_auto_key = 0; ?>
+        <?php foreach ($question_list as $question) {?>
+        <?php
+            $sub_index = 1;
+            $auto_key = auto_count();
+            $question_id = $question['ques_id'];
+            $title = explode('&nbsp;<br/>&nbsp;',$question['title']);
+            $picture = $question['picture'];
+        ?>
+        <div class="cls_question_item undo" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>">
+            <div class="h4 cls_ques_question">第 <font id="q_index_<?php echo $etp_id;?>_<?php echo $question_id;?>"><?php echo $auto_key;?></font> 题、 [<?php echo $qtype_name;?>]</div>
+            <div class="cls_ques_answer q_group">
+                <div class="cls_eg_match word_wrap fs15" style="width:100%;">
+                    <!-- picture -->
+                    <?php if($picture):?>
+                        <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+                        <br/>
+                    <?php endif;?>
+                    <!-- title -->
+                    <?php if (isset($title[0])) echo $title[0];?>
+                </div>
+                <div class="cls_eg_clear"></div>
+            </div>
+            <div class="cls_question_tip cls_eg_height_40">
+                <table width="100%" height="100%">
+                    <tbody>
+                        <tr>
+                            <td valign="middle">
+                                <?php
+
+                                    foreach($question['children'] as $sub_question) {
+                                        $global_auto_key++;
+                                        $sub_question_type = $sub_question['type'];
+                                        $answer = trim(isset($sub_question['answer'][0]) ? $sub_question['answer'][0] : $sub_question['answer']);
+                                        $sub_ques_id = $sub_question['ques_id'];
+                                        $sub_etr_id = $sub_question['etr_id'];
+                                        $picture = $sub_question['picture'];
+                                        $sub_title = nl2br($sub_question['title']);
+                                ?>
+
+                                <!-- 填空 -->
+                                <div class="cls_tiankong  question_item padding_s fl c_undo" etr_id="<?php echo $sub_etr_id;?>" p_id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="type_0_3_<?php echo $question_id;?>_<?php echo $global_auto_key;?>">
+                                    <div class="h4 cls_ques_question cls_ques_answer ">  <?php echo $sub_index++;?>.
+                                    <input type="text" ques_id="<?=$sub_ques_id?>" name="answer_<?=$sub_ques_id?>[]" class="input_answer sub_undo type_0_3" p_ques_id="<?=$question_id?>" g_k="<?php echo $global_auto_key;?>" value="<?=$sub_question['answer']?>">
+                                    </div>
+                                </div>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cls_question_tip"><input type="checkbox" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  class="question_mark" id="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>"><label for="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>">标记本题<em>（一般用于模棱两可的题） </em></label></div>
+        </div>
+        <?php } ?>
+
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+    </div>
+</div>
+<?php } ?>

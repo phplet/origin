@@ -1,0 +1,244 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<style>
+.display_none {
+	display:none;
+}
+textarea{
+	width:300px;
+	height:60px;
+}
+.red, a.red{
+	color:red;
+}
+</style>
+
+<?php echo $this->load->view('school/ajax_select_school');?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    考生成绩查询
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <th width="5%">ID</th>
+        <th width="9%">姓名</th>
+        <th width="9%">准考证</th>
+        <th width="10%">学校</th>
+        <th width="5%">年级</th>
+        <th width="5%">科目</th>
+        <th width="20%">参考试卷</th>
+        <th width="8%">试卷总分</th>
+        <th width="8%">得分(分)</th>
+        <th width="21%">操作</th>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?php /*?><input type="checkbox" name="ids[]" value="<?=$val['etp_id']?>"><?php */?><?=$val['etp_id']?></td>
+        <td><?=$val['truename']?></td>        
+        <td><?=$val['exam_ticket']?></td> 
+        <td><?=$val['school_name']?></td>
+        <td><?=$val['grade_name']?></td> 
+        <td><?=$val['subject_name']?></td> 
+        <td><a class="ajax_loader" href="###" name="预览 试卷‘<?=$val['paper_name']?>’ 的信息" ajax="<?=site_url('admin/paper/index/' . $val['exam_id'] . '/?paper_id='.$val['paper_id'])?>"><?=$val['paper_name']?></a></td> 
+        <td><?=$val['full_score']?></td> 
+        <td>
+        	<?php 
+        		$test_score = ($val['test_score']);
+        		$e_flag = $val['etp_flag'];
+        		switch ($e_flag) {
+					case '-1'://作弊
+						echo '<font color="red">因作弊已作废</font>';
+						break;
+						
+					case '0':
+					case '1':
+						echo '--';
+						break;
+						
+					case '2':
+						if ($val['invalid_record']) {
+							echo "<strong style='color:red;'>已作废</strong>";
+						} else {
+							if ($test_score <= 0) {
+								echo "<strong style='color:red;'>{$test_score}</strong>";
+							} elseif($test_score > 0 && $test_score < 60) {
+								echo "<font style='color:red;'>{$test_score}</font>";
+							} else {
+								echo "<font style='color:green;'>{$test_score}</font>";
+							}
+						}
+						break;
+					default:
+						break;
+				}
+        	
+        	?>
+		</td> 
+        <td>          
+          <a class="ajax_loader" href="###" name="预览 学生‘<?=$val['truename']?>’ 的信息" ajax="<?=site_url('admin/student/preview/'.$val['uid'])?>">预览考生信息</a>
+		  <?php if ($priv_manage) {?>
+          <?php if ($e_flag == 2) {?>
+          <?php if (!$val['invalid_record']) {?> 
+           | <a class="a_edit_note red" rel="<?php echo $val['etp_id'];?>" id="a_edit_note_<?php echo $val['etp_id'];?>" href="###">选为作废成绩</a>
+          <?php } else {?>
+          <span title="作废理由：<?php echo $val['invalid_record_note'];?>">
+          		| <a class="a_edit_note red" rel="<?php echo $val['etp_id'];?>" id="a_edit_note_<?php echo $val['etp_id'];?>" href="###">编辑作废理由</a>
+          		| <a class="red" href="<?php echo site_url('admin/exam_student_result/remove_invalid/?etp_id=' . $val['etp_id']);?>" onclick="return confirm('您确定要操作么？');">恢复成绩</a>
+          </span>
+          <?php }?>
+          <div class="edit_note_box display_none" id="edit_note_box_<?php echo $val['etp_id'];?>">
+        		<form class="form_edit_note" rel="<?php echo $val['etp_id'];?>" action="<?php echo site_url('admin/exam_student_result/set_invalid/');?>" method="post">
+        			<input type="hidden" name="etp_id" value="<?php echo $val['etp_id'];?>"/>
+        			<textarea title="请输入作废理由" placeholder="请输入作废理由" name="note" id="txt_edit_note_<?php echo $val['etp_id'];?>"><?php echo $val['invalid_record_note'];?></textarea>
+        			<input type="submit" value="保存" class="btn" style="margin-top:4px;"/>
+        			<input type="button" rel="<?php echo $val['etp_id'];?>" id="btn_cancle_<?php echo $val['etp_id'];?>" value="取消" class="btn btn_cancle_note" />
+        		</form>
+		  </div>  
+          <?php } ?>
+          <?php } ?>
+         <span>|</span>
+         <a class="ajax_loader" href="###" name="查看 学生‘<?=$val['truename']?>’ 的答题情况" ajax="<?=site_url('admin/exam_student_result/detail/'.$val['etp_id'].'/'.$val['uid'])?>">学生答题情况</a>
+        </td>
+      </tr>
+      <?php if ($e_flag == 2 && $val['invalid_record']) {?>
+      <tr><td colspan="10"><strong>作废理由：</strong><font color="blue"><?php echo $val['invalid_record_note'];?></font></td></tr>
+      <?php }?>
+      
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+
+  <form method="get" name="search_form" id="search_form" action="<?=site_url('admin/exam_student_result/index/')?>">
+    <div class="space">
+        <div class="subtitle">搜索考生成绩</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            
+              <tr>
+                <td class="altbg1">学科</td>
+                <td><select name="subject_id" id="subject_id">
+	                    <option value="0">--请选择学科--</option>
+	                    <?php foreach ($subjects as $k=>$subject_id) {?>
+	                    <option value="<?php echo $k;?>" <?php echo $search['subject_id'] == $k ? 'selected="selected"' : '';?>><?php echo $subject_id;?></option>
+	                    <?php } ?>
+                  	</select></td>
+            </tr>  
+            
+              <tr>
+                <td class="altbg1">姓/名</td>
+                <td><input type="text" name="keyword" value="<?php echo $search['keyword'];?>" id="keyword" class="txtbox" /></td>
+            </tr>  
+            
+            
+            <tr>
+                <td class="altbg1">考生准考证号</td>
+                <td><input type="text" name="ticket" value="<?php echo $search['ticket'];?>" id="txt_ticket" class="txtbox" /></td>
+            </tr>         
+            <tr>
+                <td class="altbg1">考试得分</td>
+                <td>
+                	<input type="text" name="score_start" value="<?php echo $search['score_start'];?>" id="txt_score_start" class="txtbox4" /> - 
+                	<input type="text" name="score_end" value="<?php echo $search['score_end'];?>" id="txt_score_end" class="txtbox4" />
+				</td>
+            </tr>         
+            <tr>
+                <td class="altbg1">考试期次:</td>
+                <td>
+                  <?php echo $this->load->view('exam_place/exam_place_selector');?>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">状态:</td>
+                <td>
+                  	<select name="flag" id="select_exam_pid">
+	                    <option value="-2">--请选择状态--</option>
+	                    <?php foreach ($flags as $k=>$flag) {?>
+	                    <option value="<?php echo $k;?>" <?php echo $search['flag'] == $k ? 'selected="selected"' : '';?>><?php echo $flag;?></option>
+	                    <?php } ?>
+                  	</select>
+                </td>
+            </tr>
+            <tr>
+		        <td class="altbg1">所在学校：</td>        
+		        <td>
+		            <input type="text" placeholder="点击选择学校" style="cursor:pointer;font-weight:bold;" readonly="readonly" id="select_school" value="<?php echo $search['school_name'] ? $search['school_name'] : '';?>" class="txtbox"><span style="color:#f00">*</span>
+		            <input type="hidden" id="select_school_id" name="school_id" value="<?php echo $search['school_id'];?>" class="txtbox"/>
+		        </td>
+		      </tr> 
+	    	<tr>
+                <td style="text-align:center" class="altbg1" colspan="2">
+                    <input type="submit" value=" 搜索 " class="btn" />
+                    <input type="button" value=" 重置 " class="btn" onclick="window.location.href='/admin/exam_student_result/index/?exam_pid=<?=$search['exam_pid']?>&place_id=<?=$search['place_id'] ? $search['place_id']: 0?>'" />
+                </td>
+            </tr>
+        </table>
+    </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>
+
+
+<script>
+
+$(document).ready(function(){
+    $("#search_form").submit(function(){
+       var $score_start = $('#txt_score_start'),
+       	   $score_end = $('#txt_score_end'),
+       	   score_start = parseInt($score_start.val()) || 0,
+           score_end = parseInt($score_end.val()) || 0;
+   	   
+       if (score_start > 0 && score_end > 0 && score_start > score_end) {
+           alert('结束得分 不能大于 开始得分.');
+           $score_end.focus();
+           return false;
+       }
+       
+       return true;
+    });
+
+    //选为作废成绩
+	$('a.a_edit_note').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#edit_note_box_' + _id),
+	       	   $input = $('#txt_edit_note_' + _id);
+
+       	   $thiz.hide();
+       	   $box.show();
+       	   $input.focus();
+	});
+	$('input.btn_cancle_note').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#edit_note_box_' + _id),
+	       	   $a = $('#a_edit_note_' + _id),
+	       	   $input = $('#txt_edit_note_' + _id);
+
+       	   $box.hide();
+       	   $input.val('');
+       	   $a.fadeIn();
+	});
+	$('form.form_edit_note').submit(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $input = $('#txt_edit_note_' + _id),
+	       	   note = $.trim($input.val());
+
+       	   if (!note.length) {
+           	  	alert('请填写 作废理由');
+              	$input.focus();
+           	   return false;
+       	   }
+	});
+});
+
+</script>

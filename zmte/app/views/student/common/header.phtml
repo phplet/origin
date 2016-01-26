@@ -1,0 +1,21 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+
+<?php static_css('register/style.css');?>
+
+<?php static_global(array('js/jquery/jquery.js', 'js/common/common.js'));?>
+    <script type="text/javascript">
+        $("#menu_iframe").ready(function () {
+          var height = Math.round($("#menu_iframe",parent.document).contents().height());
+//            var height = $(window).height();
+           $(".cls_iframe_left", parent.document).css("height",height);
+           $(".cls_iframe_right", parent.document).css("height",height);
+        });
+    </script>
+<?=C('tongji_script')?>
+</head>
+<body>

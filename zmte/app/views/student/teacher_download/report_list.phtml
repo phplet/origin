@@ -1,0 +1,70 @@
+<?php $this->load->view('common/header');?>
+
+<div id="body">
+    <div class="space">
+        <form action="<?php echo site_url('student/teacher_download/download_all_subject'); ?>" method="post" id="form" target="_blank">
+            <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="border:none;height:10px;"></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="altbg2" style="text-align: left;">
+                        <span class="altbg2-bg">考试成绩</span>
+                        <i class="altbg2-r"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1" style="font-weight: bold;">准考证号</td>
+                    <td class="altbg1" style="font-weight: bold;">状态</td>
+                    <td class="altbg1" style="font-weight: bold;">姓名</td>
+                    <td class="altbg1" style="font-weight: bold;">
+                        <span>操作</span>
+                        <input type="hidden" name="rule_id" value="<?php echo $rule_id; ?>">
+                        <a href="javascript:$('#form').submit();exit;" style="color:red;">（下载全部）</a>
+                    </td>
+                </tr>
+                <?php if (!empty($students) && count($students) > 0): ?>
+                    <?php foreach ($students as $key => $value): ?>
+                        <tr>
+                            <td class="altbg1">
+                                <?php echo $value['ticket']; ?>
+                            </td>
+                            <?php if ($value['uid']): ?>
+                                <td class="altbg1">
+                                    <input type="hidden" name="uids[]" value="<?php echo $value['uid'] ?>">
+                                    <span style="color: green;">已查询到</span>
+                                </td>
+                                <td class="altbg1"><?php echo $value['name']; ?></td>
+                                <td class="altbg1">
+                                    <?php foreach ($subjects as $k => $v): ?>
+                                        <?php if ($v['is_exist']): ?>
+                                            <a href="<?php echo site_url('student/teacher_download/download_subject/' . $rule_id . '/'. $value['uid'] . '/' . $k); ?>" target="_blank">
+                                                <?php echo $subject_sys[$k] ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <span style="color: gray;"><?php echo $subject_sys[$k] ?></span>
+                                        <?php endif ?>
+                                    <?php endforeach ?>
+                                    <a href="<?php echo site_url('student/teacher_download/download_subject_all/' . $rule_id . '/' . $value['uid']); ?>" style="color:red;" target="_blank">下载全部</a>
+                                </td>
+                            <?php else: ?>
+                                <td class="altbg1">
+                                    <span style="color: red;">未查询到</span>
+                                </td>
+                                <td class="altbg1">--</td>
+                                <td class="altbg1">--</td>
+                            <?php endif ?>
+                        </tr>
+                    <?php endforeach ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">暂无数据！</td>
+                    </tr>
+                <?php endif ?>
+                <tr>
+                    <td class="altbg1" colspan="4" style="border-bottom:2px solid #045eab;"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

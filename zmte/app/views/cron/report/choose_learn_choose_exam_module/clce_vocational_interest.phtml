@@ -1,0 +1,41 @@
+<?php  if (!empty($clce_vocational_interest['data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?> <?=$module_name?></h5>
+    <table class="cls_row cls_table indent_25" id="table_clce_vocational_interest">
+        <tr>
+	   		<th width="6%">序号</th>
+	   		<th width="16%">类型</th>
+	   		<th width="6%">得分</th>
+	   		<th width="30%">定义</th>
+	   		<th width="27%">相应传统职业</th>
+	   		<th width="15%">新兴职业推荐</th>
+       	</tr>
+       	</table>
+	   <?php foreach ($clce_vocational_interest['data'] as $keys => $item): ?>
+	       <?
+	   		$profession = $clce_vocational_interest['profession'];
+	   		$arr = array();
+	   		$arr2 = array();
+	   		foreach ($item['pr_professionid'] as $profession_id) 
+	   		{
+	   		    if ($profession[$profession_id]['profession_emerging'])
+	   		    {
+	   		        $arr2[] = $profession[$profession_id]['profession_name'];
+	   		    }
+	   		    else 
+	   		    {
+	   		        $arr[] = $profession[$profession_id]['profession_name'];
+	   		    }
+	   		}
+	   		?>
+	   	<table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clce_vocational_interest"<?php }?>>
+       	<tr <?if ($keys%2 == 1) {?>class="bgc"<?}?>>
+       	    <th width="6%"><?=$keys+1?></th>
+       	    <td width="16%" style="text-align: left;"><?=$item['knowledge_name']?></td>
+	   		<td width="6%"><?=$item['test_score']?></td>
+	   		<td width="30%" style="text-align: left;"><?=$item['pr_explain']?></td>
+	   		<td width="27%" style="text-align: left;"><?=implode('、', $arr)?></td>
+	   		<td width="15%" style="text-align: left;"><?=implode('、', $arr2)?></td>
+       	</tr>
+       	</table>
+	   <?php endforeach;?>
+<?php }?>

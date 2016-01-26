@@ -1,0 +1,42 @@
+<?php $this->load->view('common/exam_header', array('page_title' => '忘记密码'));?>
+<? static_css('register/style.css');?>
+<style type="text/css">
+.altbg2, .altbg2-r, .altbg2-bg {
+    background:#7eb8dd !important;
+}
+
+.altbg2-bg {
+    color:black !important;
+}
+
+.altbg1 {
+    background:#9cd5f9 !important;
+}
+</style>
+<div id="body" >
+  <form name="Frm_cpuser_info" method="POST" action="<?=site_url('student/index/forget')?>">
+  <input type="hidden" name="act" value="submit">
+  <div class="space">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+            <span class="altbg2-bg">忘记密码</span>
+          	<i class="altbg2-r"></i>
+        </td>
+      </tr>
+      <tr>
+        <td height="50">真实姓名</td>
+        <td><input type="text" name="realname"  class="txtbox"><span class="txtboxspan">*请输入您的真实姓名</span></td>
+      </tr>
+      <tr>
+        <td height="50">Email</td>        
+        <td><input type="text" name="email" class="txtbox"><span class="txtboxspan">*请输入您注册的Email地址</span></td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value="下一步" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/exam_footer');?>

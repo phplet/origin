@@ -1,0 +1,28 @@
+<?php if (!defined('BASEPATH')) exit(); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head>
+<?php static_css(array('admin.css'));?>
+</head>
+
+<body>
+<div id="header">
+  <div id="product"><?=C('webconfig/site_name')?>管理中心</div>
+  <div id="nav">
+    <div class="op">
+    <span>[<a href="<?=site_url('admin/common/latex')?>" target="_blank">LaTex编辑器</a>]</span>
+        你好：<b><?=$this->session->userdata('admin_user')?></b>，欢迎使用<?=C('webconfig/site_name')?>管理系统。
+        <?php if ($exam_manage) {?>
+        [<a href="<?=site_url('admin/index/clean')?>" target="main">清除系统缓存</a>]
+        <?php }?>
+        [<a href="<?=site_url('admin/index/logout')?>" target="_top">退出</a>]
+    </div>
+    <ul id="menu">
+      <?=$menuNav?>
+    </ul>
+  </div>
+  <div style="clear:both"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+       <table class="maintable cls_field_table" id="id_cc_table_<?=$k?>" border="0" cellspacing="0" cellpadding="0" <? if ($k > 0) echo('style="display:none"'); ?>>
+          <tbody>
+          <tr>
+            <td class="altbg1" width="15%">校区</td>
+            <td colspan="3">
+              <input type="hidden" name="cc_id" value="<?=$cc_info[$k]['cc_id']?>" class="cls_field"/>
+              <input type="hidden" name="cc_corsid" value="<?=$cc_info[$k]['cc_corsid']?>" class="cls_field"/>
+              <input type="hidden" name="cc_tcid" value="<?=$cc_info[$k]['cc_tcid']?>" class="cls_field"/>
+              <input type="text" name="tc_name" readonly="readonly" value="<? if ($cc_info[$k]['cc_tcid']) Func::echo_s($cc_info[$k]['tc_name']); ?>" onclick="fnShowSelTCDialog()" class="txtbox"/>
+              <span style="color:#f00">*</span> 
+<? if ($cors_info['cors_cmid'] == 1) { ?>
+<button type="button" onclick="fnClearCampus(<?=$k?>, <?=$cc_info[$k]['cc_id']?>)"><span style="color:red">清除校区选择</span></button>
+<? } ?>
+<button type="button" onclick="fnRemoveCampus(<?=$k?>, <?=$cc_info[$k]['cc_id']?>)"><span style="color:red">删除本校区</span></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="altbg1" width="15%">授课教师</td>
+             <td width="35%"><div class="cteacher_list" style="border-bottom:1px solid black">
+<? if (isset($cteacher_list[$cc_info[$k]['cc_id']])) foreach ($cteacher_list[$cc_info[$k]['cc_id']] as $cct_ctid => $item) { ?>
+<label><input type="checkbox" name="cct_ctid_str" class="cls_field ctid_<?=$cct_ctid?>" value="<?=$cct_ctid?>" checked="checked"/><? Func::echo_s($item['ct_name']); ?></label>
+<? } ?>
+</div>
+               <button type="button" onclick="fnShowSelCTDialog()">选择教师</button>
+               <span style="color:#f00"></span>
+             </td>
+            <td class="altbg1" width="15%">教师来源</td>
+            <td width="35%">
+            <select name="cc_ctfid" class="cls_field">
+               <option value="">--请选择--</option>
+            <? foreach ($ctf_list as $v) { ?>
+            <option value="<?=$v['ctf_id']?>" <? if ($cc_info[$k]['cc_ctfid'] == $v['ctf_id']) echo('selected="selected"'); ?> ><? Func::echo_s($v['ctf_name']); ?></option>
+            <? } ?>
+            </select>
+               <span style="color:#f00">*</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="altbg1">课程时间</td>
+            <td colspan="3">
+               <input type="text" name="cc_classtime" value="<? Func::echo_s($cc_info[$k]['cc_classtime']); ?>" class="cls_field txtbox" style="width:80%"/>
+               <span style="color:#f00">*</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="altbg1">课程周期</td>
+            <td colspan="3" class="cls_td_dd1"><input type="text" name="cc_begindate" value="<?=$cc_info[$k]['cc_begindate']?>" readonly="readonly" class="cls_field txtbox cls_dd1" style="width:100px" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d'})" <? if ($cc_info[$k]['cc_startanytime']) echo('disabled="disabled"'); ?>/> 到 
+            <input type="text" name="cc_enddate" value="<?=$cc_info[$k]['cc_enddate']?>" readonly="readonly" class="cls_field txtbox cls_dd1" style="width:100px" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d'})" <? if ($cc_info[$k]['cc_startanytime']) echo('disabled="disabled"'); ?>/> 
+                <label><input type="checkbox" name="cc_startanytime" value="1" class="cls_field" onchange="fnOnStartAnyTime2(this)" <? if ($cc_info[$k]['cc_startanytime']) echo('checked="checked"'); ?>/>随时开课</label>
+
+               共计
+                <input type="text" name="cc_hours" value="<?=$cc_info[$k]['cc_hours']?>" class="cls_field txtbox" style="width:60px"/>课时
+               <span style="color:#f00">*</span>
+            </td>
+         </tr>
+         <tr>
+            <td class="altbg1">课程收费</td>
+            <td colspan="3">
+               <input type="text" name="cc_price" value="<?=$cc_info[$k]['cc_price']?>" class="cls_field txtbox" style="width:60px"/>元
+               <span style="color:#f00">*</span>
+            </td>
+          </tr>
+
+         <tr>
+           <td class="altbg1">上课地址</td>
+           <td colspan="3">
+                  <select name="cc_provid" id="selProvinces_<?=$k?>" onchange="region.changed(this, 2, 'selCities_<?=$k?>');region.changed(document.getElementById('selCities_<?=$k?>'), 2, 'selAreas_<?=$k?>');" class="cls_field">
+                    <option value="0">--请选择省--</option>
+                    <? foreach($province_list as $val) { ?>
+                    <option value="<?=$val['region_id']?>"<?=$val['region_id']==$cc_info[$k]['cc_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                  <select name="cc_cityid" id="selCities_<?=$k?>" onchange="region.changed(this, 3, 'selAreas_<?=$k?>')" class="cls_field">
+                    <option value="0">--请选择市--</option>
+                    <? if (isset($city_list[$cc_info[$k]['cc_provid']])) foreach($city_list[$cc_info[$k]['cc_provid']] as $val) { ?>
+                    <option value="<?=$val['region_id']?>"<?=$val['region_id']==$cc_info[$k]['cc_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                  <select name="cc_areaid" id="selAreas_<?=$k?>" class="cls_field">
+                    <option value="0">--请选择区县--</option>
+                    <? if (isset($area_list[$cc_info[$k]['cc_cityid']])) foreach($area_list[$cc_info[$k]['cc_cityid']] as $val) { ?>
+                    <option value="<?=$val['region_id']?>"<?=$val['region_id']==$cc_info[$k]['cc_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                    <? } ?>
+                  </select>
+                  <input type="text" name="cc_addr" value="<? Func::echo_s($cc_info[$k]['cc_addr']); ?>" class="txtbox cls_field" />
+                   <span style="color:#f00">*</span>
+               </td>
+             </tr>
+             <tr>
+               <td class="altbg1">联系人</td>
+               <td><input type="text" name="cc_ctcperson" value="<? Func::echo_s($cc_info[$k]['cc_ctcperson']); ?>" class="cls_field txtbox"/></td>
+               <td class="altbg1">联系电话</td>
+               <td><input type="text" name="cc_ctcphone" value="<? Func::echo_s($cc_info[$k]['cc_ctcphone']); ?>" class="cls_field txtbox"/></td>
+             </tr>
+           </tbody>
+       </table>

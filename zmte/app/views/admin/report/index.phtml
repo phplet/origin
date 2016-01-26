@@ -1,0 +1,179 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    	测评规则：<?php echo $rule['name'];?>（关联期次：<?php echo $rule['exam_name'];?>） 》》 学生报告生成情况
+    	<?php if ($rule['generate_transcript']) {?>
+    	<a href="###" ajax="/admin/report/down_transcript/<?=$rule['id']?>" class="menu ajax_loader">下载学生成绩报告单</a>
+    	<?php }?>
+	</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="5%">考生ID</td>
+        <td width="10%">姓名</td>
+        <td width="20%">邮箱</td>
+        <td width="15%">所在学校</td>
+        <td width="10%">类型</td>
+        <td width="20%">ZIP及PDF生成情况</td>
+        <td width="20%">HTML页面</td>
+      </tr>
+      <?php if($list) {?>
+      <?php foreach($list as $val) {?>
+      <?php 
+      @list($rule_id, $uid, $subject_id, $type) = explode('_', $val['target_id']);
+      ?>
+      <tr>
+        <td><?=$val['uid']?></td>
+        <td><?=$val['fullname']?></td>
+        <td><?=($val['email_validate'] ? '<font color="green">' : '<font color="red">')?><?=$val['email']?></font></td>
+        <td><?=$val['school_name']?></td>
+        <td>
+        <?php if ($type == 3) {?>
+        学科成绩单
+        <?php } else {?>
+        学科报告
+        <?php }?>
+        </td>
+        <td>
+            <?php if ($type != 3) {?>
+            <?php if ($val['zip_ready']) {?> 
+            <a href="<?=site_url('admin/report/down_file?type=2&source_path=' . urlencode($rule_id . '/' . $val['uid'] . '.zip') . '&name='.$val['fullname'].'.zip')?>" style="color:green;">ZIP</a>
+            <?php } else {?>
+            <font color="red">ZIP</font>
+            <?php }?>
+            &nbsp;
+            <?php }?>
+            <?php if ($val['pdf_ready'] == 1) {?>
+            <a href="<?=(site_url('admin/report/down_file?type=1&target_id=' . $val['target_id']))?>" style="color:green;" target="_blank"><?=$subjects[$subject_id]?></a>
+            <?php } else {?>
+            <font color="red"><?=$subjects[$rule['subject_id']]?></font>
+            <?php }?>
+        </td>
+        <td>
+            <?php if ($val['html_status'] == 1) {?>
+            <a href="<?=$val['source_url']?>" target="_blank" style="color:green;"><?=$subjects[$subject_id]?></a>
+            <?php } else {?>
+            <font color="red"><?=$subjects[$rule['subject_id']]?></font>
+            <?php }?>
+        </td>
+      </tr>
+      <?php } ?>
+      <tr class="altbg1">
+        <td colspan="2"></td>
+        <td colspan="5" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php } else { ?>
+      <tr>
+        <td colspan="7">暂无记录！</td>
+      </tr>
+      <?php } ?>
+    </table>
+    
+    <?php if(count($class_report)):?>
+        <div class="subtitle">
+        	测评规则：<?php echo $rule['name'];?>（关联期次：<?php echo $rule['exam_name'];?>） 》》班级报告生成情况
+    	<?php if ($rule['generate_class_report']) {?>
+    	<a href="/admin/report/down_class_report/<?=$rule['id']?>" target="_blank" class="menu">下载班级报告</a>
+    	<?php }?>
+    	</div>
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+          <tr class="altbg1">
+            <td width="5%">班级ID</td>
+            <td width="10%">班级名称</td>
+            <td width="15%">所在学校</td>
+            <td width="25%">PDF生成情况</td>
+            <td width="25%">HTML页面</td>
+          </tr>
+          <?php foreach($class_report as $item):?>
+          <tr>
+            <td><?=$item['schcls_id']?></td>
+            <td><?=$class[$item['schcls_id']]['schcls_name']?></td>
+            <td><?=$class[$item['schcls_id']]['school_name']?></td>
+            <td>
+            <?php foreach ($item['pdf_path'] as $k => $v) {?>
+            <?php if ($v) {?>
+                <a href="<?=(site_url('admin/report/down_file?type=1&target_id=' . $item['target_id']))?>" style="color:green;" target="_blank"><?=$k?></a>
+            <?php } else {?>
+                <font color="red"><?=$k?></font>
+            <?php }?>
+            <?php }?>
+            </td>
+            <td>
+             <?php foreach ($item['html_path'] as $k => $v) {?>
+                <a href="<?=$v?>" style="color:green;" target="_blank"><?=$k?></a>
+            <?php }?>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+          </table>
+    <?php endif;?>
+    
+    <?php if(count($teacher_report)):?>
+        <div class="subtitle">
+        	测评规则：<?php echo $rule['name'];?>（关联期次：<?php echo $rule['exam_name'];?>） 》》教师报告生成情况
+        	<?php if ($rule['generate_teacher_report']) {?>
+        	<a href="/admin/report/down_teacher_report/<?=$rule['id']?>" target="_blank" class="menu">下载教师报告</a>
+        	<?php }?>
+    	</div>
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+          <tr class="altbg1">
+            <td width="5%">教师ID</td>
+            <td width="10%">教师姓名</td>
+            <td width="15%">所在学校</td>
+            <td width="25%">PDF生成情况</td>
+            <td width="25%">HTML页面</td>
+          </tr>
+          <?php foreach($teacher_report as $item):?>
+          <tr>
+            <td><?=$item['ct_id']?></td>
+            <td><?=$teacher[$item['ct_id']]['ct_name']?></td>
+            <td><?=$teacher[$item['ct_id']]['school_name']?></td>
+            <td>
+            <?php foreach ($item['pdf_path'] as $k => $v) {?>
+            <?php if ($v) {?>
+                <a href="<?=(site_url('admin/report/down_file?type=1&target_id=' . $item['target_id']))?>" style="color:green;" target="_blank"><?=$k?></a>
+            <?php } else {?>
+                <font color="red"><?=$k?></font>
+            <?php }?>
+            <?php }?>
+            </td>
+            <td>
+             <?php foreach ($item['html_path'] as $k => $v) {?>
+                <a href="<?=$v?>" style="color:green;" target="_blank"><?=$k?></a>
+            <?php }?>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+          </table>
+    <?php endif;?>
+  </div>
+  
+  <div class="space">
+    <form method="get" name="search_form" action="<?=site_url('admin/report/index/' . $rule['id'])?>">
+        <div class="space">
+            <div class="subtitle">搜索</div>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1" width="15%">考生ID</td>
+                    <td>
+                    	<input type="text" value="<?php echo $search['uid'] ? $search['uid'] : '';?>" name="uid" id="uid"/>
+                    </td>
+                </tr>
+                 <tr>
+                    <td class="altbg1" width="15%">考生姓名</td>
+                    <td>
+                    	<input type="text" value="<?php echo $search['name'] ? $search['name'] : '';?>" name="name" id="name"/>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                    	<input type="submit" value=" 搜索 " class="btn" />
+                    	<input type="reset" value=" 重置 " class="btn" onclick="$('#uid').attr('value','');$('#name').attr('value','');history.go(-1);"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

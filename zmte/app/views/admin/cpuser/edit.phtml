@@ -1,0 +1,67 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_cpuser_info" method="POST" action="<?=site_url('admin/cpuser/update')?>">
+  <input type="hidden" name="admin_id" value="<?=$cpuser['admin_id']?>" />
+  <div class="space">
+    <div class="subtitle">编辑后台用户</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">用户名</td>        
+        <td><input type="text" name="admin_user" class="txtbox" value="<?=$cpuser['admin_user']?>"><span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">真实姓名</td>        
+        <td><input type="text" id="realname" name="realname" class="txtbox" value="<?=$cpuser['realname']?>"><span style="color:#f00">*</span></td>
+      </tr>
+	  <tr>
+        <td class="altbg1">角色选择</td>
+        <td>
+          <table>
+            <tbody>
+              <?php $i = 1;?>
+              <tr>
+              <?php foreach ($role_list as $v):?>
+                
+                <td><input type="checkbox" name="roleIds[]" value="<?php echo $v['role_id'];?>" id="roles_list_<?php echo $v['role_id'];?>" <?php if(in_array($v['role_id'], $roleIds)) echo 'checked';?>/><label for="roles_list_<?php echo $v['role_id'];?>"><?php echo $v['role_name'];?></label></td>
+              <? if($i % 8 == 0 && $i != 0){?>                
+                </tr>
+                <tr>
+              <? }
+                ++$i;
+              ?>
+           
+              <?if($i == count($roles_list)){
+                echo "</tr>"; 
+              }?>
+              <?php endforeach;?>
+            </tbody>
+          </table>
+		
+
+        </td>
+      </tr>      
+      <tr>
+        <td class="altbg1">Email</td>        
+        <td><input type="text" id="email" name="email" class="txtbox" value="<?=$cpuser['email']?>"><?php if (!$is_cpuser) {?><span style="color:#f00">*</span><?php }?></td>
+      </tr>
+      <?php /*?>
+      <tr><td colspan="2" class="altbg2"><strong>修改密码</strong></td></tr>      
+      <tr>
+        <td class="altbg1">密码</td>        
+        <td><input type="password" name="password"  class="txtbox">&nbsp;<span class="notice">密码长度必须为6~20个字符</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">确认密码</td>        
+        <td><input type="password" name="password_confirm" class="txtbox"></td>
+      </tr>
+      <?php */?>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

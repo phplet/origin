@@ -1,0 +1,13 @@
+    <?php if (!empty($c_match_percent) 
+                || !empty($c_method_tactic) 
+                || !empty($c_level_assign_points)
+                || !empty($c_level_percent)) {?>
+    <br>
+    <p class="mokuai-text cls_row font12">
+            注：为表达更加简明扼要，部分数据进行了取整等简化处理，由此可能造成相关数据的误差不影响评价结果。
+    </p>
+    <?php }?>
+    <?php echo $this->load->view('report/table_auto_pager', array('g_real_page_height'=>1283));?>
+    </div>
+</body>
+</html>

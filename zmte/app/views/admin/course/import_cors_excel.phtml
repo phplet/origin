@@ -1,0 +1,186 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnUploadFile()
+{
+    var form = document.getElementById('id_form');
+    /*if (form.file.value == '')
+    {
+        alert('请选择上传文件');
+        return;
+    }
+     */
+    form.submit();
+}
+
+function fnTIRegionChanged(bChecked, iValue)
+{
+    if (iValue == '1')
+    {
+        if (bChecked)
+        {
+        }
+        else
+        {
+            $("#id_form input[name='ti_cityid_required']").get(0).checked = false;
+            $("#id_form input[name='ti_areaid_required']").get(0).checked = false;
+        }
+    }
+    else if (iValue == '2')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='ti_provid_required']").get(0).checked = true;
+        }
+        else
+        {
+            $("#id_form input[name='ti_areaid_required']").get(0).checked = false;
+        }
+
+    }
+    else if (iValue == '3')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='ti_provid_required']").get(0).checked = true;
+            $("#id_form input[name='ti_cityid_required']").get(0).checked = true;
+        }
+        else
+        {
+        }
+    }
+}
+
+function fnTCRegionChanged(bChecked, iValue)
+{
+    if (iValue == '1')
+    {
+        if (bChecked)
+        {
+        }
+        else
+        {
+            $("#id_form input[name='tc_cityid_required']").get(0).checked = false;
+            $("#id_form input[name='tc_areaid_required']").get(0).checked = false;
+        }
+    }
+    else if (iValue == '2')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='tc_provid_required']").get(0).checked = true;
+        }
+        else
+        {
+            $("#id_form input[name='tc_areaid_required']").get(0).checked = false;
+        }
+
+    }
+    else if (iValue == '3')
+    {
+        if (bChecked)
+        {
+            $("#id_form input[name='tc_provid_required']").get(0).checked = true;
+            $("#id_form input[name='tc_cityid_required']").get(0).checked = true;
+        }
+        else
+        {
+        }
+    }
+}
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">导入培训课程
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnUploadFile()">提交</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/corslist')?>'">返回列表</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/import_cors_excel?dl=1')?>'">下载模板</button>
+      </div>
+    </div>
+    <div id="id_file_form">
+    <form id="id_form" method="POST" action="?" enctype="multipart/form-data">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <? if ($error) { ?><tr><td colspan="2" style="text-align:center;color:red">错误信息: <?=$error?></td></tr><? } ?>
+        <? if ($success) { ?><tr><td colspan="2" style="text-align:center;color:green">成功信息: <?=$success?></td></tr><? } ?>
+      <tr>
+        <td class="altbg1" width="15%">上传文件</td>
+        <td><input type="file" name="file"/><span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1" rowspan="10">必填选项</td>
+        <td>
+            <label><input type="checkbox" name="cors_classid_required" value="1" 
+                     <? if ($param['cors_classid_required']) echo('checked="checked"'); ?>/>类型</label>
+       </td>
+      </tr>
+
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_classtime_required" value="1" 
+                     <? if ($param['cc_classtime_required']) echo('checked="checked"'); ?>/>课程时间</label>
+       </td>
+      </tr>
+
+       <tr>
+        <td>
+<label><input type="checkbox" name="cc_provid_required" value="1" onchange="fnCCRegionChanged(this.checked, this.value)" <? if ($param['cc_provid_required']) echo('checked="checked"'); ?>/>上课省份</label>
+<label><input type="checkbox" name="cc_cityid_required" value="2" onchange="fnCCRegionChanged(this.checked, this.value)" <? if ($param['cc_cityid_required']) echo('checked="checked"'); ?>/>上课城市</label>
+<label><input type="checkbox" name="cc_areaid_required" value="3" onchange="fnCCRegionChanged(this.checked, this.value)" <? if ($param['cc_areaid_required']) echo('checked="checked"'); ?>/>上课区县</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_addr_required" value="1" 
+                     <? if ($param['cc_addr_required']) echo('checked="checked"'); ?>/>上课地址</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_price_required" value="1" 
+                     <? if ($param['cc_price_required']) echo('checked="checked"'); ?>/>收费</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_hours_required" value="1" 
+                     <? if ($param['cc_hours_required']) echo('checked="checked"'); ?>/>上课课时</label>
+       </td>
+      </tr>
+
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_ctcperson_required" value="1" 
+                     <? if ($param['cc_ctcperson_required']) echo('checked="checked"'); ?>/>联系人</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cc_ctcphone_required" value="1" 
+                     <? if ($param['cc_ctcphone_required']) echo('checked="checked"'); ?>/>联系电话</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cors_memo_required" value="1" 
+                     <? if ($param['cors_memo_required']) echo('checked="checked"'); ?>/>课程简介</label>
+       </td>
+      </tr>
+      <tr>
+        <td>
+            <label><input type="checkbox" name="cors_url_required" value="1" 
+                     <? if ($param['cors_url_required']) echo('checked="checked"'); ?>/>网址</label>
+       </td>
+      </tr>
+
+      <tr>
+        <td class="altbg1">不存在的校区</td>
+        <td><label><input type="radio" name="non_exist_tcname_action" value="0" <? if ($param['non_exist_tcname_action'] != '1') echo('checked="checked"'); ?>/>报错停止</label>
+            <label><input type="radio" name="non_exist_tcname_action" value="1" <? if ($param['non_exist_tcname_action'] == '1') echo('checked="checked"'); ?>/>自动增加</label>
+        </td>
+      </tr>
+    </table>
+     </form>
+    </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

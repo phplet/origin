@@ -1,0 +1,1701 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>错题集</title>
+        <link rel='stylesheet' href='/zmcat/css/student/style.css' type='text/css' media='all' />
+        <link rel="stylesheet" type="text/css" href="/zmcat/css/student/cs-select.css" />
+        <link rel="stylesheet" type="text/css" href="/zmcat/css/student/cs-skin-border.css" />
+        <script type="text/javascript" src="/zmcat/sys/js/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/all.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/float-person.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/classie.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/selectFx.js"></script>
+        
+        <style type="text/css">
+        html {
+                font-family: 'Microsoft Yahei';
+        }
+       
+        .cls_body {
+                background: url("/zmcat/css/student/images/index/cls_bg.png");
+                padding-top: 40px;
+        }
+
+        .cls_auto {
+                margin: 0 auto;
+                width: 960px;
+                padding-left: 90px;
+        }
+
+        .cls_std_footer {
+                text-align: center;
+        }
+
+        .cls_std_header {
+                background: url("/zmcat/css/student/images/index/cls_header_bg.png") no-repeat;
+                height: 40px;
+                width: 100%;
+                margin-left: 7px;
+        }
+
+        .cls_std_main_left {
+                background: url("/zmcat/css/student/images/index/cls_left_bg.png") repeat-y;
+                width: 60px;
+                height: 920px;
+        }
+
+        .cls_std_main_right {
+                background: url("/zmcat/css/student/images/index/cls_right_bg.png") no-repeat;
+                background-position: 0px -10px;
+                min-height: 680px;
+                width: 96px;
+        }
+
+        .cls_std_main_right_one {
+                background: url("/zmcat/css/student/images/index/cls_right__one_bg.png")
+                        repeat-y;
+                height: 240px;
+        }
+
+        .cls_std_main_middle {
+                width: 794px;
+                height: 920px;
+                background: #FFFBEC;
+        }
+
+        .cls_std_footer {
+                height: 50px;
+                line-height: 50px;
+                width: 92%;
+                background: url("/zmcat/css/student/images/index/cls_footer_bg.png") no-repeat;
+                margin-left: 7px;
+        }
+
+        .cls_info_header_list {
+                margin-top: 5px;
+        }
+
+        .cls_info_header_list li {
+                float: left;
+                padding: 5px;
+                margin-left: 27px;
+        }
+
+        .cls_info_header_list li.cls_first {
+                margin-left: 0px;
+                color: #323a45;
+                font-size: 19px;
+                height: 35px;
+                width: 18%;
+                text-decoration: none;
+                text-align: center;
+        }
+
+         .cls_info_header_list li.cls_second {
+                margin-left: 0px;
+                color: #323a45;
+                font-size: 19px;
+                height: 35px;
+                width: 23%;
+                text-decoration: none;
+                text-align: center;
+        }
+        .cls_info_header_list li a.cls_current {
+                color: white;
+                background: #323a45;
+                border-radius: 5px;
+        }
+
+        .cls_info_header_list li a.cls_student_current {
+                color: white;
+                background: #323a45;
+                border-radius: 5px;
+        }
+
+        .cls_info_header_list_div {
+                margin-top: 20px;
+                *height: 40px;
+        }
+
+        .cls_info_header_list_img li {
+                float: left;
+                padding: 5px;
+                width: 30px;
+                height: 29px;
+                border-radius: 20px;
+                margin-left: 10px;
+                cursor: pointer;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_two img {
+                margin-left: 4px;
+                margin-top: 2px;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_four img {
+                margin-left: 3px;
+                margin-top: 4px;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_six img {
+                margin-left: 1px;
+                margin-top: 4px;
+        }
+
+        .cls_info_header_list_img li img {
+                margin-left: 5px;
+                margin-top: 2px;
+        }
+        .cls_info_header_list_img li.cls_ml_two img{
+                margin-left: 3px;
+                margin-top: 3px;
+        }
+        .cls_info_header_list_img li.cls_ml_three img{
+                margin-left: 5px;
+                margin-top: 2px;
+        }
+
+        .cls_info_header_list_img li.cls_ml_one {
+                margin-left: 30px;
+                background: url('/zmcat/css/student/images/index/cls_header_02.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_two {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_03.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_four {
+                margin-left: 94px;
+                background: url('/zmcat/css/student/images/index/cls_header_06.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_five {
+                margin-left: 100px;
+                background: url('/zmcat/css/student/images/index/cls_header_05.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_six {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_04.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_three {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_07.png');
+        }
+
+        .cls_color_gray {
+                background: gray
+        }
+
+        .cls_std_main_right_li {
+                padding-top: 10px;
+        }
+
+        .cls_std_main_right_li li {
+                margin-left: 5px;
+                width: 25px;
+                padding: 5px;
+                border-radius: 20px;
+                padding-left: 10px;
+                margin-top: 25px;
+                cursor: pointer;
+        }
+
+        .cls_std_main_right_li li.cls_right_two {
+                margin-top: 40px;
+        }
+
+        .cls_std_main_right_li li.cls_right_four {
+                margin-top: 50px;
+        }
+
+        .cls_std_main_right_li li.cls_right_six {
+                margin-top: 50px;
+        }
+
+        .cls_std_main_right_li li.cls_right_five {
+                margin-top: 40px;
+        }
+
+        .cls_std_main_right_li li.cls_right_three {
+                margin-top: 44px;
+        }
+
+        .cls_return_index {
+                float: right;
+                margin-top: 26px;
+                margin-right: 20px;
+                font-size: 15px;
+        }
+
+        .cls_return_index a {
+                text-decoration: none;
+                color: #00a4e8;
+                font-size: 15px;
+        }
+
+        .cls_logout {
+                margin-top: 26px;
+                margin-right: 45px;
+                float: right;
+                font-size: 15px;
+        }
+
+        .cls_logout a {
+                text-decoration: none;
+                color: black;
+        }
+        .cls_info_resize_h{
+                height: 44px;
+        }
+        .cls_resize_div{
+                height:1px;
+                width:200px;
+        }
+        .cls_info_header_list_img li.cls_resize_header{
+                background-position: 0px -39px; 
+        }
+        .cls_header_li a{
+                width: 30px;
+                height: 29px;
+                float: left;
+        }
+        .cls_float_person{
+                width: 200px;
+                height: 283px;
+                position: fixed;
+                bottom: 40px;
+                right: 30px;
+                background: url('/zmcat/css/student/images/cls_float_person.png') no-repeat;
+        }
+        .cls_float_word{
+                width: 100px;
+                margin-top: 18px;
+                margin-left: 6px;
+                height: 48px;
+        }
+        .cls_hide_word{
+                margin-top: 12px;
+                margin-left: 10px;
+                cursor: pointer;
+                color: #aaa;
+        }
+        .cls_current_word{
+                color: #00aeff;
+        }
+        .cls_float_hide_person{
+                background: url(/zmcat/css/student/images/cls_float_hide_person.gif) no-repeat;
+                width: 136px;
+                height: 283px;
+                position: fixed;
+                right: 0px;
+                bottom: 40px; 
+                cursor: pointer;
+        }
+        .cls_hide{
+                display: none;
+        }
+        /* ////////////////////////////////////// */
+<? $bShowS5 = in_array($exam_info['subject_id'],array(2,4,5,6,10,11,3)); ?>
+        #s{
+            width: 794px;
+            display:table;
+            margin-top:-40px;
+            z-index:1;
+            position:absolute;
+            top:214px;
+        }
+        #s > div {
+            display:table-cell;
+            width:188px;
+            text-align:center;
+        }
+        #s > div > div.cs-select {
+            min-width:132px;
+            max-width:132px;
+        }
+        @font-face {font-family: 'iconfont';
+            src: url(/zmcat/css/student/fonts/iconfont/iconfont.eot);
+            src: url(/zmcat/css/student/fonts/iconfont/iconfont.eot?#iefix) format('embedded-opentype'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.woff) format('woff'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.ttf) format('truetype'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.svg#iconfont) format('svg');
+        }
+        
+        .iconfont {
+          font-family:"iconfont" !important;
+          font-size:16px;
+          font-style:normal;
+          -webkit-font-smoothing: antialiased;
+          -webkit-text-stroke-width: 0.2px;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+<? if ($bShowS5) { ?>
+       #s1 .cs-select {
+            margin-left:-10px;
+       }
+       #s2 .cs-select {
+            margin-left:-36px;
+       }
+       #s3 .cs-select {
+            margin-left:-48px;
+       }
+       #s4 .cs-select {
+            margin-left:-54px;
+       }
+       #s5 .cs-select {
+            margin-left:-60px;
+       }
+       #s6 .cs-select {
+            margin-left:-60px;
+       }
+<? } else {?>
+       #s1 .cs-select {
+            margin-left:-10px;
+       }
+       #s2 .cs-select {
+            margin-left:-19px;
+       }
+       #s3 .cs-select {
+            margin-left:-28px;
+       }
+       #s4 .cs-select {
+            margin-left:-37px;
+       }
+<? } ?>
+
+        #s .cs-skin-border > span::after,
+        #s .cs-select > span::after,
+        #s .cs-skin-border .cs-selected span::after {
+            font-family: 'iconfont' !important;
+            font-size:1.0em;
+            content: '\e619';
+        }
+
+        #s .cs-skin-border > span {
+            color:white;
+            border-width:0px;
+            background:transparent;
+        }
+        #s .cs-options {border:1px solid gray;max-height:400px;overflow-y:auto;}
+
+        #s1 .cs-skin-border .cs-options li span:hover, #s1 .cs-skin-border li.cs-focus span  {background-color:#e8643e;}
+        #s2 .cs-skin-border .cs-options li span:hover, #s2 .cs-skin-border li.cs-focus span  {background-color:#e7aa3e;}
+        #s3 .cs-skin-border .cs-options li span:hover, #s3 .cs-skin-border li.cs-focus span  {background-color:#3375d0;}
+        #s4 .cs-skin-border .cs-options li span:hover, #s4 .cs-skin-border li.cs-focus span  {background-color:#e83e62;}
+        #s5 .cs-skin-border .cs-options li span:hover, #s5 .cs-skin-border li.cs-focus span  {background-color:#e83e62;}
+        #s6 .cs-skin-border .cs-options li span:hover, #s6 .cs-skin-border li.cs-focus span  {background-color:#e83e62;}
+
+        /************************/
+
+
+        #id_ques_list  {height:780px;overflow:auto;}
+        .cls_ques_content {height:780px;overflow:auto;}
+
+
+       #id_ques_list .cls_knowledge_list ul li {max-height:37px;width:700px;overflow:hidden;border-bottom:1px dashed gray;}
+       #id_ques_list .cls_knowledge_list ul li a {text-overflow:ellipsis;white-space:nowrap;width:700px;}
+
+        .cls_underline {border-bottom:1px dashed gray;}
+
+
+        /************************/
+#id_list_margin_top {
+    height:31px;
+}
+
+#id_list {
+    width:30px;
+    margin-left:6px;
+}
+
+#id_list > div {
+    float:left;
+    margin-top:-30px;
+    color:white;
+    font-family: 'Microsoft Yahei';
+    font-weight:bold;
+    font-size:1.2em;
+    text-shadow: 0 0 0px;
+}
+
+#id_list > div:hover {
+    text-shadow: 0 0 2px white;
+    cursor:pointer;
+}
+
+#id_list > div.cls_select > div.mid{
+    cursor:default;
+    width:35px;
+}
+
+#id_list > div.cls_select:hover {
+    text-shadow: 0 0 0px;
+    cursor:default;
+}
+
+#id_list > div > div {
+}
+
+#id_list > div > div.left {
+    width:15px;
+    padding:20px 0px 35px 0px;
+    float:left;
+    height:4em;
+}
+
+#id_list > div > div.mid {
+    padding:20px 15px 35px 0px;
+    text-align:center;
+    border-radius:15px;
+    height:4em;
+    width:30px;
+    -webkit-box-shadow: 0px 0px 2px black;
+    -moz-box-shadow: 0px 0px 2px black;
+    box-shadow: 0px 0px 2px black;
+}
+
+.cls_std_main_right {
+    background-image:url(/zmcat/css/student/images/index/cls_right__one_bg.png);
+    background-repeat:repeat-y;
+}
+ .y1
+    {
+        color:#FF0000;
+    }
+    .y2
+    { 
+        color:#FF4040;
+    }
+    .y3
+    {
+        color:#FF6A6A ;
+    }
+    .y4
+    {
+        color:#FF83FA;
+    }
+    .y5
+    {
+        color:#FFB6C1;
+    }
+
+<? $mycolor_list = array('#ff9740', '#ff6161', '#57ce95', '#6fb0ad', '#8690b7', 'rgba(51, 117, 207, 1)', 'rgba(231, 62, 98, 1)', '#ff9740', '#ff6161', '#57ce95', '#6fb0ad', '#8690b7');
+foreach ($mycolor_list as $key => $val) { ?>
+.l<?=$key+1?>, .e<?=$key+1?> {background-color:<?=$val?>;}
+<? } $max = count($mycolor_list); ?>
+/* .l<?=$max?>, .e<?=$max?> {height:80px} */
+
+
+
+        /* ////////////////////////////////////// */
+
+        </style>
+        <script type="text/javascript">
+        function isie7(){
+            var ua=navigator.userAgent;
+            return /msie 7/i.test(ua) ? true : false;
+        }
+
+        $(function(){
+            $(".cls_hide_word").mouseover(function(){
+                $(this).addClass("cls_current_word");
+            });
+            $(".cls_hide_word").mouseout(function(){
+                $(this).removeClass("cls_current_word");
+            });
+            $(".cls_hide_word").click(function(){
+                $(".cls_float_person").fadeOut();
+                $(".cls_float_hide_person").show();
+            });
+            $(".cls_float_hide_person").click(function(){
+                $(this).hide();
+                $(".cls_float_person").fadeIn();
+            });
+
+            var pathname = window.location.pathname;
+            var pathname_arr = pathname.split("/");
+            var nav = pathname_arr[3];
+            //无逻辑处理的提示页面
+            var pos1 = ['userinfo','mywallet','myerrorstatlist' ].join(' ').indexOf(nav);
+            //这里是需要逻辑处理的页面
+            var pos2 = ['index','mytestworklist','onlineclasslist'].join(' ').indexOf(nav);
+
+            var person = new FloatPerson();
+            person.move_left("cls_float_person", 600);
+            person.move_right("cls_float_person", 600);
+            if ((pos1 > -1) && (pos2 > -1)) {
+                // 其他页面
+                person.common();
+            }else{ 
+                if (pos1 >= 0){
+                    return (function(){
+                       ["person." +nav+"()"];
+                    }());
+                } else{
+                    if (nav == 'index'){
+                        var param = {
+                            'name': "当前登录用户姓名在这里"
+                        };
+                        param.has_course = 0;
+                        param.has_testwork = 0;
+                        person.index(param);
+                        setInterval(function(){
+                            person.index(param);
+                        },3000);
+                    }else if (nav == 'mytestworklist') {
+                        person.mytestworklist(0);
+                    } else if (nav == 'onlineclasslist'){
+                        person.onlineclasslist(0);
+                    }
+                }
+            } 
+        });
+        </script>
+    </head>
+    <body class="cls_body">
+        <div class="cls_float_person">
+            <div class="cls_float_word"> 好好学习，天天向上！ </div>
+            <div class="cls_hide_word"> 隐藏 </div>
+        </div>
+        <div class="cls_float_hide_person cls_hide"> </div>
+        <div class="cls_auto">
+            <div class="cls_std_header"></div>
+            <div class="cls_std_main clearfix">
+                <div class="cls_std_main_left cls_left"></div>
+                <div class="cls_left cls_std_main_middle">
+                    <div class="cls_info_header">
+                        <div class="cls_info_resize_h clearfix">
+                            <img src="/zmcat/css/student/images/index/cls_logo.png" class="cls_left"/>
+                            <span class="cls_logout"> <a href="/student/index/logout">退出登录</a> </span>
+                            <span class="cls_return_index">学生： <a href="/student/profile/index"><?=$stu_info['last_name'].$stu_info['first_name'];?></a> </span>
+                            <span class="cls_return_index"> </span>
+                        </div>
+                        <div class="cls_info_header_list_div">
+                            <ul class="cls_info_header_list clearfix">
+                                <?if (in_array($exam_info['subject_id'],array(2,4,5,6,10,11,3))){?>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/qici.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/zhishidian.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/tixing.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/nanyidu.png" align="top" /></li>
+                                <?}else{?>
+                                <li class="cls_second"><img src="/zmcat/css/student/images/index/qici.png" align="top" /></li>
+                                <li class="cls_second"><img src="/zmcat/css/student/images/index/zhishidian.png" align="top" /></li>
+                                <li class="cls_second"><img src="/zmcat/css/student/images/index/tixing.png" align="top" /></li>
+                                <li class="cls_second"><img src="/zmcat/css/student/images/index/nanyidu.png" align="top" /></li>
+                                <?}?>
+                                <?if (in_array($exam_info['subject_id'],array(2,4,5,6,10,11,3))){?>
+                                <?if ($exam_info['subject_id']!=3){?>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/fangfacelve.png" align="top" /></li>
+                                <?}else{?>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/xinxitiqu.png" align="top" /></li>
+                                <?}?>
+                                <?}?>
+                            </ul>
+                        </div>
+                        <div id="s">
+                               <div id="s1">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled></option>
+                                       <?if ($exam_pid_arr){?>
+                                        <?foreach ($exam_pid_arr as $value){?> 
+                                        <option value="<?=$value['exam_pid']?>" <?if ($value['exam_pid']==$current_exam['exam_pid']){?>selected="selected" <?}?>><?=$value['exam_name']?></option>
+                                        <?}?>
+                                        <?}else{?>
+                                         <option value=""selected="selected">暂无考试期次</option>
+                                        <?}?>
+
+                                   </select>
+                               </div>
+                              <div id="s2">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled></option>
+                                       <option value="" <?if ($current_exam['knowledge']==''){?>selected="selected" <?}?>>不限</option>
+                                     <?foreach ($knowledge_name_id as $key =>$value){?>
+                                       <option value="<?=$key;?>"<?if ($key==$current_exam['knowledge']){?>selected="selected" <?}?>><?=$value;?></option>
+                                        <?}?>
+                                   </select>
+                               </div>
+                               <div id="s3">
+                                    <?$qtype= C('qtype');?>
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled></option>
+                                       <option value="" <?if ($current_exam['qtype']==''){?>selected="selected" <?}?>>不限</option>
+                                       <?foreach ($subject_qtype_id as $value){?>
+                                        <?if ($value !=12 ){?>
+                                       <option value="<?=$value?>"<?if ($value==$current_exam['qtype']){?>selected="selected" <?}?>><?=$qtype[$value]?></option>
+                                       <?}?>
+                                       <?}?>
+                                   </select>
+                               </div>
+                               <div id="s4">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled></option>
+                                       <option value="" <?if ($current_exam['difficulty']==''){?>selected="selected" <?}?>>不限</option>
+                                       <option value="1" <?if ($current_exam['difficulty']=='1'){?>selected="selected" <?}?>>低</option>
+                                       <option value="2" <?if ($current_exam['difficulty']=='2'){?>selected="selected" <?}?>>中</option>
+                                       <option value="3" <?if ($current_exam['difficulty']=='3'){?>selected="selected" <?}?>>高</option>
+                                   </select>
+                               </div>
+                               <?if ($bShowS5){?>
+                                <?if ($exam_info['subject_id']!=3){?>
+                               <div id="s5">
+                                   <select class="cs-select cs-skin-border">
+                                         <option value="" disabled></option>
+                                         <option value="" <?if ($current_exam['method_tactic']==''){?>selected="selected" <?}?>>不限</option>
+                                         <?foreach ($method_tactic_arr as $key =>$value){?>
+                                         <option value="<?=$key;?>"<?if ($key==$current_exam['method_tactic']){?>selected="selected" <?}?>><?=$value;?></option>
+                                        <?}?>
+                                    </select>
+                               </div>
+                                <?}else{?>
+                                 <div id="s6">
+                                   <select class="cs-select cs-skin-border">
+                                         <option value="" disabled></option>
+                                         <option value="" <?if ($current_exam['group_type']==''){?>selected="selected" <?}?>>不限</option>
+                                          <?foreach ($group_type_arr as $key =>$value){?>
+                                         <option value="<?=$key;?>"<?if ($key==$current_exam['group_type']){?>selected="selected" <?}?>><?=$value;?></option>
+                                        <?}?>
+                                   </select>
+                               </div>
+                                <?}?>
+                                <?}?>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                    <div class="cls_resize_div"></div>
+
+<script type="text/javascript">
+(function() {
+                [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {    
+                    new SelectFx(el);
+                } );
+            })();
+</script>
+
+<script type="text/javascript">
+$(function(){
+    $("#s1 .cs-options li").click(function(){$("#id_query_form input[name='search_exam_id']").get(0).value = '';fnClear234Value();fnSetQueryValue('search_exam_pid', $(this).attr('data-value'));});
+    $("#s2 .cs-options li").click(function(){fnSetQueryValue('search_knowledge_id', $(this).attr('data-value'));});
+    $("#s3 .cs-options li").click(function(){fnSetQueryValue('search_qtype_id', $(this).attr('data-value'));});
+    $("#s4 .cs-options li").click(function(){fnSetQueryValue('search_difficulty_id', $(this).attr('data-value'));});
+    $("#s5 .cs-options li").click(function(){fnSetQueryValue('search_method_tactic_id', $(this).attr('data-value'));});
+    $("#s6 .cs-options li").click(function(){fnSetQueryValue('search_group_type_id', $(this).attr('data-value'));});
+
+    $("#s .cs-options li span").each(function(){
+        $(this).attr('title', $(this).text());
+    });
+});
+
+function fnSetQueryValue(key, val)
+{
+    $("#id_query_form input[name='" + key + "']").get(0).value = val;
+    $("#id_query_form").submit();
+}
+
+function fnClear234Value()
+{
+    $("#id_query_form input[name='search_knowledge_id']").get(0).value = '';
+    $("#id_query_form input[name='search_qtype_id']").get(0).value = '';
+    $("#id_query_form input[name='search_difficulty_id']").get(0).value = '';
+    $("#id_query_form input[name='search_method_tactic_id']").get(0).value = '';
+    $("#id_query_form input[name='search_group_type_id']").get(0).value = '';
+};
+
+function fnSelectSubject(exam_id)
+{
+    fnClear234Value();
+    fnSetQueryValue('search_exam_id', exam_id);
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--   /// include(common/header.phtml)  -->
+<?php $this->load->view('common/mathjax');?>
+<style type="text/css">
+    .cls_info_line {
+        /*
+    	background: url("/zmcat/css/student/images/index/cls_student_main_bg.png")
+    		repeat-y; 
+        background-position: 9px 20px; */
+    	height: 780px;
+    }
+    
+    .cls_search_list {
+    	margin-top: 58px;
+    }
+    
+    .cls_search_list li {
+    	height: 37px;
+    	line-height: 37px;
+    	font-size: 14px;
+    }
+    
+    .cls_search_list li span {
+    	padding-left: 5px;
+    	padding-right: 5px;
+    }
+    
+    .cls_search_list li span a {
+    	color: #323a45;
+    }
+    .cls_knowledge_list{
+	    width:750px;
+    }    
+    .cls_knowledge_list ul {
+    	padding-left: 40px;
+    	margin-top:20px;
+    }
+    
+    .cls_knowledge_list li a {
+    	color: #323a45; 
+    	font-size:16px;
+    }
+    
+    .cls_knowledge_list li {
+    	height: 37px;
+    	line-height: 37px;
+    	padding-left: 5px;
+    }
+    .cls_white_space{
+	    white-space:nowrap;
+    }
+    em {
+    	background: #099ad1;
+    	padding: 5px;
+    	color: white;
+    	border-radius: 5px;
+    }
+    
+    .cls_ul_page {
+    	width: 660px;
+    	margin: 0 auto;
+    	height: 26px;
+    	line-height: 26px;
+    	margin-top: 16px;
+    }
+    
+    .cls_ul_page ul li {
+    	float: left;
+    	padding: 5px;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	border-radius: 6px;
+    	margin-left: 5px;
+    	cursor: pointer;
+    }
+    
+    .cls_ul_page ul li.cls_page_num {
+    	background: white;
+    	border: 1px solid #323a45;
+    	padding-top: 0px;
+    	padding-bottom: 0px;
+    	margin-top: 5px;
+    	padding-left: 8px;
+    	padding-right: 8px;
+    }
+    
+    .cls_page_bg {
+    	background: #099ad1;
+    	color: white;
+    }
+    
+    .cls_search_list li .cls_current {
+    	background: #099ad1;
+    	padding: 5px;
+    	color: white;
+    	border-radius: 5px;
+    }
+    
+    .cls_width_580 {
+    	width: 580px;
+    }
+    
+    .cls_header_search {
+    	padding: 10px;
+    	font-size: 14px;
+    	cursor: pointer;
+    	border-top-left-radius: 10px;
+    	border-top-right-radius: 10px;
+    }
+    
+    .cls_position_relative {
+    	position: relative;
+    }
+    
+    .cls_search_box {
+    	padding-left: 10px;
+    	font-size: 14px;
+    	display: none;
+    	min-height: 60px;
+    	background: white;
+    	z-index: 20;
+    	line-height: 30px;
+    	border: 1px solid #dedede;
+    }
+    
+    .cls_search_box .cls_c {
+    	margin-right: 10px;
+    }
+    
+    .cls_search_box .cls_c a {
+    	color: #323a45;
+    }
+    
+    .cls_search_span {
+    	font-size: 14px;
+    	cursor: pointer;
+    	margin-left: 10px;
+    	margin-top: 2px;
+    }
+    
+    .cls_close_x {
+    	float: right;
+    	width: 6px;
+    	height: 6px;
+    	border-radius: 10px;
+    	background: white;
+    	padding: 5px;
+    	font-size: 12px;
+    	line-height: 3px;
+    	margin-top: 2px;
+    	margin-left: 4px;
+    	text-align: center;
+    	border: 1px solid #323a45;
+    	margin-top: 8px;
+    }
+    
+    .cls_current_header {
+    	background: white;
+    	border: 1px solid #dedede;
+    	border-bottom: 0px;
+    	position: relative;
+    	z-index: 30;
+    }
+    
+    .cls_btn {
+    	cursor: pointer;
+    }
+    
+    .cls_pointer {
+    	cursor: pointer;
+    }
+    .cls_title_order{
+    	background: url("/zmcat/css/student/images/myclass/cls_title_bg_bl.png") no-repeat;
+    	height: 45px;
+    	width: 180px;
+    	text-align: center;
+    	font-size: 18px;
+    	line-height: 45px;
+    	color: #fffbec;
+    	font-weight: bold;
+    	margin-top: 30px;
+    	margin-left: 20px;
+    }
+    .cls_tc_right{
+    	margin-right: 48px;
+    	margin-top: 26px;
+    }
+    .cls_tc_right li{
+    	height: 34px;
+    	line-height: 34px;
+    	font-size: 16px;
+    	text-align: right;
+    }
+    .cls_color_346f6a{
+    	color: #346f6a;
+    	cursor: pointer;
+    }
+    .cls_color_323a45{
+    	color: #323a45;
+    }
+    .cls_resize_page{
+    	margin-left: 40px;
+    	margin-top:4px;
+    }
+    .cls_paginator{
+    	margin-right: 30px;
+    	margin-top: 46px;
+    }
+    .cls_header_resize{
+        *height: 74px;
+    }
+
+
+
+    .cls_info_header_title {
+    	height: 65px;
+    	/*width: 180px;*/
+    	/*background: url("/css/student/images/myclass/cls_info_header_title.png") no-repeat; */
+    	line-height: 69px;
+    	text-align: center;
+    	font-size: 16px;
+    }
+    
+    .cls_info_header_title_middle {
+    	height: 65px;
+    	font-weight: bold;
+    	background:
+    		url("/css/zmcat/student/images/myclass/cls_info_header_title_middle.png")
+    		repeat-x;
+    }
+    
+    .cls_info_header_title_left {
+    	width: 40px;
+    	height: 65px;
+    	background:
+    		url("/zmcat/css/student/images/myclass/cls_info_header_title_left.png")
+    		no-repeat;
+    }
+    
+    .cls_info_header_title_right {
+    	width: 38px;
+    	height: 65px;
+    	background:
+    		url("/zmat/css/student/images/myclass/cls_info_header_title_right.png")
+    		no-repeat;
+    }
+    
+    .cls_right_ul_btn {
+    	font-size: 14px;
+    	background: #00a4e8;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	border-radius: 8px;
+    	color: white;
+    	cursor: pointer;
+    }
+    
+    .cls_right_ul_btn a {
+    	color: white;
+    	text-decoration: none;
+    }
+    
+    .cls_right_ul_word {
+    	font-size: 16px;
+    	color: #ff6363;
+    	text-align: right;
+    }
+    
+    .cls_right_ul {
+    	margin-top: 20px;
+    	margin-right: 30px;
+    }
+    
+    .cls_right_ul li {
+    	line-height: 22px;
+    	margin-right: 15px;
+    }
+    
+    .cls_color_black {
+    	background: #323a45;
+    }
+
+    .cls_info_main {
+        margin-top:25px;
+    }
+    
+    .cls_info_main_car {
+    	/*background: url("/zmcat/css/student/images/myclass/cls_car_bg.png") no-repeat;*/
+    	width: 745px;
+    	margin-left: 12px;
+    	padding: 1px;
+    }
+    
+    .cls_ml_35 {
+    	margin-left: 35px;
+    }
+    
+    .cls_scroll {
+    	/*height: 600px;*/
+    	margin-left: 30px;
+    }
+    
+    .cls_infor_main_table {
+    	text-align: center;
+    	width: 99%;
+    }
+    
+    .cls_infor_main_table thead tr {
+    	height: 30px;
+    	line-height: 30px;
+    	font-size: 16px;
+    	border-bottom: 2px solid #323a45;
+    }
+    
+    .cls_infor_main_table tbody tr {
+    	height: 40px;
+    	line-height: 40px;
+    	font-size: 14px;
+    }
+    
+    .cls_infor_main_table thead tr th {
+    	font-weight: bold;
+    	text-align: center;
+    }
+    
+    .cls_infor_main_table tbody tr td {
+    	text-align: center;
+    }
+    
+    .cls_infor_main_table tbody tr td a {
+    	color: white;
+    	padding: 5px;
+    	border-radius: 5px;
+    	background: #00a4e8;
+    }
+    
+    .cls_infor_main_table tbody tr:nth-of-type(odd) {
+    	background: #D4FBF5;
+    }
+    
+    .cls_infor_main_table tbody tr:nth-of-type(even) {
+    	background: white;
+    }
+    
+    .cls_myquestion_info h1 {
+    <?/*font-weight: bold;*/?>
+    	font-size: 16px;
+    	padding-right: 10px;
+    	line-height: 37px;
+    }
+    
+    .cls_myquestion_info ul li {
+    	line-height: 37px;
+    	font-size: 14px;
+    	/*padding: 6px; *//*       height: 25px;
+            line-height: 25px;*/
+    }
+    .cls_myquestion_info p span{
+        line-height: 140%;
+    }
+
+    label {
+    	cursor: pointer;
+    }
+    
+    .cls_myquestion_btn a {
+    	font-size: 16px;
+    	background: #57ce95;
+    	padding: 10px;
+    	margin-right: 30px;
+    	color: white;
+    	border-radius: 5px;
+    	box-shadow: 1px 2px 3px #dedede;
+    }
+    
+    
+    .cls_scrool_btn {
+    	margin-left: 6px;
+    }
+    
+    .cls_scrool_btn a{
+    	padding: 5px;
+    	background: white;
+    	border-radius: 5px;
+    	color: #323a45;
+    	border: 1px solid #323a45;
+    	margin-left: 10px;
+    }
+    .cls_li_a a{
+    	color: white;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	background: #323a45;
+    	margin-left: 10px;
+    	border-radius: 8px;
+    	font-size: 12px;
+    	height: 30px;
+    	line-height: 30px;
+    	margin-top: 4px;
+    }
+    .cls_resize_myquestion h1{
+    	line-height: 38px;
+    }
+    .cls_resize_myquestion ul{
+    	margin-top: 0px;
+    }
+
+     .cls_my_answer {
+        width:700px;
+        font-size:2em;
+       
+    }
+    .cls_my_answer p{
+        font-size:1.11em;
+        line-height: 38px;
+    	text-indent: 1em;
+    	padding-right: 10px;
+    }
+
+     .cls_my_answer_sub p{
+        font-size:1.05em;
+        line-height: 37px;
+    	text-indent: 2em;
+        padding-right: 10px;
+        margin-top:3px;
+    }
+
+    .cls_my_answer_11_3 p{
+        font-size:1.15em;
+        line-height: 38px;
+    	text-indent: 2em;
+        padding-right: 10px;
+    }
+
+     .cls_my_answer_11_1 p{
+        font-size:1.15em;
+        line-height: 38px;
+    	text-indent: 2em;
+        padding-right: 10px;
+    }
+    
+     .cls_my_answer li{
+        border-bottom:1px dashed gray;
+        line-height:37px;
+    }
+    .cls_overflow_scroll {
+    	height: 670px;
+    	overflow-y: scroll;
+    	overflow-x\0: hidden;
+    	background: url("/zmcat/css/student/images/myclass/cls_1_px.png");
+    }
+
+
+    .cls_color_blue{
+        color: #099ad1;
+    }
+    .cls_color_red{
+        color: #ff6161;
+    }
+    .cls_color_green {
+        color: #57ce95;
+    }
+
+    .cls_color1_red{
+        color: #ff6161;
+        float:left;
+    }
+    .cls_color1_green {
+        color: #57ce95;
+        float:left;
+    }
+
+    .cls_color_lightgray{
+        color: #999999;
+        
+    }
+   
+
+</style>
+<script type="text/javascript">
+$(function(){
+	$(".cls_show_error").click(function(){
+		$(this).children('.cls_right').next().show().parent().siblings().children('.cls_right').next().hide();
+	});
+    
+    $(".cls_header_search").click(function(){
+        $(".cls_plus").html("+");
+        $(".cls_search_box").hide();
+        $(this).addClass("cls_current_header").siblings().removeClass("cls_current_header");
+        
+        var search = $(".cls_search_box:eq(" + $(this).index() +")");
+        var height = search.height();
+        search.show().css("bottom","1px");
+        $(".cls_change").css("bottom",height + "px");
+        $(this).find(".cls_plus").html("-");
+    });
+
+    $(window).load(function(){$(".cls_knowledge_list span").css("position","");});
+});
+
+$(function(){
+    // 查看试题
+        var scroll = $(".cls_scroll").height();
+
+        if(scroll < 670)
+        {
+            $(".cls_scroll").removeClass("cls_overflow_scroll");
+        }
+        else
+        {
+            $(".cls_scroll").addClass("cls_overflow_scroll");
+        }
+        if(isie7()){
+            $("span").removeAttr("style");
+        }
+    });
+
+var href = window.location.pathname;
+$(function(){
+    $(".cls_c").children('a').each(function(){
+        if ($(this).attr('href') == href)
+        {
+            $(this).addClass('cls_current');
+        }
+    });
+
+    $(".cls_close_time").click(function(){
+    	location.href="/errorlist?subject_id=1";
+    });
+
+    $(".cls_close_subject").click(function(){
+        location.href="/errorlist?subject_id=2";
+    });
+
+    $(".cls_close_grade").click(function(){
+        location.href="/errorlist?subject_id=3";
+    });
+
+    var a_width;
+    $(".cls_knowledge_list ul li a").each(function(){
+        $(this).addClass('cls_white_space');
+        a_width = $(this).width();
+        if (a_width > 703)
+        {
+            $(this).parent().height((parseInt(a_width/703)+1)*37);
+            $(this).removeClass('cls_white_space');
+        }
+    });
+});
+
+function fnshowblueerror(){
+	$('.cls_blue_error').show();$('.cls_red_error').hide();
+	$('.cls_b').removeClass('cls_dialog_current_btn').addClass('cls_dialog_btn');
+	$('.cls_r').removeClass('cls_dialog_btn').addClass('cls_dialog_current_btn');
+}
+function fnshowrederror(){
+	$('.cls_red_error').show();$('.cls_blue_error').hide();
+	$('.cls_r').removeClass('cls_dialog_current_btn').addClass('cls_dialog_btn');
+	$('.cls_b').removeClass('cls_dialog_btn').addClass('cls_dialog_current_btn');
+}
+</script>
+<?/* $myexamlist = array(); 
+$subject = C('subject');
+foreach ($exam_subject_list as $val) { 
+    $myexamlist[$val['exam_pid']][] = array(
+        'exam_id' => $val['exam_id'], 
+        'exam_name' => $val['exam_name'], 
+        'subject_id' => $val['subject_id'], 
+        'subject_name' => $val['subject_name']);
+} 
+?>
+var myexamlist = <?=json_encode($myexamlist)*/?>
+<div class="cls_info_main" id="id_ques_list"   style="height:780px;overflow:auto;">
+    <div class="cls_info_line clearfix">
+        <div class="cls_search_info ">
+           <div class="clearfix cls_header_resize">
+                <div class="cls_title_order cls_left">错题列表</div>
+                 <div class="cls_right">
+                    <ul class="cls_tc_right">
+                    <li class="cls_color_346f6a"><?/*<?=date('Y-m-d',$current_exam['do_time']);*/?></li>
+                    </ul>
+                </div>
+                </div>
+            <div class="cls_knowledge_list">
+                <ul>
+                    <?if ($error_ques_list){?>
+                    <?$i=0;?>
+                    <?foreach ($error_ques_list as $key =>$item){$i++;?>
+                    <li> 
+                        <? $title = trim(strip_tags($item['title']));?>
+                        <a href="javascript:void(0);" onclick='$("#id_ques_content_<?=$item['ques_id']?>").show();$("#id_ques_list").hide();'><?=$i?>.
+                            <?if (!($title)){?>请查看题目详情<?}?>
+                        <? if (mb_strlen($title, 'utf-8') > 200){echo mb_substr($title, 0, 200, 'utf-8') .'...';} else {echo $title;}?>
+                        </a>
+                     </li>
+                    <?}?>
+                    <?}else{?>
+                        <li style="font-size:16px;">目前还没有错题。<li>
+                    <?}?>
+                </ul>
+            </div>
+            <div class="cls_resize_page">
+            </div>
+        </div>
+    </div>
+</div>
+
+<?/*展示题目信息*/?>
+
+
+<? $subject = C('subject');?>
+<? $zmcat_enabled = C('zmcat_studyplus_enabled');?>
+<? if ($error_ques_list) foreach ($error_ques_list as $key =>$item){?>
+<div class="cls_info_main cls_ques_content" id="id_ques_content_<?=$item['ques_id']?>" style="display:none">
+        <div class="cls_info_line clearfix">
+        <div class="clearfix">
+            <div class="cls_left cls_title_order clearfix">错题分析
+            </div>
+            <div class="cls_right">
+                <ul class="clearfix cls_right_ul cls_scroll">
+                    <li class="cls_right_ul_word"><a href="javascript:void(0)" onclick='$("#id_ques_list").show();$("#id_ques_content_<?=$item['ques_id'];?>").hide();'>返回错题列表</a></li>
+                    <li class="cls_right_ul_word" style="width:500px;"><?/*?><?if (!($item['type']==11)){?><?if ($item['knowledge_name']){?>所属知识点：<?=trim($item['knowledge_name']);?><?}}?><?*/?>
+                    <?if (!($item['type']==11)){?><?if ($item['knowledge_know_process']){?><span class="y1">所属知识点：</span>
+                    <?foreach($item['knowledge_know_process'] as $k =>$v){?>
+                        <?if ($zmcat_enabled){?>
+                        <a href="http://student.zeming/student/index/studyplus?<?=http_build_query(array('k_zmtekid' => $v['knowledge_id'], 'kp_name' =>implode(',', $v['know_process'])))?>">
+                        <?}?>
+            <span class="<?if ($v['knowledge_grade']==1){echo "y1";}else if ($v['knowledge_grade']==2){echo "y2";}else if ($v['knowledge_grade']==3){echo "y3";}else if ($v['knowledge_grade']==4){echo "y4";}else if ($v['knowledge_grade']==5){echo "y5";}?>"><?=$v['knowledge_name'];?></span></a>
+                    <?}}}?>
+                    </li>
+                   
+                    <?if (in_array($exam_info['subject_id'],array(2,4,5,6,10,11,3))){?>
+                    <? if ($exam_info['subject_id']!=3){?>
+                    <li class="cls_right_ul_word">
+                    <?if ($item['method_tactic_name']){?><span class="y1">方法策略：</span>
+                        <?foreach($item['method_tactic_name'] as $val){?>
+                            <?if ($zmcat_enabled){?>
+                            <a href="http://student.zeming/student/index/studyplus?<?=http_build_query(array('subject_name' => $subject[$exam_info['subject_id']], 'ms_name' =>$val['method_name']))?>">
+                            <?}?>
+                        <span class="<?if ($val['method_grade']==1){echo "y1";}else if ($val['method_grade']==2){echo "y2";}else if ($val['method_grade']==3){echo "y3";}else if ($val['method_grade']==4){echo "y4";}else if ($val['method_grade']==5){echo "y5";}?>"><?=$val['method_name'];?></span></a>
+                        <?}?>
+                    <?}?>    
+                    </li>
+                    <?}else{?>
+                    <li class="cls_right_ul_word"><?if ($item['group_type_name']){?><span class="y1">信息提取方式：</span>
+                        
+                        <?foreach($item['group_type_name'] as $val){?>
+                         <?if ($zmcat_enabled){?>
+                            <a href="http://student.zeming/student/index/studyplus?<?=http_build_query(array('subject_name' => $subject[$exam_info['subject_id']], 'ms_name' =>$val['group_type_name']))?>">
+                         <?}?>
+                        <span class="<?if ($val['group_grade']==1){echo "y1";}else if ($val['group_grade']==2){echo "y2";}else if ($val['group_grade']==3){echo "y3";}else if ($val['group_grade']==4){echo "y4";}else if ($val['group_grade']==5){echo "y5";}?>"><?=$val['group_type_name'];?></span><?}}?></a>
+                        </li>
+                    <?}?>
+                    <?}?>
+                   
+                </ul>
+            </div>
+        </div>
+        <div class="cls_info_main_car">
+            <div class="cls_scroll cls_myquestion">
+                <div class="cls_myquestion_info">
+                    <h1>题目：
+                     <?$qtype = C('qtype');?>
+                     <?
+			    if (isset($qtype[$item['type']]))
+			    {
+				echo '[<font class="font_4">'.$qtype[$item['type']].'</font>]';
+			    }else{
+				echo '[<font class="font_4">未知题型</font>]';
+			    }
+?>
+                    
+                    <?if ($current_exam['do_time']){?>
+                    <span style="float:right;">做题时间：
+                    <?=date('Y-m-d',$current_exam['do_time']);?></span>
+                    <?}?>
+                    <?if (in_array($item['type'],array(4,8,11))){?>
+                    <span class="cls_title_4_8_11"><?echo $item['title'];?></span>
+                    <?}else{?>
+                    <span><?echo $item['title'];?></span>
+                    <?}?>
+                    </h1>
+                    <!-- if 这是选择题  -->
+                    <?if (in_array($item['type'],array(1,2,7))){ ?>
+                    <? $m=0;?>
+                    <ul>
+                        <?foreach ($item['option'] as $k =>$v){$m++;?>
+                        <li class="cls_color_<?=$v['is_answer'] ?'green':'red'?>">
+                           <?=chr(ord('A')+$m-1)?>.<?echo strip_tags($v['option_name']);?> <?if ($v['is_answer']){?>√<?}?> 
+                           <?print_r($v['picture'])?>
+                            <?if ($v['picture']){?>
+                                    <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v['picture'];?>"></div>
+                        <?}?>
+                        </li>
+                        
+                        <?}?>
+                        <?/* <li class="cls_scrool_btn">
+                            <a href="javascript:void(0);" onclick="">查看相关微课</a>
+                            <a href="javascript:void(0)" onclick="">查看相关学习资料</a>
+                            </li>*/?>
+                        <!-- end 这是选择题 -->
+                    </ul>
+                    
+                 <?if (!$exam_pid_info['exam_ticket_maprule']){?>   
+                <div class="cls_my_answer">
+                    <!-- 选择题 -->
+                    <ul>
+                         <h1>我的答案：</h1>
+                        <li>
+                        <?if ($item['error_answer']){?>
+                        <?=implode('；',$item['error_answer']);?> 
+                        <?}?>
+                        <?if ($item['error_picture']){?>
+                        <? foreach ($item['error_picture'] as $v){?>
+                        <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$item['error_picture'];?>">1111</div>
+                        <?}?>
+                        <?}?>
+                        </li>
+                    </ul>
+                </div>
+                <?}?>
+                <?}else if (in_array($item['type'],array(3))){?>
+                <div class="cls_my_answer">
+                    <ul>
+                        <li><p>参考答案：<?echo $item['answer'];?></p></li>
+                         <?if (!$exam_pid_info['exam_ticket_maprule']){?>  
+                        <li><p>我的答案：<?echo $nosub_ques_answer[$item['ques_id']];?></p></li>
+                        <?}?>
+                    </ul>
+                </div>
+                <?}else if (in_array($item['type'],array(11))){?>
+                <?if ($item['subject_id']==3){?> 
+                <div class="cls_my_answer_11_3">
+                    <ul>
+                        <li><p>参考范文:<?echo $item['reference_answer'];?></p></li>
+                    </ul>
+                </div>
+                <?}else{?>
+                <div class="cls_my_answer_11_1">
+                    <ul>
+                        <li><p>参考范文：<?echo $item['reference_answer'];?></p></li>
+                    </ul>
+                </div> 
+                <?}?>
+                <?}else if (in_array($item['type'],array(9))){?>
+                <div class="cls_my_answer">
+                    <ul>
+                        <li><p>参考答案：<?echo $item['answer'];?></p></li>
+                    </ul>
+                </div>
+                 <!-- 处理题组  -->
+                <?}else if (in_array($item['type'],array(0,4,5,6,8,10,15))){?>
+                <?if (!$item['sub_ques_list']){?>
+                <div class="cls_my_answer_sub">
+                    <ul>
+                       <li><p>参考答案：<?if($item['answer']){?><?echo $item['answer'];?><?}else if($item['reference_answer']){?><?echo $item['reference_answer']?><?}?></p></li>
+                    </ul>
+                </div>
+                <?}else{?>
+                    <?$n=1;?>
+                     <?foreach ($item['sub_ques_list'] as $k=>$v){?> 
+                     <?if (in_array($item['type'],array(4))){?>
+                     <?}else{?>
+                     <h1>第<?=$n++;?>题：</h1>
+                     <?}?>
+                     <div class="cls_myquestion_info cls_resize_myquestion">
+                     <span style="font-size:15px"><?echo $v['title'];?></span>
+                     <?if ($v['picture']){?>
+		        <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v['picture']?>"></div>
+                     <?}?>
+                     <!-- if 这是选择题  -->
+                     <?if (in_array($v['type'],array(1,2))){?>
+                     <? $i=0;?>
+                     <ul>   
+                        <?if (in_array($item['type'],array(4))){?>
+                         <li style ="width:8%;float:left">（<?=$n++;?>）.<li>
+                        <?}?>
+                        <? foreach ($v['option'] as $kk =>$vv){$i++;?>
+                        <?if (in_array($item['type'],array(4))){?>
+                       
+                        <li class="cls_color1_<?=$vv['is_answer'] ?'green':'red'?>" style="width:23%">
+                            <?=chr(ord('A')+$i-1)?>.<?echo strip_tags($vv['option_name']);?> <?if ($vv['is_answer']){?>√<?}?>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <?if ($vv['picture']){?>
+                              <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$vv['picture'];?>"></div>
+                            <?}?>
+                        </li>
+                        <?}else{?>
+                            <li class="cls_color_<?=$vv['is_answer'] ?'green':'red'?>">
+                            <?=chr(ord('A')+$i-1)?>.<?echo strip_tags($vv['option_name']);?> <?if ($vv['is_answer']){?>√<?}?>
+                            <?if ($vv['picture']){?>
+                              <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$vv['picture'];?>"></div>
+                            <?}?>
+                        </li>
+                            
+                        <?}?>
+                        <?}?>
+                        
+                        <?/* <li class="cls_scrool_btn">
+                            <a href="javascript:void(0);" onclick="">查看相关微课</a>
+                            <a href="javascript:void(0)" onclick="">查看相关学习资料</a>
+                            </li>*/?>
+                        <!-- end 这是选择题 -->
+                    </ul>
+                     <?if (!$exam_pid_info['exam_ticket_maprule']){?>  
+                    <div class="cls_my_answer_sub" style="align:right">
+                        <ul>
+                        <li>
+                        <p>我的答案：
+                        <?if ($v['error_answer']){?>
+                        <?=implode('　',$v['error_answer']);?> 
+                        <?}?>
+                        <?if ($v['error_picture']){?>
+                        <? foreach ($v['error_picture'] as $v){?>
+                        <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v;?>"></div>
+                        <?}?>
+                        <?}?></p>
+                        </li>
+                        </ul>
+                    </div>
+                    <?}?>
+                <? } else if (in_array($v['type'],array(5,6,8))) { ?>
+                    <div class="cls_my_answer_sub">
+                        <ul>
+                            <li><p>参考答案：<?echo $v['answer'];?></p></li>
+                            <?if (!$exam_pid_info['exam_ticket_maprule']){?>   
+                            <li><p>我的答案：
+                            <? if($v['error_answer']){?>
+                                <?echo $v['error_answer'];?>
+                            <?}?></p></li>
+                            <?}?>
+                        </ul>
+                    </div>
+                <? } else if (in_array($v['type'],array(3))) { ?>
+                    <div class="cls_my_answer_sub">
+                        <ul>
+                            <?if ($v['reference_answer']){?>
+                            <li><p>参考答案：<?echo $v['reference_answer'];?></p></li>
+                            <?}else{?>
+                            <li><p>参考答案：<?echo $v['answer'];?></p></li>
+                            <?}?>
+                            <?if (!$exam_pid_info['exam_ticket_maprule']){?>                           
+                            <li><p>我的答案：
+                            <? if($v['error_answer']){?>
+                                <?=$v['error_answer'];?>
+                            <?}?></p></li>
+                            <?}?>
+                        </ul>
+                </div>
+                <? } else if (in_array($v['type'],array(10))) { ?>
+                <div class="cls_my_answer">
+                    <div class="cls_my_answer_sub">
+                        <ul>
+                            <li><p>参考答案：<?echo $v['reference_answer'];?></p></li>
+                        </ul>
+                    </div>
+                </div>
+                <? } else if (in_array($v['type'],array(15))) { ?>
+                    <div class="cls_my_answer_sub">
+                        <ul>
+                            <?if ($v['reference_answer']){?>
+                            <li><p>参考答案：<?echo $v['reference_answer'];?>
+                                <?if ($v['picture']){?>
+                              <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v['picture'];?>"></div>
+                            <?}?></p></li>
+                            <?}else{?>
+                            <li><p>参考答案：<?echo $v['answer'];?><?if ($v['picture']){?>
+                              <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v['picture'];?>"></div>
+                            <?}?></p></li>
+                            <?}?>
+                        </ul>
+                    </div>
+                <?}?>
+                </div>
+                <?}?>
+                <?}?>
+                <?}?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?}?>
+
+<!-- include(common/footer.phtml) -->
+
+
+
+	</div>
+		<div class="cls_left">
+			<div class="cls_std_main_right">
+                            <div id="id_list_margin_top">
+                            </div>
+                            <div id="id_list">
+                            <? $subject= C('subject');?>
+                            <?if ($exam_subject_arr){?>
+                            <? foreach ($exam_subject_arr as $key => $val) { 
+                                $val['subject_name'] = $subject[$val['subject_id']];
+                                $len = mb_strlen($val['subject_name'], 'UTF-8') * 2;
+                                if ($val['subject_id']==21)
+                                { 
+                                    if ($len > 10) $len = 10; 
+                                }
+                                else
+                                {
+                                   if ($len > 6) $len = 6;
+                                }?>
+                                <div  <? if ($val['exam_id'] == $current_exam['exam_id']) echo('class="cls_select"'); else { ?> onclick="fnSelectSubject(<?=$val['exam_id']?>)"  <? }?>>
+                                    <div class="left l<?=$key+1?>" style="height:<?=$len?>em;"></div>
+                                    <div class="mid e<?=$key+1?>" style="height:<?=$len?>em;">
+
+<? $len2 = mb_strlen($val['subject_name'], 'UTF-8'); 
+$word_list = array();
+for ($i = 0; $i < $len2; $i++)
+{
+    $word_list[] = mb_substr($val['subject_name'], $i, 1, 'UTF-8');
+}
+echo(implode('<br/>', $word_list));
+?>
+</div>
+                                </div>
+                            <? } ?>
+                            <? } ?>
+                            </div>
+			</div>
+			<div class="cls_std_main_right_one" style="*width:20px;"></div>
+		</div>
+	</div>
+	<div>
+		
+	</div>
+	<div class="cls_std_footer">
+		<span><a target="_blank" href="http://www.new-steps.com">联系我们</a></span><span class="cls_copy_right">&copy; 2015 择明教育科技 浙ICP备15024677号-1</span>
+	</div>
+	<style type="text/css">
+		.cls_std_footer span{
+			line-height: 25px;
+			padding-left:10px;
+			padding-right: 10px;
+			border-right:1px solid #aaa;  
+		} 
+		.cls_resize_img_one{
+			*margin-top: 20px;
+			*margin-left: 5px;
+		}
+		.cls_resize_img_five{
+			*margin-top:10px; 
+		}
+	</style>
+
+</div>
+<div style="position:abosolute;display:none;">
+    <form id="id_query_form" name="query_form" method="get" action="<?=site_url('student/profile/errorlist')?>">
+        <input type="hidden" name="search_exam_pid" value="<?=$current_exam['exam_pid'];?>"/>
+        <input type="hidden" name="search_exam_id" value="<?=$current_exam['exam_id'];?>"/>
+        <input type="hidden" name="search_knowledge_id" value="<?=$_GET['search_knowledge_id']?>"/>
+        <input type="hidden" name="search_qtype_id" value="<?=$_GET['search_qtype_id']?>"/>
+        <input type="hidden" name="search_difficulty_id" value="<?=$_GET['search_difficulty_id']?>"/>
+        <input type="hidden" name="search_method_tactic_id" value="<?=$_GET['search_method_tactic_id']?>"/>
+        <input type="hidden" name="search_group_type_id" value="<?=$_GET['search_group_type_id']?>"/>
+    </form>
+</div>
+</body>
+</html>

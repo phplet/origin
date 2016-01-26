@@ -1,0 +1,45 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnUploadFile()
+{
+    var form = document.getElementById('id_form');
+    if (form.file.value == '')
+    {
+        alert('请选择上传文件');
+        return;
+    }
+    form.submit();
+}
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">导入授课教师
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnUploadFile()">提交</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/cteacher/ctlist')?>'">返回列表</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/cteacher/import_cteacher_excel?dl=1')?>'">下载模板</button>
+      </div>
+    </div>
+    <div id="id_file_form">
+    <form id="id_form" method="POST" action="?" enctype="multipart/form-data">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <? if ($error) { ?><tr><td colspan="2" style="text-align:center;color:red">错误信息: <?=$error?></td></tr><? } ?>
+        <? if ($success) { ?><tr><td colspan="2" style="text-align:center;color:green">成功信息: <?=$success?></td></tr><? } ?>
+      <tr>
+        <td class="altbg1" width="15%">上传文件</td>
+        <td><input type="file" name="file"/><span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">默认状态</td>
+        <td>
+<label><input type="radio" name="ct_flag" value="1" <? if ($param['ct_flag'] == '1') echo('checked="checked"'); ?>/>启用</label>
+<label><input type="radio" name="ct_flag" value="0" <? if ($param['ct_flag'] == '0') echo('checked="checked"'); ?>/>禁用</label>
+<label><input type="radio" name="ct_flag" value="<?=time()?>" <? if ($param['ct_flag'] > 1) echo('checked="checked"'); ?>/>待审</label>
+        </td>
+       </tr>
+    </table>
+     </form>
+    </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

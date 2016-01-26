@@ -1,0 +1,112 @@
+<html xmlns:m="http://www.w3.org/1998/Math/MathML">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>MathMLEditor演示</title>
+<script type="text/javascript" src="../../lib/jquery/jquery.js"></script>
+<style type="text/css" media="screen"> 
+html, body  { height:100%; }
+body { margin:0; padding:0; overflow:auto; text-align:center; background-color: #ffffff; }   
+object:focus { outline:none; }
+#flashContent { display:none; }
+</style>
+<script type="text/javascript" src="swfobject.js"></script>
+<script type="text/javascript" src="MathMLEditor.js"></script>
+<script type="text/javascript">
+function fnGetSWF()
+{
+    return swfobject.getObjectById('editML');
+}
+
+$(function(){
+    var swfVersionStr = "10.0.0";
+    // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
+    var xiSwfUrlStr = "playerProductInstall.swf";
+    var flashvars = {};
+    var params = {};
+    params.quality = "high";
+    params.bgcolor = "#ffffff";
+    params.allowscriptaccess = "sameDomain";
+    params.allowfullscreen = "true";
+    var attributes = {};
+    attributes.id = "editML";
+    attributes.name = "editML";
+    attributes.align = "middle";
+    swfobject.embedSWF(
+        "MathMLEditor.swf", "flashContent", 
+        "100%", "100%", 
+        swfVersionStr, xiSwfUrlStr, 
+        flashvars, params, attributes);
+    // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
+    swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+
+    //////////
+    fnFocus();
+});
+
+
+function fnFocus()
+{
+    var obj = swfobject.getObjectById('editML');
+    if (obj == undefined)
+    {
+        setTimeout('fnFocus();', 500);
+        return;
+    }
+    obj.focus();
+}
+</script>
+</head>
+<body>
+<center>
+<!--
+<input type="button"  value="Set LaTeX to editor" onclick="getSWF('editML').setLaTeX('\\[x^2+2x+1\\]');focusEditor();"/>
+<input type="button"  value="Get LaTeX from editor and display" onclick="alert(getSWF('editML').getLaTeX());focusEditor();"/>
+<input type="button"  value="Set MathML to editor" onclick="getSWF('editML').setMathML('<mrow><mi>x</mi><mo>+</mo><mi>y</mi></mrow>');focusEditor();"/>
+<input type="button"  value="Get MathML from editor and display" onclick="alert(getSWF('editML').getMathML());focusEditor();"/>
+<input type="button"  value="View image in browser" onclick="getSWF('editML').viewImageInBrowser(); "/>
+<input type="button"  value="Generate Image on server" onclick="getSWF('editML').saveImageOnServer(); "/><br>
+<input type="button" onclick="alert(getSWF('editML').getBase64Image('JPG', 100))" value="get base64 image JPG"/>
+<input type="button" onclick="alert(getSWF('editML').getBase64Image('PNG'))" value="get base64 image PNG"/>
+-->
+<div id="flashContent">
+<p>
+    To view this page ensure that Adobe Flash Player version 
+    10.0.0 or greater is installed. 
+</p>
+<script type="text/javascript"> 
+var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
+document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" 
+    + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+</script> 
+</div>
+<noscript>
+    <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="100%" height="100%" name="editML" id="editML">
+        <param name="movie" value="MathMLEditor.swf" />
+        <param name="quality" value="high" />
+        <param name="bgcolor" value="#ffffff" />
+        <param name="allowScriptAccess" value="sameDomain" />
+        <param name="allowFullScreen" value="true" />
+        <!--[if !IE]>-->
+        <object type="application/x-shockwave-flash" data="MathMLEditor.swf" width="100%" height="100%" name="editML" id="editML">
+            <param name="quality" value="high" />
+            <param name="bgcolor" value="#ffffff" />
+            <param name="allowScriptAccess" value="sameDomain" />
+            <param name="allowFullScreen" value="true" />
+        <!--<![endif]-->
+        <!--[if gte IE 6]>-->
+            <p> 
+                Either scripts and active content are not permitted to run or Adobe Flash Player version
+                10.0.0 or greater is not installed.
+            </p>
+        <!--<![endif]-->
+            <a href="http://www.adobe.com/go/getflashplayer">
+                <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+            </a>
+        <!--[if !IE]>-->
+        </object>
+        <!--<![endif]-->
+    </object>
+</noscript>     
+</center>
+</body>
+</html>

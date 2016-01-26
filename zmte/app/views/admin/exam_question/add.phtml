@@ -1,0 +1,223 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+<?php static_global('js/jquery/plugin/tiper.min.js');?>
+
+<script>
+var paper_id = '<?=$paper['paper_id']?>';
+var ques_list = [];
+var group_list = [];
+
+$(document).ready(function(){
+    $('#result_list,#addlist').on('dblclick', 'div', function(){
+        $(this).toggleClass('line_18');
+    });
+});
+
+function check_form(form) {                      
+    if (ques_list.length == 0) {
+        alert('还没有待添加试题');
+        return false;
+    } else {
+        $('#ques_ids').val(ques_list.join(','));
+        return true;
+    }
+}
+
+function search_question(page) {
+    var qtype = $('input:checked[name=qtype]').val();
+    var is_original = $('input:checked[name=is_original]').val();
+    var start_difficulty = $('#start_difficulty').val().trim();
+    var end_difficulty = $('#end_difficulty').val().trim();
+    if (start_difficulty.length) {
+        start_difficulty = parseInt(start_difficulty);
+        if (isNaN(start_difficulty) || start_difficulty>100) {
+            alert('开始难易度只能是0-100的数字');
+            $('#start_difficulty').focus();
+            return;
+        }
+    }
+    if (end_difficulty.length) {
+        end_difficulty = parseInt(end_difficulty);
+        if (isNaN(end_difficulty) || end_difficulty>100) {
+            alert('结束难易度只能是0-100的数字');
+            $('#end_difficulty').focus();
+            return;
+        }        
+    }
+    if (start_difficulty && end_difficulty && start_difficulty>end_difficulty) {
+        alert('请输入正确的难易度区间');
+        $('#start_difficulty').focus();
+        return;
+    }
+    var keyword = $('#keyword').val().trim();
+    var que_id_str = $('#que_id').val().trim(),
+    	que_id = parseInt(que_id_str);
+    
+    if (que_id_str.length && (isNaN(que_id) || que_id <= 0)) {
+        alert('试题ID必须是正整数');
+        $('#que_id').focus();
+        return false;
+    }
+    if (!isNaN(que_id)) {
+    	UtilTiper.message.doing('正在提交查询...', {'target': '#result_list'});
+    } else {
+        if(page>0)
+    	UtilTiper.message.doing('亲，可能会花点时间，正在努力处理哦...', {'target': '#result_list'});
+    }
+    $.post(
+        '<?=site_url('admin/exam_question/search')?>',
+        {page:page,paper_id:paper_id, qtype:qtype, start_difficulty:start_difficulty, end_difficulty:end_difficulty, keyword:keyword, que_id:que_id, is_original:is_original},
+        function(data){
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            var list = data.list;
+            var result = '';
+            var result1 = '<div id="tt">';
+            if(list.length>0)
+            {
+                for(var i=0; i<list.length; i++) {
+                    var question_id = list[i]['ques_id'];
+                    result += '<div class="line_18" alt="ques'+question_id+'"><strong>[试题ID:' +　question_id + ']</strong> [<a href="javascript://" onclick="add_question('+question_id+', \''+list[i]['group_id']+'\')">添加</a>] [<a href="<?=site_url('admin/question/preview')?>/'+question_id+'" target="_blank">预览</a>] [难易度:'+list[i]['difficulty']+'] [分组:'+list[i]['group_id']+'] '+list[i]['title']+'</div>';
+                } 
+            }
+            else
+            {
+            	result ='<font color="red"><strong>&nbsp;无符合条件的记录！</strong></font>'; 
+            }
+            
+            var result2 = '</div>';
+            var result3 = result1+result+result2;
+            var prev_page = next_page = '';
+            if (list.length == 15 && data.next_page) {
+                var next_page = '<a href="javascript:search_question('+data.next_page+')">下一页</a>';
+            }
+            if (data.prev_page) {
+                var prev_page = '<a href="javascript:search_question('+data.prev_page+')">上一页</a>';
+            }
+            if (prev_page || next_page) {
+            	result3 += '<div style="text-align:center;height:30px;padding-top:10px;">'+prev_page+' '+next_page+'</div>';
+            }
+            
+            $('#result_list').html(result3);
+            UtilTiper.message.loaded();
+/*
+            if (isNaN(que_id)) {
+	            UtilTiper.message.success('亲，搜的有点慢了，试试试题ID搜索吧，那是相当快!', {'target': '#result_list'});
+            }
+             */   
+        },
+        'json'
+    );
+}
+
+function add_question(ques_id, group_id) {
+    if ($.inArray(ques_id, ques_list) != -1) {
+        alert('该题已在待添加列表中');
+        return;
+    }
+    if (group_id > 0 && $.inArray(group_id, group_list) != -1) {
+        alert('该试题分组已存在');
+        return;
+    }
+    var string = $('#result_list').find('div[alt=ques'+ques_id+']').html();
+    string = string.replace('add_question', 'del_question');
+    string = string.replace('添加', '删除');
+    string = '<div class="line_18" alt="ques'+ques_id+'">'+string+'</div>';
+    $('#addlist').append(string);
+    
+    $('#result_list').find('div[alt=ques'+ques_id+']').remove();
+    ques_list[ques_list.length] = ques_id;
+    if (group_id)
+        group_list[group_list.length] = group_id;    
+}
+
+function del_question(ques_id, group_id) {
+    var string = $('#addlist').find('div[alt=ques'+ques_id+']').html();
+    string = string.replace('del_question', 'add_question');
+    string = string.replace('删除', '添加');
+    string = '<div class="line_18" alt="ques'+ques_id+'">'+string+'</div>';
+    $('#tt').append(string);
+    
+    $('#addlist').find('div[alt=ques'+ques_id+']').remove();
+    
+    var qindex = $.inArray(ques_id, ques_list);
+    if (qindex != -1) {
+        ques_list.splice(qindex,1);
+    }
+    if (group_id > 0) {
+        gindex = $.inArray(group_id, group_list);
+        if (gindex != -1)
+            group_list.splice(gindex,1);
+    }
+}
+
+
+</script>
+<div id="body">
+  <form name="paper_form" class="validate" id="paper_form" method="POST" action="<?=site_url('admin/exam_question/insert')?>" onsubmit="return check_form(this);">  
+  <div class="space">
+    <div class="subtitle">手工添加试卷试题</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="altbg1" width="15%">试卷名称</td>
+            <td>
+              <?=$paper['paper_name']?>
+              <input type="hidden" name="paper_id" value="<?=$paper['paper_id']?>" />
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">搜索试题</td>
+            <td>
+                <div style="height:30px;">
+                    <span style="width:100px;text-align:right;">　题目类型：</span>
+                    <input type="radio" id="original" name="is_original" value="1">
+                    <label for="original">原创</label>
+                    <input type="radio" id="exam_past" name="is_original" value="2">
+                    <label for="exam_past">真题</label>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+                <div style="height:30px;">
+                  <span style="width:100px;text-align:right;">　题型：</span> 
+                    <?php foreach(C('qtype') as $k => $v):?>
+                    <?php if ($exam['subject_id'] != 3 && in_array($k, array(4, 5, 6, 7, 8, 9))) continue;?>
+                    <input type="radio" name="qtype" id="qtype<?=$k?>" value="<?=$k?>" <?=$k==1?' checked':''?>/><label for="qtype<?=$k?>"> <?=$v?></label>
+                    <?php endforeach;?>               
+                </div>                 
+                <div style="height:30px;margin:5px 0;">
+                  <span style="width:100px;">难易度：</span> <input type="text" class="txtbox4" id="start_difficulty"> - <input type="text" class="txtbox4" id="end_difficulty">
+                </div>
+                <div style="height:30px;">
+                  <span style="width:100px;">关键字：</span> <input type="text" class="txtbox2" id="keyword"> 
+                </div>
+                <div style="height:30px;margin:5px 0;">
+                  <span style="width:100px;">试题ID：</span> <input type="text" class="txtbox2" id="que_id">
+                  <font color="red">*注意：根据试题ID查询，其他条件将不起作用</font>
+                </div>
+                <div style="height:30px;">
+                  <input type="button" value="搜索试题" class="btn2" onclick="search_question();"/>
+                </div>
+				搜索结果：
+                <div id="result_list" style="background:#FFFFE8;min-height:50px;">
+                <div id="result_list1" style="background:#FFFFE8;">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">待添加试题</td>
+            <td>
+              <div id="addlist"></div>
+              <input type="hidden" name="ques_ids" id="ques_ids" value="" />
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交添加 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

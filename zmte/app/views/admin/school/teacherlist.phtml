@@ -1,0 +1,126 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveSchoolClassBatch()
+{
+    var ids = fnGetCheckBoxValues('id_grid', "ids[]");
+    if (ids.length < 1)
+    {
+        alert('您没有选择任何记录');
+        return;
+    }
+
+    if (!confirm('确定删除所选记录吗？'))
+    {
+		return;
+    }
+    
+    ajax_removeSchoolTeacher(ids);
+}
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+<a class="menu" href="/admin/school/index" style="float:right">学校管理</a>
+<a class="menu no-ajax" href="<?=site_url('admin/school/importteacher/' . $param['scht_schid'])?>">导入</a>
+<a class="menu no-ajax" href="<?=site_url('admin/school/editteacher/' . $param['scht_schid'])?>">添加教师</a>
+<a class="menu" href="javascript:void(0)" onclick="fnRemoveSchoolClassBatch()" style="float:right">批量删除</a>
+<a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')" style="float:right">查询</a>
+
+
+学校教师管理</div>  
+    <table id="id_grid" border="0" cellspacing="0" cellpadding="0">
+      <tr class="cls_title">
+        <td width="40" class="no-ajax">删?</td>
+        <td width="150">学校名称</te>
+        <td width="100">教师</td>
+        <td width="150">任教学科</td>
+        <td width="150">任教年级</td>
+        <td width="200">个人简介</td>
+        <td width="50">状态</td>
+        <td width="80" class="no-ajax">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr class="tr_line">
+      <td class="no-ajax"><input type="checkbox" name="ids[]" value="<?=$val['ct_id']?>"></td>
+        <td><?=$school['school_name']?></td>
+        <td><?=$val['ct_name']?></td>
+        <td><?foreach ($cteacher_subjectid[$val['ct_id']] as $item) {?><?=$item['subject_name']?> <?php }?> </td> 
+        <td><?foreach ($cteacher_gradeid[$val['ct_id']] as $item) {?><?=$grade_map[$item['ctg_gradeid']]?> <?php }?></td> 
+        <td><?=$val['ct_memo']?></td>
+        <td><?  if ($val['ct_flag'] < 0) echo('已删'); 
+                else if ($val['ct_flag'] == '0') echo('禁用'); 
+                else if ($val['ct_flag'] == 1) echo('启用'); 
+                else if ($val['ct_flag'] > 1) echo('待审'); ?></td>
+        <td class="no-ajax">
+          <a href="<?=site_url('admin/school/editteacher/'.$school['school_id'].'/'.$val['ct_id'])?>">编辑</a>
+          <a href="javascript:void(0)"  onclick="if (confirm('确定要删除么？')) ajax_removeSchoolTeacher('<?=$val['ct_id']?>');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td class="no-ajax"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="8" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+
+    
+<div id="id_qry_dlg" style="display:none">
+<div class="cls_title">搜索教师信息</div>
+  <form method="GET" id="id_qry_form" name="search_form" action="<?=site_url('admin/school/teacherlist/' . $school['school_id'])?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">教师名称</td>
+                <td><input type="text" name="ct_name" value="<? Func::echo_s($param['ct_name']); ?>" class="txtbox"/></td>
+            </tr>  
+            <tr>
+                <td class="altbg1">年级</td>
+                <td>
+                    <select name="grade_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($grade_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['grade_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">学科</td>
+                <td>
+                    <select name="subject_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($subject_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['subject_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+  </form>
+<div class="cls_dialog_buttons">
+<button type="submit" onclick="document.getElementById('id_qry_form').submit()">确定</button>
+<button type="button" onclick="fnCloseDialog('id_qry_dlg')">取消</button>
+</div>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,123 @@
+<!--低于试卷平均水平折线图start-->
+<?php  if (!empty($c_level_percent['subject_count_percent_p'])) {?>
+    <h3 class="cls_row"><?=$g_sort?>&nbsp;<?=$parent_module_name?></h3>
+    <?php 
+		$fields = array_keys($c_level_percent['subject_count_percent_p']);
+		$subject_count_percent_p = isset($c_level_percent['subject_count_percent_p']) ? $c_level_percent['subject_count_percent_p'] : array();
+		$subject_count_percent = isset($c_level_percent['subject_count_percent']) ? $c_level_percent['subject_count_percent'] : array();
+	?>
+		
+    <?php if (count(array_keys($subject_count_percent_p))) {?>
+        <?php 
+           	$flash_data = array();
+           	$diff = array();
+      
+           	$flash_data[] = array('name'=>'所有考试人员', 'data' => array_values($subject_count_percent));
+
+           	
+           	foreach ($subject_count_percent_p as $key =>$val)
+           	{
+                 $t_diff = $subject_count_percent[$key] - $val;
+                 if ($t_diff > 0)
+                 {
+                     $diff[$key] = $t_diff;
+                 }
+           	}
+
+           	$flash_data[] = array('name'=>'我', 'data' => array_values($subject_count_percent_p));
+           	$fields_now_str = '';
+
+           	if ($diff)
+           	{
+           	    arsort($diff);
+           	    $fields_now = array();
+           	    $prev_diff = 0;
+           	    foreach ($diff as $key => $val)
+           	    {
+           	        if (count($fields_now) >= 3)
+           	        {
+           	            if ($val == $prev_diff)
+           	            {
+           	                $fields_now[] = $key;
+           	            }
+           	            else 
+           	            {
+           	                break;
+           	            }
+           	        }
+           	        else 
+           	        {
+           	            $fields_now[] = $key;
+           	        }
+           	        
+           	        $prev_diff = $val;
+           	    }
+           	    
+           	    $subject_count = count($fields_now);
+           	    
+           	    if ($subject_count > 2)
+           	    {
+           	        $last_subject = array_pop($fields_now);
+           	        
+           	        $fields_now_str = implode('、', $fields_now) . "和" . $last_subject;
+           	    }
+           	    else
+           	    {
+           	        $fields_now_str = implode('和', $fields_now);
+           	    }
+           	    
+           	    $fields_now_str = "数据显示，若再认真努力点，你在<span style='color:red;'>{$fields_now_str}</span>这" . ($subject_count > 1 ? ($subject_count == 2 ? "两": '几') : '') . "门学科上有较快速提升的空间。";
+           	}
+        ?>
+    <?php }?>
+
+    <div class="cls_row center" id="flash_container_lp"></div>
+
+    <?php if ($fields_now_str) {?>
+        <br>
+        <p class="cls_row" style="text-indent:15px;font-size:14px;"><?=$fields_now_str?></p>
+    <?php }?>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#flash_container_lp').highcharts({
+        		chart: {
+                        height: '400'
+                },
+                title: {
+                    text: '非难题答对率折线图',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: '',
+                    x: -20
+                },
+                colors: ['#FF6162', '#2e7ed8'],
+                xAxis: {
+                    categories: eval("("+'<?php echo json_encode(array_values($fields)); ?>'+")")
+                },
+                yAxis: {
+                    title: {
+                        text: '答对率(%)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+          	    series: eval("("+'<?php echo json_encode($flash_data); ?>'+")")
+            });
+        });
+    </script>
+<?php } ?>

@@ -1,0 +1,152 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(document).ready(function(){
+    $('td[attr^=knowledge_cid_]').hover(
+        function(){
+            var attr = $(this).attr("attr");
+            $('td[attr='+attr+']').addClass("hover");
+        },
+        function(){
+            var attr = $(this).attr("attr");
+            $('td[attr='+attr+']').removeClass("hover");
+        }
+    );
+});
+</script>
+<style>
+td.separate{
+    background:#BBDCF1;
+    width:1px;padding:0;margin:0px;
+}
+td.hover{
+    background:#BBDCF1;
+}
+</style>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">试卷详情对比</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="altbg1" width="140">试卷名称</td>
+            <td width="45%"><?=$paper1['paper_name']?></td>
+            <td class="separate"></td>
+            <td width="45%"><?=$paper2['paper_name']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">试题总数</td>
+            <td><?=$paper1['ques_num']?> 【相同数量：<?=$paper1['ques_intersect']?>】</td>
+            <td class="separate"></td>
+            <td><?=$paper2['ques_num']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">题型数量</td>
+            <td>
+                <?php foreach(C('qtype') as $k => $v):?>
+                <a href="<?=site_url('admin/exam_question/index/'.$paper1['paper_id'].'?qtype='.$k)?>" target="_blank"><?=$v?></a>：<?=$paper1['qtype_ques_num_arr'][$k]?>
+                <?php endforeach;?>
+            </td>
+            <td class="separate"></td>
+            <td>
+                <?php foreach(C('qtype') as $k => $v):?>
+                <a href="<?=site_url('admin/exam_question/index/'.$paper2['paper_id'].'?qtype='.$k)?>" target="_blank"><?=$v?></a>：<?=$paper2['qtype_ques_num_arr'][$k]?>
+                <?php endforeach;?>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">分组数量</td>
+            <td><?=$paper1['group_count']?> 【相同数量：<?=$paper1['group_intersect']?>】</td>
+            <td class="separate"></td>
+            <td><?=$paper2['group_count']?></td>
+        </tr>
+        <tr>
+            <td class="altbg1">平均难易度</td>
+            <td><?=$paper1['difficulty']?> [更新时间：<?=$paper1['uptime']?>]</td>
+            <td class="separate" style="width:1px;"></td>
+            <td><?=$paper2['difficulty']?> [更新时间：<?=$paper2['uptime']?>]</td>
+        </tr>
+        <!--  
+        <tr>
+            <td class="altbg1">技能分布</td>
+            <td>
+               <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <?php foreach($paper1['skills'] as $val):?>
+                 <tr>
+                    <td width="50%"><a href="<?=site_url('admin/exam_question/index/'.$paper1['paper_id'].'?skill='.$val['id'])?>" target="_blank"><?=$val['skill_name']?></a>：</td>
+                    <td width="20%"><?=$val['num']?></td>
+                    <td><?=$val['percent']?></td>
+                 </tr>
+                <?php endforeach;?>
+               </table>
+            </td>
+            <td class="separate"></td>
+            <td>
+               <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <?php foreach($paper2['skills'] as $val):?>
+                 <tr>
+                    <td width="50%"><a href="<?=site_url('admin/exam_question/index/'.$paper2['paper_id'].'?skill='.$val['id'])?>" target="_blank"><?=$val['skill_name']?></a>：</td>
+                    <td width="20%"><?=$val['num']?></td>
+                    <td><?=$val['percent']?></td>
+                 </tr>
+                <?php endforeach;?>
+               </table>
+            </td>
+        </tr>
+        -->
+        <tr>
+            <td class="altbg1">知识点分布</td>
+            <td valign="top">
+               <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <?php foreach($paper1['knowledges'] as $val):?>
+                 <tr>
+                    <td colspan="6" class="altbg2" style="text-align:center;">
+                      <a href="<?=site_url('admin/exam_question/index/'.$paper1['paper_id'].'?kid='.$val['id'])?>" target="_blank"><?=$val['name']?> </a>：
+                      <?=$val['num']?> (<?=$val['percent']?>)
+                    </td>
+                 </tr>
+                 <?php $index=1;$children_num=count($val['children']);?>
+                 <?php foreach($val['children'] as $k => $v):?>
+                 <?php if($index%2==1):?><tr><?php endif;?>
+                    <td width="30%" attr="knowledge_cid_<?=$v['id']?>"><a href="<?=site_url('admin/exam_question/index/'.$paper1['paper_id'].'?kid='.$v['id'])?>" target="_blank"><?=$v['name']?> </a>：</td>
+                    <td width="50" attr="knowledge_cid_<?=$v['id']?>"><?=$v['num']?></td>
+                    <td attr="knowledge_cid_<?=$v['id']?>" <?php if($index==$children_num):?> colspan="4"<?php endif;?>><?=$v['percent']?></td>
+                 <?php if($index%2==0 OR $index==$children_num):?></tr><?php endif;?>
+                 <?php $index++;?>
+                 <?php endforeach;?>
+                <?php endforeach;?>
+               </table>
+            </td>
+            <td class="separate"></td>
+            <td valign="top">
+               <table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+                <?php foreach($paper2['knowledges'] as $val):?>
+                 <tr>
+                    <td colspan="6" class="altbg2" style="text-align:center;">
+                      <a href="<?=site_url('admin/exam_question/index/'.$paper2['paper_id'].'?kid='.$val['id'])?>" target="_blank"><?=$val['name']?> </a>：
+                      <?=$val['num']?> (<?=$val['percent']?>)
+                    </td>
+                 </tr>
+                 <?php $index=1;$children_num=count($val['children']);?>
+                 <?php foreach($val['children'] as $k => $v):?>
+                 <?php if($index%2==1):?><tr><?php endif;?>
+                    <td width="30%" attr="knowledge_cid_<?=$v['id']?>"><a href="<?=site_url('admin/exam_question/index/'.$paper2['paper_id'].'?kid='.$v['id'])?>" target="_blank"><?=$v['name']?> </a>：</td>
+                    <td width="50" attr="knowledge_cid_<?=$v['id']?>"><?=$v['num']?></td>
+                    <td attr="knowledge_cid_<?=$v['id']?>"<?php if($index==$children_num):?> colspan="4"<?php endif;?>><?=$v['percent']?></td>
+                 <?php if($index%2==0 OR $index==$children_num):?></tr><?php endif;?>
+                 <?php $index++;?>
+                 <?php endforeach;?>
+                <?php endforeach;?>
+               </table>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="button" name="back" value=" 试卷列表 " onclick="location='<?=site_url('admin/paper/index/'.$paper1['exam_id'])?>'" class="btn" />
+
+    <input type="button" name="back" value=" 交换位置 " onclick="location='<?=site_url('admin/paper/compare/'.$paper2['paper_id'].'/'.$paper1['paper_id'])?>'" class="btn" />
+  </center>   
+</div>
+<?php $this->load->view('common/footer');?>

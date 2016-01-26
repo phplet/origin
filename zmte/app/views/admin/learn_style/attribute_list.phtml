@@ -1,0 +1,50 @@
+<?php
+/**
+ * 后台管理->素质相关管理->学习风格管理
+ */
+$this->load->view('common/header');?>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    <?php if ($priv_edit && count($list) < 2) {?>
+    <a class="menu" href="<?=site_url('admin/learn_style/edit_attribute/'.$learnstyle['learnstyle_id'])?>">添加学习风格</a>
+    <?php }?>
+    <a class="menu" href="<?=site_url('admin/learn_style/index/')?>">学习风格管理</a>
+            学习风格管理
+   </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="5%">属性</td>
+        <td width="10%">学习风格</td>
+        <td width="35%">定义</td>
+        <td width="35%">建议</td>
+        <td width="10%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$val['lsattr_value'] == 1 ? '正向' : '反向'?></td>
+        <td><?=$val['lsattr_name']?></td>
+        <td><?=$val['lsattr_define']?></td>
+        <td><?=$val['lsattr_advice']?></td>
+        <td>
+          <?php if ($priv_edit) {?>
+          <a href="<?=site_url("admin/learn_style/edit_attribute/{$val['lsattr_learnstyleid']}/{$val['lsattr_value']}")?>">编辑</a>
+          <?php } ?>
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url("admin/learn_style/remove_attribute/{$val['lsattr_learnstyleid']}/{$val['lsattr_value']}")?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+</div>
+
+<?php $this->load->view('common/footer');?>

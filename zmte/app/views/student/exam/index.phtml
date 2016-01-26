@@ -1,0 +1,105 @@
+<? $this->load->view('common/exam_header'); ?>
+<style type="text/css">
+.cls_proditem {
+    display:table-cell;
+    height:500px;
+    width: <?=(100/count($pclist))?>%;
+    color:white;
+}
+
+.cls_proditem_content {
+    display:table;
+    margin:51px auto 51px auto;
+    height:399px;
+    width:80%;
+}
+
+.cls_proditem_content .cls_proditem_content_left {
+    display:table-cell;
+    width:40px;
+    background-image:url(<?=site_url('images/exam/pc_bg_l.png')?>);
+}
+.cls_proditem_content .cls_proditem_content_center {
+    display:table-cell;
+    background-image:url(<?=site_url('images/exam/pc_bg_c.png')?>);
+}
+.cls_proditem_content .cls_proditem_content_right {
+    display:table-cell;
+    width:40px;
+    background-image:url(<?=site_url('images/exam/pc_bg_r.png')?>);
+}
+
+.cls_proditem_content:hover .cls_proditem_content_left {
+    background-image:url(<?=site_url('images/exam/pc_bg_hover_l.png')?>);
+}
+.cls_proditem_content:hover .cls_proditem_content_center {
+    background-image:url(<?=site_url('images/exam/pc_bg_hover_c.png')?>);
+}
+.cls_proditem_content:hover .cls_proditem_content_right {
+    background-image:url(<?=site_url('images/exam/pc_bg_hover_r.png')?>);
+}
+
+.cls_pcc_title {
+    font-size:1.5em;
+    font-weight:bold;
+    margin-top:20px;
+    height:40px;
+    text-align:center;
+}
+
+.cls_pcc_memo {
+    margin-top:10px;
+    height:260px;
+    text-indent:32px;
+    font-size:1.1em;
+}
+
+.cls_pcc_go {
+    height:53px;
+    width:55px;
+    margin:0 auto 0 auto;
+    background-image:url(<?=site_url('images/exam/pc_go.png')?>);
+    cursor:pointer;
+}
+
+.cls_pcc_go_disabled {
+    height:53px;
+    width:55px;
+    margin:0 auto 0 auto;
+    background-image:url(<?=site_url('images/exam/pc_go_disabled.png')?>);
+}
+
+.cls_pagetip {
+    border-bottom:1px dashed gray;
+    padding:4px;
+}
+</style>
+<? if ($uinfo['uid']) { ?>
+<div class="cls_pagetip">
+帐号余额: <?=$student['account']?><?=C('virtual_currency')['fullname']?> &nbsp; &nbsp; &nbsp; &nbsp;
+<? if (C('paycharge_enable')) { ?>
+<a target="_blank" href="<?=site_url('student/profile/pay')?>" style="color:red;text-decoration:underline">立即充值</a>
+<? } ?>
+
+<a style="float:right" href="<?=site_url('student/exam/examresult')?>">查看历史成绩</a>
+</div>
+<? } ?>
+
+<div style="display:table;width:100%">
+<? foreach ($pclist as $val) { ?>
+  <div class="cls_proditem">
+    <div class="cls_proditem_content">
+       <div class="cls_proditem_content_left">
+       </div>
+       <div class="cls_proditem_content_center">
+         <div class="cls_pcc_title"><?=$val['pc_name']?></div>
+         <div class="cls_pcc_memo"><?=nl2br($val['pc_memo'])?></div>
+         <div <? if (!in_array(trim($val['pc_name']), array('模拟测试', '对比测评'))) { ?>class="cls_pcc_go" onclick="location.href='<?=site_url('student/exam/examlist/' . $val['pc_id'])?>'" <? } else { ?>class="cls_pcc_go_disabled"<? } ?>></div>
+       </div>
+       <div class="cls_proditem_content_right">
+       </div>
+     </div>
+  </div>
+<? } ?>
+</div>
+<? $this->load->view('common/exam_footer'); ?>

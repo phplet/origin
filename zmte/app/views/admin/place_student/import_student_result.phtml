@@ -1,0 +1,45 @@
+<?php $this->load->view('common/header');?>
+<style>
+.import_msg {height:18px; line-height:18px; float:left;}
+.fc_red { color: red;}
+.fc_blue { color: blue;}
+.clear {clear:both;}
+</style>
+<div id="body">
+    <div class="space">
+        <div class="subtitle">批量导入学生结果反馈</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>
+                <span class="fc_red">Excel文件中共<?=$stat['total']?>个学生，成功导入<?=$stat['success']?>个，失败<?=$stat['fail']?>个，有<?=$stat['exist']?>个学生已经在系统中存在了。</span>
+            </td>
+        </tr>
+		<tr>
+            <td>
+            <?php if (!empty($message['fail'])) {?>
+                <?php if (!empty($message['fail']['student_name'])) {?>
+                    <div class="fc_red"><?=implode('，', $message['fail']['student_name'])?> 导入失败。失败原因：学生姓名不能为空</div>
+                <?php }?>
+                <?php if (!empty($message['fail']['exam_ticket'])) {?>
+                    <div class="fc_red"><?=implode('，', $message['fail']['exam_ticket'])?> 导入失败。失败原因：学生准考证号不能为空</div>
+                <?php }?>
+                <?php if (!empty($message['fail']['exam_ticket_error'])) {?>
+                    <div class="fc_red"><?=implode('，', $message['fail']['exam_ticket_error'])?> 导入失败。失败原因：学生准考证号格式不正确</div>
+                <?php }?>
+                <?php if (!empty($message['fail']['insert_fail'])) {?>
+                    <div class="fc_red"><?=implode('，', $message['fail']['insert_fail'])?> 导入失败。失败原因：数据插入系统失败，请重新导入</div>
+                <?php }?>
+            <?php }?>
+            <?php if (!empty($message['exist'])) {?>
+                <div class="fc_blue"><?=implode('，', $message['exist'])?> 在系统中已存在，不需要重复导入。</div>
+            <?php }?>
+            </td>
+        </tr>
+        </table>
+        <center>
+            <input type="button" name="back" value=" 返回 " onclick="location.href='<?=site_url('admin/place_student/index/'.$place_id)?>'" class="btn" />
+        </center>
+    </div>
+</div>
+
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,261 @@
+<? $this->load->view('common/header');?>
+<? static_global(array('js/common/address.js', 'js/common/region.js')); ?>
+<script type="text/javascript">
+function fnSetCooperationAddRuleText(addinc, addfreqday, addenddate)
+{
+    if (addinc > 0 && addfreqday > 0 && addenddate != '')
+    {
+        $("#id_cooperation_addrule").text('每' + addfreqday + '天自动增加' + addinc + '合作度,持续到' + addenddate);
+        $("#id_cooperation_addrule_showdlg").css('display', 'none');
+        $("#id_cooperation_addrule_clear").css('display', 'inline');
+    }
+    else
+    {
+        $("#id_cooperation_addrule").text('[现无自动增加规则]');
+        $("#id_cooperation_addrule_clear").css('display', 'none');
+        $("#id_cooperation_addrule_showdlg").css('display', 'inline');
+    }
+}
+
+function fnClearExistCooperationAddRule()
+{
+    $("#id_ti_cooperation_addinc").attr('value', '0');
+    $("#id_ti_cooperation_addfreqday").attr('value', '0');
+    $("#id_ti_cooperation_addenddate").attr('value', '');
+    fnSetCooperationAddRuleText(0, 0, '');
+}
+
+function fnSetCooperationAddRule()
+{
+    var param = fnGetFormData('id_ti_cooperation_addrule_dlg');
+    var addinc = parseInt(param['ti_cooperation_addinc']);
+    if (isNaN(addinc) || addinc < 1)
+    {
+        alert('增加合作度值必须为正整数');
+        return;
+    }
+    param['ti_cooperation_addinc'] = addinc;
+    if (param['ti_cooperation_addfreqday'] == undefined)
+    {
+        alert('请选择增加频率');
+        return;
+    }
+    if (param['ti_cooperation_addenddate'] == undefined)
+    {
+        alert('请选择持续时长');
+        return;
+    }
+    $("#id_ti_cooperation_addinc").attr('value', param['ti_cooperation_addinc']);
+    $("#id_ti_cooperation_addfreqday").attr('value', param['ti_cooperation_addfreqday']);
+    $("#id_ti_cooperation_addenddate").attr('value', param['ti_cooperation_addenddate']);
+    fnSetCooperationAddRuleText(param['ti_cooperation_addinc'], 
+        param['ti_cooperation_addfreqday'], 
+        param['ti_cooperation_addenddate']);
+    fnCloseDialog('id_ti_cooperation_addrule_dlg');
+}
+
+function fnSaveTIInfo()
+{
+    var param = fnGetFormData('id_ti_form');
+    if ($.trim(param['ti_name']) == '')
+    {
+        alert('培训机构名称不可为空');
+        return;
+    }
+    if (param['ti_typeid'] == '')
+    {
+        alert('请选择培训机构类型');
+        return;
+    }
+    if (param['ti_priid'] == '')
+    {
+        alert('请选择培训机构优先级');
+        return;
+    }
+    if (param['ti_provid'] < 1)
+    {
+        alert('请选择培训机构所在省');
+        return;
+    }
+    var ti_stumax = parseInt(param['ti_stumax']);
+    if (isNaN(ti_stumax) || ti_stumax < 1)
+    {
+        alert('请写每学年学员人数');
+        return;
+    }
+    var ti_reputation = parseInt(param['ti_reputation']);
+    if (isNaN(ti_reputation))
+    {
+        alert('请填写声誉值');
+        return;
+    }
+    var ti_cooperation = parseInt(param['ti_cooperation']);
+    if (isNaN(ti_cooperation))
+    {
+        alert('请填写合作度');
+        return;
+    }
+    ajax_setTI(param);
+}
+
+$(function(){
+    fnSetCooperationAddRuleText(<?=intval($ti_info['ti_cooperation_addinc'])?>,
+        <?=intval($ti_info['ti_cooperation_addfreqday'])?>,
+        '<?=trim($ti_info['ti_cooperation_addenddate'])?>');
+});
+
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle"><?=$ti_info['ti_id'] ? '编辑': '新增'?>培训机构<? if ($ti_info['ti_id']) echo('(ID:' . $ti_info['ti_id'] . ')'); ?>
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnSaveTIInfo()">保存</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/tilist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">重新载入</button>
+      </div>
+    </div>
+    <div id="id_ti_form">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">培训机构名称</td>
+        <td width="35%">
+          <input type="hidden" name="ti_id" value="<?=$ti_info['ti_id']?>" class="cls_field"/>
+          <input type="text" name="ti_name" value="<? Func::echo_s($ti_info['ti_name']); ?>" class="txtbox cls_field"/>
+           <span style="color:#f00">*</span>
+        </td>
+        <td class="altbg1" width="15%">培训机构类型</td>
+        <td width="35%">
+          <select name="ti_typeid" class="cls_field">
+            <option value="">--请选择--</option>
+            <? foreach ($tit_list as $v) { ?>
+            <option value="<?=$v['tit_id']?>" <? if ($ti_info['ti_typeid'] == $v['tit_id']) echo('selected="selected"'); ?>><? Func::echo_s($v['tit_name']); ?></option>
+            <? } ?> 
+          </select>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td class="altbg1">培训机构优先级</td>
+        <td>
+          <select name="ti_priid" class="cls_field">
+            <option value="">--请选择--</option>
+            <? foreach ($tipt_list as $v) { ?>
+            <option value="<?=$v['tipt_id']?>" <? if ($ti_info['ti_priid'] == $v['tipt_id']) echo('selected="selected"'); ?>><? Func::echo_s($v['tipt_name']); ?></option>
+            <? } ?> 
+          </select>
+           <span style="color:#f00">*</span>
+        </td>
+
+        <td class="altbg1">网址</td>
+        <td>
+          <input type="text" name="ti_url" value="<?=trim($ti_info['ti_url'])?>" class="txtbox cls_field"/>
+           <span style="color:#f00"></span>
+        </td>
+      </tr>
+
+        <tr>
+            <td class="altbg1">机构地址</td>
+            <td colspan="3">
+              <select name="ti_provid" id="selProvinces" onchange="region.changed(this, 2, 'selCities');region.changed(document.getElementById('selCities'), 2, 'selAreas');" class="cls_field">
+                <option value="0">--请选择省--</option>
+                <? foreach($province_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$ti_info['ti_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="ti_cityid" id="selCities" onchange="region.changed(this, 3, 'selAreas')" class="cls_field">
+                <option value="0">--请选择市--</option>
+                <? foreach($city_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$ti_info['ti_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="ti_areaid" id="selAreas" class="cls_field">
+                <option value="0">--请选择区县--</option>
+                <? foreach($area_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$ti_info['ti_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <input type="text" name="ti_addr" value="<?=$ti_info['ti_addr']?>" class="txtbox cls_field" />
+               <span style="color:#f00">*</span>
+            </td>
+        </tr>
+
+        <tr>
+          <td class="altbg1">学员人数/年</td>
+          <td><input type="text" name="ti_stumax" value="<?=$ti_info['ti_stumax']?>" class="cls_field txtbox"/> <span style="color:#f00">*</span></td>
+          <td class="altbg1">声誉值</td>
+          <td>
+          <? if ($ti_info['ti_reputation'] > 0){?>
+             <input type="text" name="ti_reputation" value="<?=$ti_info['ti_reputation']?>" class="cls_field txtbox"/>
+          <?}else {?>  
+             <input type="text" name="ti_reputation" value='0' class="cls_field txtbox"/>
+          <?}?>
+          <span style="color:#f00">*</span></td>
+        </tr>
+        <tr>
+          <td class="altbg1">合作度</td>
+          <td>
+          <? if ($ti_info['ti_cooperation'] > 0){?>
+            <input type="text" name="ti_cooperation" value="<?=$ti_info['ti_cooperation']?>" class="cls_field txtbox"/>
+          <?}else{?>
+            <input type="text" name="ti_cooperation" value="0" class="cls_field txtbox"/>
+          <?}?>
+          <span style="color:#f00">*</span></td>
+          <td class="altbg1">合作度增加规则</td>
+          <td> 
+          <input type="hidden" id="id_ti_cooperation_addinc" name="ti_cooperation_addinc"  value="<?=$ti_info['ti_cooperation_addinc']?>" class="cls_field"/>
+          <input type="hidden" id="id_ti_cooperation_addfreqday" name="ti_cooperation_addfreqday" value="<?=$ti_info['ti_cooperation_addfreqday']?>" class="cls_field"/>
+          <input type="hidden" id="id_ti_cooperation_addenddate" name="ti_cooperation_addenddate" value="<?=$ti_info['ti_cooperation_addenddate']?>" class="cls_field"/>
+              <span id="id_cooperation_addrule">
+              </span>
+              <button style="display:none" id="id_cooperation_addrule_clear" type="button" onclick="fnClearExistCooperationAddRule()">清除规则</button>
+              <button style="display:none" id="id_cooperation_addrule_showdlg" type="button" onclick="fnShowDialog('id_ti_cooperation_addrule_dlg')">设置规则</button>
+          </td>
+        </tr>
+        <tr>
+           <td class="altbg1">校区数量</td>
+           <td><?=$ti_info['ti_campusnum']?></td>
+           <td class="altbg1">状态</td>
+           <td>
+                 <label><input type="radio" name="ti_flag" class="cls_field" value="1" <?=$ti_info['ti_flag'] == 1 ? 'checked="checked"' : ''?>/>启用</label>
+                 <label><input type="radio" name="ti_flag" class="cls_field" value="0" <?=$ti_info['ti_flag'] == '0' ? 'checked="checked"' : ''?>/>禁用</label>
+                 <? if ($ti_info['ti_id']) { ?>
+                 <label><input type="radio" name="ti_flag" class="cls_field" value="-1" <?=$ti_info['ti_flag'] == -1 ? 'checked="checked"' : ''?>/>已删</label>
+                 <? } ?>
+                 <? if ($ti_info['ti_flag'] > 1) { ?>
+                 <label><input type="radio" name="ti_flag" class="cls_field" value="<?=$ti_info['ti_flag']?>" checked="checked">待审</label>
+                 <? } else { ?>
+                 <label><input type="radio" name="ti_flag" class="cls_field" value="<?=time()?>">待审</label>
+                 <? } ?>
+           </td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="id_ti_cooperation_addrule_dlg" style="display:none;width:300px">
+<div class="cls_title">合作度增加规则设置</div>
+<div style="margin:4px;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr><td class="altbg1">增加合作度</td><td><input type="text" name="ti_cooperation_addinc" value="" class="txtbox cls_field" style="width:60px"/></td></tr>
+      <tr><td class="altbg1">增加频率</td><td>
+            <label><input class='cls_field' type="radio" name="ti_cooperation_addfreqday" value="1"/>按天增加</label>
+            <label><input class='cls_field' type="radio" name="ti_cooperation_addfreqday" value="7"/>按周增加</label>
+            <label><input class='cls_field' type="radio" name="ti_cooperation_addfreqday" value="30"/>按月增加</label>
+      </td></tr>
+      <tr><td class="altbg1">持续时长</td><td>
+            <label><input type="radio" name="ti_cooperation_addenddate" value="<?=date('Y-m-d', strtotime('+1 month'))?>" class="cls_field"/>1个月</label>
+            <label><input type="radio" name="ti_cooperation_addenddate" value="<?=date('Y-m-d', strtotime('+6 month'))?>" class="cls_field"/>6个月</label>
+            <label><input type="radio" name="ti_cooperation_addenddate" value="<?=date('Y-m-d', strtotime('+1 year'))?>" class="cls_field"/>1年</label>
+          </td></tr>
+    </table>
+</div>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="fnSetCooperationAddRule()">添加规则</button>
+<button type="button" onclick="fnCloseDialog('id_ti_cooperation_addrule_dlg')">关闭</button>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

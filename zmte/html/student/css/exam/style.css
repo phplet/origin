@@ -1,0 +1,119 @@
+body {
+    font-size:14px;
+    background-color:#d6f0f1;
+    padding:0px;
+    margin:0px;
+}
+
+div.cls_header_bg {
+    /*background-image:url(images/exam/header_bg.png); */
+}
+
+div.cls_header_bg_small {
+}
+
+div.cls_header_bg div.cls_header {
+    display:table;
+    margin-left:auto;
+    margin-right:auto;
+    width:1000px;
+    height:116px;
+}
+
+div.cls_header_bg_small div.cls_header {
+    display:table;
+    margin-left:auto;
+    margin-right:auto;
+    width:1000px;
+    height:103px;
+}
+
+a, a:visited, a:link {
+    color:darkblue;
+}
+
+a:hover {
+    color:darkred;
+}
+
+.cls_header_logo {
+    float:left;
+    cursor:pointer;
+}
+
+.cls_header_title {
+    color:white;
+    font-size:2.4em;
+    font-weight:bold;
+    margin:38px auto 0px auto;
+    width:700px;
+    text-align:center;
+}
+
+.cls_header_avatar {
+    margin:20px auto 0px auto;
+    width:700px;
+    text-align:center;
+}
+
+.cls_header_avatar img {
+    width:80px;
+    height:80px;
+    border-radius:40px;
+    -webkit-box-shadow:0 0 20px gold;
+    overflow:hidden;
+    border:2px solid white;
+    box-shadow: 0 0 20px gold;
+}
+
+.cls_header_userinfo {
+    margin-top:4px;
+    float:right;
+    font-size:0.9em;
+    color:white;
+    text-align:right;
+}
+
+span.cls_header_userinfo > a,
+span.cls_header_userinfo > a:visited,
+span.cls_header_userinfo > a:link,
+span.cls_header_userinfo > a:hover {
+    color:white;
+    text-decoration:underline;
+}
+
+
+.cls_header_goexam {
+    margin-top:45px;
+    font-size:2.0em;
+    text-align:center;
+}
+
+.cls_header_goexam a,
+.cls_header_goexam a:visited, 
+.cls_header_goexam a:link {
+    color:white;
+    text-decoration:underline;
+}
+
+.cls_header_goexam a:hover {
+    color:orange;
+    text-decoration:underline;
+}
+
+div.cls_footer {
+    margin-left:auto;
+    margin-right:auto;
+    width:1200px;
+    padding-top:10px;
+    text-align:center;
+    font-size:0.9em;
+}
+
+div.cls_page {
+    margin-left:auto;
+    margin-right:auto;
+    width:1000px;
+    background-color:#ffffff;
+    min-height:600px;
+}

@@ -1,0 +1,173 @@
+<?php echo $this->load->view('common/header');?>
+<?php $current_module_url = site_url('admin/exam_invigilator');?>
+<?php 
+  $detail = isset($detail) ? $detail : array();
+  $mode = isset($mode) ? $mode : 'add';
+?>
+
+<?php echo $this->load->view('school/ajax_select_school');?>
+
+<div id="body">
+  <form name="frm_add_invigilator" id="frm_add_invigilator" method="POST" action="<?php echo $current_module_url . '/save/';?>">
+
+  <input type="hidden" name="id" value="<?php echo isset($detail['invigilator_id']) ? $detail['invigilator_id'] : '0'; ?>" />
+  <div class="space">
+    <div class="subtitle"><?php echo $mode == 'add' ? '添加' : '编辑'; ?> “机考-监考人员信息” </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">电子邮箱：</td>        
+        <td><input type="text" placeholder="请输入电子邮箱" name="email" id="txt_email" autocomplete="off" value="<?php echo isset($detail['invigilator_email']) ? $detail['invigilator_email'] : '';?>" class="txtbox"> <span style="color:#f00">*</span><font class="error"></font></td>
+      </tr>
+      <?php if($mode == 'add') { ?>
+      <tr>
+        <td class="altbg1">密码</td>      
+        <td>
+        	<input type="password" placeholder="请输入密码"  name="password" autocomplete="off" id="txt_password" value="" class="txtbox"> 
+        	<i style="color:#f00">*</i><span class="notice">密码长度必须为6~20个字符</span><font class="error"></font>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">确认密码</td>        
+        <td><input type="password" placeholder="请重新输入密码" name="password_confirm" id="txt_password_confirm" class="txtbox"> <span style="color:#f00">*</span><font class="error"></font></td>
+      </tr>
+      <?php } ?>
+      <?php /* if($mode != 'add') { ?>
+      <tr>
+        <td class="altbg1">状态：</td>        
+        <td>
+            <?php $flag = isset($detail['invigilator_flag']) ? $detail['invigilator_flag'] : '1';?>
+            <?php if ($flag == '-1') {?>
+            <b>已删除(<font color="red">*注：要恢复请到回收站中操作</font>&nbsp;&nbsp;<a href="<?php echo site_url() . '/admin/exam_invigilator/index?trash=1&email=' . (isset($detail['invigilator_email']) ? $detail['invigilator_email'] : '');?>">前往回收站</a>)</b>
+            <?php } else { ?>
+            <input type="radio"  name="flag" value="0" <?php echo $flag == '0' ? 'checked="checked"' : ''; ?> id="flag_no"><label for="flag_no" style="color:red;">禁用</label>
+            &nbsp;&nbsp;
+            <input type="radio"  name="flag" value="1" <?php echo $flag == '1' ? 'checked="checked"' : ''; ?>  id="flag_ok"><label for="flag_ok" style="color:green;">启用</label>
+            <?php } ?>
+        </td>
+      </tr>
+      <?php }*/ ?>
+      <tr>
+        <td class="altbg1">姓名：</td>        
+        <td><input type="text" placeholder="请输入姓名" id="txt_name" name="name" value="<?php echo isset($detail['invigilator_name']) ? $detail['invigilator_name'] : '';?>" class="txtbox"><span style="color:#f00">*</span><font class="error"></font></td>
+      </tr>
+      <tr>
+        <td class="altbg1">所在单位：</td>        
+        <td><input type="text" placeholder="请输入 所在单位" id="txt_memo" name="memo" value="<?php echo isset($detail['invigilator_memo']) ? $detail['invigilator_memo'] : '';?>" class="txtbox"/><span style="color:#f00">*</span><font class="error"></font></td>
+      </tr>
+      <tr>
+          <td class="altbg1">手机号码：</td>        
+          <td>
+            <input type="text" placeholder="请输入 手机号码" id="cellphone" name="cellphone" value="<?php echo isset($detail['cellphone'])  ? $detail['cellphone'] : '';?>" class="txtbox"/>
+            <span style="color:#f00">*</span>
+            <font class="error"></font>
+          </td>
+        </tr>
+        <tr>
+          <td class="altbg1">电话号码：</td>        
+          <td>
+            <input type="text" placeholder="请输入 电话号码" id="telephone" name="telephone" value="<?php echo isset($detail['telephone']) ? $detail['telephone'] : '';?>" class="txtbox"/>
+            <font class="error"></font>
+          </td>
+        </tr>
+    </table>
+  </div>
+  <input type="hidden"  value="<?php echo $place_id;?>" name="place_id" />
+  <center> 
+    <input type="submit"  value=" <?php echo $mode == 'add' ? '保存' : '保存修改'; ?> " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+
+<?php static_global('js/datepicker/wdatepicker.js');?>
+<script type="text/javascript">  
+  $(document).ready(function () {
+      $('#txt_email').focus();
+
+      var bind_flag_notice = function () {
+          $('#flag_no').click(function(){
+              if (!confirm('被禁用的 监考人员帐号 将无法在机考系统中登录，是否继续?')) {
+                  $('#flag_no').attr('checked', 'checked');
+                  return false;
+              }
+          });
+      };
+
+      bind_flag_notice();
+
+      var check_form = function () {
+
+          var $email = $('#txt_email'),
+              $txt_memo = $('#txt_memo'),
+              $txt_name = $('#txt_name'),
+              $select_school_id = $('#select_school_id'),
+              $cellphone = $('#cellphone');
+
+          var email = $.trim($email.val()),
+              txt_memo = $.trim($txt_memo.val()),
+              txt_name = $.trim($txt_name.val()),
+              select_school_id = parseInt($.trim($select_school_id.val()), 10),
+          	  cellphone = $.trim($cellphone.val());
+        
+          var is_success = true,
+              objs = [];
+
+          if (!email.length || !is_email(email)) {
+              is_success = false;
+              objs.push({msg:'请填写正确的邮箱地址.', obj:$email});
+          }
+
+          var mode = '<?php echo $mode;?>';
+          var $txt_password = $('#txt_password'),
+              $txt_password_confirm = $('#txt_password_confirm'),
+              txt_password = $txt_password.val(),
+              txt_password_confirm = $txt_password_confirm.val();
+
+          //验证密码规则
+          if ('string' === typeof (passwd_msg = is_password(txt_password))) {
+              is_success = false;
+              objs.push({msg:passwd_msg, obj:$txt_password});
+          }
+
+          if (!txt_password_confirm.length || txt_password != txt_password_confirm) {
+              is_success = false;
+              objs.push({msg:'两次密码输入不一致，请检查.', obj:$txt_password_confirm});
+          }
+
+          if (!txt_name.length) {
+              is_success = false;
+              objs.push({msg:'姓名不能为空.', obj:$txt_name});
+          }
+
+          if (!txt_memo.length) {
+              is_success = false;
+              objs.push({msg:'所在单位不能为空.', obj:$txt_memo});
+          }          
+
+		  if (!cellphone.length){
+			  is_success = false;
+			  objs.push({msg:'手机号码不能为空.', obj:$cellphone});  
+		  }
+          
+          if (!is_success) {
+              show_error(objs);
+              return false;
+          }
+          
+          return true;
+      };
+      
+      $('#frm_add_invigilator').submit(function() {
+        
+          if (!check_form()) {
+              return false;
+          }
+
+          return true;
+      });
+
+  });
+</script>
+<?php echo $this->load->view('common/footer');?>

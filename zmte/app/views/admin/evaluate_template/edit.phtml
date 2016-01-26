@@ -1,0 +1,158 @@
+<?php
+$this->load->view('common/header');?>
+<script type="text/javascript">
+	function check_form(){
+	    if (!$("#template_name").val())
+	    {
+	    	alert('请输入模板名称');
+	    	$("#template_name").focus();
+	    	return false;
+		}
+
+		var is_checked = false;
+		$("#module_list input[type=checkbox]").each(function(){
+			if ($(this).is(':checked'))
+			{
+				is_checked = true;
+			}
+		});
+
+		 if (is_checked)
+		 {
+			 return true;
+	     }
+
+		 alert('请勾选模块');
+
+	     return false;
+	};
+
+	$(function(){
+		check_applicable_subject();
+
+	    $("input[name='template_subjectid[]']").click(function(){
+	    	check_applicable_subject();
+		});
+    });
+
+    function check_applicable_subject()
+    {
+    	if ($("input[name='template_subjectid[]']:checked").length < 1)
+        {
+        	$('#module_list input[applicable_subject]').each(function(){
+        		$(this).removeAttr('disabled');
+        	});
+
+        	return;
+        }
+
+    	$('#module_list input[applicable_subject]').each(function(){
+	        var s_id_str = $(this).attr('applicable_subject');
+	        if (s_id_str.length > 2)
+	        {
+            	$(this).attr('disabled','disabled');
+	        }
+    	});
+
+    	$("input[name='template_subjectid[]']:checked").each(function(){
+    	    var s_id = $(this).val();
+    	    $('#module_list input[applicable_subject]').each(function(){
+    	        var s_id_str = $(this).attr('applicable_subject');
+    	        if (s_id_str.length > 2)
+    	        {
+    	            if (s_id_str.indexOf("," + s_id + ",") >= 0)
+    	            {
+    	            	$(this).removeAttr('disabled');
+    	            }
+    	        }
+        	});
+        });
+    }
+</script>
+<style>
+#body .btn_bg {background:#a6cbe7}
+</style>
+
+<div id="body">
+<div style="height:40px; line-height:40px; ">
+    <?php foreach ($template_type_name as $key => $val) {?>
+    <input class="btn <?php if ($template_type == $key) {?>btn_bg<?php }?>" type="button" value="<?=$val?>模板管理" onclick="location.href='<?=site_url('admin/evaluate_template/index/'.$key)?>'">
+    <?php }?>
+</div>
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/evaluate_template/update')?>" onsubmit="return check_form();">
+  <input type="hidden" name="template_id" value="<?=isset($info['template_id']) ? $info['template_id'] : 0?>" />
+  <div class="space">
+    <div class="subtitle"><?php if (isset($info['template_id']) && $info['template_id']) {?>编辑<?php } else {?>新增<?php }?><?=$template_type_name[$template_type]?>模板</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">模板名称</td>
+        <td>
+            <input type="text" id="template_name" name="template_name" class="txtbox" value="<?=isset($info['template_name']) ? $info['template_name'] : ''?>">
+        </td>
+      </tr>
+      <?php /* 模板类型 0:综合 1:学科 2:面试 3:面试综合 */ ?>
+      <?php if (in_array($template_type, array(0, 1, 2, 4, 5))) {?>
+      <tr>
+        <td width="16%" class="altbg1"><?php if (in_array($template_type, array(1, 2, 4))) {?>适用<?php }?>学科</td>
+        <td>
+            <?php
+                $template_subjectid = isset($info['template_subjectid']) ? array_filter(explode(",", $info['template_subjectid'])) : array();
+            ?>
+            <?php foreach ($subject as $subject_id => $subject_name) {?>
+            <input type="checkbox" name="template_subjectid[]" id="subject_id_<?=$subject_id?>" value="<?=$subject_id?>" <?php if (in_array($subject_id, $template_subjectid)) echo "checked";?>><label for="subject_id_<?=$subject_id?>"><?=$subject_name?></label>
+            <?php }?>
+        </td>
+      </tr>
+      <?php }?>
+      <tr>
+        <td width="16%" class="altbg1">模块</td>
+        <td id="module_list">
+        <?php
+            $template_modules = !empty($info['module']) ? $info['module'] : array();
+            $template_module = array();
+            foreach ($template_modules as $vals)
+            {
+                $template_module[$vals['module_id']] = $vals;
+            }
+        ?>
+        <?php foreach ($module as $item) {?>
+            <?php $now_module = !empty($template_module[$item['module_id']]) ? $template_module[$item['module_id']] : array();?>
+            <?php if (!empty($item['children'])) {?>
+                <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                  <tr>
+                    <td width="80">序号：<input type="text" style="width: 20px;" value="<?=isset($now_module['template_module_sort']) ? $now_module['template_module_sort'] : '';?>" name="template_module[<?=$item['module_id']?>][sort]" applicable_subject="<?=$item['module_subjectid']?>">
+                    <input type="hidden" value="<?=$item['module_sort']?>" name="template_module[<?=$item['module_id']?>][module_sort]">
+                    </td>
+                    <td>
+                        <?=$item['module_name']?>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                        <?php foreach ($item['children'] as $val) {?>
+                        <?php $now_child_module = !empty($now_module['children'][$val['module_id']]) ? $now_module['children'][$val['module_id']] : array();?>
+
+                        <div style="min-width: 400px; line-height:30px; margin-left:10px; float:left">
+                                                    序号：<input type="text" style="width: 20px; " value="<?=isset($now_child_module['template_module_sort']) ? $now_child_module['template_module_sort'] : '';?>" name="template_module[<?=$item['module_id']?>][children][<?=$val['module_id']?>][sort]" applicable_subject="<?=$val['module_subjectid']?>">
+                        <input type="checkbox" <?php if ($now_child_module) echo 'checked';?> value="<?=$val['module_id']?>" name="template_module[<?=$item['module_id']?>][children][<?=$val['module_id']?>][module_id]" id="template_module[<?=$item['module_id']?>][children][<?=$val['module_id']?>][module_id]" applicable_subject="<?=$val['module_subjectid']?>"><label for="template_module[<?=$item['module_id']?>][children][<?=$val['module_id']?>][module_id]"><?=$val['module_name']?></label>
+                        <input type="hidden" value="<?=$val['module_sort']?>" name="template_module[<?=$item['module_id']?>][children][<?=$val['module_id']?>][module_sort]">
+                        </div>
+                        <?php }?>
+                    </td>
+                  </tr>
+                </table>
+            <?php }?>
+        <?php }?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center>
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

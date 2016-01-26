@@ -1,0 +1,67 @@
+<?php 
+/**
+ * 后台管理->素质相关管理->学习风格管理
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/learn_style/save')?>">
+  <input type="hidden" name="learnstyle_id" value="<?=$info['learnstyle_id']?>" />
+  <div class="space">
+    <div class="subtitle"><?=$info['learnstyle_id'] ? '编辑' : '新增'?>内化过程</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">内化过程</td>
+        <td>
+        <?php if ($info['learnstyle_id']) {?>
+        <?=$info['knowledge_name']?>
+        <?php } else {?>
+        <select name="learnstyle_knowledgeid" id="learnstyle_knowledgeid" <?=$info['learnstyle_id'] ? 'disabled' : ''?>>
+        <option value="0">请选择内化过程</option>
+        <?php foreach ($knowledge_list as $val) {?>
+        <?php if (in_array($val['id'], $learnstyle_knowledgeids)) { continue ;}?>
+        <option value="<?=$val['id']?>" <?=$info['learnstyle_knowledgeid'] == $val['id'] ? 'selected' : ''?>><?=$val['knowledge_name']?></option>
+        <?php }?>
+        </select>
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">说明</td>        
+        <td>
+            <textarea id="learnstyle_explain" name="learnstyle_explain" class="txtbox"><?=$info['learnstyle_explain']?></textarea>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	pr_knowledgeid: {
+	    		required : true,
+	    		min : 1
+		    }
+	    },
+	    messages: {
+	    	pr_knowledgeid: "请选择内化过程"
+	    }
+	});
+})
+</script>
+
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,8 @@
+.wrap { width:720px; }
+.footer { width:800px; }
+#fleft { margin-left:5px; }
+
+
+.toolbar_wrapper {  clear:both; height:37px; text-align:left; }
+.toolbar { position:absolute; padding-top:2px; margin:0 auto; margin-left:50px; }
+.panel { display: block; float:left; }

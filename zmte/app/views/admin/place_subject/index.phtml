@@ -1,0 +1,61 @@
+<?php $this->load->view('common/header');?>
+
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js',
+                    'common/jquery14.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    ));
+?>
+<script language="javascript">
+    function CheckedAll(){
+        var vl = $('#checkedAll').val();
+
+        if (vl == 0) {
+            $(':checkbox').attr('checked','checked');
+            $('#checkedAll').val(1);
+        } else if (vl == 1) {
+            $(':checkbox').attr('checked',''); 
+            $('#checkedAll').val(0);
+        }
+    } 
+</script>
+<div id="body">
+    <div class="space">
+        <form name="frm_list" action="<?=site_url('admin/place_subject/update')?>" method="POST" >
+            <input type="hidden" name="place_id" value="<?=$place['place_id']?>" />
+            <input type="hidden" name="exam_pid" value="<?=$exam['exam_id']?>" />
+            <div class="subtitle">场次科目列表</div>
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td colspan="<?=count($allow_subject)?>" class="altbg2" style="text-align: center;">
+                        考试：<a href="<?=site_url('admin/exam_place/index/'.$exam['exam_id'])?>"><?=$exam['exam_name']?></a>--->场次：<?=$place['place_name']?>--->考试地点：<?=$place['address']?>
+                    </td>
+                </tr>     
+                <tr>
+                    <td colspan="<?=count($allow_subject)?>" class="altbg2" style="text-align: center;">
+                        <input type="checkbox" name="checkedAll" id="checkedAll" value="0" onclick="CheckedAll()"/>全选/取消
+                    </td>
+                </tr>      
+                <tr>
+                    <?php foreach ($subjects as $v):?>    
+                        <td width="120" style="border:0px;float:left;">
+                            <?php/* if (!in_array($v['subject_id'], array_keys($allow_subject))){ continue; }*/?>
+                            <input type="checkbox" name="subjects[]" value="<?php echo $v['subject_id'] . '_' . $v['exam_id'];?>" id="subject_list_<?php echo $v['subject_id'];?>" <?php if(in_array($v['subject_id'], array_keys($old_subjects))) echo 'checked';?> />
+                            <label for="subject_list_<?php echo $v['subject_id']?>"><?php echo $subjects_name[$v['subject_id']];?></label>
+                        </td>
+                    <?php endforeach;?> 
+                </tr>
+            </table>
+            <center>
+                <input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />&nbsp;&nbsp;
+                <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+            </center>
+        </form>
+    </div>
+</div>
+<?php $this->load->view('common/footer');?>

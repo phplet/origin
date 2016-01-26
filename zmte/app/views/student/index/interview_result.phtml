@@ -1,0 +1,44 @@
+<?php $this->load->view('common/header');?>
+<style type="text/css">
+.cls_center{
+  text-align: center;
+}
+.cls_bold{
+  font-weight: bold;
+}
+.cls_gray{
+  color: #bbb;
+}
+</style>
+<div id="body">
+    <div class="space">
+        <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="border:none;height:10px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="altbg2" style="text-align: left;">
+                    <span class="altbg2-bg">面试成绩</span>
+                    <i class="altbg2-r"></i>
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" class="altbg1 cls_bold cls_center">考试期次</td>
+                <td class="cls_center cls_bold altbg1">面试成绩下载</td>
+            </tr>
+            <?php if ($rule_id): ?>
+                <tr>
+                    <td width="20%" class="altbg1 cls_center"><?php echo $exam_name; ?></td>
+                    <td class="cls_center cls_gray">
+                        <a href="<?php echo site_url('student/index/down_interview_file/' . $rule_id); ?>">点击下载</a>
+                    </td>
+                </tr>
+            <?php else: ?>
+                <tr>
+                    <td class="altbg1" colspan="2" align="center " class="cls_gray">暂时没有成绩可供下载查看</td>
+                </tr>
+            <?php endif; ?>
+        </table>
+    </div>
+</div>
+<?php $this->load->view('common/footer');?>

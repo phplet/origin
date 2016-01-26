@@ -1,0 +1,123 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+<?php static_global(array('js/common/common.js'));?>
+<style>
+.ZebraDialog .ZebraDialog_Icon {
+	padding-left: 24px;
+}
+.ZebraDialog .ZebraDialog_Body {
+	padding: 10px 40px 40px 40px;
+}
+.info {
+	border:1px dotted #ccc;
+	padding:8px;
+	margin:0 auto; 
+	display:none;
+	text-align:center;
+}
+*{
+	font-size:12px;
+}
+</style>
+<div class="form_data">
+	<p>
+		<span class="f_label">
+		<select class="account_in_out" width="">
+		<option value=1>增加</option>
+		<option value=2>减少</option>
+		</select></span>
+		<input type="text" id="txt_account" value=""/>
+		<span class="notice">*必须为正整数</span><font class="error"></font>
+	</p>
+	<p><span class="f_label">备注：</span>
+	<TEXTAREA rows="1" cols="30" id="tex_memo"> </TEXTAREA>
+	<font class="error"></font></p>
+	<p> </p>
+	<p class="tool_bar"><input type="button" id="btn_submit" value="确定"/></p>
+	<br/>
+	<br/>
+	<div class="info error" id="font_form"></div>
+	<input type="hidden" id="txt_hidden_uid" value="<?php echo $uid;?>"/>
+</div>
+
+<script>
+$(document).ready(function () {
+	$('#txt_account').focus();
+	
+	$('#txt_account')
+	    .bind('keyup', function(e) {
+	      var  keycode=e.keyCode;
+	      if (keycode == '13') {
+	    	  $('#btn_submit').click();
+	          return false;
+	      }
+    });
+	
+	$('#btn_submit').unbind('click').bind('click', function () {
+		var $thiz = $(this),
+			$txt_hidden_uid = $('#txt_hidden_uid'),
+			$account_in_out = $('.account_in_out'),
+			$txt_account = $('#txt_account'),
+			$tex_memo = $('#tex_memo'),
+			$font_form = $('#font_form');
+		
+		var account_in_out = $account_in_out.val(),
+		txt_account = $txt_account.val(),
+		tex_memo = $tex_memo.val();
+		hidden_uid = $txt_hidden_uid.val();
+		var is_success = true,
+        	objs = [];
+
+		//验证密码规则
+	 
+	        var nubmer = txt_account;
+	         if(isNaN(nubmer)||nubmer<=0||!(/^\d+$/.test(nubmer)))
+	        {
+	        	 is_success=false;
+	        	 objs.push({msg:'请输入正确的数值,只允许输入正整数!', obj:$txt_account});
+	        
+	         }
+
+		if (!is_success) {
+			show_error(objs);
+            return false;
+        }
+	
+		$thiz.attr('disabled', 'disabled');
+		$.ajax({
+			url : '<?php echo site_url('admin/account/reset_account/'); ?>',
+			dataType : 'json',
+			type : 'post',
+			data : {
+				uid:hidden_uid,
+				account_in_out : account_in_out,
+				txt_account : txt_account,
+				tex_memo : tex_memo
+			},
+			timeout : 5000,
+			error: function (a, b, c) {
+				$thiz.removeAttr('disabled');
+				$font_form.removeClass('success').addClass('error').html('帐号充值失败.').hide().fadeIn()	;
+			},
+			success : function (response) {
+				var code = response.code,
+					msg	= response.msg,
+					data = response.data;
+
+				$thiz.removeAttr('disabled');
+				if (code < 0) {
+					$font_form.removeClass('success').addClass('error').html(msg).hide().fadeIn();
+					return false;
+				}
+
+				$font_form.removeClass('error').addClass('success').html(msg).hide().fadeIn();
+				setTimeout(function () {
+					parent.window.location.reload();
+				}, 1500);
+				return true;
+			}
+		});
+
+		
+	});
+});
+</script>

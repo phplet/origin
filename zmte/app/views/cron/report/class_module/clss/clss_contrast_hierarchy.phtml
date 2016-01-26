@@ -1,0 +1,97 @@
+<?php
+/**
+ * 诊断及建议  -- 学生成绩分层对比
+ */
+?>
+<?php if (isset($clss_contrast_hierarchy['flash_data'])) {?>
+    <?php 
+    	$flash_data = $clss_contrast_hierarchy['flash_data'];
+    ?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+
+	<?php $auto_key = 0;?>
+	<?php foreach ($flash_data as $key => $item) {?>
+        <?php $auto_key++;?>
+        <?php $data = array();?>
+        <?php foreach ($item as $k => $v) {
+            $data[] = array(
+                'name' => $k,
+                'y' => $v
+            );
+        }?>
+        <div id="flash_container_clss_k_<?php echo $auto_key;?>"  class="cls_row indent_25"></div>
+        <script type="text/javascript">
+        	$(function () {
+	            $('#flash_container_clss_k_<?php echo $auto_key;?>').highcharts({
+	                chart: {
+	                    plotBackgroundColor: null,
+	                    plotBorderWidth: null,
+	                    plotShadow: false
+	                },
+	                title: {
+	                    text: '<?=$key?>',	//标题
+	                    x: -20 //center
+	                },
+	                tooltip: {
+	                    pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
+	                },
+	                plotOptions: {
+	                    pie: {
+	                        allowPointSelect: true,
+	                        cursor: 'pointer',
+	                        dataLabels: {
+	                            enabled: true,
+	                            color: '#000000',
+	                            connectorColor: '#000000',
+	                            format: '<b>{point.name}</b>: {point.percentage:.0f}%'
+	                        },
+	                        showInLegend: true
+	                    }
+	                },
+	                legend: {
+	                    layout: 'vertical',
+	                    align: 'right',
+	                    verticalAlign: 'middle',
+	                    borderWidth: 0,
+	                    useHTML:true,
+                        itemStyle: {
+                            fontWeight: 'bold'
+                        }
+	                },
+	                colors: ['#8CC63F','#4F81BD','#F15A24','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+	                series: [{
+	                    type: 'pie',
+	                    size : '30',
+	                    name: '',
+	                    data: eval("("+'<?php echo json_encode($data); ?>'+")")
+	                }]
+	            });
+            });
+        </script>
+    <?php }?>
+    <?php 
+    $prev_rate = 0;
+    $text = array();
+    $end_name = end(array_keys($clss_contrast_hierarchy['proportion']));
+    foreach ($clss_contrast_hierarchy['proportion'] as $name => $rate) 
+    {
+        if ($prev_rate && $end_name != $name)
+        {
+            $text[] = "前{$prev_rate}%-{$rate}%为{$name}";
+        }
+        else if ($prev_rate && $end_name == $name)
+        {
+            $text[] = "后" . (100 - $prev_rate) ."%为{$name}";
+        }
+        else
+        {
+            $text[] = "前{$rate}%为{$name}";
+        }
+   
+        $prev_rate = $rate;
+    }
+    ?>
+    <?php if ($text) {?>
+    <p class="mokuai-text cls_row font12">&emsp;&emsp;注：定义学校<?=implode('，', $text)?>。</p>
+   <?php }?>
+<?php } ?>

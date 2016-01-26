@@ -1,0 +1,172 @@
+<style>
+span.know_process{
+	border:1px solid #ccc;
+	padding:3px;	
+}
+</style>
+<div class="space">
+  <div class="subtitle"><span class="menu" style="padding-top:5px;"><a href="javascript://" class="close"><img src="<?=__HTML_URL__?>images/no.gif" /></a></span>知识点选择</div> 
+    <div style="max-height:300px;_height:300px;overflow:auto;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:0px;width:780px;">
+        <?php if($list):?>
+        <?php foreach($list as $parent):?>
+        <tbody id="range_parent_<?=$parent['id']?>">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                <input type="hidden" name="pid" value="<?=$parent['id']?>" />        
+                <?php $subject = C('subject');?>        
+                <span class="pname font_4"><?=$subject[$parent['subject_id']] . '->' . $parent['knowledge_name']?>(<?=$parent['ques_num']?>[<?=$parent['relate_ques_num']?>])</span>
+                [<a href="javascript://" class="expand">收起</a>]
+                <input class="check_all" knowledge_id="<?php echo $parent['id'];?>" type="checkbox" name="knowledge_parent<?=$parent['id']?>" id="knowledge_parent<?=$parent['id']?>" onclick="allchecked('','range_parent_<?=$parent['id']?>',this)" /><label for="knowledge_parent<?=$parent['id']?>">全选/取消</label>
+            </td>
+        </tr>
+        <?php foreach($parent['children'] as $key => $val):?>
+        <?php $td_index = $key%2;?>
+        <?php $is_checked = strpos($knowledge_ids, ','.$val['id'].',')!==false;?>
+        <?php if($td_index == 0):?><tr><?php endif;?>
+            <td class="sub_knowledge_<?php echo $parent['id'];?>" <?php if($key+1==count($parent['children']) && $td_index<2):?> colspan="<?=(3-$td_index)?>"<?php endif;?>>
+            	<input class="checkbox_knowledge" type="checkbox" name="knowledge_ids" id="knowledge_<?=$val['id']?>" value="<?=$val['id']?>" <?=$is_checked?' checked':''?>/>
+            	<label for="knowledge_<?=$val['id']?>">
+            		<?=$val['knowledge_name']?>(<?=$val['ques_num']?>[<?=$val['relate_ques_num']?>])
+            	</label>
+            	<span class="know_process" id="know_process_<?php echo $val['id'];?>" <?php if (!$is_checked) { echo 'style="display:none"'; }?>>
+            		<?php foreach ($know_process as $k=>$kp) {?>
+            		<input type="radio" kp="<?php echo $kp;?>" id="know_process_<?php echo $val['id'] . '_' . $k;?>" <?php echo (isset($know_process_ids[$val['id']]) && $know_process_ids[$val['id']] == $k) ? 'checked="checked"' : '';?> name="tmp_know_process[<?php echo $val['id']?>]" value="<?php echo $k;?>"/>
+            		<label for="know_process_<?php echo $val['id'] . '_' . $k;?>"><?php echo $kp;?></label>
+            		<?php } ?>
+            	</span>
+			</td>
+        <?php if($td_index==2 OR $key+1==count($parent['children'])):?></tr><?php endif;?>
+        <?php endforeach;?>
+        </tbody>
+        <?php endforeach;?>
+        <?php else:?>
+        <tr>
+            <td colspan="2" style="text-align: center;color:#f00">
+                暂无知识点
+            </td>
+        </tr>
+        <?php endif;?>
+    </table>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="background:#A6CBE7;text-align: center;color:#f00">
+                <input type="button" id="knowledge_confirm" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " class="btn close" />
+            </td>
+        </tr>
+    </table>
+  </div>
+  <script>
+    $(document).ready(function(){
+        $('#knowledge_confirm').click(function(){
+            var selected = [];
+            var item = [];
+            var index = 0;
+            var checkbox = $('input:checked[name=knowledge_ids]');
+            for (var i=0; i<checkbox.length; i++) {
+                if (checkbox[i].checked == true) {
+                    var pid = $(checkbox[i]).parent().parent().parent().find('input[name=pid]').val();
+                    var pname = $(checkbox[i]).parent().parent().parent().find('span.pname').text();                    
+                    if (typeof(selected[pid])=='undefined') {
+                        selected[pid] = [pname,[]];
+                        index = 0;
+                    }                     
+                    var kid = checkbox[i].value;
+                    var kname = $(checkbox[i]).parent().find('label').html();
+                    item = [kid,kname];
+                    selected[pid][1][index++] = item;
+                } 
+            }
+            
+            if (selected.length == 0) {
+                alert('请选择知识点');
+                return;
+            }
+
+            var msg = [];
+            var string = '';
+            var knowledge_ids = '';
+            var know_process_cache = {};
+            for (pid in selected) {
+                if (pid != 'indexof') {                   
+                    var parent = selected[pid];
+                    string += '<div><span class="font_4" pkid="'+pid+'">'+parent[0]+'</span>：';
+                    for (i=0; i<parent[1].length; i++) {
+                        var know_process = '';
+                        
+                        //检查已选的知识点是否有未勾选认知过程
+                        var $checked_kp = $('#know_process_' + parent[1][i][0]).find('input:checked');
+                        if (!$checked_kp.length) {
+                            msg.push(parent[1][i][1]);
+                        } else {
+                        	know_process = '(认知过程：' + $checked_kp.attr('kp') + ')';
+                        }
+                        
+                        if (know_process == '') {
+                            continue;
+                        }
+
+                        var know_process_str = '<input  type="hidden" name="know_process[' + parent[1][i][0] + ']" value="' + ($checked_kp.val()) + '"/>';
+                        know_process_cache[parent[1][i][0]] = $checked_kp.val();
+                        
+                        string += '<input type="checkbox" name="knowledge_id[]" id="knowledge'+parent[1][i][0]+'" value="'+parent[1][i][0]+'" checked /><label for="knowledge'+parent[1][i][0]+'">'+parent[1][i][1]+know_process+know_process_str+'</label>';
+                        knowledge_ids += (knowledge_ids?',':'') + parent[1][i][0];
+
+                    }
+                    string += '</div><hr/>';
+                }                  
+            }
+
+            if (msg.length) {
+                alert("请选择以下知识点的认知过程：\n" + msg.join("\n"));
+                return false;
+            }
+
+            if (!$.isEmptyObject(know_process_cache)) {
+            	know_process_cache = $.toJSON(know_process_cache);
+            	string += '<div style="display:none;" id="k_know_process">' + know_process_cache + '</div>';
+            }
+            
+            $('#knowledge_list').html(string);
+            $('#knowledge_ids').val(knowledge_ids);            
+            $.unblockUI();
+            // 试题规则编辑页面
+            if ($('#knowledge_rule_list').length) {                
+                reset_knowledge_rule_list();
+            }
+        });
+        $('.expand').click(function(){
+            if ($(this).html() == '展开') {
+                $(this).html('收起');
+                $(this).parent().parent().siblings().show();
+            } else {
+                $(this).html('展开');
+                $(this).parent().parent().siblings().hide();
+            }
+        });
+
+        //知识点联动 认知过程
+        $('input.checkbox_knowledge').click(function () {
+            var knowledge_id = $(this).val();
+			if ($(this).is(':checked')) {
+				$('#know_process_' + knowledge_id).show(300);
+			} else {
+				$('#know_process_' + knowledge_id).hide();
+			}
+        });
+        //全选知识点联动 认知过程
+        $('input.check_all').click(function () {
+            var $thiz = $(this);
+            setTimeout(function () {
+	            var knowledge_id = $thiz.attr('knowledge_id');
+				if ($thiz.is(':checked')) {
+					$('td.sub_knowledge_' + knowledge_id).find('.know_process').show(500);
+				} else {
+					$('td.sub_knowledge_' + knowledge_id).find('.know_process').hide();
+				}
+            }, 200);
+        });
+    });
+  </script>

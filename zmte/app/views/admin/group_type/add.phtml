@@ -1,0 +1,39 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/group_type/update')?>">
+  <input type="hidden" name="pid" value="<?=$pid?>" />
+  <div class="space">
+    <div class="subtitle">添加信息提取方式</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">信息提取方式名称</td>        
+        <td>
+            <input type="text" name="group_type_name" class="txtbox" value="">
+        </td>
+      </tr>
+      <tr style="display: none;">
+        <td width="16%" class="altbg1">所属学科</td>        
+        <td>
+          <?php if($parent['id']): ?>
+          <input type="hidden" name="subject_id" value="<?=$parent['subject_id']?>" />
+          <?=$subjects[$parent['subject_id']]?>
+          <?php else: ?>
+            <select name="subject_id">
+                <option value="0">--学科--</option>
+                <?php foreach($subjects as $k => $v): ?>
+                <option value="<?=$k?>" <?php if ($k == 3) {?>selected<?php }?>><?=$v?></option>
+                <?php endforeach; ?>
+            </select>
+          <?php endif; ?>          
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

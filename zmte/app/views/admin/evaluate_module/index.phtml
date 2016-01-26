@@ -1,0 +1,121 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<?php
+	$search = &$detail;
+    $current_module_url = site_url('admin/evaluate_module');
+    $current_module_manage_url = site_url('admin/module_manage');
+    $is_trash = isset($search['trash']) && $search['trash'] == 1;
+?>
+<style>
+#body .btn_bg {background:#a6cbe7}
+tr.module_pid{
+	background:#eee;
+}
+tr.module_pid td{
+	border-bottom: 1px solid #ccc;
+}
+</style>
+<script>
+$(function(){
+    $('a.folder').click(function(){
+        var pid = $(this).attr('pid');
+        $('#module_'+pid).toggle();
+        $(this).html($(this).html()=='[-]'?'[+]':'[-]');
+    });
+})
+</script>
+
+<div id="body">
+<div style="height:40px; line-height:40px; ">
+    <?foreach ($module_type_name as $key => $val) {?>
+    <input class="btn <?php if ($module_type == $key) {?>btn_bg<?php }?>" type="button" value="<?=$val?>模板管理" onclick="location.href='<?=site_url('admin/evaluate_template/index/'.$key)?>'">
+    <?php }?>
+</div>
+
+  <form name="frm_invigilator_list" action="<?php echo $current_module_url . '/index/';?>" method="post" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+          <a class="menu" href="<?php echo $current_module_url . '/add';?>">新增<?=$module_type_name[$module_type]?>模块分类</a>
+          <a class="menu" href="<?=site_url('/admin/evaluate_template/index')?>/<?=$module_type?>"><?=$module_type_name[$module_type]?>模板管理</a>
+          <?=$module_type_name[$module_type]?>模块管理
+      </div>
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+        <?if (empty($list)) {?>
+            <tr class="altbg1" colspan="6">
+             <td><center>没有记录</center></td>
+          </tr>
+        <?php } else { ?>
+          <tr class="altbg1">
+             <th width="2%">ID</th>
+             <th width="30%">评估模块分类名称</th>
+             <th width="20%">模块编码</th>
+             <th width="20%">适用学科</th>
+             <th width="100">模块分类序号</th>
+             <th width="80">状态</th>
+             <th width="200">操作</th>
+          </tr>
+            <?foreach ($list as $val){?>
+                  <tr class="altbg2 module_pid">
+                      <td><?=$val['module_id']?></td>
+                      <td><a href="javascript://" class="folder" pid="<?=$val['module_id']?>">[-]</a> <?=$val['module_name']?></td>
+                      <td><?=$val['module_code']?></td>
+                      <td></td>
+                      <td><?=$val['module_sort']?></td>
+                      <td><img src="<?php echo __HTML_URL__;?>images/<?php echo $val['status']==1?'yes':'no';?>.gif" /></td>
+                      <td>
+                        <a href="<? echo $current_module_url . '/edit/' .$val['module_id']?>">编辑</a>
+                        <a href="<?=site_url('/admin/evaluate_module/do_action/'.$val['module_id'].'/del')?>" onclick="return confirm('删除后不能恢复，您确认要删除么？')">删除</a>
+                        <?if ($val['status']==0){?>
+                        <a href="<?=site_url( '/admin/evaluate_module/do_action/'.$val['module_id'].'/on')?>">启用</a>
+        				<?}else{?>
+        				<a href="<?=site_url( '/admin/evaluate_module/do_action/'.$val['module_id'].'/off')?>">禁用</a>
+                        <?}?>
+                        <a href="/admin/evaluate_module/add_module/<?=$val['module_id']?>">新增模块</a>
+                      </td>
+                  </tr>
+                  <?php if(!empty($val['children'])) {?>
+                      <tbody id="module_<?=$val['module_id']?>">
+                      <?php foreach($val['children'] as $k => $item) {?>
+                          <tr>
+                              <td><?=$item['module_id']?></td>
+                              <td>　<?=count($val['children'])-1>$k?'├':'└'?>&emsp;<?=$item['module_name']?></td>
+                              <td><?=$item['module_code']?></td>
+                              <td>
+                              <?
+                                  $subject_name = array();
+                                  if (isset($item['module_subjectid']) && !empty($item['module_subjectid']))
+                                  {
+                                      $subjects = explode(',', trim($item['module_subjectid'], ','));
+                                      foreach ($subjects as $val1)
+                                      {
+                                          $subject_name[] = $subject[$val1];
+                                      }
+
+                                      $subject_name = implode(',', $subject_name);
+                                  }
+                                  ?>
+                                  <?=$subject_name ? $subject_name : '全部';?>
+                              </td>
+                              <td>　　<?=$item['module_sort']?></td>
+                              <td><img src="<?php echo __HTML_URL__;?>images/<?php echo $item['status']==1?'yes':'no';?>.gif" /></td>
+                              <td>
+                                <a href=<?=site_url("/admin/evaluate_module/edit_module/".$item['module_id'])?>>编辑</a>
+                                <a href="<?=site_url('/admin/evaluate_module/do_action/'.$item['module_id'].'/del/'. $val['module_id'])?>" onclick="return confirm('删除后不能恢复，您确认要删除么？')">删除</a>
+                                <?if ($item['status']==0){?>
+                                <a href="<?=site_url( '/admin/evaluate_module/do_action/'.$item['module_id'].'/on/')?>">启用</a>
+                				<?}else{?>
+                				<a href="<?=site_url( '/admin/evaluate_module/do_action/'.$item['module_id'].'/off/')?>">禁用</a>
+                                <?}?>
+                              </td>
+                          </tr>
+                      <?php }?>
+                      </tbody>
+                  <?php }?>
+          <?}?>
+          <?}?>
+        </tbody>
+      </table>
+    </div>
+  </form>
+ </div>

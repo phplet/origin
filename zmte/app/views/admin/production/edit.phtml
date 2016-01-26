@@ -1,0 +1,206 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+        'js/jquery/plugin/tiper.min.js',
+        'js/jquery/plugin/jquery.form.js',
+        'js/jquery/plugin/jquery.charsleft.min.js',
+        'js/datepicker/wdatepicker.js'
+    ));
+    static_js(array('third_party/ueditor/ueditor.config.js',
+        'third_party/ueditor/ueditor.all.min.js',
+        'third_party/ueditor/lang/zh-cn/zh-cn.js',
+    ));
+?><script>
+
+//解决ueditor编辑器放table里在360兼容模式下显示不了。
+$(function() {
+    //题目编辑器
+    var editor = UE.getEditor('question_title');
+    window.question_editor = editor; //填空题（）判断有用到。
+});
+</script>
+<style type="text/css">
+.score_rank_td div {
+    line-height:30px;
+    height:30px;
+    padding-top:6px;
+}
+</style>
+<script type="text/javascript">
+
+/*========== 每步表单检查 ========*/
+var action = '<?php echo $act;?>';
+function get_form()
+{
+    return document.getElementById('add_form');	
+}
+
+//基本信息
+function check_basic()
+{
+    var form = get_form();
+
+    if (!form.p_name.value)
+    {
+        alert('请填写产品名称');
+        form.p_name.focus();
+        return false;
+    }
+    if (form.pc_id.value == 0)
+    {
+        alert('请选择产品类别');
+        form.pc_id.focus();
+        return false;
+    }
+    if (form.exam_id.value == 0)
+    {
+        alert('请选择考试期次');
+        form.exam_id.focus();
+        return false;
+    }
+    if (!form.p_money_pushcourse.value)
+    {
+        alert('请填写推送课程时产品定价');
+        form.p_money_pushcourse.focus();
+        return false;
+    }
+    if (!form.p_money.value)
+    {
+        alert('请填写不推送课程时产品定价');
+        form.p_money.focus();
+        return false;
+    }
+    var v = fnGetCheckBoxValues('body', 'p_prefixinfo[]');
+    if (v.length < 1)
+    {
+        if (!confirm('您确认不选择前置数据么?'))
+        {
+            return false;
+        }
+    }
+    form.submit();
+}
+</script>
+<div id="body">
+    <form name="Frm_cpuser_info" id="add_form" method="POST" action="<?=site_url('admin/production/update')?>" autocomplete="off" multipart/form-data">
+    <? if($act == 'edit') { ?>  
+        <input type="hidden" name="p_id" value="<?=$pro['p_id']?>"/>
+    <? } ?>
+    <input type="hidden" name="act" value="<?=$act?>"/>
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'? '添加新':'修改'?>产品(<font color="red">请注意查看带 * 的必填字段 </font>)</div>
+
+    <div>    
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+     
+      
+      <tr>
+        <td class="altbg1">产品名称</td>
+        <td>                      
+          <input type="text" id="p_name" name="p_name" value="<?php echo $pro['p_name'];?>" class="txtbox" />
+           <span style="color:#f00">*</span>
+        </td>
+        </tr>
+      <tr>
+        <td class="altbg1">产品类别</td>        
+        <td>
+         <select name="pc_id" id="pc_id">
+                    <option value="0">--请选择--</option>
+                    <?php foreach($pc_ids as $key => $val): ?>
+                    <option value="<?=$key?>"<?=$key==$pro['pc_id']?' selected="selected" ':''?>><?=$val?></option>
+                    <?php endforeach; ?>
+                  </select>  
+                  
+        	<span style="color:#f00">*</span>
+		</td>
+      </tr>
+      <tr>
+        <td class="altbg1">考试期次</td>        
+        <td>
+      
+       <select name="exam_id" id="exam_id">
+                    <option value="0">--请选择--</option>
+                    <?php foreach($exam_ids as $key => $val): ?>
+                    <option value="<?=$key?>"<?=$key==$pro['exam_pid']?' selected="selected" ':''?>><?=$val?></option>
+                    <?php endforeach; ?>
+                  </select>  
+                    <span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">状态</td>        
+        <td>
+        	<input type="radio" <?php if(!$pro['p_status']):?>checked<?php endif;?> name="p_status" value="0" class="p_status" >禁用
+        	<input  type="radio" <?php if($pro['p_status']):?>checked<?php endif;?> name="p_status" value="1" class="p_status" >启用
+		</td>
+      </tr>
+    
+ 
+      <tr>
+      <td width="16%" class="altbg1">产品定价(<?=C('virtual_currency/name')?>/场)</td>
+    <td>
+            <input type="text" name="p_money_pushcourse" id="p_money_pushcourse"  value="<?php echo $pro['p_price_pushcourse'];?>"/>
+            <span style="color:#f00">*</span>(推送课程时价格)
+            <input type="text" name="p_money" id="p_money"  value="<?php echo $pro['p_price'];?>"/>(不推送课程时价格)
+        </td>
+      </tr>
+      <tr>
+        <td  class="altbg1">产品前置数据</td>
+        <td>
+        <? foreach(C('product_prefixinfo') as $k => $v) { ?>
+        <input type="checkbox" name="p_prefixinfo[]"  value="<?=$k?>" <? if (strpos($pro['p_prefixinfo'], $k) !== false) echo('checked="checked"'); ?>/><?=$v?>
+        <? } ?>
+        </td>
+      </tr>
+<? /* ?>
+      <tr>
+        <td class="altbg1">产品管理员</td>        
+             <td>
+           <?php foreach($admin_ids as $key => $val): ?>
+          <?php if($key==$pro['p_admin']||$key==1||$key==$admin_id):?> 
+           <input type="checkbox" name="p_managers[]" id="p_managers"  checked disabled value="<?php echo $key;?>"><?=$val?>
+           <input type="hidden" name="p_managers[]" id="p_managers"  value="<?php echo $key;?>">
+          <?php else:?>
+           <input type="checkbox" name="p_managers[]" id="p_managers"  <?if(in_array($key, explode(',',$pro['p_managers']))):?> checked<?php endif;?> value="<?php echo $key;?>" >
+                <?=$val?>
+                <?php endif;?>
+                    <?php endforeach; ?>
+                    
+                    </td>
+      
+      </tr>
+<? */ ?>
+      <tr>
+        <td class="altbg1">产品须知</td>        
+        <td>
+        
+            <script id="question_title" name="p_notice" type="text/plain" style="width:700px;height:320px;">
+                <?php echo $pro['p_notice'];?>
+              </script>
+       </td>
+      </tr>
+     
+        <tr>
+      <td colspan="4">
+      <!-- 下一步 -->
+        <center> 
+    <input type="button" name="" value=" 提交 " onclick="check_basic();" class="btn next_step" />
+    &nbsp;
+        <input type="button" name="" value=" 返回" onclick="window.history.go(-1);" class="btn next_step" />
+    </center> 
+      </td>
+      </tr>
+    </table>
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>
+<?php $this->load->view('student/school_selector');?>

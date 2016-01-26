@@ -1,0 +1,150 @@
+/*css reset*/
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
+
+/*css style*/
+body {
+    font-size: 12px;
+}
+
+iframe {
+    border:none;
+}
+
+a, a:visited {
+    text-decoration:none;
+    color:#0000FF;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+ul,li {
+    list-style: none;
+}
+
+.clearfix:after {
+visibility: hidden;
+display: block;
+font-size: 0;
+content: " ";
+clear: both;
+height: 0;
+}
+.clearfix { display: inline-table; }
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* End hide from IE-mac */
+
+/**/
+/*teacher common*/
+.cls_bg_img{
+    background:url("/css/student/images/index/cls_bg.png");
+    width:100%;
+    min-height:650px;
+}
+.cls_left{
+    float:left;
+}
+.cls_right{
+    float:right;
+}
+.cls_ml10{
+    margin-left:10px;
+}
+.cls_nav_left{
+    background:url("/css/student/images/testwork/cls_nav_left_bg.png") repeat-y;
+
+}
+ .cls_logo_box{
+     width:180px;
+     height:169px;
+     background:url("/css/student/images/index/cls_logo_bg.png");
+ }
+/**
+ * PRIVATE
+ * 层对话框背景DIV
+ */
+div.cls_dialog_mask 
+{
+    margin-left:auto;
+    margin-right:auto;
+    background-color:#cccccc;
+    position:fixed;
+    opacity:0.4;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
+    top:0px;
+    left:0px;
+}
+
+/**
+ * PRIVATE
+ * 层对话框本身
+ */
+div.cls_dialog 
+{
+    border:1px solid darkGray;
+    position:fixed;
+    background-color:white;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+}
+
+
+/**
+ * PUBLIC
+ * 层对话框内的标题栏
+ */
+div.cls_dialog > div.cls_title 
+{
+    font-weight:bold;
+    height:18px;
+    /*background-color:#f5f5f5;*/
+    background:url(/sys/ueditor/themes/default/images/dialog-title-bg.png);
+    color: #000;
+    padding:6px 6px 3px 6px;
+    border-bottom:1px solid #C6C6C6;
+    margin-bottom:2px;
+}
+
+div.cls_dialog > div.cls_title > div.cls_close 
+{
+    background-image:url(/sys/ueditor/themes/default/images/icons-all.gif);
+    background-attachment:scroll;
+    background-repeat:no-repeat;
+    background-position:0px -59px;
+    background-color:transparent;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    margin-top:-2px;
+    margin-right:-2px;
+    float:right;
+}
+
+div.cls_dialog > div.cls_title > div.cls_close:hover 
+{
+    background-position:0px -89px;
+}
+
+/**
+ * PUBLIC
+ * 层对话框内的底部对话框按钮(确定/取消/关闭等)
+ */
+div.cls_dialog > div.cls_dialog_buttons 
+{
+    margin-top:4px;
+    border-top: 1px solid #c6c6c6;
+    text-align:right;
+    padding:8px;
+    background-color:#fff;
+    font:12px/1.5em;
+}
+/*// 对话框里的确定、取消等按钮*/
+div.cls_dialog > div.cls_dialog_buttons button 
+{
+}
+.MathJax span{
+    *clipTop:0em;
+}

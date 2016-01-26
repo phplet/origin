@@ -1,0 +1,223 @@
+<?php $this->load->view('common/header');?>
+
+<script language='javascript'>
+var subject_ids = '<?=$question['subject_id']?>';
+var is_primary = '<?=$question['is_primary']?>';
+</script>
+
+<?php 
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js', 
+                        'js/jquery/plugin/validate/additional-methods.min.js',
+                        
+                        'js/jquery/plugin/blockUi.js',
+                        'js/jquery/plugin/jquery.json-2.4.min.js',
+                        		
+                        'js/jquery/plugin/validate/messages_zh.js',
+                        'js/third_party/ueditor/ueditor.config.question.js',
+                        'js/third_party/ueditor/ueditor.all.min.js',
+                        'js/third_party/ueditor/lang/zh-cn/zh-cn.js'));
+
+        static_js(array('third_party/ueditor/ueditor.config.question.js',
+                    'third_party/ueditor/ueditor.all.min.js',
+                    'third_party/ueditor/lang/zh-cn/zh-cn.js',
+                    'admin/question/question.js',
+                    'admin/question/question_validate.js',
+                    'admin/question/pic_delete.js',
+                    ));
+?>
+
+<script language='javascript'>
+var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+var is_group  = false;
+var knowledge_ids = [<?=trim($question['knowledge'],',')?>];
+var method_tactic_ids = [<?=trim($question['method_tactic'],',')?>];
+var knowledge_know_process = eval("("+'<?php echo json_encode($know_processes); ?>'+")");
+var group_type_ids = [<?=trim($question['group_type'],',')?>];
+
+var ajax_url_knowledge = '<?=site_url('admin/common/knowledge_all')?>';
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+
+var ajax_url_method_tactic = '<?=site_url('admin/common/method_tactic_all')?>';
+var ajax_url_method_tactic_select = '<?=site_url('admin/common/method_tactic_select')?>';
+var ajax_url_method_tactic_init = '<?=site_url('admin/common/method_tactic_init')?>';
+
+<?php if(!$question['is_primary']): ?>
+var ajax_url_group_type = '<?=site_url('admin/common/group_type_all')?>';
+var ajax_url_group_type_select = '<?=site_url('admin/common/group_type_select')?>';
+var ajax_url_group_type_init = '<?=site_url('admin/common/group_type_init')?>';
+<?php endif; ?>
+</script>
+
+<script>
+$(document).ready(function(){
+    $("#question_form").validate({
+        submitHandler:function(form){
+            var qtype = getRadio(null, 'qtype');
+            if (qtype == 3) {
+                if (check_input_answer()) {
+                    form.submit();
+                }
+            } else {
+                if (check_option_group()) {
+                    form.submit();
+                }
+            }
+        },
+        rules: {
+            picture:{
+                accept:"jpe?g|gif|png"
+            }
+        },
+        messages: {
+            picture:{
+                accept: '只能上传jpg,gif格式图片'
+            }
+        }
+    });
+    $('input:radio[name=qtype]').unbind('click').click(function(){
+        toggle_qtype();
+    });
+    toggle_qtype();
+});
+
+//解决ueditor编辑器放table里在360兼容模式下显示不了。
+$(function() {
+	//题目编辑器
+	var editor = UE.getEditor('question_title');
+	window.question_editor = editor;
+
+	//选项编辑器
+	$("textarea[name='option[]']").each(function(i,item){
+		$(this).attr('id','option_'+i);
+		UE.getEditor('option_'+i,{
+			enterTag:'<br>',
+			initialFrameWidth:720,
+			initialFrameHeight:60			
+		});
+	});
+});
+</script>
+<style>
+.height_light {
+    border:1px solid #f00;
+    padding:2px 0 2px 0;
+    margin:2px 0 2px 0;
+}
+.div_option{
+    border-bottom:1px solid #CCCCFF;
+    padding:5px;
+}
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question_external/update_group_question')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'edit'):?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+  <input type="hidden" name="parent_id" value="<?=$question['parent_id']?>" />  
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'编辑'?>题组试题</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                题目信息 [<font class="font_4">选填</font>]
+            </td>
+        </tr>
+        <tr style="display: none;">
+        	<td>
+        		<input type="hidden" name="subject_id" id="subject_id" value="<?php echo $question['subject_id'];?>"/>
+        		<?php if ($question['subject_id'] == 11):?>
+        		<span id="subject_id_list" style="display: none;">
+                <input type="checkbox" name="subject_str[]" value="<?=trim(substr($question['subject_id_str'], 1), ',')?>" checked="checked">
+                </span>
+                <?php endif;?>
+        	</td>
+        </tr>
+        <tr>
+            <td class="altbg1">知识点</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;">
+              <input type="checkbox" name="knowledge_id[]" value="" />
+            </div>
+             <div id="knowledge_list"></div>
+             <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=trim($question['knowledge'],',')?>" />
+             <button id="knowledge_select" class="btn2" type="button">点击选择</button>
+             <?php if ($question['subject_id'] != 3 || $question['is_primary']) {?>
+             <font color="red">*</font>
+             <?php }?>
+             <label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php if ($question['subject_id'] == 3 && !$question['is_primary']) {?>
+         <tr>
+            <td class="altbg1">信息提取方式</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;">
+              <input type="checkbox" name="group_type_id[]" value="" />
+            </div>
+             <div id="group_type_list"></div>
+             <input type="hidden" name="group_type_ids" id="group_type_ids" value="<?=trim($question['group_type'],',')?>" />
+             <button id="group_type_select" class="btn2" type="button">点击选择</button><font color="red">*</font>
+             <label for="group_type_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php }?>
+        <tr id="tr_method_tactic" <?php echo !$question['count_subject_method_tactics'] ? 'style="display:none;"' : '';?>>
+            <td class="altbg1">方法策略</td>
+            <td>
+             <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="method_tactic_id[]" value="" /></div>
+             <div id="method_tactic_list"></div>
+             <input type="hidden" name="method_tactic_ids" id="method_tactic_ids" value="<?=trim($question['method_tactic'],',')?>" />
+             <button id="method_tactic_select" class="btn2" type="button">点击选择</button>
+             <label for="method_tactic_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr <?php if(isset($question['p_type']) && in_array($question['p_type'], array(4,5,6,7))):?>style="display: none;"<?php endif;?>>
+          <td class="altbg1">题型</td>
+          <td>              
+            <input type="radio" name="qtype" value="1" id="qtype1" required title="请选择题型"<?=$question['type']==1 ? ' checked':''?>/>
+            <label for="qtype1"> 单选</label>
+            &nbsp;
+            <input type="radio" name="qtype" value="2" id="qtype2" <?=$question['type']==2 ? ' checked':''?>/>
+            <label for="qtype2"> 不定项</label>
+            &nbsp;
+            <input type="radio" name="qtype" value="3" id="qtype3" <?=$question['type']==3 ? ' checked':''?>/>
+            <label for="qtype3"> 填空</label>
+            &nbsp;
+            <input type="radio" name="qtype" value="10" id="qtype10" <?=$question['type']==10 ? ' checked':''?>/>
+            <label for="qtype10"> 解答题</label>
+            
+            &nbsp;&nbsp;
+            <span style="color:#f00">*</span>
+            <label for="qtype" class="error" style="display:none"></label>
+            
+            <?php if (isset($question['p_type']) && $question['p_type'] == 7) {?>
+              <input type="radio" name="qtype" value="7" id="qtype7" checked/><label for="qtype7">翻译题</label>
+              <span style="color:#f00">*</span>
+              <label for="qtype" class="error" style="display:none"></label>
+            <?php }?>
+          </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="10%">题目</td>
+            <td>
+				<script id="question_title" name="title" type="text/plain" style="width:700px;height:320px;"><?=$question['title']?></script>                
+                <div id="input_answer_notice">
+                填空题说明：<br/>
+                1, 在需要设置填空项的地方，输入【中文括号加数字】，例如：（1），（2）。<br/>
+                2, 多个填空项，请按数字顺序填写；只有一个填空项，可以不填写数字。
+                </div> 
+            </td>
+        </tr>
+        <?php $this->load->view('question/options');?>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

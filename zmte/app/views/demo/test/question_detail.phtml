@@ -1,0 +1,53 @@
+<!-- 考试题目 格式转化 -->
+<?php
+	/**
+	 * 自增
+	 */
+	function auto_count() {
+		static $auto_key = 0;
+		$auto_key++;
+		return $auto_key;
+	}
+	
+	foreach ($questions as $key=>$question) { 
+		//试题类型
+		$question_type = $key;
+		$qtype_name = isset($qtypes[$question_type]) ? $qtypes[$question_type] : '--'; 
+
+		echo $this->load->view("test/question_type/type_{$question_type}", array('qtype_name' => $qtype_name, 'question_list' => $question));
+	}
+?>
+<script>
+	$(function(){
+		//公式转化
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub,"question_detail_box"]);
+
+	    uParse('.cls_question_item', {
+	        rootPath: '../'
+	    })
+
+	    // 有序列表兼容firefox
+	    if ($('.cls_question_item ol').length >= 1) {
+	    	$('.cls_question_item ol').each(function(i){
+	    		var list_style = $(this).attr('style');
+
+	        	if (list_style.match(/list\-style\-type\:\s(cn|num)/) != null) {
+	        		$(this).attr('style','');
+	        	};
+	    	});
+	    };
+
+	    // 无序列表兼容firefox
+	    if ($('.cls_question_item ul').length >= 1) {
+	        $('.cls_question_item ul').each(function(i){
+	            var list_style = $(this).attr('style');
+
+	            if (list_style != undefined) {
+	            	if (list_style.match(/list\-style\-type\:\s(dash|dot)/) != null) {
+		                $(this).attr('style','');
+		            }
+	            }
+	        });
+	    };
+	});
+</script>

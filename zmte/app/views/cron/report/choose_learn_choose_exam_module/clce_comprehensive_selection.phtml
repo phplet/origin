@@ -1,0 +1,50 @@
+<?php  if (!empty($clce_comprehensive_selection['flash_data']['data'])) {?>
+    <div class="cls_row center" id="flash_container_comprehensive_selection"></div>
+    
+    <script type="text/javascript">
+        $(function () {
+            $('#flash_container_comprehensive_selection').highcharts({
+            	chart: {
+            		polar: true,
+        	        type: 'line',
+        	        height: 400
+                },
+                title: {
+                    text: '',
+                    x: -80
+                },
+                pane: {
+        	    	size: '80%'
+        	    },
+                xAxis: {
+                    categories: eval("("+'<?=json_encode($clce_comprehensive_selection['flash_data']['fields'])?>'+")"),
+            		tickmarkPlacement: 'on',
+        	        lineWidth: 0
+                },
+                yAxis: {
+        	        gridLineInterpolation: 'polygon',
+        	        lineWidth: 0,
+        	        min: 0,
+        	        max: 2,
+        	        tickInterval:1
+        	    },
+        	    legend: {
+        	        align: 'right',
+        	        verticalAlign: 'top',
+        	        y: 70,
+        	        layout: 'vertical'
+        	    },
+        	    colors: ['#00A0E9','#996C33','#FF0000','#009944'],
+          	    series: eval("("+'<?=json_encode($clce_comprehensive_selection['flash_data']['data']); ?>'+")")
+            });
+        });
+    </script>
+    
+    <?php if ($clce_comprehensive_selection['recommended_subject']) {?>
+    <? 
+        $subject = $clce_comprehensive_selection['recommended_subject'];
+        $end_subject = array_pop($subject);
+    ?>
+    <p class="cls_row">综合考虑你的学业水平现状、学习风格类型和学科兴趣，给出如下选科推荐：<?=implode('、', $subject)?>和<?=$end_subject?>。</p>
+    <?php }?>
+<?php } ?>

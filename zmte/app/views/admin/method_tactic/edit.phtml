@@ -1,0 +1,26 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form id="frm_add" name="Frm_info" method="POST" action="<?=site_url('admin/method_tactic/save')?>">
+  <input type="hidden" name="id" value="<?=$detail['id']?>" />
+  <input type="hidden" name="subject_category_id" value="<?=$subject_category['id']?>" />
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <div class="space">
+    <div class="subtitle" style="text-align:center"><span style="float:left;"><?php echo $act == 'add' ? '添加' : '编辑';?>方法策略</span>分类：<?php echo $subject_category['name'];?>  -> 方法策略</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">策略名称</td>        
+        <td>
+            <input type="text" name="name" class="txtbox" value="<?=$detail['name']?>">
+        </td>
+      </tr>
+      
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,34 @@
+<script>
+    $(function(){
+        $('#is_original').change(function () {
+            var value = $(this).val();
+
+            $('#exam_question_extras').hide();
+            $('#exam_question_related').hide();
+            $('#exam_question_simulation').hide();
+
+            if (value == 2) {
+                $('#exam_question_extras').show();
+            } else if (value == 1) {
+                $('#exam_question_related').show();
+            } else if (value == 3) {
+                $('#exam_question_simulation').show();
+            }
+        });
+
+        var paper_diy=1;
+
+        // 验证真题是否存在
+        $('#related').blur(function(){
+            var val = $('#related').val();
+            if (val != '') {
+                $.post('<?=site_url('admin/question/validate_related')?>',{related:val},function(data){
+                    if (data == 'false') {
+                        alert('真题路径错误！(试题ID填写错误或试题类型不为真题)');
+                        $('#related').focus();
+                    };
+                });
+            };
+        });
+    });
+</script>

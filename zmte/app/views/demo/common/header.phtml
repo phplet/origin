@@ -1,0 +1,46 @@
+<?php  if ( ! defined('BASEPATH')) die;?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<base target="_self"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<title><?php echo isset($page_title) ? $page_title : '';?>--<?php echo isset($system_name) ? $system_name : ''; ?></title>
+<link rel="Shortcut Icon" href="/source/favicon.ico';?>" type="image/x-icon" />
+
+<?php if (!(isset($render_simple) && $render_simple === true)) {?>
+
+<?php 	if (!(isset($render_no_style) && $render_no_style === true)) {?>
+
+<?php if($subject_name=='英语'):?>
+<?php 		static_css(array('public_qt.css'));?>
+<?php else:?>
+<?php 		static_css(array('public.css'));?>
+<?php endif?>
+
+<?php 	} ?>
+
+<?php 	if (ENVIRONMENT == 'production') {?>
+<?php 		static_global(array('js/common/screen_error.js'));?>
+<?php 	}?>
+
+<?php 	static_global(array('js/jquery/jquery-1.7.2.min.js'));?>
+<?php 	//static_global(array('js/jquery/plugin/jquery.ua.min.js'));?>
+<?php 	static_global('js/jquery/plugin/jquery.placeholder.min.js');?>
+<?php 	static_js(array('common.js'));?>
+
+<?php } ?>
+<script type="text/javascript">
+	var exam_count_down_config = { 
+      		'startT' : '<?php echo isset($current_exam['start_time']) ? $current_exam['start_time'] : '';?>',
+      		'startText' : '距离考试开始时间还有 ',
+      		'startCallback':function () {setTimeout(function () {window.location.reload();}, 2000);},
+      		'endT' : '<?php echo isset($current_exam['end_time']) ? $current_exam['end_time'] : date('Y-m-d H:i:s', time() + 300);?>',
+      		'endText' : '距离考试结束时间还有 ',
+      		'endCallback':function () {setTimeout(function () {window.location.reload();}, 10000)},
+      		'eText' : '本场考试已经结束!',
+      		'currentTime':'<?php echo date('Y-m-d H:i:s');?>'
+		},
+		has_submited = false;
+</script>
+<?=C('tongji_script')?>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8"/>
+        <!-- 页脚页眉信息 -->
+        <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+        <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+        <meta type="student_name" content="<?php echo $studentName; ?>"/>
+        <meta type="exam_time" content="<?php echo $examName; ?>"/>
+        <title>面试结果</title>
+
+        <?php
+            static_global('css/app/report/ceping.css', 'css');
+            static_global(array(
+    						'js/jquery/jquery.js',
+                            'js/app/report/highcharts.js',
+                            'js/app/report/highcharts-more.js',
+            ));
+            /* 表格分页 */
+            /* echo $this->load->view('report/table_auto_pager'); */
+            $counter = 1;
+        ?>
+
+        <!-- script -->
+        <script type="text/javascript">
+            //全局设置,省得每个都写
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false
+                },
+                credits: {
+                    enabled: false  //右下角不显示LOGO
+                },
+                chart: {
+                    animation:false //关闭全部动画,使其在pdf中可以渲染到
+                },
+                title:{
+                    style:{
+                        color:"#333"
+                    }
+                },
+                legend:{
+                    itemStyle:{
+                        color:"#333"
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        animation: false    //关闭全部动画,使其在pdf中可以渲染到
+                    }
+                }
+            });
+
+            <?php if (true) {?>
+                $(function(){
+                    $('#container').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: '面试结果对比'
+                        },
+                        subtitle: {
+                            text: '面试结果对比'
+                        },
+                        xAxis: {
+                            categories: eval(<?php echo json_encode($option_index); ?>)
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: '分数'
+                            }
+                        },
+                        tooltip: {
+                            enabled: false,
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0,
+                                dataLabels: {
+                                    enabled: true,
+                                    color: "#000",
+                                    style: {
+                                        fontWeight: 'bold'
+                                    },
+                                    formatter: function() {
+                                        return this.y;
+                                    }
+                                },
+                            }
+                        },
+                        series: [
+                        {
+                            name: '总分',
+                            data: eval(<?php echo json_encode($total); ?>)
+                        },
+                        {
+                            name: '得分',
+                            data: eval(<?php echo json_encode($scroes); ?>)
+                        }, {
+                            name: '平均',
+                            data: eval(<?php echo json_encode($avg); ?>)
+                        }]
+                    });
+                })
+            <?php }?>
+        </script>
+    </head>
+    <body>
+        <div class="ceping cls_root">
+
+            <h1><?php echo $studentName; ?>&nbsp;&nbsp;面试结果报告</h1>
+
+            <!-- 面试结果对比柱状图 -->
+            <h3><?php echo $counter++; ?>.面试结果对比柱状图</h3>
+            <div class="center">
+                <div id="container" style="page-break-before:auto"></div>
+            </div>
+            <!-- end 面试结果对比柱状图 -->
+
+            <!-- 面试结果 -->
+            <h3><?php echo $counter++; ?>.面试结果</h3>
+            <table class="pingyu">
+                <tr>
+                    <th>评分项</td>
+                    <th>总分</th>
+                    <th>得分</td>
+                    <th>平均得分</td>
+                </tr>
+                <?php 
+                    $auto_key = 0;
+                    $sum_total = 0;
+                    $sum_scroe = 0;
+                    $sum_avg = 0;
+                ?>
+                <?php foreach ($grade as $key => $item) {?>
+                    <?php 
+                        $auto_key++;
+                        $sum_total += $options[$key + 1 ]['score'];
+                        $sum_scroe += $item['scroe'];
+                        $sum_avg += $avg_index[$item['option_index']];
+                    ?>
+                    <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                        <td><?php echo $item['option_index'] . '.' . $options[$key + 1]['title']; ?></td>
+                        <td><?php echo $options[$key + 1]['score']; ?></td>
+                        <td><?php echo $item['scroe']; ?></td>
+                        <td><?php echo $avg_index[$item['option_index']]; ?></td>
+                    </tr>
+                <?php } ?>
+                <tr>
+                    <td>总计</td>
+                    <td><?php echo $sum_total; ?></td>
+                    <td><?php echo $sum_scroe; ?></td>
+                    <td><?php echo $sum_avg; ?></td>
+                </tr>
+            </table>
+            <!-- end 面试结果 -->
+
+           <br/>
+           <p class="mokuai-text cls_row">
+                    注：为表达更加简明扼要，部分数据进行了取整等简化处理，由此可能造成相关数据的误差不影响评价结果。
+           </p>
+        </div>
+    </body>
+</html>

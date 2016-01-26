@@ -1,0 +1,29 @@
+<div class="cls_footer clearfix" id="tool_bar_box">
+	<div class="cls_footer_page bar_menu" id="tool_bar_menu">
+        <a class="cls_footer_prv disabled visibility_hide" href="###" id="btn_prev_question" >上一题</a>
+		<a class="cls_footer_next visibility_hide" href="###" id="btn_next_question">下一题</a>
+    </div>
+    <div class="cls_footer_bg">
+		<div class="cls_footer_pos">
+			<div class="cls_footer_left fl_l clearfix">
+				<?php /*?>
+	            <div class="cls_jiankao_btn fl_l">
+	            	<i class="cls_imgpng"></i>
+	            	<a class="cls_jiankao_text" href="">呼叫监考老师</a>
+				</div>
+				<?php */?>
+	            <div class="cls_countTime fl_l">
+	            	<i class="cls_imgpng"></i><span>剩余时间:</span>
+	            	<strong id="id_statusbar_clock" class="cls_countTime_main">正在初始化考试计时器...</strong>
+				</div>
+                <div class="cls_jilu fl_l" id="cheat_span" style="display:none;">本场考试你的作弊行为已经达到 <em class="cls_jilu_strong" id="cheat_count"></em>次，累计<em id="cheat_total"></em>次系统将视为作弊处理!</div>
+			</div>
+	        <div class="cls_ques_buttons fl_r clearfix">
+	            <!--  <a href="###" class="cls_save_btn cls_button fl_l">保存考试</a>&nbsp; -->
+	            <?php if ($current_exam['start_time'] <= date('Y-m-d H:i:s')) { ?>
+	            <!-- <a href="###" id="btn_finish" class="btn_finish cls_submit_btn cls_button fl_r">提交试卷</a> -->
+	            <?php } ?>
+	        </div>
+		</div>
+	</div>
+</div>

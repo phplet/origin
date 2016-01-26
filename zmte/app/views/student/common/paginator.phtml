@@ -1,0 +1,82 @@
+<? if ($totalItemCount > 0) { 
+$pos = strpos($_SERVER['REQUEST_URI'], '?');
+if ($pos === false)
+{
+    $url = $_SERVER['REQUEST_URI'];
+}
+else
+{
+    $url = substr($_SERVER['REQUEST_URI'], 0, $pos);
+}
+
+$get = $_GET;
+if (isset($get[$pageKey]))
+{
+    unset($get[$pageKey]);
+}
+if (isset($get[$perpageKey]))
+{
+    unset($get[$perpageKey]);
+}
+if (empty($get))
+{
+    $qry_str = '';
+}
+else
+{
+    $qry_str = '&' . http_build_query($get);
+}
+?>
+<div class="cls_paginator">
+<? if ($current <= 1) { ?>
+<span>&lt;&lt;&lt;</span>
+<? } else { ?>
+<a href="<?=$url?>?<?=$pageKey?>=1<?=$qry_str?>"><span>&lt;&lt;&lt;</span></a>
+<? }
+if ($current - 1 >= 1) { ?>
+<a href="<?=$url?>?<?=$pageKey?>=<?=($current - 1)?><?=$qry_str?>"><span>&lt;</span></a>
+<? } else { ?>
+<span>&lt;</span>
+<? } 
+$page_min = $current; $page_max = $current; 
+$i = 1;
+while ($i < 11)
+{ 
+    if ($page_min > 1)
+    {
+        $page_min--;
+        $i++;
+    }
+    if ($page_max < $pageCount)
+    {
+        $page_max++;
+        $i++;
+    }
+    if ($page_min == 1 && $page_max == $pageCount)
+    {
+        break;
+    }
+} 
+for ($i = $page_min; $i < $current; $i++) { ?>
+<a href="<?=$url?>?<?=$pageKey?>=<?=$i?><?=$qry_str?>"><span class="cls_page_span"><?=$i?></span></a>
+<? } ?>
+<span class="cls_page_span"><?=$current?></span>
+<? for ($i = $current + 1; $i <= $page_max; $i++) { ?>
+<a href="<?=$url?>?<?=$pageKey?>=<?=$i?><?=$qry_str?>"><span class="cls_page_span"><?=$i?></span></a>
+<? } 
+if ($current + 1 <= $pageCount) { ?>
+<a href="<?=$url?>?<?=$pageKey?>=<?=($current + 1)?><?=$qry_str?>"><span>&gt;</span></a>
+<? } else { ?>
+<span>&gt;</span>
+<? } 
+if ($current >= $pageCount) { ?>
+<span>&gt;&gt;&gt;</span>
+<? } else { ?>
+<a href="<?=$url?>?<?=$pageKey?>=<?=$pageCount?><?=$qry_str?>"><span>&gt;&gt;&gt;</span></a>
+<? } ?>
+<span class="cls_page_sum">总计<?=$pageCount?>页<?=$totalItemCount?>条记录<? /*$itemCountPerPage */?></span>
+
+</div>
+<? } else { ?>
+<div class="cls_paginator">查询无记录</div>
+<? } ?>

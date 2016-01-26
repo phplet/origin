@@ -1,0 +1,256 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'pwish'));?>
+<div id="body">
+  <form method="POST" id="frm_save" action="<?=site_url('student/profile/pwish_save')?>" onsubmit="return check_pwish(this);">
+  <input type="hidden" name="uid" value="<?=$uid?>">
+  <div class="space">
+    <table class="maintable" id="table_parent_wish" border="0" cellspacing="0" cellpadding="0">
+     <tr><td style="border:none;height:10px;"></td></tr>
+     <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+            <span class="altbg2-bg">兴趣爱好</span>
+          	<i class="altbg2-r"></i>
+        </td>
+        <td colspan="2" class="altbg2" style="text-align: left;color:#666">
+            <span style="color:#f00;position:relative;top:3px;">*</span> 发展意愿
+        </td>
+      </tr>
+      <tr>
+        <td width="12%" class="altbg1" rowspan="2" style="border-bottom:2px solid #045eab;">家庭背景 <span style="color:#f00;position:relative;top:3px;">*</span></td>
+        <td width="33%" rowspan="2" style="border-bottom:2px solid #045eab;">
+            <?php
+                $parent_wish[family_bg_qt] = unserialize($parent_wish['family_bg_qt']);
+            ?>
+            <p>户籍性质：        <select name="parent_wish[family_bg_qt][huji]" id="parent_wish_family_bg_qt_huji">
+            <option value="">请选择</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][huji]==1):?>selected<?php endif;?>>农村户口</option>
+                     <option value="2" <?php if($parent_wish[family_bg_qt][huji]==2):?>selected<?php endif;?>>城市户口</option>
+                </select></p>
+                 <p>&nbsp;</p>
+            <p>生活环境:
+            <input type="radio" name="parent_wish[family_bg_qt][shenghuohuanjing]" id="pwish_shenghuohuanjing1" value="1"<?php if(!empty($parent_wish[family_bg_qt][shenghuohuanjing])&&
+            $parent_wish[family_bg_qt][shenghuohuanjing]==1) echo ' checked';
+            else
+                echo ' checked';
+            ?>/><label for="pwish_shenghuohuanjing1"> 与父母同住</label>
+            <input type="radio" name="parent_wish[family_bg_qt][shenghuohuanjing]" id="pwish_shenghuohuanjing1" value="2"<?php if($parent_wish[family_bg_qt][shenghuohuanjing]==2) echo ' checked';?>/><label for="pwish_shenghuohuanjing1"> 与其他监护人</label>
+
+            </p>
+            <p>&nbsp;</p>
+            <p id="pwish_shenghuohuanjing3">父亲学历    <select name="parent_wish[family_bg_qt][fxueli]" id="parent_wish_family_bg_qt_fxueli">
+               <option value="">请选择</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][fxueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][fxueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][fxueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][fxueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][fxueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][fxueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+                                             母亲学历  <select name="parent_wish[family_bg_qt][mxueli]" id="parent_wish_family_bg_qt_mxueli">
+               <option value="">请选择</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][mxueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][mxueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][mxueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][mxueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][mxueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][mxueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+            </p><p>&nbsp;</p>
+            <p id="pwish_shenghuohuanjing4">监护人年龄   <input name="parent_wish[family_bg_qt][jian_age]" id="parent_wish_family_bg_qt_jian_age" value="<?php echo $parent_wish[family_bg_qt][jian_age];?>" size=3>
+
+                                               性别<select name="parent_wish[family_bg_qt][jian_sex]" id="parent_wish_family_bg_qt_jian_sex">
+                 <option value="">请选择</option>
+                     <option value="1" <?php if($parent_wish[family_bg_qt][jian_sex]==1):?>selected<?php endif;?>>男</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_sex]==2):?>selected<?php endif;?>>女</option>
+                </select>
+                                                  学历<select name="parent_wish[family_bg_qt][jian_xueli]" id="parent_wish_family_bg_qt_jian_xueli">
+                 <option value="">请选择</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][jian_xueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_xueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][jian_xueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][jian_xueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][jian_xueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_xueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+            </p>
+          <ul id="family_bg_div">
+            <?php foreach(C('family_bg') as $k => $v):?>
+            <li class="family_bg_item">
+            <input type="checkbox" name="parent_wish[family_bg][]" id="family_bg_<?=$k?>" value="<?=$k?>" <?php if(strpos(','.$parent_wish['family_bg'].',', ','.$k.',')!==false) echo 'checked';?>/><label for="family_bg_<?=$k?>"> <?=$v?></label>
+            <?php if ($k==99):?><input type="text" class="txtbox2" name="parent_wish[other_bg]" id="other_bg" value="<?=empty($parent_wish['other_bg'])?'':$parent_wish['other_bg']?>" /><?php endif;?>
+            </li>
+            <?php endforeach;?>
+          </ul>
+        </td>
+        <td  width="12%" class="altbg1">升学途经 <span style="color:#f00;position:relative;top:3px;">*</span></td>
+        <td>
+          <div id="pwish_method_div">
+            <input type="radio" name="parent_wish[upmethod]" id="pwish_method1" value="高考"<?php if($parent_wish['upmethod']=='高考') echo ' checked';?>/><label for="pwish_method1"> 高考</label>
+            <input type="radio" name="parent_wish[upmethod]" id="pwish_method2" value="自主招生"<?php if($parent_wish['upmethod']=='自主招生') echo ' checked';?> /><label for="pwish_method2"> 自主招生</label>
+            <input type="radio" name="parent_wish[upmethod]" id="pwish_method3" value="出国留学"<?php if($parent_wish['upmethod']=='出国留学') echo ' checked';?> /><label for="pwish_method3"> 出国留学</label>
+            <?php if(in_array($parent_wish['upmethod'],array('高考','自主招生','出国留学',''))):?>
+            <input type="radio" name="parent_wish[upmethod]" id="pwish_method4" value="其他" /><label for="pwish_method4"> 其他</label>
+            <input type="text" name="parent_wish[upmethod_other]" id="other_method" value="" class="txtbox4"/>
+            <?php else: ?>
+            <input type="radio" name="parent_wish[upmethod]" id="pwish_method4" value="其他" checked /><label for="pwish_method4"> 其他</label>
+            <input type="text" name="parent_wish[upmethod_other]" id="other_method" value="<?=$parent_wish['upmethod']?>" class="txtbox5"/>
+            <?php endif; ?>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">发展意愿 <span style="color:#f00;position:relative;top:3px;">*</span></td>
+        <td style="border-bottom:2px solid #045eab;">
+            <textarea name="parent_wish[wish]" id="wish_content" rows="8" cols="45"><?=$parent_wish['wish']?></textarea>
+        </td>
+      </tr>
+      <tr><td style="border:none;height:10px;"></td></tr>
+    </table>
+    <center style="margin-bottom:10px;">
+  <?php if($uid OR $this->session->userdata('complete')):?>
+    <input type="submit" name="dosubmit"  value=" 保存修改  " class="btn" />
+  <?php else: ?>
+  	<input type="hidden" value="0" name="go_prev" id="hidden_go_prev"/>
+    <input type="button" value=" 上一步 " id="btn_go_prev" onclick="location='<?=site_url('student/profile/wish')?>'" class="btn" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="submit" name="dosubmit" value="提交" class="btn" />
+  <?php endif; ?>
+  </center>
+  </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(":radio[name='parent_wish[family_bg_qt][shenghuohuanjing]']").click(function(){
+        var index = $(":radio[name='parent_wish[family_bg_qt][shenghuohuanjing]']").index($(this));
+        if(index == 1) { //选中第2个时，div显示
+           $("#pwish_shenghuohuanjing4").show();
+           $("#pwish_shenghuohuanjing3").hide();
+        } else { //当被选中的不是第2个时，div隐藏
+     	   $("#pwish_shenghuohuanjing3").show();
+           $("#pwish_shenghuohuanjing4").hide();
+        }
+    });
+
+
+
+    if($('input[name="parent_wish[family_bg_qt][shenghuohuanjing]"]:checked').val()==1) {
+    	$("#pwish_shenghuohuanjing4").hide();
+    	$("#pwish_shenghuohuanjing3").show();
+    } else {
+    	$("#pwish_shenghuohuanjing3").hide();
+    	$("#pwish_shenghuohuanjing4").show();
+    }
+
+
+  });
+
+    function check_pwish(form) {
+
+        var wish = getRadio(form, 'parent_wish[upmethod]');
+        var other = $('#other_method').val().trim();
+        var other_bg = $('#other_bg').val().trim();
+        var err = '';
+        var focus_id = [];
+        if ( ! checkbox_check('parent_wish[family_bg][]', null, false)) {
+            err += "- 请选择家庭背景。\n";
+            focus_id[focus_id.length] = 'family_bg_1';//'family_bg_div';
+        }
+
+        if ($('#family_bg_99')[0].checked && ! other_bg) {
+            err += "- 请填写其他家庭背景名称。\n";
+            focus_id[focus_id.length] = 'other_bg';
+        }
+        if ($("#parent_wish_family_bg_qt_huji").val().trim() == '') {
+           	 err += "- 请选择户籍性质\n";
+             focus_id[focus_id.length] = 'parent_wish_family_bg_qt_huji';
+        }
+        
+        if ($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:checked").val()== 2){
+
+        	if ($("input[name='parent_wish[family_bg_qt][jian_age]']:text").val().trim() == '') {
+       		 err += "- 请输入监护人年龄。\n";
+             focus_id[focus_id.length] = 'parent_wish_family_bg_qt_jian_age';
+        	}
+
+       	 if ($("#parent_wish_family_bg_qt_jian_xueli").val().trim() == '') {
+            	 err += "- 请选择监护人学历\n";
+              focus_id[focus_id.length] = 'parent_wish_family_bg_qt_jian_xueli';
+         }
+       	 if ($("#parent_wish_family_bg_qt_jian_sex").val().trim() == '') {
+            	 err += "- 请选择监护人性别\n";
+              focus_id[focus_id.length] = 'parent_wish_family_bg_qt_jian_sex';
+         }
+
+        }
+        
+        if ($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:checked").val()== 1){
+
+        	if ($("#parent_wish_family_bg_qt_fxueli").val().trim() == '') {
+       		 err += "- 请选择父亲学历。\n";
+             focus_id[focus_id.length] = 'parent_wish_family_bg_qt_fxueli';
+        	}
+
+       	 if ($("#parent_wish_family_bg_qt_mxueli").val().trim() == '') {
+            	 err += "- 请选择母亲学历\n";
+              focus_id[focus_id.length] = 'parent_wish_family_bg_qt_mxueli';
+         }
+        }
+ 
+        if ( ! wish) {
+            err += "- 请选择升学途经。\n";
+            focus_id[focus_id.length] = 'pwish_method1';//'pwish_method_div';
+        }
+        if (wish == '其他' && other == '') {
+            err += "- 请填写其他升学途经名称。\n";
+            focus_id[focus_id.length] = 'other_method';
+        }
+        if ($("textarea[name*='[wish]']").val().trim() == '') {
+            err += "- 请填写发展意愿。\n";
+            focus_id[focus_id.length] = 'wish_content';
+        }
+
+        if (err) {
+            alert(err);
+            if (focus_id) {
+                $('#'+focus_id[0]).focus();
+            }
+            //for(var i=0; i<focus_id.length; i++) {
+            //    $('#'+focus_id[i]).addClass('height_light');
+            //}
+            return false;
+        }
+        return true;
+    }
+    
+    var other_method = '';
+    $(function(){
+        $('input:radio').click(function(){
+            if($(this).val() != '其他') {
+                if ($('#other_method').val())
+                    other_method = $('#other_method').val();
+                $('#other_method').val('');
+            }
+        });
+        $('input:radio').last().click(function(){
+            if (other_method) {
+                $('#other_method').val(other_method);
+            }
+        });
+        $('#other_method').focus(function(){
+            $('input:radio').last().click();
+        });
+
+        $('#frm_save').submit(function () {
+            if ($('#hidden_go_prev').val() == '0') {
+				return check_pwish();
+            }
+		});
+
+        $('#btn_go_prev').click(function () {
+        	$('#hidden_go_prev').val('1');
+        	$('#frm_save').submit();
+		});
+    });
+</script>
+<?php $this->load->view('common/profile_footer');?>

@@ -1,0 +1,88 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnSaveCTInfo()
+{
+    var param = fnGetFormData('id_ct_form');
+    if ($.trim(param['ct_name']) == '')
+    {
+        alert('教师名称不可为空');
+        return;
+    }
+    if (param['grade_id_str'] == '')
+    {
+        alert('请选择年级');
+        return;
+    }
+    if (param['subject_id_str'] == '')
+    {
+        alert('请选择学科');
+        return;
+    }
+    ajax_setSchoolTeacher(param);
+}
+
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle"><?=$ct_info['ct_id'] ? '编辑': '新增'?>教师<? if ($ct_info['ct_id']) echo('(ID:' . $ct_info['ct_id'] . ')'); ?>
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnSaveCTInfo()">保存</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/school/teacherlist/'.$scht_schid)?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">重新载入</button>
+      </div>
+    </div>
+    <div id="id_ct_form">
+    <table class="maintable" id="id_ct_table" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">教师名称</td>
+        <td colspan="3">
+          <input type="hidden" name="ct_id" value="<?=$ct_info['ct_id']?>" class="cls_field"/>
+          <input type="hidden" name="scht_schid" value="<?=$scht_schid?>" class="cls_field"/>
+          <input type="text" name="ct_name" value="<? Func::echo_s($ct_info['ct_name']); ?>" class="txtbox cls_field"/>
+           <span style="color:#f00">*</span>
+        </td>
+        
+      </tr>
+      <tr>
+        <td class="altbg1">年级</td>
+        <td colspan="3">
+        <? $ctg_arr = array(); foreach ($cteacher_gradeid as $v) $ctg_arr[] = $v['ctg_gradeid'];  ?>
+        <? foreach ($grade_map as $gradeid => $gradename) { ?>
+        <label><input type="checkbox" name="grade_id_str" value="<?=$gradeid?>" class="cls_field" <? if (in_array(0, $ctg_arr) || in_array($gradeid, $ctg_arr)) echo('checked="checked"'); ?>/><?=$gradename?></label>
+        <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">学科</td>
+        <td colspan="3"><? $cts_arr = array(); foreach ($cteacher_subjectid as $v) $cts_arr[] = $v['cts_subjectid']; ?>
+        <? foreach ($subject_map as $subjectid => $subjectname) { ?>
+        <label><input type="checkbox" name="subject_id_str" value="<?=$subjectid?>" class="cls_field" <? if (in_array(0, $cts_arr) || in_array($subjectid, $cts_arr)) echo('checked="checked"'); ?>/><?=$subjectname?></label>
+        <? } ?>
+        </td>
+      </tr>
+        <tr>
+           <td class="altbg1">状态</td>
+           <td colspan="3">
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="1" <?=$ct_info['ct_flag'] == 1 ? 'checked="checked"' : ''?>/>启用</label>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="0" <?=$ct_info['ct_flag'] == '0' ? 'checked="checked"' : ''?>/>禁用</label>
+                 <? if ($ct_info['ct_id']) { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="-1" <?=$ct_info['ct_flag'] == -1 ? 'checked="checked"' : ''?>/>已删</label>
+                 <? } ?>
+                 <? if ($ct_info['ct_flag'] > 1) { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="<?=$ct_info['ct_flag']?>" checked="checked">待审</label>
+                 <? } else { ?>
+                 <label><input type="radio" name="ct_flag" class="cls_field" value="<?=time()?>">待审</label>
+                 <? } ?>
+           </td>
+        </tr>
+        <tr>
+          <td class="altbg1">个人简介</td>
+          <td colspan="3"><textarea name="ct_memo" class="cls_field" style="width:90%;height:200px"><? Func::echo_s($ct_info['ct_memo']); ?></textarea></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<?php $this->load->view('common/footer');?>

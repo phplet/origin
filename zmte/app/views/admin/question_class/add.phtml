@@ -1,0 +1,88 @@
+<?php 
+/**
+ * 添加考试类型
+ */
+$this->load->view('common/header');?>
+
+<script>
+function validate_form()
+{
+	
+	if ($('#class_name').val().length <= 0)
+	{
+	   alert('请输入类型名称');
+	   return false;
+	}
+	
+	var start_grade = $('#start_grade');
+	var end_grade = $('#end_grade');
+	if (start_grade < 1)
+	{
+		alert('请选择起始年级');
+		return false;
+	}
+
+	
+	if (end_grade < 1)
+	{
+		alert('请选择结束年级');
+		return false;
+	}
+
+	if (start_grade > end_grade)
+	{
+		alert('结束年级不能小于起始年级');
+		return false;
+	}
+
+	
+	return true;
+}
+</script>
+
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/question_class/create')?>" onsubmit="return validate_form();">
+  <div class="space">
+    <div class="subtitle">添加考试类型</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">类型名称</td>        
+        <td>
+            <input type="text" id="class_name" name="class_name" class="txtbox" value="">
+            <span style="color:#f00">*</span><span style="color:#f00" id="class_name_err"></span>
+        </td>
+      </tr>
+        <tr>
+            <td class="altbg1">起始年级</td>
+            <td>
+              <select name="start_grade" id="start_grade" >
+                <option value="0">--请选择--</option>
+                <?php foreach(C('grades') as $key => $val): ?>
+                <option value="<?=$key?>"><?=$val?></option>
+                <?php endforeach; ?>
+              </select>  
+               <span style="color:#f00">*</span><span style="color:#f00" id="start_grade_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">结束年级</td>
+            <td>
+              <select name="end_grade" id="end_grade" >
+                <option value="0">--请选择--</option>
+                <?php foreach(C('grades') as $key => $val): ?>
+                <option value="<?=$key?>"><?=$val?></option>
+                <?php endforeach; ?>
+              </select>  
+               <span style="color:#f00">*</span><span style="color:#f00" id="end_grade_err"></span>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

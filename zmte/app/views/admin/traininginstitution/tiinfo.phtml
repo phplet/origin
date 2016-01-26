@@ -1,0 +1,81 @@
+<? $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnSetCooperationAddRuleText(addinc, addfreqday, addenddate)
+{
+    if (addinc > 0 && addfreqday > 0 && addenddate != '')
+    {
+        $("#id_cooperation_addrule").text('每' + addfreqday + '天自动增加' + addinc + '合作度,持续到' + addenddate);
+    }
+    else
+    {
+        $("#id_cooperation_addrule").text('[现无自动增加规则]');
+    }
+}
+
+$(function(){
+    fnSetCooperationAddRuleText(<?=intval($ti_info['ti_cooperation_addinc'])?>,
+        <?=intval($ti_info['ti_cooperation_addfreqday'])?>,
+        '<?=trim($ti_info['ti_cooperation_addenddate'])?>');
+});
+
+</script>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('traininginstitution_settiinfo', false); 
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">查看培训机构(ID:<?=$ti_info['ti_id']?>)
+      <div class="cls_toolbar">
+<? if ($bPrivEdit) { ?>
+      <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/settiinfo/' . $ti_info['ti_id'])?>'">编辑</button>
+<? } ?>
+        <button type="button" onclick="location.href='<?=site_url('admin/traininginstitution/tilist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <div id="id_ti_form">
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">培训机构名称</td>
+        <td width="35%"><? Func::echo_s($ti_info['ti_name']); ?></td>
+        <td class="altbg1" width="15%">培训机构类型</td>
+        <td width="35%"><? Func::echo_s($ti_info['tit_name']); ?></td>
+      </tr>
+
+      <tr>
+        <td class="altbg1">培训机构优先级</td>
+        <td><? Func::echo_s($ti_info['tipt_name']); ?></td>
+        <td class="altbg1">网址</td>
+        <td><? Func::echo_s($ti_info['ti_url']); ?></td>
+      </tr>
+
+        <tr>
+            <td class="altbg1">机构地址</td>
+            <td colspan="3"><?=$ti_info['ti_provname']?> / <?=$ti_info['ti_cityname']?> / <?=$ti_info['ti_areaname']?> <? Func::echo_s($ti_info['ti_addr']); ?></td>
+        </tr>
+
+        <tr>
+          <td class="altbg1">学员人数/年</td>
+          <td><?=$ti_info['ti_stumax']?></td>
+          <td class="altbg1">声誉值</td>
+          <td><?=$ti_info['ti_reputation']?></td>
+        </tr>
+
+        <tr>
+          <td class="altbg1">合作度</td>
+          <td><?=$ti_info['ti_cooperation']?></td>
+          <td class="altbg1">合作度增加规则</td>
+          <td> <span id="id_cooperation_addrule"></span></td>
+        </tr>
+        <tr>
+           <td class="altbg1">校区数量</td>
+           <td><?=$ti_info['ti_campusnum']?></td>
+           <td class="altbg1">状态</td>
+           <td><? if ($ti_info['ti_flag'] > 1) echo('待审'); else if ($ti_info['ti_flag'] == '0') echo('禁用'); else if ($ti_info['ti_flag'] == 1) echo('启用'); else if ($ti_info['ti_flag'] == -1) echo('已删'); ?></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

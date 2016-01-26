@@ -1,0 +1,445 @@
+<?php 
+    static_js(array('common/region.js'));
+?>
+
+<div id="hidden_knowledge_list" style="display:none;"><?php echo isset($knowledge_list) ? json_encode($knowledge_list) : '{}';?></div>
+<div id="hidden_method_tactic_list" style="display:none;"><?php echo isset($method_tactic_list) ? json_encode($method_tactic_list) : '{}';?></div>
+<div id="hidden_group_type_list" style="display:none;"><?php echo isset($group_type_list) ? json_encode($group_type_list) : '{}';?></div>
+
+<?php 
+	$subject_percent = isset($detail['subject_percent']) ? $detail['subject_percent'] : '';
+	$subject_percents = explode(',', $subject_percent);
+	$tmp_subject_percent = array();
+	$tmp_subject_ids = array();
+	foreach ($subject_percents as $sp) {
+		@list($tmp_subject_id, $tmp_s_percent) = @explode(':', $sp);
+		if (!is_null($tmp_subject_id) && !is_null($tmp_s_percent)) {
+			$tmp_subject_percent['subject_' . $tmp_subject_id] = $tmp_s_percent;
+			$tmp_subject_ids[] = $tmp_subject_id;
+		}
+	}
+	$tmp_subject_ids = implode(',', $tmp_subject_ids);
+	$tmp_subject_percent = json_encode($tmp_subject_percent);
+?>
+<div id="hidden_subject_percent" style="display:none;"><?php echo $tmp_subject_percent;?></div>
+<?php 
+	$comparison_level = isset($detail['comparison_level']) && '' != $detail['comparison_level'] ? $detail['comparison_level'] : '';
+?>
+<script type="text/javascript">
+  _regions = [];
+  $(document).ready(function () {
+	  	var js_exam_pid = parseInt('<?php echo $detail['exam_pid']?>') || 0,
+	        js_contrast_exam_pid = parseInt('<?php echo $detail['contrast_exam_pid']?>') || 0,
+	  		js_place_id = parseInt('<?php echo $detail['place_id']?>') || 0,
+	  		js_is_complex_subject = '<?php echo isset($detail['subject_percent']) && trim($detail['subject_percent']) != '' ? 1 : 0;?>',
+	  		js_subject_id = '<?php echo $detail['subject_id'] > 0 ? $detail['subject_id'] : $tmp_subject_ids;?>',
+	  		js_knowledge_ids = eval("("+$('#hidden_knowledge_list').html()+")"),
+	  		js_method_tactic_ids = eval("("+$('#hidden_method_tactic_list').html()+")"),
+	  		js_group_type_ids = eval("("+$('#hidden_group_type_list').html()+")"),
+	  		js_subject_percent = eval("("+$('#hidden_subject_percent').html()+")"),
+	  		js_comparison_level = '<?php echo $comparison_level;?>';
+
+	  	//知识点等级
+  		var levels = [1,2,3,4,5];
+
+  		var url_get_exam = '<?php echo site_url('admin/evaluate_rule/get_exams');?>',
+  			url_get_place = '<?php echo site_url('admin/evaluate_rule/get_exam_places');?>',
+  			url_get_subject = '<?php echo site_url('admin/evaluate_rule/get_exam_place_subjects');?>',
+  			url_get_knowledge = '<?php echo site_url('admin/evaluate_rule/get_exam_place_subject_knowledge');?>',
+  			url_get_method_tactic = '<?php echo site_url('admin/evaluate_rule/get_exam_place_subject_method_tactic');?>',
+  			url_get_group_type = '<?php echo site_url('admin/evaluate_rule/get_exam_place_subject_group_type');?>',
+  			url_comparison_info = '<?php echo site_url('admin/evaluate_rule/get_comparison_info');?>',
+  			url_get_exam_area = '<?php echo site_url('admin/evaluate_rule/get_exam_areas');?>'
+  			;
+  		
+		var 
+			$select_exam_pid = $('#select_exam_pid'),
+			$select_contrast_exam_pid = $('#select_contrast_exam_pid'),
+			$select_place_id = $('#select_place_id'),	  
+			$select_subject_id = $('#select_subject_id'),	  
+			$knowledge_box = $('#knowledge_box'),
+			$method_tactic_box = $('#method_tactic_box'),
+			$group_type_box = $('#group_type_box'),
+			$select_comparison_level = $('#comparison_level_box'),
+			$subject_percent_box = $('#subject_percent_box')
+			;
+
+		var _cache_place_ids = [];
+
+		//获取期次
+		var get_exam = function () {
+			$.get(url_get_exam, function (data) {
+				var output = ['<option value="0">== 选择期次 ==</option>'];
+				$.each(data.data || [], function (i, item) {
+					var _exam_pid = item['exam_id'],
+						_exam_name = item['exam_name'];
+	
+					var selected = js_exam_pid == _exam_pid ? 'selected="selected"' : '';				
+					output.push('<option value="' + _exam_pid + '" ' + selected + '>' + _exam_name + '</option>');
+				});
+
+				$select_exam_pid.html(output.join('')).change();
+				$select_contrast_exam_pid.html(output.join(''));
+				$select_contrast_exam_pid.val(js_contrast_exam_pid);
+				//js_exam_pid && $select_contrast_exam_pid.find('option[value='+js_exam_pid+']').remove();
+			}, 'json');
+		};
+
+		//获取考场
+		var get_place = function (exam_pid) {
+			$.get(url_get_place, {exam_pid:exam_pid},  function (data) {
+				var output = ['<option value="">== 选择考场 ==</option>'];
+				if (exam_pid != '') {
+					var selected = exam_pid == js_exam_pid && js_place_id == 0 ? 'selected="selected"' : '';				
+					output.push('<option value="0" ' + selected + '>所有考场</option>');
+				}
+				_cache_place_ids = [];
+				$.each(data.data || [], function (i, item) {
+					var _place_id = item['place_id'],
+						_place_name = item['place_name'];
+
+					_cache_place_ids.push(_place_id);
+					var selected = exam_pid == js_exam_pid && js_place_id == _place_id ? 'selected="selected"' : '';				
+					output.push('<option value="' + _place_id + '" ' + selected + '>' + _place_name + '</option>');
+				});
+				
+				$select_place_id.html(output.join('')).change();
+			}, 'json');
+		};
+
+		//获取科目
+		var get_subject = function (exam_pid, place_id) {
+			$.get(url_get_subject, {exam_pid:exam_pid, place_id:place_id}, function (data) {
+				var output = ['<option value="">== 选择学科 ==</option>'],
+					subject_percent = [];
+
+				var _data = data.data || [];
+				if (_data.length>1) {
+					output.push('<option value="0" ' + ((js_place_id == '0' || place_id == js_place_id) && js_is_complex_subject == '1' ? 'selected="selected"' : '') +'>总结</option>');
+				}
+				$.each(data.data || [], function (i, item) {
+					var _subject_id = item['subject_id'],
+						_subject_name = item['subject_name'],
+						_subject_percent = (js_place_id == '0' || place_id == js_place_id) && typeof js_subject_percent['subject_' + _subject_id] != 'undefined' ? js_subject_percent['subject_' + _subject_id] : '';
+	
+					var selected = ((js_place_id == 0 || place_id == js_place_id) && js_subject_id == _subject_id && js_is_complex_subject == '0') ? 'selected="selected"' : '';				
+					output.push('<option value="' + _subject_id + '" ' + selected + '>' + _subject_name + '</option>');
+					subject_percent.push(_subject_name + '：<input type="text" class="txtbox5 subject_percent" subject_id="' + _subject_id + '" subject_name="' + _subject_name + '" name="subject_percent[' + _subject_id + ']" value="' + _subject_percent + '"/> % &nbsp;&nbsp;');
+				});
+				$select_subject_id.html(output.join(''));
+
+				//渲染填充综合学科
+				subject_percent.push('<strong style="padding-left:10px;color:red;">*注意：所有学科的占比总和必须等于 100</strong>');
+				$subject_percent_box.html(subject_percent.join('')).hide();
+
+				$select_subject_id.change();
+				
+			}, 'json');
+		};
+
+		//获取对比等级
+		var get_exam_area = function (exam_pid, place_id) {
+			if (exam_pid == '') {
+				return false;
+			}
+			var request_data = {exam_pid:exam_pid, place_id:place_id};
+			if (exam_pid == js_exam_pid) {
+				request_data.comparison_level = js_comparison_level;
+			}
+			$.get(url_get_exam_area, request_data, function (data) {
+				if (typeof data['data'] !== 'undefined') {
+					$select_comparison_level.html(data['data']);
+				} else {
+					$select_comparison_level.html('');
+				}
+
+				add_area_line();
+				
+			}, 'json');
+		};
+
+		//添加对比等级
+		function add_area_line() {
+			$('#btn_add_area').unbind('click').click(function () {
+				var $c_levels = $select_comparison_level.find('p'),
+					$clone_last = $c_levels.last().clone(),
+					_length = $c_levels.length;
+				
+				if (_length == 1) {
+					$clone_last.find('.add').hide();
+					$clone_last.find('.remove').show();
+				}
+				
+				$select_comparison_level.append($clone_last);
+				
+				//重置下拉框的选项
+				$select_comparison_level.find('p').last().find('select').each(function(){
+					$(this).find("option").eq(0).attr("selected", true);
+				});  
+			});  
+		}
+
+		//获取关联一级知识点
+		var get_knowledge = function (place_id, subject_id) {
+			var _levels = levels;
+			$.get(url_get_knowledge, {place_id:place_id, subject_id:subject_id}, function (data) {
+				var output = [];
+				$.each(data.data || [], function (i, item) {
+					var _subject_id = i;
+					$.each(item, function (j, sub_item) {
+						var _knowledge_id = sub_item['id'],
+							_knowledge_name = sub_item['knowledge_name'],
+							_subject_name = sub_item['subject_name'];
+						
+						var _knowledge = (typeof js_knowledge_ids['s_' + _subject_id] !== 'undefined' && typeof js_knowledge_ids['s_' + _subject_id]['k_' + _knowledge_id] !== 'undefined') ? js_knowledge_ids['s_' + _subject_id]['k_' + _knowledge_id] : null,
+							_checked = 'checked="checked"';
+						
+						output.push('<li>');
+						output.push('	<h2 class="line_h2">学科：' + _subject_name + '》》知识点：<input style="display:none;" class="check_knowledge_ids" name="knowledge_ids[' + _subject_id + '][]" type="checkbox" value="' + _knowledge_id + '" ' + _checked + ' id="knowledge_' + _knowledge_id + '"/><label>' + _knowledge_name + '</label></h2>');
+						output.push('	<div class="box"><h3>学科：' + _subject_name + '》》知识点：' + _knowledge_name + '》》分级评语:</h3><br/>');
+						$.each(_levels, function (i, item) {
+							var  _comment = '',
+								 _disabled = _checked ? '' : 'disabled="disabled"';
+							if ( _knowledge != null && typeof _knowledge['l_' + item] === 'object') {
+								_comment = _knowledge['l_' + item]['comment'];
+							}
+							output.push('   <input type="hidden" value="' + item + '" name="levels[' + _subject_id + '][' + _knowledge_id + '][]"/>');
+							output.push('   <i class="star' + item + '" title="' + item + '星"></i> <textarea ' + _disabled + ' subject_name="' + _subject_name + '" id="comments_' + _subject_id + '_' + _knowledge_id + '_' + item + '" name="comments[' + _subject_id + '][' + _knowledge_id + '][]">' + _comment + '</textarea><hr/>');
+						});
+
+						/*
+						output.push('	<h3>学科：' + _subject_name + '》》知识点：' + _knowledge_name + '》》推断建议:</h3><br/>');
+						$.each(_levels, function (i, item) {
+							var  _suggest = '',
+							 	_disabled = _checked ? '' : 'disabled="disabled"';
+							if ((js_place_id == '0' || place_id == js_place_id) && subject_id == js_subject_id && _knowledge != null && typeof _knowledge['l_' + item] === 'object') {
+								_suggest = _knowledge['l_' + item]['suggest'];
+							}
+							output.push('   <i class="star' + item + '" title="' + item + '星"></i> <textarea ' + _disabled + ' subject_name="' + _subject_name + '" id="suggests_' + _subject_id + '_' + _knowledge_id + '_' + item + '" name="suggests[' + _subject_id + '][' + _knowledge_id + '][]">' + _suggest + '</textarea><hr/>');
+						});
+						*/
+						
+						output.push('</div></li>');
+					});
+				});
+
+				$knowledge_box.html(output.join(''));
+
+				check_knowledge();
+			}, 'json');
+		};
+
+		//获取关联方法策略
+		var get_method_tactic = function (place_id, subject_id) {
+			
+			var _levels = levels;
+			$.get(url_get_method_tactic, {place_id:place_id, subject_id:subject_id}, function (data) {
+				var output = [];
+				$.each(data.data || [], function (i, item) {
+					var _subject_id = i;
+					$.each(item, function (j, sub_item) {
+						var _method_tactic_id = sub_item['id'],
+							_method_tactic_name = sub_item['name'],
+							_subject_name = sub_item['subject_name'];
+
+						if(sub_item['subject_category_id'])
+						{
+							var _subject_category_id = sub_item['subject_category_id'];
+							var _method_tactic = (typeof js_method_tactic_ids['sc_' + _subject_category_id] !== 'undefined' && typeof js_method_tactic_ids['sc_' + _subject_category_id]['method_tactic_' + _method_tactic_id] !== 'undefined') ? js_method_tactic_ids['sc_' + _subject_category_id]['method_tactic_' + _method_tactic_id] : null,
+								_checked = 'checked="checked"';
+						}
+						else
+						{
+							var _method_tactic = (typeof js_method_tactic_ids['s_' + _subject_id] !== 'undefined' && typeof js_method_tactic_ids['s_' + _subject_id]['method_tactic_' + _method_tactic_id] !== 'undefined') ? js_method_tactic_ids['s_' + _subject_id]['method_tactic_' + _method_tactic_id] : null,
+								_checked = 'checked="checked"';
+						}
+						
+						
+						output.push('<li>');
+						output.push('	<h2 class="line_h2">学科：' + _subject_name + '》》方法策略：<input style="display:none;" class="check_method_tactic_ids" name="method_tactic_ids[' + _subject_id + '][]" type="checkbox" value="' + _method_tactic_id + '" ' + _checked + ' id="method_tactic_' + _subject_id + '_' + _method_tactic_id + '"/><label>' + _method_tactic_name + '</label></h2><hr/>');
+						output.push('	<div class="box"><h3>学科：' + _subject_name + '》》方法策略：' + _method_tactic_name + '》》分级评语:</h3><br/>');
+						$.each(_levels, function (i, item) {
+							var  _comment = '',
+								 _disabled = _checked ? '' : 'disabled="disabled"';
+							if (_method_tactic != null && typeof _method_tactic['l_' + item] === 'object') {
+								_comment = _method_tactic['l_' + item]['comment'];
+							}
+							
+							output.push('   <input type="hidden" value="' + item + '" name="method_tactic_levels[' + _subject_id + '][' + _method_tactic_id + '][]"/>');
+							output.push('   <i class="star' + item + '" title="' + item + '星"></i> <textarea ' + _disabled + ' subject_name="' + _subject_name + '" id="method_tactic_comments_' + _subject_id + '_' + _method_tactic_id + '_' + item + '" name="method_tactic_comments[' + _subject_id + '][' + _method_tactic_id + '][]">' + _comment + '</textarea><hr/>');
+						});
+
+						/*
+						output.push('	<h3>学科：' + _subject_name + '》》方法策略：' + _method_tactic_name + '》》推断建议:</h3><br/>');
+						$.each(_levels, function (i, item) {
+							var  _suggest = '',
+							 	_disabled = _checked ? '' : 'disabled="disabled"';
+							if ((js_place_id == '0' || place_id == js_place_id) && subject_id == js_subject_id && _method_tactic != null && typeof _method_tactic['l_' + item] === 'object') {
+								_suggest = _method_tactic['l_' + item]['suggest'];
+							}
+							output.push('   <i class="star' + item + '" title="' + item + '星"></i> <textarea ' + _disabled + ' subject_name="' + _subject_name + '" id="method_tactic_suggests_' + _subject_id + '_' + _method_tactic_id + '_' + item + '" name="method_tactic_suggests[' + _subject_id + '][' + _method_tactic_id + '][]">' + _suggest + '</textarea><hr/>');
+						});
+						*/
+						output.push('</div></li>');
+					});
+				});
+				
+				$method_tactic_box.html(output.join(''));
+				// $group_type_box.html('');
+			}, 'json');
+		};
+		//获取关联对比信息
+		var get_comparison_info = function (subject_id,exam_pid, place_id) {
+			$.get(url_comparison_info, {subject_id:subject_id, exam_pid:exam_pid, place_id:place_id},  function (data) {
+            
+				$('#comparison_info_box').html(data.data);
+			}, 'json');
+		};
+		
+		//获取关联信息提取方式
+		var get_group_type = function (place_id, subject_id) {
+			var _levels = levels;
+			$.get(url_get_group_type, {place_id:place_id, subject_id:subject_id}, function (data) {
+				var output = [];
+				$.each(data.data || [], function (i, item) {
+					var _subject_id = i;
+					$.each(item, function (j, sub_item) {
+						var _gr_id = sub_item['id'],
+							_gr_name = sub_item['group_type_name'],
+							_subject_name = sub_item['subject_name'];
+						
+						var _gr = (typeof js_group_type_ids['s_' + _subject_id] !== 'undefined' && typeof js_group_type_ids['s_' + _subject_id]['gr_' + _gr_id] !== 'undefined') ? js_group_type_ids['s_' + _subject_id]['gr_' + _gr_id] : null,
+							_checked = 'checked="checked"';
+						
+						output.push('<li>');
+						output.push('	<h2 class="line_h2">学科：' + _subject_name + '》》信息提取方式：<input style="display:none;" class="check_group_type_ids" name="group_type_ids[' + _subject_id + '][]" type="checkbox" value="' + _gr_id + '" ' + _checked + ' id="group_type_' + _gr_id + '"/><label>' + _gr_name + '</label></h2>');
+						output.push('	<div class="box"><h3>学科：' + _subject_name + '》》信息提取方式：' + _gr_name + '》》分级评语:</h3><br/>');
+						$.each(_levels, function (i, item) {
+							var  _comment = '',
+								 _disabled = _checked ? '' : 'disabled="disabled"';
+							if ( _gr != null && typeof _gr['l_' + item] === 'object') {
+								_comment = _gr['l_' + item]['comment'];
+							}
+							output.push('   <input type="hidden" value="' + item + '" name="group_type_levels[' + _subject_id + '][' + _gr_id + '][]"/>');
+							output.push('   <i class="star' + item + '" title="' + item + '星"></i> <textarea ' + _disabled + ' subject_name="' + _subject_name + '" id="group_type_comments_' + _subject_id + '_' + _gr_id + '_' + item + '" name="group_type_comments[' + _subject_id + '][' + _gr_id + '][]">' + _comment + '</textarea><hr/>');
+						});
+						
+						output.push('</div></li>');
+					});
+				});
+
+				$group_type_box.html(output.join(''));
+				// $method_tactic_box.html('');
+			}, 'json');
+		};
+
+		//联动期次
+		$select_exam_pid.change(function () {
+			var val = $(this).val();
+			get_place(val);
+			get_exam_area(val, $select_place_id.val());
+		});
+
+		//联动考场
+		$select_place_id.change(function () {
+			var place_id = $(this).val();
+			
+// 			if (place_id == '0' && _cache_place_ids.length) {
+// 				place_id = _cache_place_ids.join(',');
+// 			}
+			
+			get_subject($select_exam_pid.val(), place_id);
+			get_exam_area($select_exam_pid.val(), place_id);
+		});
+		
+		//联动科目
+		$select_subject_id.change(function () {
+			var $thiz = $(this),
+				val = $thiz.val();
+
+			var subject_id = val;
+            var exam_pid = $select_exam_pid.val();
+            var place_id = $select_place_id.val();
+
+			get_comparison_info(subject_id, exam_pid, place_id);
+
+			//综合 - 英语判断
+			var haveEnglish = false;
+			var options = $thiz.children('option');
+
+			for(var i in options)
+			{
+				if(options[i].value == 3)
+				{
+					haveEnglish = true;
+				}
+			}
+
+			if (subject_id == 0 && haveEnglish)
+			{
+				$("#subject_method_tactic_3").show();
+				$("#subject_group_type_3").show();
+			}
+			else if (subject_id == 3)
+			{
+				$("#subject_method_tactic_3").hide();
+				$("#subject_group_type_3").show();
+			}
+			else
+			{
+				$("#subject_method_tactic_3").show();
+				$("#subject_group_type_3").hide();
+			}
+			
+			if (val == '0') {
+				subject_id = [];
+				$('input.subject_percent').each(function () {
+					subject_id.push($(this).attr('subject_id'));
+				});
+				if (!subject_id.length) {
+					return false;
+				}
+				subject_id = subject_id.join(',');
+				
+				$subject_percent_box.show().find('.subject_percent').eq(0).focus();
+			} else {
+				$subject_percent_box.hide();
+			}
+
+			var _place_id = $select_place_id.val();
+			_place_id = _place_id == '0' ? _cache_place_ids.join(',') : _place_id;
+			
+			get_knowledge(_place_id, subject_id);
+
+			// 获取方法策略 信息提取方式
+			if (subject_id.length > 1 && subject_id.indexOf('3') > 0)
+			{
+				get_group_type(_place_id, 3);
+				get_method_tactic(_place_id, subject_id);
+			}
+			else if (subject_id == 3)
+			{
+				get_group_type(_place_id, subject_id);
+			}
+			else
+			{
+				get_method_tactic(_place_id, subject_id);
+			}
+		});
+
+		get_exam();
+
+		//选择知识点
+		var check_knowledge = function () {
+			$('input.check_knowledge_ids').unbind('click').click(function () {
+				var $thiz = $(this),
+					$li = $thiz.parent().parent();
+				if ($thiz.is(':checked')) {
+					$li.addClass('checked').find('textarea').attr('disabled', false).eq(0).focus();
+				} else {
+					$li.removeClass('checked').find('textarea').attr('disabled', true);
+				}
+			});
+		}
+  });
+</script>

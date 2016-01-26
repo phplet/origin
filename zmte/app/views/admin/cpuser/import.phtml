@@ -1,0 +1,138 @@
+<?php $this->load->view('common/header');?>
+<?php 
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/fancybox/jquery.fancybox.js',
+    ));
+    static_global(array(
+    					'js/jquery/plugin/fancybox/jquery.fancybox.css',
+    ), 'css');
+?>
+
+<div id="body">
+  <form name="frm_import" id="frm_import" method="POST" action="<?=site_url('admin/cpuser/import_save');?>" enctype="multipart/form-data">
+  <input type="hidden" name="id" value="{$id}" />
+  <div class="space">
+    <div class="subtitle">
+    	批量导入管理员(Excel)
+        <div class="cls_toolbar">
+           <button type="button" onclick="location.href='<?=site_url('admin/cpuser/import?dl=1')?>'">下载导入模板</button>
+        </div>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1">选择文件：</td>        
+        <td>
+        	<input type="file" id="file" name="file" class="txtbox" value="">
+        	支持格式：xls, xlsx <font color="red">(*注意：请选择正确的文件格式)</font>
+		</td>
+      </tr>
+      <tr>
+        <td class="altbg1"></td>        
+        <td>
+		    <input type="submit" id="btn_submit" name="dosubmit" value=" 开始导入 " class="btn" />
+		    &nbsp;&nbsp;
+		    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" id="result_box" style="display:none; color:red;padding-left:210px;">
+		    
+        </td>
+      </tr>
+    </table>
+  </div>
+  </form>
+</div>
+<script>
+$(document).ready(function () {
+	var time_start = 0,
+		total = 0;
+	$('#frm_import').submit(function (){
+		$('#btn_submit').css('background', '#E5E5E5').val('导入中...').attr('disabled', 'disabled');
+		var $form = $(this);
+		$(this).ajaxSubmit({
+			url : $form.attr('action'),
+			dataType : 'json',
+			timeout : 60000,
+			error: function (a, b, c) {
+				$('#btn_submit').css('background', '').val('开始导入').removeAttr('disabled');
+				$('#result_box').hide().show(400).html('导入失败，请重试');
+			},
+			success : function (responseText, statusText, xhr, $form) {
+				var code = responseText.code,
+					msg	= responseText.msg,
+					data = responseText['data'] || {};
+
+				$('#result_box').hide().show(400).html(msg);
+				if (data['mail_data']) {
+					time_start = data['now'];
+					total = data['total'];
+					$('#result_box').append('<hr/><br/><p><strong>请不要关闭浏览器</strong>，正在发送邮件,共' + data['total'] + '个用户, 每次发送' + data['deal_limit'] + '个</p><p> -->正在发送第 1 ~ ' + data['deal_limit'] + '个用户</p>');
+					batch_send_email(data['mail_data'], 1, time_start);
+				} else {
+					$('#btn_submit').css('background', '').val('开始导入').removeAttr('disabled');
+				}
+			}
+		});
+		
+	    return false;
+	});
+
+	//批量处理发送邮件
+	var batch_send_email = function (mail_data, current, t_s) {
+		var old_current = current;
+		$.ajax({
+			url : '<?php echo site_url('admin/cpuser/batch_send_email');?>',
+			type: 'post',
+			data:{mail_data:mail_data, current:current},
+			dataType : 'json',
+			timeout : 60000,
+			error: function (a, b, c) {
+				$('#result_box').append('<p style="color:red;font-weight:bold;">x 当前发送失败</p>');
+			},
+			success : function (responseText, statusText, xhr, $form) {
+				var code = responseText.code,
+					msg	= responseText.msg,
+					data = responseText['data'] || {};
+
+				if (msg == 'done') {
+					var mail_data = data['mail_data'],
+						current = data['current'],
+						deal_limit = data['deal_limit'],
+						now = data['now'],
+						success_deal = data['success_deal'];
+					
+					$('#btn_submit').css('background', '').val('开始导入').removeAttr('disabled');
+					
+					$('#result_box').append('<br/><p>》第' + old_current + ' ~ ' + (current-1) + '已发送完毕，本次耗时 ' + (parseInt(now) - parseInt(t_s)) + ' 秒.</p>');
+					$('#result_box').append("<div style='padding-left:20px;color:#666'>本次已发送以下帐号：<br/>"  + success_deal +  "</div><br/>");
+					$('#result_box').append('<p style="color:green;font-weight:bold;">》所有用户邮箱已发送完毕, 共耗时： ' + (parseInt(data['now']) - parseInt(time_start)) +' 秒.</p>');
+					
+				} else if (data['mail_data']){
+					var mail_data = data['mail_data'],
+						current = data['current'],
+						deal_limit = data['deal_limit'],
+						now = data['now'],
+						success_deal = data['success_deal'];
+						
+					$('#result_box').append('<br/><p>》第' + old_current + ' ~ ' + current + '已发送完毕，本次耗时 ' + (parseInt(now) - parseInt(t_s)) + ' 秒.</p>');
+					$('#result_box').append("<div style='padding-left:20px;color:#666'>本次已发送以下帐号：<br/>"  + success_deal +  "</div><br/>");
+					$('#result_box').append('<hr/><br/><p>》正在发送第' + (current + 1) + ' ~ ' + ((current + deal_limit) > total ? total : (current + deal_limit)) + '个...</p>');
+					
+					batch_send_email(data['mail_data'], current + 1, now);
+				}
+			}
+		});
+	};
+
+	//图片放大
+	$("#a_demo").click(function() {
+		$.fancybox.open('<?php echo __HTML_URL__ . '/images/cpuser/import_demo.png'?>');
+	});
+	
+});
+</script>
+<?php $this->load->view('common/footer');?>

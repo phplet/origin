@@ -1,0 +1,109 @@
+<!--各科综合的方法策略运用情况start-->
+<?php if (!empty($c_method_tactic)) {?>
+    <?php
+        $method_tactic = $c_method_tactic;
+    	$method_tactic['subjects'] = isset($method_tactic['subjects']) ? $method_tactic['subjects'] : array();
+    	$method_tactic['method_tactics'] = isset($method_tactic['method_tactics']) ? $method_tactic['method_tactics'] : array();
+    	$method_tactic['data'] = isset($method_tactic['data']) ? $method_tactic['data'] : array();
+    	$method_tactic['comment'] = isset($method_tactic['comment']) ? $method_tactic['comment'] : array();
+    ?>
+    <?php 
+    	//加工flash数据
+    	$zf_flash_data = array();
+    	if (count($method_tactic['data']))
+    	{
+	    	foreach ($method_tactic['data'] as $k=>$item)
+	    	{
+	    		$zf_flash_data[] = array('name' => $k, 'data' => array_values($item));
+	    	}
+    	}
+    	
+    	$method_tactic['data'] = $zf_flash_data;
+    ?>
+    
+    <h3 class='cls_row'><?=$g_sort?>&nbsp;<?=$parent_module_name?></h3>
+	<div class="center cls_row">
+		<div id="container_zf" style="page-break-before:auto"></div>
+	</div>
+	
+    <table class="pingyu cls_row">
+    	<?php $auto_key = 0;?>
+    	<?php foreach ($method_tactic['comment'] as $item) {?>
+            <?php $auto_key++;?>
+            <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+                <td style="text-indent: 20px;"><?php echo $item;?></td>
+        </tr>
+        <?php } ?>
+    </table>
+
+    <script type="text/javascript">
+    //各科综合的方法策略运用情况
+    $('#container_zf').highcharts({
+        chart: {
+            plotBorderWidth: null,
+            type: 'column'
+        },
+        title: {
+            //text: '各科综合的方法策略运用情况'
+            text: ''
+        },
+        //colors: ['#000000','#000000','#000000','#000000'],	//柱状图的颜色
+        xAxis: {
+            categories: eval("("+'<?php echo json_encode($method_tactic['method_tactics']); ?>'+")"),
+            labels: {
+				rotation : -45,//坐标旋转角度 为0：表示横放置
+				align : 'right'
+				/* style: {
+					fontSize: '13px',
+					fontFamily: 'Verdana, sans-serif'
+				} */
+			}	
+        },
+        yAxis: {
+        	title: {
+				text: ''
+			},
+            tickPixelInterval:72	//y轴坐标值的密度,单位是像素，y轴默认值72，x轴默认值100
+        },
+        plotOptions : {
+            column : {
+                pointPadding: 0,//柱子之间的间隔(会影响到柱子的大小)
+                //pointWidth: 2,		//柱子的大小(会影响到柱子的大小)
+                dataLabels: {
+                    //enabled: true,
+                    formatter: function() {
+                        if (this.y != null)
+                        {
+                            return String(this.y);
+                        }
+                        else
+                        {
+                            return '';
+                        }
+                    },
+                    
+                    style: {
+                        fontSize: '8px',
+                    },
+                    crop: false,
+                    overflow: 'none'
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+        series: eval("("+'<?php echo json_encode($method_tactic['data']); ?>'+")")
+        /*series: [{
+            name: '语文',
+            data: [97.33]
+        }]*/
+        
+    });
+</script>
+<?php }?>
+    <!--各科综合的方法策略运用情况end-->

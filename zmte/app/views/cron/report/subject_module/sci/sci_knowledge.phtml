@@ -1,0 +1,218 @@
+<?php
+/**
+ * 考试信息对比  -- 知识点模块
+ */
+?>
+
+<?php if (isset($sci_knowledge['knowledge']['internal']) && count($sci_knowledge['knowledge']['internal'])) {?>
+<?php 
+	$sci_knowledge['knowledge'] = isset($sci_knowledge['knowledge']) ? $sci_knowledge['knowledge'] : array();
+	$sci_knowledge['exams'] = isset($sci_knowledge['exams']) ? $sci_knowledge['exams'] : array();
+	$sci_knowledge['exam_names'] = array_keys($sci_knowledge['exams']);
+?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+
+    <table class="cls_row table_header indent_25" id="table_sci_k">
+        <tr>
+            <?php $first_th_width = '20';?>
+                <th width="<?=$first_th_width?>%">知识模块\考试名称</th>
+            <?php $count_data = count($sci_knowledge['exam_names']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($sci_knowledge['exam_names']));?>
+            <?php foreach ($sci_knowledge['exam_names'] as $exam_name) {?>
+                <th width="<?php echo $left_p_width;?>%"><?php echo $exam_name;?></th>
+            <?php }?>
+        </tr>
+    </table>
+
+    <?php $k_internal = isset($sci_knowledge['knowledge']['internal']) ? $sci_knowledge['knowledge']['internal'] : array(); ?>
+    <?php $k_external = isset($sci_knowledge['knowledge']['external']) ? $sci_knowledge['knowledge']['external'] : array(); ?>
+    
+    <?php if (count($k_internal)) {?>
+        <?php
+            // 内部修正百分比
+            $tmpInternalLastPercent = 100;
+            $exam_name = end($sci_knowledge['exam_names']);
+            $k_internal = array_values($k_internal);
+            foreach ($k_internal as $key => $k_name) {
+                if ($key == (count($k_internal) -1)) {
+                    $sci_knowledge['exams'][$exam_name][$k_name] = $tmpInternalLastPercent;
+                } else {
+                    $tmpInternalLastPercent = $tmpInternalLastPercent - (isset($sci_knowledge['exams'][$exam_name][$k_name]) ? round($sci_knowledge['exams'][$exam_name][$k_name]) : 0);
+                }
+            }
+        ?>
+        <!-- 内部知识点 -->
+        <?php $auto_key  = 0;?>
+        <?php foreach ($k_internal as $k_name) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_k"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $k_name . '(%)';?></th>
+                    <?php foreach ($sci_knowledge['exam_names'] as $exam_name) {?>
+                        <td width="<?php echo $left_p_width;?>%">
+                            <?php echo isset($sci_knowledge['exams'][$exam_name][$k_name]) && $sci_knowledge['exams'][$exam_name][$k_name] > 0 ? round($sci_knowledge['exams'][$exam_name][$k_name]) : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+    
+    <?php if (count($k_external)) {?>
+        <!-- 外部知识点 -->
+        <?php foreach ($k_external as $k_name) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_sci_k"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $k_name . '(%)';?></th>
+                    <?php foreach ($sci_knowledge['exam_names'] as $exam_name) {?>
+                        <td width="<?php echo $left_p_width;?>%">
+                            <?php echo isset($sci_knowledge['exams'][$exam_name]) && isset($sci_knowledge['exams'][$exam_name][$k_name]) && $sci_knowledge['exams'][$exam_name][$k_name] > 0 ? round($sci_knowledge['exams'][$exam_name][$k_name]) : '0';?>
+                        </td>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+    <?php } ?>
+
+    <p class="cls_row">&nbsp;&nbsp;</p>
+
+	<?php $auto_key = 0;?>
+	<?php foreach ($sci_knowledge['exam_names'] as $exam_name) {?>
+        <?php $auto_key++;?>
+        <div id="flash_container_sci_k_<?php echo $auto_key;?>"  class="cls_row indent_25"></div>
+    <?php }?>
+
+    <?php if (count($sci_knowledge['exam_names'])) {?>
+        <script type="text/javascript">
+        	$(function () {
+        		//考试信息对比--知识点模块 （饼状图）
+	            <?php $auto_key = 0;
+	             foreach ($sci_knowledge['exam_names'] as $exam_name) {
+		             if (!isset($sci_knowledge['exams'][$exam_name])) {continue;}
+		             $auto_key++;
+		             $flash_exams = $sci_knowledge['exams'][$exam_name];
+		             $tmp_arr = array();
+		             foreach ($k_internal as $k_name) {
+			            $tmp_arr[] = array(
+									'name' 	=> $k_name,
+									'y' 	=> isset($flash_exams[$k_name]) ? round($flash_exams[$k_name]) : 0,
+			            );
+		             }
+                     //内部
+                     /* $k_internal_tmp = array_values($k_internal);
+                     $count = 100;
+                     for ($i=0; $i < count($k_internal_tmp); $i++)
+                     {
+                        if ($i == (count($k_internal_tmp)-1))
+                        {
+                            $tmp_arr[] = array(
+                                'name'  => $k_internal_tmp[$i],
+                                'y'     => $count,
+                            );
+                        } else {
+                            $tmp_arr[] = array(
+                                'name'  => $k_internal_tmp[$i],
+                                'y'     => isset($flash_exams[$k_internal_tmp[$i]]) ? round($flash_exams[$k_internal_tmp[$i]]) : 0,
+                            );
+                            $precent = isset($flash_exams[$k_internal_tmp[$i]]) ? round($flash_exams[$k_internal_tmp[$i]]) : 0;
+                            $count = $count - $precent;
+                        }
+                     } */
+
+		             foreach ($k_external as $k_name) {
+			            $tmp_arr[] = array(
+									'name' 	=> $k_name,
+									'y' 	=> isset($flash_exams[$k_name]) ? round($flash_exams[$k_name]) : 0,
+			            );
+		             }
+                     /* $k_external_tmp = array_values($k_external);
+                     $count = 100;
+                     for ($i=0; $i < count($k_external_tmp); $i++)
+                     {
+                        if ($i == (count($k_external_tmp)-1))
+                        {
+                            $tmp_arr[] = array(
+                                'name'  => $k_external_tmp[$i],
+                                'y'     => $count,
+                            );
+                        }
+                        else
+                        {
+                            $tmp_arr[] = array(
+                                'name'  => $k_external_tmp[$i],
+                                'y'     => isset($flash_exams[$k_external_tmp[$i]]) ? round($flash_exams[$k_external_tmp[$i]]) : 0,
+                            );
+                            $precent = isset($flash_exams[$k_external_tmp[$i]]) ? round($flash_exams[$k_external_tmp[$i]]) : 0;
+                            $count = $count - $precent;
+                        }
+                     } */
+
+
+                    /* 排序 */
+                     /*
+                    $sort_array = array();
+                    foreach ($tmp_arr as $value) {
+                        $sort_array[$value['y']][] = $value;
+                    }
+
+                    krsort($sort_array);
+
+                    $sort_complete = array();
+                    foreach ($sort_array as $value) {
+                        foreach ($value as $v) {
+                            $sort_complete[] = $v;
+                        }
+                    }
+                    */
+	             ?>
+	            
+	            $('#flash_container_sci_k_<?php echo $auto_key;?>').highcharts({
+	                chart: {
+	                    plotBackgroundColor: null,
+	                    plotBorderWidth: null,
+	                    plotShadow: false
+	                },
+	                title: {
+	                    text: '<?php echo $exam_name;?>',	//标题
+	                    x: -20 //center
+	                },
+	                tooltip: {
+	                    pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
+	                },
+	                plotOptions: {
+	                    pie: {
+	                        allowPointSelect: true,
+	                        cursor: 'pointer',
+	                        dataLabels: {
+	                            enabled: true,
+	                            color: '#000000',
+	                            connectorColor: '#000000',
+	                            format: '<b>{point.name}</b>: {point.percentage:.0f}%'
+	                        },
+	                        showInLegend: true
+	                    }
+	                },
+	                legend: {
+	                    layout: 'vertical',
+	                    align: 'right',
+	                    verticalAlign: 'middle',
+	                    borderWidth: 0,
+	                    useHTML:true,
+                        itemStyle: {
+                            fontWeight: 'bold'
+                        }
+	                },
+	                colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+	                series: [{
+	                    type: 'pie',
+	                    size : '30',
+	                    name: '',
+	                    data: eval("("+'<?php echo json_encode($tmp_arr); ?>'+")")
+	                }]
+	            });
+		        <?php } ?>
+            });
+        </script>
+    <?php } ?>
+<?php } ?>

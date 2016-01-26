@@ -1,0 +1,1081 @@
+<style type="text/css">
+table.pop_dialog_table {
+    border-collapse: collapse;
+    margin: auto;
+    table-layout: fixed;
+    background: rgba(0, 0, 0, .45);
+    border-radius: 7px;
+    background-color: #8b8b8b\9 ;
+    width: 650px;
+
+}
+
+table.pop_dialog_table em {
+    font-style: normal
+}
+
+td.pop_topleft, td.pop_topright, td.pop_bottomleft, td.pop_bottomright {
+    height: 10px;
+    overflow: hidden;
+    padding: 0 !important;
+    width: 10px !important
+}
+
+td.pop_content {
+    background-color: #FFF;
+    padding: 0
+}
+
+td.pop_content.morpadding_bluebg {
+    padding: 10px;
+    background-color: #d2d9e6
+}
+
+td.pop_content h2 {
+    background: #3777bc;
+    border: 1px solid #005eac;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    *zoom: 1
+}
+
+td.pop_content h2 span {
+    display: block;
+    padding: 4px 10px 5px
+}
+
+td.pop_content h2 a.floatright {
+    float: right
+}
+
+td.pop_content .dialog_content {
+    background: #fff;
+    border: 1px solid #005eac;
+    border-top-width: 0
+}
+
+td.pop_content .dialog_body p {
+    color: #333
+}
+
+td.pop_content .dialog_body a, td.pop_content .dialog_body a:visited {
+    color: #005eac;
+    font-size: 12px;
+
+}
+
+td.pop_content .dialog_content.borderblue {
+    border: 1px #8598c0 solid
+}
+
+td.pop_content .dialog_body {
+    padding: 10px;
+    position: relative;
+    zoom: 1
+}
+
+td.pop_content .no_padding {
+    padding: 0
+}
+
+td.pop_content .dialog_buttons input {
+    line-height: 16px;
+    background-color: #005eac !important;
+    background-image: none !important;
+    border-color: #b8d4e8 #124680 #124680 #b8d4e8 !important;
+    border-style: solid;
+    border-width: 1px;
+    color: #fff
+}
+
+td.pop_content .dialog_buttons input.gray {
+    border: 1px solid;
+    border-color: #fff #848484 #848484 #fff !important;
+    background: #f0f0f0 !important;
+    color: #333 !important
+}
+
+td.pop_content .share_popup {
+    padding: 0
+}
+
+td.pop_content .dialog_summary {
+    background: #f2f2f2;
+    padding: 8px 10px;
+    border-bottom: 1px solid #ccc
+}
+
+td.pop_content .dialog_summary p.centertext {
+    margin: 30px;
+    text-align: center;
+    line-height: 20px
+}
+
+td.pop_content .dialog_summary ul.classlist {
+    list-style: none
+}
+
+td.pop_content .dialog_summary ul.classlist li {
+    list-style: none;
+    height: 25px;
+    line-height: 25px
+}
+
+td.pop_content .dialog_summary ul.classlist li input.floatleft {
+    background: 0;
+    float: left;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: 7px
+}
+
+td.pop_content .dialog_summary ul.classlist li .gray {
+    color: #b4b4b4
+}
+
+td.pop_content .dialog_summary.higher {
+    height: 100px;
+    padding: 10px
+}
+
+td.pop_content .dialog_buttons {
+    background: #f0f5f8;
+    padding: 8px;
+    text-align: right;
+    border-top: 1px solid #ccc
+}
+
+td.pop_content .dialog_buttons.alignleft {
+    text-align: left
+}
+
+td.pop_content .dialog_buttons input {
+    margin-left: 5px;
+    padding: 2px 15px;
+    _padding: 2px 10px
+}
+
+td.pop_content .dialog_buttons_left_msg {
+    float: left
+}
+
+td.pop_content .loading {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #f7f7f7
+}
+
+td.pop_content input, td.pop_content select {
+    vertical-align: middle
+}
+
+td.pop_content p {
+    margin-bottom: 1ex
+}
+
+.dialogtips {
+    padding: 4px;
+    background-color: #feffcf;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 370px
+}
+
+* html .dialogtips {
+    left: auto;
+    right: 0
+}
+ #school_select{
+     /*position: relative;*/
+ }
+ .pop_dialog_table{
+     position: absolute;
+     z-index: 30;
+     bottom: -10px;
+ }
+.contextual_dialog .generic_dialog_popup {
+    width: 360px
+}
+
+.contextual_dialog .contextual_arrow, .contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle.gif);
+    background-repeat: no-repeat;
+    height: 12px;
+    position: relative;
+    top: 1px
+}
+
+.contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle_rev.gif)
+}
+
+.contextual_dialog .contextual_arrow span, .contextual_dialog .contextual_arrow_rev span {
+    display: none
+}
+
+.contextual_dialog h2 {
+    color: #000;
+    padding-bottom: 4px
+}
+
+.contextual_dialog .contextual_dialog_content {
+    background-color: #f0f0f0;
+    border: 1px solid #b7b7b7;
+    border-bottom: 2px solid #005eac;
+    line-height: 15px;
+    padding: 8px 10px 10px
+}
+
+.contextual_dialog .dialog_buttons {
+    padding-top: 10px
+}
+
+.contextual_dialog .dialog_buttons input {
+    margin-right: 10px
+}
+
+.errorDialog td.pop_content h2 {
+    background: #ffebe8;
+    border: 0;
+    border-bottom: 1px solid #AAA;
+    color: #333
+}
+
+.errorDialog td.pop_content h2 span {
+    padding: 6px 10px 7px
+}
+
+.errorDialog td.pop_content {
+    border: 1px solid #ee7c90
+}
+
+.errorDialog td.pop_content .dialog_content {
+    border: 0
+}
+
+.errorDialog td.pop_content .dialog_content .dialog_body {
+    padding: 15px
+}
+
+ul.square_bullets {
+    color: #005eac;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: square;
+    padding-left: 20px
+}
+
+.share-intro p {
+    table-layout: fixed;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden
+}
+
+.share_popup .tabs {
+    padding-top: 15px;
+    border-bottom: 1px solid #898989
+}
+
+.share_popup .toggle_tabs {
+    list-style: none;
+    width: 360px;
+    margin: 0 auto
+}
+
+.share_popup .toggle_tabs li {
+    float: left;
+    background: #f1f1f1 url(http://a.xnimg.cn/img/toggle_tab_bg.gif) repeat-x 0 1px
+}
+
+.share_popup .toggle_tabs li a {
+    border: solid #898989;
+    border-width: 1px;
+    border-left: 0;
+    padding: 3px 15px;
+    display: block;
+    color: #333;
+    margin-bottom: -1px
+}
+
+.share_popup .toggle_tabs li a.selected {
+    color: #fff !important;
+    background: #6d84b4;
+    border-color: #005eac;
+    text-decoration: none
+}
+
+.share_popup .toggle_tabs li.first a {
+    border: 1px solid #898989
+}
+
+.share_popup .toggle_tabs li.first a.selected {
+    border-color: #005eac #5973a9
+}
+
+.share_popup .toggle_tabs li.middle a {
+    border: 1px solid #898989;
+    border-left: 0
+}
+
+.share_popup .toggle_tabs li.middle a.selected {
+    border-color: #005eac #5973a9
+}
+
+td.pop_content h2 a {
+    float: right;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a.close-button {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a:hover {
+    color: #fff
+}
+
+.share_popup .share_header {
+    position: relative
+}
+
+#popShare .poplogin {
+    width: 500px;
+    margin: 0 auto
+}
+
+.share_popup .title-share {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bolder;
+    background: url(http://a.xnimg.cn/img/newsfeed/share.gif) no-repeat left center
+}
+
+.share_send, .share_post {
+    background: #f7f7f7 none repeat scroll 0;
+    padding-top: 15px
+}
+
+.share-preview {
+    background: #f7f7f7
+}
+
+.share_fields {
+    padding-bottom: 10px
+}
+
+.composer_fields dt {
+    float: left;
+    margin: 0;
+    padding: 0 10px 0 20pt;
+    text-align: right;
+    width: 65px
+}
+
+.composer_fields dd {
+    float: left;
+    margin: 0 0 10px;
+    width: 300px;
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all
+}
+
+.composer_fields dd#dd_privacy_field {
+    margin: 0
+}
+
+.composer_fields textarea {
+    height: 50px;
+    margin: 0;
+    overflow: auto
+}
+
+.composer_fields label {
+    color: #666;
+    font-weight: 700;
+    padding-top: 4px;
+    display: block
+}
+
+.attachment_stage {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc
+}
+
+.s-message .share-footer {
+    display: block;
+    height: 23px;
+    line-height: 23px;
+    float: right;
+    _margin-top: 3px;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    padding-left: 0
+}
+
+.s-message .share-footer span {
+    color: #888;
+    _margin-top: 4px;
+    display: block;
+    float: left
+}
+
+.s-message a.m-editor-emo {
+    display: block;
+    width: 30px;
+    height: 23px;
+    line-height: 23px;
+    padding-left: 25px;
+    background-image: url(http://a.xnimg.cn/imgpro/minieditor/action_btn.png);
+    background-position: 0 -23px;
+    background-repeat: no-repeat;
+    outline: 0;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    float: left
+}
+
+.attachment_stage_area {
+    overflow: hidden;
+    padding: 8px 3px 7px 8px
+}
+
+.message-fields .share-title, .message-fields .share-description {
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1
+}
+
+.share-body h3 {
+    font-weight: normal
+}
+
+.share-title {
+    font-weight: 700;
+    color: #555;
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1;
+    overflow: hidden
+}
+
+.music-summary {
+    margin-top: 5px
+}
+
+.share_info.share-with-pic {
+    margin-left: 115px
+}
+
+.share_thumb {
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 5px
+}
+
+.share_thumb img {
+    border: 3px solid #fff
+}
+
+.share-description {
+    line-height: 18px;
+    color: gray
+}
+
+.share-description span {
+    color: #333
+}
+
+.share-description a {
+    margin-right: 3px
+}
+
+.share_buttons {
+    text-align: center;
+    padding: 0 60px 10px 0
+}
+
+.share_buttons input {
+    margin: 0 5px
+}
+
+.share_popup div.tokenizer, .share_popup input.inputtext, .share_popup textarea {
+    width: 295px;
+    border: 1px solid #8496ba
+}
+
+.share_popup input.inputtext, .share_popup textarea {
+    padding: 5px 0 5px 3px
+}
+
+.share-popup-abstract .share-popup-figure {
+    float: left;
+    margin-right: 10px;
+    _display: inline
+}
+
+.share-popup-abstract .share-abs-title {
+    color: #005dac !important;
+    font-weight: bolder
+}
+
+.share-popup-abstract .share-abs-content {
+    color: #808080 !important
+}
+
+.share-success {
+    width: 410px;
+    padding: 10px 0
+}
+
+.share-success-tip {
+    width: 100px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more {
+    width: 300px;
+    text-align: center;
+    font-size: 12px;
+    border-left: 1px solid #cee1ee;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more p {
+    margin-top: 10px
+}
+
+td.pop_content .dialog_body h1.general {
+    font-size: 15px;
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.altbox {
+    color: #999;
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px #e0e0e0 solid
+}
+
+td.pop_content .dialog_body p.namefilter {
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.namefilter label {
+    color: #999;
+    font-weight: 700
+}
+
+td.pop_content .dialog_body p.namefilter .inputtext {
+    width: 200px
+}
+
+td.pop_content .dialog_body #list-results .selector {
+    height: 200px;
+    margin-bottom: 15px
+}
+
+table.pop_dialog_table.w515 {
+    width: 515px
+}
+
+#univlist, #searchSchoolList, #highSchoolList {
+    position: absolute;
+    width: 606px;
+    z-index: 9999
+}
+
+#univlist_provinces {
+    border-bottom: 1px solid #005eac
+}
+
+#univlist p label {
+    font-weight: lighter;
+    color: #333
+}
+
+#univlist p .input-text {
+    width: 190px;
+    background: #fff url(http://a.xnimg.cn/imgpro/bg/cs_navtop.png?timestamp=091222) no-repeat scroll left -175px
+}
+
+#univlist_provinces td {
+    vertical-align: middle;
+    color: #808080;
+    text-align: center;
+    font-size: 13px
+}
+
+#univlist_provinces a {
+    font-size: 12px;
+    display: block;
+    text-decoration: none
+}
+
+#univlist_provinces td.activetab a {
+    background: #005eac;
+    color: #fff
+}
+
+#univlist_provinces:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_provinces {
+    *zoom: 1
+}
+
+#univlist_univs {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#univlist_univs:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_univs {
+    *zoom: 1
+}
+
+#univlist_univs li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#univlist_univs li.univ {
+    width: 112px
+}
+
+#univlist_univs li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#searchlist_school {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#searchlist_school:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#searchlist_school {
+    *zoom: 1
+}
+
+#searchlist_school li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#searchlist_school li.univ {
+    width: 112px
+}
+
+#searchlist_school li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#univlist .operation a {
+    margin-right: 180px
+}
+
+#uniList {
+    width: 612px
+}
+
+.popup-wrapper {
+    border: 10px solid #d8dfea;
+    position: absolute;
+    z-index: 9999;
+    overflow: hidden
+}
+
+.popup-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: mask();
+    width: 3000px;
+    height: 3000px;
+    display: hidden
+}
+
+.popup-content {
+    border: 1px solid #005eac;
+    background: #f7f7f7;
+    padding: 6px;
+    overflow: hidden;
+    zoom: 1
+}
+
+#popup-country {
+    font: 13px sans-serif;
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    /*margin-left: -36px;*/
+}
+
+#popup-country li {
+    float: left;
+    line-height: 26px !important;
+    padding: 0 4px 0 5px;
+    background: url(http://a.xnimg.cn/img/popup_country_separator.gif) no-repeat right 50%;
+    _border: 0
+}
+
+* html #popup-country li {
+    background-position: 0 40%
+}
+
+#popup-country li a {
+    word-break: keep-all;
+    _line-height: 26px
+}
+
+#popup-country li#c_0, #popup-country li#c_13 {
+    background: 0
+}
+
+#popup-country li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-country li.active a {
+    font-weight: bold;
+    color: #000
+}
+
+#popup-country li.active a:hover {
+    text-decoration: none
+}
+
+#popup-province, #popup-province-hs,#popup-area {
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 3px;
+	margin-top: 5px;
+}
+
+#popup-province li, #popup-province-hs li,#popup-area li{
+    font-size: 12px;
+    float: left;
+    padding-right:10px;
+    text-align: center;
+    _border: 0
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    height: 18px;
+    line-height: 18px
+}
+
+li.active a, li.active a {
+    background: #005eac;
+    color: #fff !important
+}
+
+#popup-province li.active a:hover, #popup-province-hs li.active a:hover, #popup-area li.active a:hover{
+    text-decoration: none
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-province li#p_0_3, #popup-province li#p_0_20, #popup-province li#p_0_26, #popup-province li#p_0_9 {
+    width: 44px
+}
+
+#popup-province-hs li#hsp_0_5, #popup-province-hs li#hsp_0_8, #popup-province-hs li#hsp_0_22, #popup-province-hs li#hsp_0_25 {
+    width: 44px
+}
+
+#popup-unis, #popup-unis-hs {
+    list-style: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 200px;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 10px 0 10px 10px;
+    margin: 5px 0
+}
+
+#popup-unis li, #popup-unis-hs li {
+    float: left;
+    width: 160px;
+    padding: 4px 12px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) no-repeat 0 9px
+}
+
+#popup-unis li a:hover, #popup-unis-hs li a:hover {
+    background: #005eac;
+    color: #FFF;
+    text-decoration: none;
+	cursor: pointer
+}
+
+* html #popup-unis li {
+    height: 1.3em
+}
+
+#uniList .canbutton {
+    float: right
+}
+
+.module-popupcity {
+    background-color: #fff;
+    padding: 3px 8px;
+    border: 1px solid #c3c3c3;
+    overflow: hidden;
+    zoom: 1;
+    margin: 5px 0
+}
+
+.module-popupcity li {
+    list-style: none;
+    margin-right: 5px;
+    height: 18px;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    word-break: keep-all;
+    line-height: 18px
+}
+
+.module-popupcity li.active {
+    _border: 0
+}
+
+.module-qulist {
+    background-color: #fff;
+    overflow: hidden;
+    zoom: 1;
+    padding: 3px 8px;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-qulist li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 5px;
+    float: left;
+    word-break: keep-all;
+    height: 18px;
+    line-height: 18px;
+    _border: 0
+}
+
+.module-qulist li a {
+    white-space: nowrap
+}
+
+.module-schoollist {
+    background-color: #fff;
+    height: 200px;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-schoollist li {
+    float: left;
+    list-style: none;
+    display: block;
+    width: 170px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    padding-left: 10px;
+    margin-right: 5px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) left 10px no-repeat
+}
+
+.module-schoollist li.active {
+    _border: 0
+}
+
+#scroll_s {
+    display: none;
+	position : absolute;
+	top : 550px; 
+	left : 60px;
+}
+</style>
+<script type="text/javascript">
+$(function(){	
+	//
+	$(document).on('click', 'li[id^=c_]', function(){
+		$('li[id^=c_]').removeClass('active');
+		$(this).addClass('active');
+		_depth_1_selected  = $(this).attr('id').split('_')[1];
+		region_city(_depth_1_selected);
+	});
+	//
+	$(document).on('click', 'li[id^=p_]', function(){
+		$('li[id^=p_]').removeClass('active');	
+		$(this).addClass('active');
+		_depth_2_selected  = $(this).attr('id').split('_')[1];
+		region_area(_depth_2_selected);
+	});
+	//
+	$(document).on('click', 'li[id^=a_]', function(){
+		$('li[id^=a_]').removeClass('active');	
+		$(this).addClass('active');
+		_depth_3_selected  = $(this).attr('id').split('_')[1];
+		show_school(_depth_3_selected);
+	});
+	
+	//搜索学校
+	$('#school_search_input').keyup(function(){
+		keywords = $(this).val();
+		$('li[id^=u_]').find('a').each(function(i, item) {
+            if($(this).html().indexOf(keywords)<0){
+				$(this).parent().hide();
+			}else{
+				$(this).parent().show();
+			}
+        });
+	});
+	//点击学校，返回id,name，关闭层
+	$(document).on('click', 'li[id^=u_]', function(){	
+		var school_id = $(this).attr('id').split('_')[1];
+		$('#school_select').val($(this).find('a').html());
+		$('#school_id').val(school_id);
+		$('#scroll_s').hide();
+	});
+});
+</script>
+<div id="scroll_s">
+<table class="pop_dialog_table">
+<tbody>
+<tr>
+    <td class="pop_topleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_topright"></td>
+</tr>
+<tr>
+<td class="pop_border"></td>
+<td class="pop_content"><h2><span>选择学校</span><a style="display:none;" class="close-button" href="#nogo"
+                                                onclick="return false;">关闭</a></h2>
+
+<div class="dialog_content">
+<div class="dialog_body">
+<div id="univlist" style="position: static;">
+<div><p id="filter_univ"><label for="school_search_input">搜索 : </label><input class="input-text" id="school_search_input" name="school_search_input" type="text" autocomplete="off">
+
+</p>
+<ul id="popup-country"></ul>
+<ul id="popup-province"></ul>
+<ul id="popup-area"></ul>
+<ul id="popup-unis"></ul>
+</div>
+</div>
+</div>
+<div class="dialog_buttons"><input type="button" class=" input-submit" value="关闭" dialog="1"></div>
+</div>
+</td>
+<td class="pop_border"></td>
+</tr>
+<tr>
+    <td class="pop_bottomleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_bottomright"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<script>
+$('document').ready(function () {
+    $("#school_select").click(function(){
+        if($('#select_grade_id').val()==0){
+			$('#_school_select').html('请先选择年级').fadeIn('slow').delay(800).fadeOut('slow');
+			return false;
+        }
+        
+        $("#scroll_s").css("display","block");
+        var school_id = parseInt($('#school_id').val());
+        var school_area = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+        
+        if(school_country > 0){
+        	region_province(0,school_country,school_province,school_area);
+        }else{
+        	region_province(0,0,0,0);//初始化弹出层
+        }
+    });
+    $(".input-submit").click(function(){
+        $("#scroll_s").css("display","none");
+    });
+});
+</script>

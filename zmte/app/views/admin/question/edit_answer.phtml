@@ -1,0 +1,231 @@
+<?php $this->load->view('common/header'); ?>
+<?php $this->load->view('common/question_js');?>
+<?php $this->load->view('question/js/question_type');?>
+
+<script>
+var dirName = "question/<?=$question['ques_id'] ? $question['ques_id'] : microtime(true);?>";
+    var paper_diy = 0;
+    var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+    var is_group  = false;
+    var class_ids = [<?=trim($question['class_id'],',')?>];
+    var knowledge_ids = [<?=trim($question['knowledge'],',')?>];
+    var method_tactic_ids = [<?=trim($question['method_tactic'],',')?>];
+    var knowledge_know_process = eval("("+'<?php echo json_encode($know_processes); ?>'+")");
+    var ajax_url_class = '<?=site_url('admin/common/question_class')?>';
+    var ajax_url_knowledge = '<?=site_url('admin/common/knowledge_all')?>';
+    var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+    var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+    var ajax_url_method_tactic = '<?=site_url('admin/common/method_tactic_all')?>';
+    var ajax_url_method_tactic_select = '<?=site_url('admin/common/method_tactic_select')?>';
+    var ajax_url_method_tactic_init = '<?=site_url('admin/common/method_tactic_init')?>';
+    var ajax_url_count_method_tactic = '<?=site_url('admin/question/count_method_tactics')?>';
+
+$('document').ready(function () {
+	//联动学科 检查是否有关联方法策略
+	$('#subject_id').change(function () {
+		var subject_id = $(this).val();
+		if (subject_id == 11) {
+			$('#subject_id_list').show();
+		} else {
+			$('#subject_id_list').hide();
+		}
+
+		if ($('input[name="is_parent"]:checked').val() != 1)
+		{
+    		$.get(ajax_url_count_method_tactic, {subject_id:subject_id},  function (data) {
+    			var count = parseInt(data);
+    			if (count <= 0) {
+    				$('#method_tactic_ids').attr('disabled', 'disabled');
+    				$('#tr_method_tactic').hide();
+    			} else {
+    				$('#method_tactic_ids').removeAttr('disabled');
+    				$('#tr_method_tactic').show();
+    			}
+    		});
+		}
+	});
+
+	<?php if ($question['is_parent'] == 1) {?>
+	$('#input_reference_answer_tr').hide();
+	<?php }?>
+
+	$('input[name="is_parent"]').change(function(){
+		change_answer_input();
+	});
+});
+
+function change_answer_input()
+{
+	if ($('input[name="is_parent"]:checked').val() == 1)
+	{
+		$('#knowledges').hide();
+		$('#tr_method_tactic').hide();
+		$('#input_reference_answer_tr').hide();
+	}
+	else
+	{
+		$('#knowledges').show();
+		$('#tr_method_tactic').show();
+		$('#input_reference_answer_tr').show();
+	}
+}
+</script>
+
+<style>
+    .height_light {
+        border:1px solid #f00;
+        padding:2px 0 2px 0;
+        margin:2px 0 2px 0;
+    }
+    .div_option{
+        border-bottom:1px solid #CCCCFF;
+        padding:5px;
+    }
+    .gray_input {
+        color:#ccc;
+    }
+</style>
+
+<div id="body">
+    <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question/update_answer')?>" enctype="multipart/form-data" onsubmit="return false;">
+        <?php if($act == 'add'):?>
+            <input type="hidden" name="relate_group" value="<?=$relate_group?>" />
+            <input type="hidden" name="relate_ques_id" value="<?=$relate_ques_id?>" />
+            <input type="hidden" name="file_save_path" value="<?=$question['ques_id']?>">
+        <?php else:?>
+            <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+            <input type="hidden" name="relate_group" value="<?=$question['group_id']?>" />
+        <?php endif;?>
+        <input type="hidden" name="back_url" value="<?=$back_url?>" />
+        <input type="hidden" name="act" id="act" value="<?=$act?>" />
+        <input type="hidden" name="act" id="act" value="<?=$act?>" />
+        <div style="position:absolute;top:-1000px;">
+            <input type="checkbox" id="class_id_validate" name="class_id_validate" value="1" />
+        </div>
+        <div class="space">
+            <div class="subtitle">
+                <?php if($act=='edit'):?>
+                    <a class="menu" href="<?=site_url('admin/question/add_answer/'.$question['ques_id'])?>">添加相关试题</a>
+                <?php endif;?>
+                <?=$act=='add'?'添加':'修改'?>解答题
+            </div>
+
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="altbg2" style="text-align: center;">题目信息</td>
+                    </tr>
+                    <tr>
+                        <td width="10%" class="altbg1">学科</td>
+                        <td>
+                            <select name="subject_id" id="subject_id">
+                                <option value="">--请选择--</option>
+                                <?php foreach($subjects as $key => $val): ?>
+                                    <option value="<?=$key?>"<?=$question['subject_id']==$key?' selected':''?>><?=$val?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span style="color:#f00">*</span>
+                            <label for="subject_id" class="error" style="display:none"></label>
+                            <span id="subject_id_list" <?if ($question['subject_id'] != 11): ?> style="display: none;" <?php endif;?>>
+                            <?php $subject_ids = explode(',', $question['subject_id_str']);?>
+                            <?php foreach($all_subjects as $key => $val): ?>
+                                <?php if ($key != 11):?>
+                                    <input type="checkbox" name="subject_str[]" value="<?=$key?>" <? echo in_array($key, $subject_ids) ? 'checked': '';?>><?=$val?>
+                                <?php endif;?>
+                            <?php endforeach; ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="altbg1">年级</td>
+                        <td>
+                          <select name="start_grade" id="start_grade">
+                            <option value="">--请选择--</option>
+                            <?php foreach($grades as $key => $val): ?>
+                            <option value="<?=$key?>"<?=$question['start_grade']==$key?' selected':''?>><?=$val?></option>
+                            <?php endforeach; ?>
+                          </select>
+                          -
+                          <select name="end_grade" id="end_grade">
+                            <option value="">--请选择--</option>
+                            <?php foreach($grades as $key => $val): ?>
+                            <option value="<?=$key?>"<?=$question['end_grade']==$key?' selected':''?>><?=$val?></option>
+                            <?php endforeach; ?>
+                          </select>
+                          <span style="color:#f00">*</span>
+                          <label for="grade_id" class="error" style="display:none"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="altbg1">是否题干</td>
+                        <td>
+                        <?php if (isset($question['is_parent'])) {?>
+                         <input type="hidden" value="<?=$question['is_parent']?>" name="is_parent">
+                         <input type="radio" value="1" id="is_answer_parent_1" <?if (isset($question['is_parent']) && $question['is_parent'] == 1){?>checked<?php }?> disabled><label for="is_answer_parent_1">是</label> 
+                          <input type="radio" value="0" id="is_answer_parent_0" <?if (isset($question['is_parent']) && $question['is_parent'] == 0){?>checked<?php }?> disabled><label for="is_answer_parent_0">否</label>
+                        <?php } else {?>
+                          <input type="radio" value="1" id="is_answer_parent_1" name="is_parent"><label for="is_answer_parent_1">是</label> 
+                          <input type="radio" value="0" id="is_answer_parent_0" name="is_parent"><label for="is_answer_parent_0">否</label>
+                          <?php }?>
+                        </td>
+                    </tr>
+                     <?php if ($question['is_parent'] == 0) {?>
+                    <tr id="knowledges">
+                        <td class="altbg1">知识点</td>
+                        <td>
+                         <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="knowledge_id[]" value="" /></div>
+                         <div id="knowledge_list"></div>
+                         <input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=trim($question['knowledge'],',')?>" />
+                         <button id="knowledge_select" class="btn2" type="button">点击选择</button>
+                         <label for="knowledge_id[]" class="error" style="display:none"></label>
+                        </td>
+                    </tr>
+                    <tr id="tr_method_tactic" <?php echo $act=='add' || !$question['count_subject_method_tactics'] ? 'style="display:none;"' : '';?>>
+                        <td class="altbg1">方法策略</td>
+                        <td>
+                         <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="method_tactic_id[]" value="" /></div>
+                         <div id="method_tactic_list"></div>
+                         <input type="hidden" name="method_tactic_ids" id="method_tactic_ids" value="<?=trim($question['method_tactic'],',')?>" />
+                         <button id="method_tactic_select" class="btn2" type="button">点击选择</button>
+                         <label for="method_tactic_id[]" class="error" style="display:none"></label>
+                        </td>
+                    </tr>
+                    <?php }?>
+                    <?php /* 考试类型 */ ?>
+                    <?php $this->load->view('question/property/exam_type'); ?>
+                    <?php /* 考试方式 */ ?>
+                    <?php $this->load->view('question/property/exam_way'); ?>
+                    <?php /* 试题类型 */ ?>
+                    <?php $this->load->view('question/property/question_type'); ?>
+                    <tr style="display: none;">
+                        <td class="altbg1">题型</td>
+                        <td>
+                            <input type="radio" name="qtype" value="10" id="qtype10" <?=$question['type']==10 ? ' checked':''?>/>
+                            <label for="qtype10"> 解答题</label>
+                            <label for="qtype" class="error" style="display:none"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="altbg1">题目</td>
+                        <td>
+                            <script id="question_title" name="title" type="text/plain" style="width:700px;height:320px;"><?=$question['title']?><?php if($act=='edit' && $question['picture']):?><img src="<?=__IMG_ROOT_URL__?><?=$question['picture']?>"/><?php endif;?></script>
+                            <div id="input_answer_notice">
+                                填空题说明：<br/>
+                                1, 在需要设置填空项的地方，输入【中文括号加数字】，例如：（1），（2）。<br/>
+                                2, 多个填空项，请按数字顺序填写；只有一个填空项，可以不填写数字。
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <?php /* 单选 多选 填空 解答 */ ?>
+                <?php $this->load->view('question/options');?>
+            </table>
+        </div>
+        <center>
+            <input type="submit" id="dosubmit" name="dosubmit" value=" 提交 " class="btn" />
+            &nbsp;&nbsp;
+            <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+        </center>
+    </form>
+</div>
+<?php $this->load->view('common/footer');?>

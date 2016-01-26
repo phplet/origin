@@ -1,0 +1,33 @@
+<?php
+$this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<?php
+$current_module_url = site_url('/admin/evaluate_rule');
+?>
+<div id="body">
+
+  <div class="space">
+    <div class="subtitle">PDF生成</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">PDF生成</td>
+        <td>   <a class="ajax_loader" href="###"ajax="<?php echo $current_module_url . '/pdf_status/?act=2&id=' . $id;?>">查看PDF生成状态</a>
+
+        </td>
+        <td>
+
+     <a class="ajax_loader" href="###"ajax="<?php echo $current_module_url . '/pdf_ip/?act=2&id=' . $id;?>"> PDF生成任务分配</a>
+
+        </td>  <td>
+        <a class="ajax_loader" href="###"ajax="<?php echo $current_module_url . '/pdf_check/?act=2&id=' . $id;?>">PDF生成检查</a>
+        </td>
+
+
+      </tr>
+
+          </table>
+  </div>
+
+
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

@@ -1,0 +1,4 @@
+<?php
+	$is_invigilator = isset($is_invigilator) ? true : false;
+?>
+<h1 class="<?php echo $is_invigilator ? 'cls_jk_title' : 'cls_product_title';?>"><?=C('webconfig')['site_name']?><i class="cls_copyright_tm"></i><span class="cls_copyright_main">机考系统演示<?php echo $is_invigilator ? '(监控后台)' : '';?></span></h1>

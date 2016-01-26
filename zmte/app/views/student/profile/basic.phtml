@@ -1,0 +1,1988 @@
+<?if ($uid){?>
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'basic'));?>
+<?}else{?>
+<?php $this->load->view('common/exam_header', array('page_title' => '用户注册'));?>
+<? static_css('register/style.css');?>
+<style type="text/css">
+.altbg2, .altbg2-r, .altbg2-bg {
+    background:#7eb8dd !important;
+}
+
+.altbg2-bg {
+    color:black !important;
+}
+
+.altbg1 {
+    background:#9cd5f9 !important;
+}
+</style>
+<?}?>
+<?php
+// 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+    static_js('schools.js');
+    static_global(array('js/datepicker/wdatepicker.js'));
+    $vc = C('virtual_currency');
+?>
+
+<script type="text/javascript">
+function check_basic(form) {
+    var uid = form.uid.value;
+    var action = form.action.value;
+    if ( ! is_email(form.email.value.trim())) {
+        alert('请正确填写Email地址！');
+        form.email.focus();
+        return false;
+    }
+    var email = form.email.value.trim();
+    if (email.indexOf('@qq.com') >= 0) {
+        alert('QQ邮箱有可能收不到系统发送的邮件信息，建议更换邮箱帐号');
+    }
+
+<? if (!$uinfo['uid']) { ?>
+    if (action == 'add') {
+        if ( ! form.password.value) {
+            alert('请设置您的登录密码');
+            form.password.focus();
+            return false;
+        }
+    }
+
+    if (pwd = form.password.value) {
+        var _length = pwd.length;
+        //验证密码规则
+        if ('string' === typeof (passwd_msg = is_password(pwd))) {
+        	alert(passwd_msg);
+            form.password.focus();
+            return false;
+        }
+        if (form.password_confirm.value != pwd) {
+            alert('两次密码输入不一致！');
+            form.password_confirm.focus();
+            return false;
+        }
+    }
+<? } ?>
+    if ( ! is_chinese(form.last_name.value.trim())) {
+        alert('请填写真实姓名（姓）！');
+        form.last_name.focus();
+        return false;
+    }
+    if ( ! is_chinese(form.first_name.value.trim())) {
+        alert('请填写真实姓名（名）！');
+        form.first_name.focus();
+        return false;
+    }
+    if ( ! checkradio(form)) {
+        alert('请选择您的性别！');
+        return false;
+    }
+
+    if ( ! form.birthday.value.trim() ) {
+        alert('请填写您的出生日期！');
+        form.birthday.focus();
+        return false;
+    }
+    var idcard = form.idcard.value.trim();
+    if ((idcard.length > 0 && !is_idcard(idcard)) || idcard.length == 0)
+    {
+        alert('请正确填写您的身份证号码！');
+        form.idcard.focus();
+        return false;
+    }
+
+    /*
+    if(form.province.value=='0' || form.city.value=='0' || form.area.value=='0') {
+        alert('请选择您的所在地区！');
+        return false;
+    }
+    */
+    if(form.grade_id.value=='0') {
+        alert('请选择您就读的年级！');
+        return false;
+    }
+    if(form.school_id.value=='0') {
+        alert('请选择您的所在学校！');
+        return false;
+    }
+
+<?php /*
+    if ( ! form.address.value.trim() ) {
+        alert('请填写您家庭地址！');
+        form.address.focus();
+        return false;
+    }
+    if ( ! is_zipcode(form.zipcode.value.trim()) ) {
+        alert('请填写邮编！');
+        form.zipcode.focus();
+        return false;
+    }
+ */ ?>
+    var mobilecode = form.mobile.value.trim();
+    if (mobilecode.length > 0 && !is_mobile(mobilecode))
+    {
+        alert('请正确填写手机号码！');
+        form.mobile.focus();
+        return false;
+    }
+<? if ($uinfo['uid']) { ?>
+    return check_base(form);
+<? } else { ?>
+    return true;
+<? } ?>
+}
+
+//var js_school_id = '<?php echo $student['school_id'];?>';
+
+
+/**
+ * 检查email是否存在
+ */
+function check_email()
+{
+    $('#email').blur(function () {
+        var $thiz = $(this),email = $.trim($thiz.val());
+        if (is_email(email)) {
+            $.post('<?php echo site_url('student/profile/check_email_exists');?>', {email:email}, function (data) {
+                var code = data.code,data = data.data;
+                if (code >= 0 && data == '1') {
+                    alert('该Email地址已被注册！');
+                    $thiz.focus();
+                }
+                return true;
+            }, 'json');
+        }
+    });
+}
+
+/**
+ * 检查idcard是否存在
+ */
+function check_idcard()
+{
+    $('#idcard').blur(function (){
+        var idcard = $.trim($(this).val());
+        if (idcard.length < 1)
+        {
+            return;
+        }
+
+        if (!is_idcard(idcard))
+        {
+            alert('请正确填写您的身份证号码！');
+            $(this).focus();
+            return;
+        }
+
+        $.post('<?php echo site_url('student/profile/check_idcard_exists');?>', {idcard:idcard}, function (data) {
+            if (data.data == '1')
+            {
+                alert('该身份证号已被注册！');
+                $(this).focus();
+                return;
+            }
+        }, 'json');
+    });
+}
+
+$(function(){
+    check_email();
+    check_idcard();
+});
+</script>
+<? /***************** COPY FROM base.pthml START ************************/?>
+<? if ($uinfo['uid']) { ?>
+<?php 
+    static_global(array('js/common/address.js', 
+                    'js/common/region.js'));
+?>
+<style type="text/css">
+div.cls_item_div_ul_list {
+    margin:4px 0px 0px 4px;
+    padding:4px;
+    border-width:1px 0px 1px 0px;
+    border-style:solid;
+    border-color:black;
+    height:300px;
+    overflow-y:auto;
+}
+div.cls_item_div_ul_list ul {
+    list-style-type:none;
+}
+
+div.cls_item_div_ul_list ul li {
+    float:left;
+    width:25%;
+    cursor:pointer;
+}
+</style>
+<script tyle="text/javascript">
+function check_base(form)
+{
+    var uid = form.uid.value;
+    var action = form.action.value;
+
+<? 
+    /*
+    if (form.school_id.value == '0' || form.school_id.value == '')
+    {
+        alert('请选择您的所在学校！');
+        return false;
+    }
+     */
+?>
+
+    if ((jQuery("#selProvinces option").size() > 1 && form.sb_addr_provid.value == '0')
+        || (jQuery("#selCities option").size() > 1 && form.sb_addr_cityid.value == '0')
+        || (jQuery("#selAreas option").size() > 1 && form.sb_addr_areaid.value == '0'))
+    {
+        alert('请选择您的家庭地址所在省市区！');
+        return false;
+    }
+    if (!form.sb_addr_desc.value.trim())
+    {
+        alert('请填写您家庭地址！');
+        form.sb_addr_desc.focus();
+        return false;
+    }
+
+    var prov = jQuery("#selProvinces option:selected").text();
+    var city = jQuery("#selCities option:selected").text();
+    var area = jQuery("#selAreas option:selected").text();
+    if (prov == city)
+    {
+        form.address.value = city + area + ' ' + form.sb_addr_desc.value;
+    }
+    else
+    {
+        form.address.value = prov + city + area + ' ' + form.sb_addr_desc.value;
+    }
+    if (!is_zipcode(form.zipcode.value.trim()))
+    {
+        alert('请填写邮编！');
+        form.zipcode.focus();
+        return false;
+    }
+
+    if (form.no_tiid.checked == false)
+    {
+        if (form.ti_name.value == '')
+        {
+            alert('请填写培训学校');
+            return false;
+        }
+        if (form.cors_name.value == '')
+        {
+            alert('请填写培训课程');
+            return false;
+        }
+        if (form.sbc_teachers.value == '')
+        {
+            alert('请填写授课老师');
+            return false;
+        }
+    }
+
+    if (fnGetCheckBoxValues('body', 'sbs_stunumtype[]') == '')
+    {
+        alert('请选择可接受的授课模式');
+        return false;
+    }
+
+    if (fnGetCheckBoxValues('body', 'sbclassid_classid[]') == '')
+    {
+        alert('请选择希望辅导难度');
+        return false;
+    }
+
+    return true;
+}
+
+function fnSetTIIDNameClick()
+{
+    var ti_name = jQuery('#id_ti_name_defined').get(0).value;
+    if (ti_name.length < 1)
+    {
+        alert('请输入自定义培训机构名称(省市区与家庭住址相同)');
+        return;
+    }
+    fnSetTIIDName('', ti_name);
+}
+
+function fnSetTIIDName(ti_id, ti_name)
+{
+    if (ti_id != jQuery('#id_sbc_tiid').get(0).value)
+    {
+        jQuery('#id_sbc_corsid').get(0).value = '';
+        jQuery('#id_cors_cmid').get(0).value = '';
+        jQuery('#id_cors_name').get(0).value = '';
+    }
+    jQuery('#id_sbc_tiid').attr('value', ti_id);
+    jQuery('#id_ti_name').attr('value', ti_name);
+    fnCloseDialog('id_sbc_tiid_dlg');
+}
+
+function fnSetTIListDiv(ti_list)
+{
+    var str = '';
+    for (var i = 0; i < ti_list.length; i++)
+    {
+        str += '<li onclick="fnSetTIIDName(' + ti_list[i]['ti_id'] + ', jQuery(this).text())">' + ti_list[i]['ti_name'] + '</li>';
+    }
+<? /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '这是的是安是的分服是安是但' + '</li>';
+    }
+ */ ?>
+
+    $("#id_ti_list > ul").html(str);
+}
+
+function fnSetCORSIDNameClick()
+{
+    var cors_name = jQuery('#id_cors_name_defined').get(0).value;
+    if (cors_name.length < 1)
+    {
+        alert('请输入自定义培训课程名称');
+        return;
+    }
+    var cors_cmid = jQuery('#id_cors_cmid_1').get(0).checked ? 1 : 2;
+    fnSetCORSIDName('', cors_name, cors_cmid);
+}
+
+function fnSetCORSIDName(cors_id, cors_name, cors_cmid)
+{
+    jQuery('#id_sbc_corsid').get(0).value = cors_id;
+    jQuery('#id_cors_name').get(0).value = cors_name;
+    jQuery('#id_cors_cmid').get(0).value = cors_cmid;
+    fnCloseDialog('id_sbc_corsid_dlg');
+}
+
+function fnSetCORSListDiv(cors_list)
+{
+    var str = '';
+    for (var i = 0; i < cors_list.length; i++)
+    {
+        str += '<li onclick="fnSetCORSIDName(' + cors_list[i]['cors_id'] + ', jQuery(this).text(), ' + cors_list[i]['cors_cmid'] + ')">' + cors_list[i]['cors_name'] + '</li>';
+    }
+<? /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '课程课程安是的分服是安是但' + '</li>';
+    }
+ */ ?>
+
+    $("#id_cors_list > ul").html(str);
+}
+
+
+function fnSetCTeacherClick()
+{
+    var cteachers = jQuery('#id_sbc_teachers_defined').get(0).value;
+    if (cteachers .length < 1)
+    {
+        alert('请输入自定义授课教师名称');
+        return;
+    }
+    fnSetCTeacher(cteachers);
+}
+
+function fnSetCTeacher(cteachers)
+{
+    jQuery('#id_sbc_teachers').get(0).value = cteachers;
+    fnCloseDialog('id_sbc_teachers_dlg');
+}
+
+function fnSetCTeacherListDiv(ct_list)
+{
+    var str = '';
+    for (var i = 0; i < ct_list.length; i++)
+    {
+        str += '<li onclick="fnSetCTeacher(jQuery(this).text())">' + ct_list[i]['ct_name'] + '</li>';
+    }
+<? /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '教师教师是安是但' + '</li>';
+    }
+ */?>
+
+    $("#id_cteacher_list > ul").html(str);
+}
+
+
+function fnShowDlg1()
+{
+    var ti_id = jQuery('#id_sbc_tiid').attr('value');
+    var ti_name = jQuery('#id_ti_name').attr('value');
+
+    if (ti_id == '')
+    {
+        jQuery('#id_ti_name_defined').get(0).value = ti_name;
+    }
+    fnShowDialog('id_sbc_tiid_dlg');
+}
+
+function fnShowDlg2()
+{
+    if (jQuery('#id_ti_name').attr('value').length < 1)
+    {
+        alert('请先填写培训机构');
+        return;
+    }
+    var tiid = jQuery('#id_sbc_tiid').attr('value');
+    jQuery("#id_cors_tiid").get(0).value = tiid;
+    if (tiid == '')
+    {
+        jQuery('#id_cors_list > ul').html('');
+        jQuery("#id_qry_cors_cmid").attr('disabled', 'disabled');
+        jQuery("#id_qry_cors_name").attr('disabled', 'disabled');
+        jQuery("#id_qry_cors_btn").attr('disabled', 'disabled');
+
+    }
+    else
+    {
+        jQuery("#id_qry_cors_cmid").removeAttr('disabled');
+        jQuery("#id_qry_cors_name").removeAttr('disabled');
+        jQuery("#id_qry_cors_btn").removeAttr('disabled');
+    }
+    var cors_id = jQuery("#id_sbc_corsid").attr('value');
+    if (cors_id == '')
+    {
+        jQuery("#id_cors_name_defined").get(0).value = jQuery("#id_cors_name").get(0).value;
+        if (jQuery("#id_cors_cmid").attr('value') == 1)
+        {
+            jQuery("#id_cors_cmid_1").get(0).checked =  true;
+        }
+        else
+        {
+            jQuery("#id_cors_cmid_1").get(0).checked =  false;
+        }
+    }
+    fnShowDialog('id_sbc_corsid_dlg');
+}
+
+function fnShowDlg3()
+{
+    if (jQuery('#id_ti_name').get(0).value.length < 1)
+    {
+        alert('请先填写培训机构');
+        return;
+    }
+    if (jQuery('#id_cors_name').get(0).value.length < 1)
+    {
+        alert('请先填写培训课程');
+        return;
+    }
+
+    var cors_id = jQuery('#id_sbc_corsid').get(0).value;
+    jQuery('#id_cteacher_cors_id').get(0).value = cors_id;
+    if (cors_id == '')
+    {
+        jQuery('#id_cteacher_list > ul').html('');
+        jQuery('#id_sbc_teachers_defined').get(0).value = jQuery('#id_sbc_teachers').get(0).value;
+        jQuery('#id_cteacher_cors_id').attr('disabled', 'disabled');
+        jQuery('#id_qry_cteacher_name').attr('disabled', 'disabled');
+        jQuery('#id_qry_cteacher_btn').attr('disabled', 'disabled');
+    }
+    else
+    {
+        jQuery('#id_sbc_teachers_defined').get(0).value = jQuery('#id_sbc_teachers').get(0).value;
+        jQuery('#id_cteacher_cors_id').removeAttr('disabled');
+        jQuery('#id_qry_cteacher_name').removeAttr('disabled');
+        jQuery('#id_qry_cteacher_btn').removeAttr('disabled');
+    }
+    fnShowDialog('id_sbc_teachers_dlg');
+}
+
+function fnOnCheckBoxNOTIChanged()
+{
+    var bChecked = jQuery('#id_checkbox_noti').get(0).checked;
+    if (bChecked)
+    {
+        jQuery('#id_ti_name').attr('disabled', 'disabled');
+        jQuery('#id_cors_name').attr('disabled', 'disabled');
+        jQuery('#id_sbc_teachers').attr('disabled', 'disabled');
+    }
+    else
+    {
+        jQuery('#id_ti_name').removeAttr('disabled', 'disabled');
+        jQuery('#id_cors_name').removeAttr('disabled', 'disabled');
+        jQuery('#id_sbc_teachers').removeAttr('disabled', 'disabled');
+    }
+}
+
+$(function() {
+<? if (!isset($student['sbc_uid'])) { ?>
+    jQuery('#id_checkbox_noti').get(0).checked = true;
+    fnOnCheckBoxNOTIChanged();
+<? } ?>
+});
+</script>
+<? } ?>
+<? /***************** COPY FROM base.pthml END ************************/?>
+<div id="body">
+  <form method="POST" name="form_basic" action="<?=site_url('student/profile/basic_save')?>" enctype="multipart/form-data" onsubmit="return check_basic(this);">
+  <input type="hidden" name="uid" value="<?=$uid?>">
+  <input type="hidden" name="action" value="<?=$action?>">
+      <div class="space">
+<? $bUid = $uinfo['uid']; ?>
+          <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+              <td colspan="<?=$bUid ? 5 : 4?>" class="altbg2" style="text-align: left;">
+            <span class="altbg2-bg">
+           	 基本信息
+            </span>
+            <i class="altbg2-r"></i>
+        </td>
+      </tr>
+        <tr>
+<? if ($bUid) { ?>
+           <td rowspan="5" width="16%" style="border-bottom:2px solid #045eab;" ><img src="<?=$uinfo['avatar_url']?>" width="100"/></td>
+<? } ?>
+<td width="<?=$bUid ? 10 : 16?>%" class="altbg1">Email</td>
+<td <? if (!$uinfo['uid']) { ?>colspan="3"<? } else { ?> width="<?=$bUid ? 32 : 34?>%" <? } ?>>
+                <input type="text" id="email" name="email" value="<?=$student['email']?>" class="txtbox" />
+                <span style="color:#f00">*</span>
+                <? if (!$uinfo['uid']) { ?> <span class="notice">(QQ邮箱有可能收不到系统发的邮件信息) 可作为帐号名登录，并且可在忘记密码时通过该邮箱重置密码</span><? } ?>
+            </td>
+            <? if ($uinfo['uid']) { ?>
+            <td width="<?=$bUid ? 10 : 16?>%" class="altbg1">准考证号</td>
+                <td ><?=($student['external_account'] ? $student['external_account'] : $student['exam_ticket'])?></td>
+           <? } ?>
+        </tr>
+
+      <?php if (!$uinfo['uid']) {?>
+      <tr>
+        <td class="altbg1">密码</td>
+        <td colspan="3">
+          <input type="password" id="password" name="password" class="txtbox">
+          <?php if($action=='add'):?>
+          <span style="color:#f00">*</span> <span class="notice">长度必须 为6~20个字符</span>
+          <?php else:?>
+          <span class="notice">不修改则留空</span>, 如果填写：长度必须 为6~20个字符
+          <?php endif;?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1" >确认密码</td>
+        <td colspan="3"><input type="password" id="password_confirm" name="password_confirm" class="txtbox">
+          <?php if($action=='add') { ?>
+          <span style="color:#f00">*</span>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php } ?>
+      <tr>
+      <td width="<?=$bUid ? 10 : 16?>%" class="altbg1">真实姓名</td>
+
+      <td width="<?=$bUid ? 32 : 34?>%"><input type="text" name="full_name" class="txtbox" value="<?=$student_fullname;?>" > <span style="color:#f00">*</span></td>
+      <td class="altbg1" width="<?=$bUid ? 10 : 16?>%">性别</td>
+        <td>
+            <input type="radio" name="sex" value="1" <?=$student['sex']==1?' checked':''?>/> 男
+            <input type="radio" name="sex" value="2" <?=$student['sex']==2?' checked':''?>/> 女
+            <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">出生日期</td>
+        <td><input type="text" id="birthday" name="birthday" class="txtbox" value="<?=$student['birthday']?>" readOnly="true" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'1995-01-01'});">  <span style="color:#f00">*</span> <span class="notice">格式：2013-07-16</span></td>
+        <td class="altbg1">身份证号码</td>
+        <td><input type="text" id="idcard" name="idcard" class="txtbox" value="<?=$student['idcard']?>">    <?php if($action=='add'):?>
+          
+          <?php endif; ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <!-- <?php /*
+        <tr>
+            <td class="altbg1">所在地</td>
+            <td>
+              <select name="province" id="selProvinces" onchange="region.changed(this, 2, 'selCities')">
+                <option value="0">--请选择省--</option>
+                <?php foreach($province_list as $val): ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['province']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+              <select name="city" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                <option value="0">--请选择市--</option>
+                <?php foreach($city_list as $val): ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['city']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+              <select name="area" id="selAreas">
+                <option value="0">--请选择区县--</option>
+                <?php foreach($area_list as $val): ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['area']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+               <span style="color:#f00">*</span>
+            </td>
+        </tr>
+      */ ?> -->
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="grade_id" id="select_grade_id">
+                <option value="0">--请选择--</option>
+<?php $grade_list = array_reverse(C('grades'), true);
+                foreach($grade_list as $key => $val): ?>
+                <option value="<?=$key?>"<?=$key==$student['grade_id']?' selected="selected"':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+            </td>
+            <td class="altbg1">所在学校</td>
+            <td>
+                <input class="txtbox" id="school_select" name="school_name" type="text" value="<?=$student['school_name']?>"/>
+                <input id="school_id" name="school_id" type="hidden" value="<?=$student['school_id']?>"/>
+              <span style="color:#f00">*</span><span style="color:#f00;display:none" id="_school_select"></span>
+            </td>
+        </tr>
+<? /*
+        <tr>
+            <td class="altbg1">家庭地址</td>
+            <td>
+              <input type="text" id="address" name="address" value="<?=$student['address']?>" class="txtbox" />
+               <span style="color:#f00"></span>
+            </td>
+        </tr>
+      <tr>
+        <td class="altbg1">邮编</td>
+        <td>
+          <input type="text" id="zipcode" name="zipcode" value="<?=$student['zipcode']?>" class="txtbox" />
+           <span style="color:#f00"></span>
+        </td>
+      </tr>
+ */ ?>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;" >手机</td>
+            <td style="border-bottom:2px solid #045eab;" >
+              <input type="text" id="mobile" name="mobile" value="<?=$student['mobile']?>" class="txtbox" />
+               <span style="color:#ff0000"></span>
+            </td>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;" title="图片大小小于1M，尺寸不超过2000 x 2000像素，图片格式为 jpg 或 gif"><u>头像</u></td>
+            <td style="border-bottom:2px solid #045eab;" title="图片大小小于1M，尺寸不超过2000 x 2000像素，图片格式为 jpg 或 gif"><input type="file" name="picture" value="" class="txtbox" />
+              <span class="notice"></span>
+            </td>
+        </tr>
+        <tr><td style="border:none;height:10px;" colspan="4"></td></tr>
+<? if (!$uinfo['uid']) { ?>
+        <tr>
+        <td colspan="<?=$bUid ? 5 : 4?>" style="text-align:center;border:none;">
+             <center>
+                <? if ($uid OR $this->session->userdata('complete')) { ?>
+                  <input type="submit" name="dosubmit"  value=" 保存修改  " class="btn" />
+                <? } else { ?>
+                  <input type="submit" name="dosubmit" value=" 提 交 " class="btn" />
+                <? } ?>
+                <!--<input type="button" onclick="check_basic(this.form)" value=" 测试 " class="btn" />-->
+              </center>
+          </td>
+        </tr>
+        <tr><td style="border:none;height:10px;" colspan="<?=$bUid ? 5 : 4?>"></td></tr>
+<? } ?>
+    </table>
+  </div>
+
+<? /*************** COPY FROM base.phtml START ****************************/?>
+<? if ($uinfo['uid']) { ?>
+      <div class="space">
+          <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+              <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+            <span class="altbg2-bg">学习概况</span>
+          	<i class="altbg2-r"></i>
+        </td>
+      </tr>
+<? /*
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="grade_id" id="select_grade_id">
+                <option value="0">--请选择--</option>
+<?php $grade_list = array_reverse(C('grades'), true);
+                foreach($grade_list as $key => $val): ?>
+                <option value="<?=$key?>"<?=$key==$student['grade_id']?' selected="selected"':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">所在学校</td>
+            <td>
+                <input type="hidden" name="grade_id" id="select_grade_id" value="<?=$student['grade_id']?>"/>
+                <input class="txtbox" id="school_select" name="school_name" type="text" value="<?=$student['school_name']?>"/>
+                <input id="school_id" name="school_id" type="hidden" value="<?=$student['school_id']?>"/>
+              <span style="color:#f00">*</span><span style="color:#f00;display:none" id="_school_select"></span>
+            </td>
+        </tr>
+ */?>
+        <tr>
+            <td class="altbg1">家庭地址</td>
+            <td>
+              <select name="sb_addr_provid" id="selProvinces" onchange="region.changed(this, 2, 'selCities');region.changed(document.getElementById('selCities'), 2, 'selAreas');">
+                <option value="0">--请选择省--</option>
+                <? foreach($province_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="sb_addr_cityid" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                <option value="0">--请选择市--</option>
+                <? foreach($city_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="sb_addr_areaid" id="selAreas">
+                <option value="0">--请选择区县--</option>
+                <? foreach($area_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <input type="text" id="sb_addr_desc" name="sb_addr_desc" value="<?=$student['sb_addr_desc']?>" class="txtbox" />
+              <input type="hidden" id="address" name="address" value="<?=$student['address']?>" class="txtbox" />
+               <span style="color:#f00">*</span>
+            </td>
+        </tr>
+      <tr>
+        <td class="altbg1">邮编</td>
+        <td>
+          <input type="text" id="zipcode" name="zipcode" value="<?=$student['zipcode']?>" class="txtbox" />
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">参加的培训机构</td>
+        <td>
+              培训机构
+              <input type="hidden" id="id_sbc_tiid" name="sbc_tiid" value="<?=$student['sbc_tiid']?>"/>
+              <input type="text" id="id_ti_name" name="ti_name" value="<?=Func::echo_s($student['ti_name'])?>" class="txtbox" readonly="readonly" style="background:lightyellow" onclick="fnShowDlg1()"/>
+              培训课程
+              <input type="hidden" id="id_sbc_corsid" name="sbc_corsid" value="<?=$student['sbc_corsid']?>"/> 
+              <input type="hidden" id="id_cors_cmid" name="cors_cmid" value="<?=$student['cors_cmid']?>"/>
+              <input type="text" id="id_cors_name" name="cors_name" value="<?=Func::echo_s($student['cors_name'])?>" class="txtbox" readonly="readonly" style="background:lightyellow" onclick="fnShowDlg2()"/>
+              授课教师
+              <input type="text" id="id_sbc_teachers" name="sbc_teachers" value="<?=Func::echo_s($student['sbc_teachers'])?>" class="txtbox" readonly="readonly" style="background:lightyellow" onclick="fnShowDlg3()"/>
+
+              <label><input type="checkbox" name='no_tiid' id="id_checkbox_noti" onchange="fnOnCheckBoxNOTIChanged()" <? if ($student['no_tiid']) echo('checked="checked"'); ?> value="1"/>暂无</label>
+               <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">可接受的授课模式</td>
+        <td>
+            <? foreach ($stunumtype_list as $v) { ?>
+            <label><input type="checkbox" name="sbs_stunumtype[]" value="<?=$v['csnt_id']?>" <? if (in_array($v['csnt_id'], $student['sbs_stunumtype'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['csnt_name'])?><? if ($v['csnt_memo']) { ?>(<?=Func::echo_s($v['csnt_memo'])?>)<? } ?></label>
+            <? } ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">希望辅导难度</td>
+        <td style="border-bottom:2px solid #045eab;">
+            <? foreach ($class_list as $v) { ?>
+            <label><input type="checkbox" name="sbclassid_classid[]" value="<?=$v['class_id']?>" <? if (in_array($v['class_id'], $student['sbclassid_classid'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['class_name'])?></label>
+            <? } ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+
+        <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+          <td colspan="2" style="text-align:center;border:none;">
+             <center><input type="submit" name="dosubmit"  value=" 保存修改  " class="btn"/></center>
+          </td>
+        </tr>
+        <tr><td style="border:none;height:10px;"></td></tr>
+    </table>
+  </div>
+<? } ?>
+<? /*************** COPY FROM base.phtml END ****************************/?>
+  </form>
+</div>
+
+
+<?/***************** COPY FROM base.phtml START **************************/?>
+<? if ($uinfo['uid']) { ?>
+<div id="id_sbc_tiid_dlg" style="display:none;width:800px">
+  <div class="cls_title">选择或输入培训机构</div>
+  <div class="cls_box" style="margin:5px">
+     <div>
+      <select name="ti_typeid" class="cls_field">
+        <option value="">--请选择培训机构类型--</option>
+        <? foreach ($tit_list as $val) { ?>
+        <option value="<?=$val['tit_id']?>" <?=$val['tit_id'] == $student['ti_typeid'] ? ' selected="selected"' : ''?>><?=Func::echo_s($val['tit_name'])?></option>
+        <? } ?>
+      </select>
+      <select name="ti_provid" id="id_ti_provid" onchange="region.changed(this, 2, 'id_ti_cityid');region.changed(document.getElementById('id_ti_cityid'), 2, 'id_ti_areaid');" class="cls_field">
+      <option value="0">--请选择省--</option>
+      <? foreach($province_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <select name="ti_cityid" id="id_ti_cityid" onchange="region.changed(this, 3, 'id_ti_areaid')" class="cls_field">
+      <option value="0">--请选择市--</option>
+      <? foreach($city_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <select name="ti_areaid" id="id_ti_areaid" class="cls_field">
+      <option value="0">--请选择区县--</option>
+      <? foreach($area_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <input type="text" name="ti_name" class='cls_field txtbox'/> <button type="button" onclick="ajax_baseFetchTIList(fnGetFormData('id_sbc_tiid_dlg'))">查询</button>
+    </div>
+    <div id="id_ti_list" class='cls_item_div_ul_list'>
+      <ul>
+      </ul>
+    </div>
+    <div style="clear:both">以上没有我要找的培训机构，自己输入<input type="text" id="id_ti_name_defined" name="ti_name_defined" value="" class="txtbox"/></div>
+  </div>
+  <div class="cls_dialog_buttons">
+    <button type="button" onclick="fnSetTIIDNameClick()">确  定</button>
+    <button type="button" onclick="fnCloseDialog('id_sbc_tiid_dlg')">取  消</button>
+  </div>
+</div>
+
+<div id="id_sbc_corsid_dlg" style="display:none;width:800px">
+  <div class="cls_title">选择或输入培训课程</div>
+  <div class="cls_box" style="margin:5px">
+     <div id='id_sbc_corsid_dlg_qry_div'>
+      <input type="hidden" name="cors_tiid" id="id_cors_tiid" value="" class='cls_field'/>
+      <select name="cors_cmid" id="id_qry_cors_cmid" class='cls_field'>
+        <option value="">--请选择授课模式--</option>
+        <? foreach ($cm_list as $val) { ?>
+        <option value="<?=$val['cm_id']?>" <?=$val['cm_id'] == $student['cors_cmid'] ? ' selected="selected"' : ''?>><?=Func::echo_s($val['cm_name'])?></option>
+        <? } ?>
+      </select>
+    <input type="text" name="cors_name" id="id_qry_cors_name" class='cls_field txtbox'/> <button type="button" id="id_qry_cors_btn" onclick='ajax_baseFetchCORSList(fnGetFormData("id_sbc_corsid_dlg_qry_div"))'>查询</button>
+    </div>
+    <div id="id_cors_list" class='cls_item_div_ul_list'>
+       <ul>
+       </ul>
+    </div>
+    <div style="clear:both">以上没有我要找的培训课程，自己输入<input type="text" id="id_cors_name_defined" class="txtbox"/><label><input type="checkbox" name="cors_cmid_1" id="id_cors_cmid_1"/>一对一课程</label></div>
+  </div>
+  <div class="cls_dialog_buttons">
+    <button type="button" onclick="fnSetCORSIDNameClick()">确  定</button>
+    <button type="button" onclick="fnCloseDialog('id_sbc_corsid_dlg')">取  消</button>
+  </div>
+</div>
+
+<div id="id_sbc_teachers_dlg" style="display:none;width:800px">
+  <div class="cls_title">选择或输入授课教师</div>
+  <div class="cls_box" style="margin:5px">
+     <div id='id_sbc_teachers_dlg_qry_div'>
+    <input type="hidden" name="cors_id" id="id_cteacher_cors_id" class="cls_field"/>
+    <input type="text" name="cteacher_name" id='id_qry_cteacher_name' class='cls_field txtbox'/> <button type="button" id='id_qry_cteacher_btn' onclick='ajax_baseFetchCTeacherList(fnGetFormData("id_sbc_teachers_dlg_qry_div"))'>查询</button>
+    </div>
+    <div id="id_cteacher_list" class='cls_item_div_ul_list'>
+        <ul>
+        </ul>
+    </div>
+    <div style="clear:both">以上没有我要找的授课老师, 自己输入<input type="text" id="id_sbc_teachers_defined" class="txtbox"/></div>
+  </div>
+  <div class="cls_dialog_buttons">
+    <button type="button" onclick="fnSetCTeacherClick()">确  定</button>
+    <button type="button" onclick="fnCloseDialog('id_sbc_teachers_dlg')">取  消</button>
+  </div>
+</div>
+<? } ?>
+<?/***************** COPY FROM base.phtml END ******************************/?>
+
+
+
+<div id="scroll_s">
+<style type="text/css">
+table.pop_dialog_table {
+    border-collapse: collapse;
+    margin: auto;
+    table-layout: fixed;
+    background: rgba(0, 0, 0, .45);
+    border-radius: 7px;
+    background-color: #8b8b8b\9 ;
+    width: 650px;
+
+}
+
+table.pop_dialog_table em {
+    font-style: normal
+}
+
+td.pop_topleft, td.pop_topright, td.pop_bottomleft, td.pop_bottomright {
+    height: 10px;
+    overflow: hidden;
+    padding: 0 !important;
+    width: 10px !important
+}
+
+td.pop_content {
+    background-color: #FFF;
+    padding: 0
+}
+
+td.pop_content.morpadding_bluebg {
+    padding: 10px;
+    background-color: #d2d9e6
+}
+
+td.pop_content h2 {
+    background: #3777bc;
+    border: 1px solid #005eac;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    *zoom: 1
+}
+
+td.pop_content h2 span {
+    display: block;
+    padding: 4px 10px 5px
+}
+
+td.pop_content h2 a.floatright {
+    float: right
+}
+
+td.pop_content .dialog_content {
+    background: #fff;
+    border: 1px solid #005eac;
+    border-top-width: 0
+}
+
+td.pop_content .dialog_body p {
+    color: #333
+}
+
+td.pop_content .dialog_body a, td.pop_content .dialog_body a:visited {
+    color: #005eac;
+    font-size: 12px;
+
+}
+
+td.pop_content .dialog_content.borderblue {
+    border: 1px #8598c0 solid
+}
+
+td.pop_content .dialog_body {
+    padding: 10px;
+    position: relative;
+    zoom: 1
+}
+
+td.pop_content .no_padding {
+    padding: 0
+}
+
+td.pop_content .dialog_buttons input {
+    line-height: 16px;
+    background-color: #005eac !important;
+    background-image: none !important;
+    border-color: #b8d4e8 #124680 #124680 #b8d4e8 !important;
+    border-style: solid;
+    border-width: 1px;
+    color: #fff
+}
+
+td.pop_content .dialog_buttons input.gray {
+    border: 1px solid;
+    border-color: #fff #848484 #848484 #fff !important;
+    background: #f0f0f0 !important;
+    color: #333 !important
+}
+
+td.pop_content .share_popup {
+    padding: 0
+}
+
+td.pop_content .dialog_summary {
+    background: #f2f2f2;
+    padding: 8px 10px;
+    border-bottom: 1px solid #ccc
+}
+
+td.pop_content .dialog_summary p.centertext {
+    margin: 30px;
+    text-align: center;
+    line-height: 20px
+}
+
+td.pop_content .dialog_summary ul.classlist {
+    list-style: none
+}
+
+td.pop_content .dialog_summary ul.classlist li {
+    list-style: none;
+    height: 25px;
+    line-height: 25px
+}
+
+td.pop_content .dialog_summary ul.classlist li input.floatleft {
+    background: 0;
+    float: left;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: 7px
+}
+
+td.pop_content .dialog_summary ul.classlist li .gray {
+    color: #b4b4b4
+}
+
+td.pop_content .dialog_summary.higher {
+    height: 100px;
+    padding: 10px
+}
+
+td.pop_content .dialog_buttons {
+    background: #f0f5f8;
+    padding: 8px;
+    text-align: right;
+    border-top: 1px solid #ccc
+}
+
+td.pop_content .dialog_buttons.alignleft {
+    text-align: left
+}
+
+td.pop_content .dialog_buttons input {
+    margin-left: 5px;
+    padding: 2px 15px;
+    _padding: 2px 10px
+}
+
+td.pop_content .dialog_buttons_left_msg {
+    float: left
+}
+
+td.pop_content .loading {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #f7f7f7
+}
+
+td.pop_content input, td.pop_content select {
+    vertical-align: middle
+}
+
+td.pop_content p {
+    margin-bottom: 1ex
+}
+
+.dialogtips {
+    padding: 4px;
+    background-color: #feffcf;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 370px
+}
+
+* html .dialogtips {
+    left: auto;
+    right: 0
+}
+ #school_select{
+     /*position: relative;*/
+ }
+ .pop_dialog_table{
+     position: absolute;
+     z-index: 30;
+     bottom: -10px;
+ }
+.contextual_dialog .generic_dialog_popup {
+    width: 360px
+}
+
+.contextual_dialog .contextual_arrow, .contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle.gif);
+    background-repeat: no-repeat;
+    height: 12px;
+    position: relative;
+    top: 1px
+}
+
+.contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle_rev.gif)
+}
+
+.contextual_dialog .contextual_arrow span, .contextual_dialog .contextual_arrow_rev span {
+    display: none
+}
+
+.contextual_dialog h2 {
+    color: #000;
+    padding-bottom: 4px
+}
+
+.contextual_dialog .contextual_dialog_content {
+    background-color: #f0f0f0;
+    border: 1px solid #b7b7b7;
+    border-bottom: 2px solid #005eac;
+    line-height: 15px;
+    padding: 8px 10px 10px
+}
+
+.contextual_dialog .dialog_buttons {
+    padding-top: 10px
+}
+
+.contextual_dialog .dialog_buttons input {
+    margin-right: 10px
+}
+
+.errorDialog td.pop_content h2 {
+    background: #ffebe8;
+    border: 0;
+    border-bottom: 1px solid #AAA;
+    color: #333
+}
+
+.errorDialog td.pop_content h2 span {
+    padding: 6px 10px 7px
+}
+
+.errorDialog td.pop_content {
+    border: 1px solid #ee7c90
+}
+
+.errorDialog td.pop_content .dialog_content {
+    border: 0
+}
+
+.errorDialog td.pop_content .dialog_content .dialog_body {
+    padding: 15px
+}
+
+ul.square_bullets {
+    color: #005eac;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: square;
+    padding-left: 20px
+}
+
+.share-intro p {
+    table-layout: fixed;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden
+}
+
+.share_popup .tabs {
+    padding-top: 15px;
+    border-bottom: 1px solid #898989
+}
+
+.share_popup .toggle_tabs {
+    list-style: none;
+    width: 360px;
+    margin: 0 auto
+}
+
+.share_popup .toggle_tabs li {
+    float: left;
+    background: #f1f1f1 url(http://a.xnimg.cn/img/toggle_tab_bg.gif) repeat-x 0 1px
+}
+
+.share_popup .toggle_tabs li a {
+    border: solid #898989;
+    border-width: 1px;
+    border-left: 0;
+    padding: 3px 15px;
+    display: block;
+    color: #333;
+    margin-bottom: -1px
+}
+
+.share_popup .toggle_tabs li a.selected {
+    color: #fff !important;
+    background: #6d84b4;
+    border-color: #005eac;
+    text-decoration: none
+}
+
+.share_popup .toggle_tabs li.first a {
+    border: 1px solid #898989
+}
+
+.share_popup .toggle_tabs li.first a.selected {
+    border-color: #005eac #5973a9
+}
+
+.share_popup .toggle_tabs li.middle a {
+    border: 1px solid #898989;
+    border-left: 0
+}
+
+.share_popup .toggle_tabs li.middle a.selected {
+    border-color: #005eac #5973a9
+}
+
+td.pop_content h2 a {
+    float: right;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a.close-button {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a:hover {
+    color: #fff
+}
+
+.share_popup .share_header {
+    position: relative
+}
+
+#popShare .poplogin {
+    width: 500px;
+    margin: 0 auto
+}
+
+.share_popup .title-share {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bolder;
+    background: url(http://a.xnimg.cn/img/newsfeed/share.gif) no-repeat left center
+}
+
+.share_send, .share_post {
+    background: #f7f7f7 none repeat scroll 0;
+    padding-top: 15px
+}
+
+.share-preview {
+    background: #f7f7f7
+}
+
+.share_fields {
+    padding-bottom: 10px
+}
+
+.composer_fields dt {
+    float: left;
+    margin: 0;
+    padding: 0 10px 0 20pt;
+    text-align: right;
+    width: 65px
+}
+
+.composer_fields dd {
+    float: left;
+    margin: 0 0 10px;
+    width: 300px;
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all
+}
+
+.composer_fields dd#dd_privacy_field {
+    margin: 0
+}
+
+.composer_fields textarea {
+    height: 50px;
+    margin: 0;
+    overflow: auto
+}
+
+.composer_fields label {
+    color: #666;
+    font-weight: 700;
+    padding-top: 4px;
+    display: block
+}
+
+.attachment_stage {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc
+}
+
+.s-message .share-footer {
+    display: block;
+    height: 23px;
+    line-height: 23px;
+    float: right;
+    _margin-top: 3px;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    padding-left: 0
+}
+
+.s-message .share-footer span {
+    color: #888;
+    _margin-top: 4px;
+    display: block;
+    float: left
+}
+
+.s-message a.m-editor-emo {
+    display: block;
+    width: 30px;
+    height: 23px;
+    line-height: 23px;
+    padding-left: 25px;
+    background-image: url(http://a.xnimg.cn/imgpro/minieditor/action_btn.png);
+    background-position: 0 -23px;
+    background-repeat: no-repeat;
+    outline: 0;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    float: left
+}
+
+.attachment_stage_area {
+    overflow: hidden;
+    padding: 8px 3px 7px 8px
+}
+
+.message-fields .share-title, .message-fields .share-description {
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1
+}
+
+.share-body h3 {
+    font-weight: normal
+}
+
+.share-title {
+    font-weight: 700;
+    color: #555;
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1;
+    overflow: hidden
+}
+
+.music-summary {
+    margin-top: 5px
+}
+
+.share_info.share-with-pic {
+    margin-left: 115px
+}
+
+.share_thumb {
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 5px
+}
+
+.share_thumb img {
+    border: 3px solid #fff
+}
+
+.share-description {
+    line-height: 18px;
+    color: gray
+}
+
+.share-description span {
+    color: #333
+}
+
+.share-description a {
+    margin-right: 3px
+}
+
+.share_buttons {
+    text-align: center;
+    padding: 0 60px 10px 0
+}
+
+.share_buttons input {
+    margin: 0 5px
+}
+
+.share_popup div.tokenizer, .share_popup input.inputtext, .share_popup textarea {
+    width: 295px;
+    border: 1px solid #8496ba
+}
+
+.share_popup input.inputtext, .share_popup textarea {
+    padding: 5px 0 5px 3px
+}
+
+.share-popup-abstract .share-popup-figure {
+    float: left;
+    margin-right: 10px;
+    _display: inline
+}
+
+.share-popup-abstract .share-abs-title {
+    color: #005dac !important;
+    font-weight: bolder
+}
+
+.share-popup-abstract .share-abs-content {
+    color: #808080 !important
+}
+
+.share-success {
+    width: 410px;
+    padding: 10px 0
+}
+
+.share-success-tip {
+    width: 100px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more {
+    width: 300px;
+    text-align: center;
+    font-size: 12px;
+    border-left: 1px solid #cee1ee;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more p {
+    margin-top: 10px
+}
+
+td.pop_content .dialog_body h1.general {
+    font-size: 15px;
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.altbox {
+    color: #999;
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px #e0e0e0 solid
+}
+
+td.pop_content .dialog_body p.namefilter {
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.namefilter label {
+    color: #999;
+    font-weight: 700
+}
+
+td.pop_content .dialog_body p.namefilter .inputtext {
+    width: 200px
+}
+
+td.pop_content .dialog_body #list-results .selector {
+    height: 200px;
+    margin-bottom: 15px
+}
+
+table.pop_dialog_table.w515 {
+    width: 515px
+}
+
+#univlist, #searchSchoolList, #highSchoolList {
+    position: absolute;
+    width: 606px;
+    z-index: 9999
+}
+
+#univlist_provinces {
+    border-bottom: 1px solid #005eac
+}
+
+#univlist p label {
+    font-weight: lighter;
+    color: #333
+}
+
+#univlist p .input-text {
+    width: 190px;
+    background: #fff url(http://a.xnimg.cn/imgpro/bg/cs_navtop.png?timestamp=091222) no-repeat scroll left -175px
+}
+
+#univlist_provinces td {
+    vertical-align: middle;
+    color: #808080;
+    text-align: center;
+    font-size: 13px
+}
+
+#univlist_provinces a {
+    font-size: 12px;
+    display: block;
+    text-decoration: none
+}
+
+#univlist_provinces td.activetab a {
+    background: #005eac;
+    color: #fff
+}
+
+#univlist_provinces:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_provinces {
+    *zoom: 1
+}
+
+#univlist_univs {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#univlist_univs:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_univs {
+    *zoom: 1
+}
+
+#univlist_univs li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#univlist_univs li.univ {
+    width: 112px
+}
+
+#univlist_univs li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#searchlist_school {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#searchlist_school:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#searchlist_school {
+    *zoom: 1
+}
+
+#searchlist_school li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#searchlist_school li.univ {
+    width: 112px
+}
+
+#searchlist_school li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#univlist .operation a {
+    margin-right: 180px
+}
+
+#uniList {
+    width: 612px
+}
+
+.popup-wrapper {
+    border: 10px solid #d8dfea;
+    position: absolute;
+    z-index: 9999;
+    overflow: hidden
+}
+
+.popup-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: mask();
+    width: 3000px;
+    height: 3000px;
+    display: hidden
+}
+
+.popup-content {
+    border: 1px solid #005eac;
+    background: #f7f7f7;
+    padding: 6px;
+    overflow: hidden;
+    zoom: 1
+}
+
+#popup-country {
+    font: 13px sans-serif;
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    /*margin-left: -36px;*/
+}
+
+#popup-country li {
+    float: left;
+    line-height: 26px !important;
+    padding: 0 4px 0 5px;
+    background: url(http://a.xnimg.cn/img/popup_country_separator.gif) no-repeat right 50%;
+    _border: 0
+}
+
+* html #popup-country li {
+    background-position: 0 40%
+}
+
+#popup-country li a {
+    word-break: keep-all;
+    _line-height: 26px
+}
+
+#popup-country li#c_0, #popup-country li#c_13 {
+    background: 0
+}
+
+#popup-country li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-country li.active a {
+    font-weight: bold;
+    color: #000
+}
+
+#popup-country li.active a:hover {
+    text-decoration: none
+}
+
+#popup-province, #popup-province-hs,#popup-area {
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 3px;
+	margin-top: 5px;
+}
+
+#popup-province li, #popup-province-hs li,#popup-area li{
+    font-size: 12px;
+    float: left;
+    padding-right:10px;
+    text-align: center;
+    _border: 0
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    height: 18px;
+    line-height: 18px
+}
+
+li.active a, li.active a {
+    background: #005eac;
+    color: #fff !important
+}
+
+#popup-province li.active a:hover, #popup-province-hs li.active a:hover, #popup-area li.active a:hover{
+    text-decoration: none
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-province li#p_0_3, #popup-province li#p_0_20, #popup-province li#p_0_26, #popup-province li#p_0_9 {
+    width: 44px
+}
+
+#popup-province-hs li#hsp_0_5, #popup-province-hs li#hsp_0_8, #popup-province-hs li#hsp_0_22, #popup-province-hs li#hsp_0_25 {
+    width: 44px
+}
+
+#popup-unis, #popup-unis-hs {
+    list-style: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 200px;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 10px 0 10px 10px;
+    margin: 5px 0
+}
+
+#popup-unis li, #popup-unis-hs li {
+    float: left;
+    width: 160px;
+    padding: 4px 12px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) no-repeat 0 9px
+}
+
+#popup-unis li a:hover, #popup-unis-hs li a:hover {
+    background: #005eac;
+    color: #FFF;
+    text-decoration: none;
+	cursor: pointer
+}
+
+* html #popup-unis li {
+    height: 1.3em
+}
+
+#uniList .canbutton {
+    float: right
+}
+
+.module-popupcity {
+    background-color: #fff;
+    padding: 3px 8px;
+    border: 1px solid #c3c3c3;
+    overflow: hidden;
+    zoom: 1;
+    margin: 5px 0
+}
+
+.module-popupcity li {
+    list-style: none;
+    margin-right: 5px;
+    height: 18px;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    word-break: keep-all;
+    line-height: 18px
+}
+
+.module-popupcity li.active {
+    _border: 0
+}
+
+.module-qulist {
+    background-color: #fff;
+    overflow: hidden;
+    zoom: 1;
+    padding: 3px 8px;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-qulist li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 5px;
+    float: left;
+    word-break: keep-all;
+    height: 18px;
+    line-height: 18px;
+    _border: 0
+}
+
+.module-qulist li a {
+    white-space: nowrap
+}
+
+.module-schoollist {
+    background-color: #fff;
+    height: 200px;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-schoollist li {
+    float: left;
+    list-style: none;
+    display: block;
+    width: 170px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    padding-left: 10px;
+    margin-right: 5px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) left 10px no-repeat
+}
+
+.module-schoollist li.active {
+    _border: 0
+}
+
+#scroll_s {
+    display: none;
+    position : absolute;
+    top : 550px;
+    left : 60px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+    //
+    $(document).on('click', 'li[id^=c_]', function(){
+        $('li[id^=c_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_1_selected  = $(this).attr('id').split('_')[1];
+        region_city(_depth_1_selected);
+    });
+    //
+    $(document).on('click', 'li[id^=p_]', function(){
+        $('li[id^=p_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_2_selected  = $(this).attr('id').split('_')[1];
+        region_area(_depth_2_selected);
+    });
+    $(document).on('click', 'li[id^=a_]', function(){
+        $('li[id^=a_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_3_selected  = $(this).attr('id').split('_')[1];
+        _depth_2_selected  = $('li[id^=p_][class="active"]').attr('id').split('_')[1];
+        show_school(_depth_3_selected,_depth_2_selected);
+    });
+    
+    //搜索学校
+    $('#school_search_input').keyup(function(){
+        keywords = $(this).val();
+        $('li[id^=u_]').find('a').each(function(i, item) {
+            if ($(this).html().indexOf(keywords)<0)
+            {
+                $(this).parent().hide();
+            }
+            else
+            {
+                $(this).parent().show();
+            }
+        });
+    });
+    
+    //点击学校，返回id,name，关闭层
+    $(document).on('click', 'li[id^=u_]', function(){
+        var school_id = $(this).attr('id').split('_')[1];
+        $('#school_select').val($(this).find('a').html());
+        $('#school_id').val(school_id);
+        $('#scroll_s').hide();
+    });
+});
+</script>
+<table class="pop_dialog_table">
+<tbody>
+<tr>
+    <td class="pop_topleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_topright"></td>
+</tr>
+<tr>
+<td class="pop_border"></td>
+<td class="pop_content"><h2><span>选择学校</span><a style="display:none;" class="close-button" href="#nogo"
+                                                onclick="return false;">关闭</a></h2>
+
+<div class="dialog_content">
+<div class="dialog_body">
+<div id="univlist" style="position: static;">
+<div><p id="filter_univ"><label for="school_search_input">搜索 : </label><input class="input-text" id="school_search_input" name="school_search_input" type="text" autocomplete="off">
+
+</p>
+<ul id="popup-country"></ul>
+<ul id="popup-province"></ul>
+<ul id="popup-area"></ul>
+<ul id="popup-unis"></ul>
+</div>
+</div>
+</div>
+<div class="dialog_buttons"><input type="button" class=" input-submit" value="关闭" dialog="1"></div>
+</div>
+</td>
+<td class="pop_border"></td>
+</tr>
+<tr>
+    <td class="pop_bottomleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_bottomright"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+$('document').ready(function (){
+    $("#school_select").click(function(){
+        if($('#select_grade_id').val()==0){
+            $('#_school_select').html('请先选择年级').fadeIn('slow').delay(800).fadeOut('slow');
+            return false;
+        }
+
+        $("#scroll_s").css("display","block");
+        var school_id = parseInt($('#school_id').val());
+        var school_area = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+
+        if(school_country > 0)
+        {
+            region_province(0,school_country,school_province,school_area);
+        }
+        else
+        {
+            region_province(0,0,0,0);//初始化弹出层
+        }
+    });
+    $(".input-submit").click(function(){
+        $("#scroll_s").css("display","none");
+    });
+});
+</script>
+<?php $this->load->view('common/profile_footer');?>

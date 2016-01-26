@@ -1,0 +1,93 @@
+<?php 
+/**
+ * 后台管理->题库及试题管理->知识点管理->知识点列表
+ *
+ */
+$this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/knowledge/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><?php if($parent['pid']==0):?><a class="menu" href="<?=site_url('admin/knowledge/add/'.$parent['id'])?>">添加知识点</a><?php endif;?>知识点管理</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="8" class="altbg2" style="text-align: center;">
+        <a href="<?=site_url('admin/knowledge/index/')?>">一级知识点</a>
+          <?php if($parent['id']):?>
+           <?php if(isset($subjects[$parent['subject_id']])):?>
+            ：<a href="<?=site_url('admin/knowledge/index/?subject='.$parent['subject_id'])?>"><?=$subjects[$parent['subject_id']]?></a>
+           <?php endif;?>
+            -> <?=$parent['knowledge_name']?>
+          <?php else:?>
+          [学科筛选：
+          <a href="<?=site_url('admin/knowledge/index/')?>"<?php if($subject_id==0):?> style="color:#f00;margin:0 2px;"<?php endif;?>>全部</a>
+          <?php foreach($subjects as $k => $v):?>
+          <a href="<?=site_url('admin/knowledge/index/?subject='.$k)?>" <?php if($subject_id==$k):?>style="color:#f00;margin:0 2px;"<?php endif;?>><?=$v?></a>
+          <?php endforeach;?>
+          ]
+          <?php endif;?>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="5%">删?</td>
+        <td width="15%">ID</td>
+        <td>知识点名称</td>
+        <td width="10%">学科</td>
+        <td width="10%">试题数</td>
+        <td width="25%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['id']?>"></td>
+        <td><?=$val['id']?></td>
+        <td>          
+          <?=$val['knowledge_name']?> 
+        </td>
+        <td><?=$val['subject_name']?></td>
+        <td><?=$val['ques_num']?> (<?=$val['relate_ques_num']?>)</td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <a href="<?=site_url('admin/knowledge/edit/'.$val['id'])?>">编辑</a>
+          <?php } ?>
+          <?php if($val['pid']==0):?>
+          <a href="<?=site_url('admin/knowledge/index/'.$val['id'])?>">下级知识点(<?=$val['children']?>)</a>
+          <?php endif;?>
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url('admin/knowledge/delete/'.$val['id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    
+    <center><?php if ($priv_delete) {?>
+    <input type="submit" name="dosubmit" value=" 批量删除 " class="btn" />
+    <?php } ?> <?php if($parent['id']||$subject_id>0):?>
+    &nbsp; &nbsp;
+    <input type="button" name="dosubmit" value=" 返回 " class="btn"  onclick="window.location.href='<?=site_url('admin/knowledge/index/')?>'"/>
+<?php endif; ?>  </center>
+    
+    </div>
+  </form>
+ 
+ </div>
+ <?php $this->load->view('common/footer');?>

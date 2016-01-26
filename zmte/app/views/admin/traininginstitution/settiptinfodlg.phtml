@@ -1,0 +1,23 @@
+<div id="id_settiptinfo_dlg" style="width:400px">
+<div class="cls_title"><?=$tipt_info['tipt_id'] ? '编辑' : '新增'?>培训机构优先类型<? if ($tipt_info['tipt_id']) echo('(ID:' . $tipt_info['tipt_id'] . ')'); ?></div>
+<table class="maintable" id="id_settiptinfo_table" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="altbg1" width="35%">培训机构优先类型ID</td>
+    <td>
+      <input type="text" name="tipt_id" value="<?=$tipt_info['tipt_id']?>" class="cls_field txtbox" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="altbg1">培训机构优先类型名称</td>
+    <td>
+      <input type="text" name="tipt_name" value="<? Func::echo_s($tipt_info['tipt_name']); ?>" class="txtbox cls_field" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+</table>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="ajax_setTIPT(<?=$tipt_id?>, fnGetFormData('id_settiptinfo_dlg'))">确定</button>
+<button type="button" onclick="fnCloseDialog('id_settiptinfo_dlg')">取消</button>
+</div>
+</div>

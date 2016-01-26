@@ -1,0 +1,242 @@
+<?php
+    $this->load->view('common/header');
+    static_js(array('third_party/layer/layer.min.js'));
+?>
+
+<script>
+    $(function(){
+        //双击展开
+        $('.maintable').on('dblclick', '.ques_title', function(){
+            $(this).find('div').toggleClass('line_18');
+        });
+
+        <?php if ($subject_id) {?>
+        $('#subject_id').val(<?=$subject_id?>).attr('disabled', true);
+        <?php }?>
+        <?php if ($class_id) {?>
+        $('#class_id').val(<?=$class_id?>).attr('disabled', true);
+        <?php }?>
+        <?php if ($grade_id) {?>
+        $('#grade_id').val(<?=$grade_id?>).attr('disabled', true);
+        <?php }?>
+    });
+
+    function func_reset()
+    {
+        $('#search_question_form select').val('');
+        $('#remark').val('');
+    }
+</script>
+
+<div id="space">
+    <div class="subtitle">
+        <a href="javascript:void(0)" id="select_all" style="color:red;">[全选/反选]</a>
+        <a href="javascript:void(0)" id="question_manager" class="menu">试题管理</a>
+    </div>
+    <form action="#" method="GET" id="search_question_form">
+    <div class="subtitle" style="height:40px; line-height:40px;">
+        试题搜索：
+        <select name="subject_id" id="subject_id">
+        <option value=''>--学科--</option>
+        <?php $subject = C('subject');?>
+        <?php foreach ($subject as $subject_id => $subject_name) {?>
+        <?php if ($c_subject_id && !in_array($subject_id, $c_subject_id)) continue;?>
+        <option value='<?=$subject_id?>' <?php if($search_data['subject_id'] == $subject_id) echo 'selected'; ?>><?=$subject_name?></option>
+        <?php }?>
+        </select>
+        
+        <select name="grade_id" id="grade_id">
+        <option value=''>--年级--</option>
+        <?php $grade = C('grades');?>
+        <?php foreach ($grade as $grade_id => $grade_name) {?>
+        <?php if ($c_grade_id && !in_array($grade_id, $c_grade_id)) continue;?>
+        <option value='<?=$grade_id?>' <?php if($search_data['grade_id'] == $grade_id) echo 'selected'; ?>><?=$grade_name?></option>
+        <?php }?>
+        </select>
+        
+        <select name="class_id" id="class_id">
+        <option value=''>--考试类型--</option>
+        <?php foreach ($q_class as $item) {?>
+        <?php if ($c_class_id && !in_array($item['class_id'], $c_class_id)) continue;?>
+        <option value='<?=$item['class_id']?>' <?php if($search_data['class_id'] == $item['class_id']) echo 'selected'; ?>><?=$item['class_name']?></option>
+        <?php }?>
+        </select>
+        
+        <select name="type">
+        <option value=''>--题型--</option>
+        <?php $q_type = C('q_type');?>
+        <?php foreach ($q_type as $type_id => $type_name) {?>
+        <option value='<?=$type_id?>' <?php if(strlen($search_data['type']) && $search_data['type'] == $type_id) echo 'selected'; ?>><?=$type_name?></option>
+        <?php }?>
+        </select>
+        
+        <select name="is_original">
+            <option value="">--题目类型--</option>
+            <option value="1" <?php if($search_data['is_original'] == 1) echo 'selected'; ?>>原创</option>
+            <option value="2" <?php if($search_data['is_original'] == 2) echo 'selected'; ?>>真题</option>
+            <option value="3" <?php if($search_data['is_original'] == 3) echo 'selected'; ?>>模拟题</option>
+        </select>
+        <input type="text" id="ques_id" name="ques_id" placeholder="搜索试题ID，多题用“,”隔开" value="<?=$search_data['ques_id']?>">
+        <input type="text" style="width:110px;" id="remark" name="remark" placeholder="搜索试题备注关键字" value="<?=$search_data['remark']?>">
+        <input type="submit" value="搜索">
+        <?php if (!$subject_id) {?>
+        <input type="button" value="重置" onclick="func_reset();">
+        <?php }?>
+    </div>
+    </form>
+    <form name="frm_cpuser_list" action="#" method="POST" onsubmit="return check_form(this)">
+        <div class="space">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr class="altbg1">
+                    <td width="10%">&nbsp;&nbsp;ID</td>
+                    <td>题目（双击展开/收缩）</td>
+                    <td width="10%">类型</td>
+                    <td width="10%">学科</td>
+                    <td width="15%">录入时间</td>
+                    <td width="10%">录入人员</td>
+                </tr>
+                <?php if($list):?>
+                    <?php foreach($list as $val):?>
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="ques_id" name="ques_ids_c" value="<?=$val['ques_id']?>" />
+                                <?=$val['ques_id']?>
+                                <input type="hidden" name="ques_ids[]" value="<?=$val['ques_id']?>" />
+                                <?php if (in_array($val['type'], array(10, 15))) {?>
+                                <input type="hidden" id="ques_num_<?=$val['ques_id']?>" name="ques_num_<?=$val['ques_id']?>" value="<?=$val['children_num']?>" />
+                                <?php }?>
+                            </td>
+                            <td class="ques_title">
+                                <a href="/admin/question/preview/<?=$val['ques_id']?>" target="_blank"><div class="line_18" style="width:450px;"><?=$val['title']?></div></a>
+                            </td>
+                            <td><?=$val['qtype']?></td>
+                            <td><?=$val['subject_name']?></td>
+                            <td><?=$val['addtime']?></td>
+                            <td><?=$val['realname']?></td>
+                         </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="10">暂无记录！</td>
+                    </tr>
+                <?php endif; ?>
+                <tr class="altbg1">
+                    <td colspan="6" style="text-align:right"><?=$pagination?></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="text-align: center;color:#f00">
+                <input type="button" id="add_question" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " id="close_button" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function(){
+
+        // 初始化试题是否被选中
+        var questions = parent.$('.ques_id');
+
+        if(questions.length > 0) {
+            for (var i = 0; i < questions.length; i++) {
+                var ques_id = $(questions[i]).val();
+                $('.ques_id[value="' + ques_id + '"]').prop("checked", true);
+            };
+        }
+
+        // 全选/反选
+        var option_select_all_off = false;
+        $('#select_all').click(function(){
+            if (!option_select_all_off) {
+                $('.ques_id').prop("checked", true);
+                option_select_all_off = true;
+            } else {
+                $('.ques_id').prop("checked", false);
+                option_select_all_off = false;
+            }
+        });
+
+        // 关闭当前窗口
+        var index = parent.layer.getFrameIndex(window.name); //获取当前窗体索引
+        $('#close_button').on('click', function(){
+            parent.layer.close(index); //执行关闭
+        });
+
+        // 跳转到试题管理页面
+        $('#question_manager').on('click', function(){
+            // parent.layer.close(index);
+            parent.location.href = "<?php echo site_url('admin/question/index').'/?paper_diy=1'; ?>";
+        });
+
+        // 试题预览地址
+        var preview_url = "<?php echo site_url('admin/question/preview'); ?>";
+
+        // 添加试题到试卷中
+        $('#add_question').click(function(){
+            // 待添加试题
+            var checkbox = $('input:checked[name=ques_ids_c]');
+
+            if (checkbox.length == 0) {
+                layer.alert('请选择试题！', -1);
+                return;
+            }
+
+            // 所有已经添加的试题
+            var checkbox_done = parent.$('.ques_id');
+            var checkbox_done_id = [];
+            if (checkbox_done.length > 0) {
+                for (var i = 0; i < checkbox_done.length; i++) {
+                    checkbox_done_id.push($(checkbox_done[i]).val());
+                };
+            };
+
+            for (i=0; i<checkbox.length; i++) {
+                // 判断是否需要添加
+                if ($.inArray($(checkbox[i]).val(), checkbox_done_id) > -1) {
+                    continue;
+                };
+
+                // 添加排序选框
+
+                var children_num = $('#ques_num_'+$(checkbox[i]).val().toString()).val();
+                var _score_input = '';
+                if (!isNaN(children_num) && children_num > 0)
+                {
+					for(var j = 1; j <= children_num; j++)
+					{
+						_score_input += _score_input ? "<br/>" : '';
+						_score_input += '第'+j+'题 <input type="text" name="score['+$(checkbox[i]).val().toString()+'][]" style="width: 30px;" value="0" />';
+					}
+                }
+                else
+                {
+					_score_input = '<input type="text" name="score['+$(checkbox[i]).val().toString()+'][]" style="width: 30px;" value="0" />';
+                }
+                
+                $(checkbox[i]).parent().after('<td><input type="text" name="sort[]" style="width: 30px;" value="0" /></td><td>'+_score_input+'</td>');
+                
+                // 添加操作项
+                var preview_url_id = preview_url + '/' + $(checkbox[i]).val().toString();
+
+                var str = '<td>';
+                str += '<a href="' + preview_url_id + '" target="_blank">预览</a>&nbsp;&nbsp;';
+                str += '<a href="javascript:void(0);" class="remove_question">从试卷中移除</a>';
+                str += '</td>';
+
+                $(checkbox[i]).parent().parent().append(str);
+
+                // 给父页面传值
+                parent.$('#container_button').before($(checkbox[i]).parent().parent());
+            }
+
+            parent.layer.close(index);
+        });
+    });
+</script>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

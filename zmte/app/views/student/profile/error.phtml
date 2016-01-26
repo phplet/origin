@@ -1,0 +1,486 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'error'));?>
+<?php $this->load->view('common/mathjax');?>
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+<??>
+<style>
+.cls_table_btn {
+    background: url("images/register/u144.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    position: relative;
+    text-align: center;
+    width: 177px;
+}
+.cls_table_current {
+    background: url("images/register/u142.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    z-index: 20;
+}
+
+.cls_subjectid {
+	display:none;
+	width:100%;
+}
+</style>
+
+<style type="text/css">
+.clearfix:after {
+visibility: hidden;
+display: block;
+font-size: 0;
+content: " ";
+clear: both;
+height: 0;
+}
+.clearfix { display: inline-table; }
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* End hide from IE-mac */
+.cls_left{
+    float:left;
+}
+.cls_table_btn{
+    position: relative;
+    cursor: pointer;
+    background: url("/images/register/u144.png") no-repeat;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 177px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+.cls_person_table{
+    width: 100%;
+    border: 1px solid #323a45;
+}
+.cls_person_table th{
+    border: 1px solid #323a45;
+    font-size: 14px;
+}
+.cls_person_table td{
+    border: 1px solid #323a45;
+    text-align: center;
+    font-size: 12px;
+}
+.cls_change_move_0{
+    z-index: 4;
+    right: 16px;
+}
+.cls_change_move_32{
+    z-index: 3;
+    right: 32px;
+}
+.cls_change_move_48{
+    z-index:2;
+    right:48px;
+}
+.cls_table_current{
+    z-index: 20;
+    background: url("/images/register/u142.png") no-repeat;
+}
+.cls_right{
+    float: right;
+}
+.cls_fs_14{
+    font-size: 12px;
+}
+.cls_hide{
+    display: none;
+}
+.cls_table_btn a{
+    text-decoration: none;
+    color: #666666;
+}
+.cls_img{
+    margin-right: 8px;
+    margin-top: 2px;
+}
+.cls_title_a{
+    position: relative;
+    right:18px;
+}
+</style>
+    <? $qtype = C('qtype');?>
+<script type="text/javascript">
+$(function(){
+    if ($(".cls_subjectid_radio[checked='checked']").empty())
+    {
+            $(".cls_subjectid_radio:first").attr('checked', 'checked');
+    }
+
+    var subject_id = $(".cls_subjectid_radio[checked='checked']").val();
+    //fnShowErrorList(subject_id);
+});
+
+/*function fnShowErrorList(subject_id)
+{
+	$(".cls_subjectid").css('display', 'none');
+	$(".cls_subjectid_" + subject_id).css('display', 'block');
+}*/
+
+/**
+ * 初始化知识点/题型
+ */
+function fnInitErrorListPaperKnowledgeListAndQuesType(data)
+{
+    $("#search_knowledge_id").empty();
+    $("#search_knowledge_id").append('<option value="">[请选择]</option>');
+    
+    for (var i = 0; i < data['knowledge_name_id'].length; i++)
+    {
+      $("#search_knowledge_id").append('<option value="' +
+            data['knowledge_name_id'][i]['id'] + '">' +
+            data['knowledge_name_id'][i]['knowledge_name'] + '</option>');
+    }
+
+    $("#search_qtype_id").empty();
+    $("#search_qtype_id").append('<option value="">[请选择]</option>');
+    
+    for (var i = 0; i < data['subject_qtype_id'].length; i++)
+    {
+      $("#search_qtype_id").append('<option value="' +
+            data['subject_qtype_id'][i]['type'] + '">' +
+            data['subject_qtype_id'][i]['type_name'] + '</option>');
+    }
+
+}
+
+function check_exam_id(form)
+{
+    if (!form.search_exam_pid.value)
+    {
+        alert('请选择考试期次！');
+        return false;
+    }
+    if (!form.search_exam_id.value)
+    {
+        alert('请选择考试学科！');
+        return false;
+    }
+}
+function fnFilterSelectSubject(exam_id)
+{
+    ajax_fetchErrorListPaperKnowledgeListAndQuesType(exam_id);
+}
+
+<? $myexamlist = array(); 
+$subject = C('subject');
+foreach ($exam_subject_list as $val) { 
+    $myexamlist[$val['exam_pid']][] = array(
+        'exam_id' => $val['exam_id'], 
+        'exam_name' => $val['exam_name'], 
+        'subject_id' => $val['subject_id'], 
+        'subject_name' => $val['subject_name']);
+} 
+?>
+var myexamlist = <?=json_encode($myexamlist)?>;
+
+function fnFilterSelectExamPID(exam_pid)
+{
+    if (exam_pid == '')
+    {
+        // 清空后面所有选项
+        return;
+    }
+
+    $("#search_exam_id").empty();
+    $("#search_exam_id").append('<option value="">[请选择]</option>');
+    for (var i = 0; i < myexamlist[exam_pid].length; i++)
+    {
+        $("#search_exam_id").append('<option value="' +
+            myexamlist[exam_pid][i]['exam_id'] +'">'+ 
+            myexamlist[exam_pid][i]['subject_name'] + '</option>');
+    }
+}
+
+$(function(){
+    fnFilterSelectExamPID($("#search_exam_pid").val());
+    <? if($current_exam['exam_id']){?>
+        $("#search_exam_id").val(<?=$current_exam['exam_id']?>);
+        fnFilterSelectSubject(<?=$current_exam['exam_id']?>);
+    <?}?>
+});
+</script>
+<div id="body">
+  <div class="space">
+     <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align:left;">
+            <span class="altbg2-bg">
+                <strong>错题记录</strong>
+            </span>
+            <i class="altbg2-r"></i>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">期次选择</td>
+            <td><?=$current_exam['exam_name'];?>
+<?/*<form action="/student/profile/error" method="POST">
+                <select name="exam_pid" id="exam_pid" onchange="$(this).parent('form').submit()" class="txtbox">
+                    <?if ($exam_list){?>
+                    <?php foreach($exam_list as $val): ?>
+					<option value="<?=$val['exam_id']?>"
+                        <?if ($val['exam_id']==$exam_pid){?>selected="selected"<?}?>>
+                        <?=$val['exam_name']?>
+                    </option>
+                    <?php endforeach; ?>
+                    <?}else{?>
+                    <option value="">暂无测试过期次</option>
+                    <?}?>
+                 </select>
+                 </form>*/?>
+             </td>
+        </tr>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;">科目</td>
+            <td >
+                <?=$subject[$current_exam['subject_id']];?>
+            </td>
+        </tr>
+        <? if ($mode=='search'){?>
+        <?if ($current_exam['knowledge_name']){?>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;">知识点</td>
+            <td >
+                <?=$current_exam['knowledge_name'];?>
+            </td>
+        </tr> 
+        <?}?>
+        <?if ($current_exam['qtype']){?>
+        <?$qtype = C('qtype');?>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;">题型</td>
+            <td >
+                <?=$qtype[$current_exam['qtype']];?>
+            </td>
+        </tr> 
+        <?}?>
+        <?if ($current_exam['difficulty']){?>
+        <?$qtype = C('qtype');?>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;">难易度</td>
+            <td style="border-bottom:2px solid #045eab;">
+                <?=$current_exam['difficulty'];?>
+            </td>
+        </tr> 
+        <?}?>
+        <?}?>
+        <tr><td style="border:none;"></td></tr>
+        <tr>
+            <td class="altbg1" style="border-bottom:2px solid #045eab;"><a href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">筛选条件</a></td>
+            <td style="border-bottom:2px solid #045eab;"></td>
+        </tr>
+        <tr><td style="border:none;height:10px;"></td></tr>
+        <tr>
+            <td colspan="4" class="altbg2" style="text-align:left;">
+            <span class="altbg2-bg">
+                <strong>错题列表</strong>
+            </span>
+            <i class="altbg2-r"></i>
+            </td>
+        </tr>
+      </table>
+	</div>
+        <?if ($error_ques_list){?>
+            <?foreach ($error_ques_list as $key =>$item){$i++;?>
+            <div>
+		<table style="width:100%">
+                    <tr>
+		        <td colspan="3" class="altbg1">
+                        <?
+			   
+			    if (isset($qtype[$item['type']]))
+			    {
+				echo '[<font class="font_4">'.$qtype[$item['type']].'</font>]';
+			    }else{
+				echo '[<font class="font_4">未知题型</font>]';
+			    }
+			?>
+			<span style="float:right;"><?=date('Y-m-d',$current_exam['do_time']);?></span>
+			</td>
+		    </tr>
+		    <?/*<tr>
+		    <td colspan="3"  style="text-align:left;">试题内容</td>
+		    </tr>
+		     */?>
+                    <tr></tr>
+		    <tr>
+                        <td width="100%" class="preview_content">
+                        <div><?echo $item['title'];?></div>
+                       
+			<?if ($item['picture']){?>
+			    </br>
+			    <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$item['picture']?>"></div>
+			<?}?>
+			<br/>
+                        <?if (in_array($item['type'],array(0,4,8))){?>
+                            <?$i=0;?>
+			    <?foreach ($item['sub_ques_list'] as $k =>$v){$i++;?>
+                            <span>第<?=$i;?>题
+                             <?
+			    $qtype = C('qtype');
+			    if (isset($qtype[$v['type']]))
+			    {
+				echo '[<font class="font_4">'.$qtype[$v['type']].'</font>]';
+			    }else{
+				echo '[<font class="font_4">未知题型</font>]';
+			    }
+			?><?=$v['title'];?></span>
+			        <?if ($v['picture']){?>
+				    <img src="<?=_IMG_ROOT_URL_?><?=$v['picture']?>"></br>
+                                <?}?>
+                                <br/>
+                                <?if (in_array($v['type'],array(3,8))){?>
+                                    <strong>参考答案:</strong><?echo $v['answer'];?> <br/>   
+                                    <strong>我的答案:</strong><?echo $v['ques_answer'];?> 
+                                <?}else{?>
+                                <?$i=0;unset($sub_option_id_arr);?>
+                            <?foreach ($v['option'] as $kk =>$vv){$i++;?>
+                                <?$sub_option_id_arr[]=$vv['option_id'];?>
+                                <p style="display:block;margin-right:10px;"><?if($vv['is_answer']){?>√<?}?><?=chr(ord('A')+$i-1)?>.<?echo $vv['option_name'];?></p>
+			        <?if ($vv['picture']){?>
+				    <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$vv['picture'];?>">
+			        <?}?>		
+                            <?}?>
+                            <? $sub_ques_answer=$v['ques_answer'];$sub_ques_answer_arr=explode(',',$sub_ques_answer);?>
+                            <strong>你的答案：</strong>
+                            <?foreach ($sub_ques_answer_arr as $vvv){;?>
+                                <?if (in_array($vvv,$sub_option_id_arr)){?>
+                                    <?$b=array_search($vvv,$sub_option_id_arr)+1;?>
+                                    <?if ($b){?>
+                                        <?$c=chr(ord('A')+$b-1);?>
+                                        <strong><?echo $c;?></strong>
+                                    <?}?>
+                                <?}?>
+                            <?}?>
+                             <?}?>
+                            <br/>
+			    <?}?>
+                        <?}else if (in_array($item['type'],array(9,11))){?>
+                            <strong>正确答案:</strong><?echo $item['answer'];?><br/>
+                        <?}else if (in_array($item['type'],array(3))){?>
+                            <strong>正确答案:</strong><?echo $item['answer'];?><br/>
+                            <strong>错误答案:</strong><?echo $nosub_ques_answer[$item['ques_id']];?>
+                        <?}else if (in_array($item['type'],array(1,2,7))){?>
+                            <? $m=0;unset($option_id_arr);?>
+                            <?foreach ($item['option'] as $k =>$v){$m++;?>
+                                <?$option_id_arr[]=$v['option_id'];?>
+                                <p style="display:block;margin-right:10px;"><?if($v['is_answer']){?>√<?}?><?=chr(ord('A')+$m-1)?>.<?echo $v['option_name'];?></p>
+			        <?if ($v['picture']){?>
+				    <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v;?>">
+			        <?}?>		
+                            <?}?>
+                            <? $ques_answer=$nosub_ques_answer[$item['ques_id']];$ques_answer=explode(',',$ques_answer);?>
+                            <strong>你的答案：</strong>
+                            <?foreach ($ques_answer as $vv){?>
+                                <?if (in_array($vv,$option_id_arr)){?>
+                                    <?$b=array_search($vv,$option_id_arr)+1;?>
+                                    <?if ($b){?>
+                                    <?$c=chr(ord('A')+$b-1);?>
+                                    <?}?>
+                                    <strong><?echo $c;?></strong>
+                                <?}?>
+                                
+                            <?}?>
+                                
+                        <?}else if ($item['type']==4){?>
+                        <?}else if (in_array($item['type'],array(5,6,12,15))){?>
+                        <?$i =0;?>
+                            <?if ($item['match_ques_list']){?>
+                                <?foreach ($item['match_ques_list'] as $vv ){$i++;?>
+                                    <strong>第《<?echo $i;?>》题答案:</strong><?echo $vv['answer'];?><br/>
+                                <?}?>
+                            <?}?>
+                        <?}else if ($item['type']==6){?>
+                        <?}else if ($item['type']==7){?>
+                        <?}else if ($item['type']==8){?>
+                        <?}else if ($item['type']==9){?>
+                        <?}else if ($item['type']==10){?>
+                        <?}else if ($item['type']==11){?>
+                        <?}else if ($item['type']==13){?>
+                        <?}else if ($item['type']==14){?>
+			<?}?>
+		        </td>
+		    </tr>
+                        <tr>
+                            <td style="border-bottom:2px solid #054eab"><span style="float:right" class="font_4">知识点：<?echo $item['knowledge_name']?></pan></td>
+			<i class="altbg2-r"></i></tr>
+			<tr><td =style="border:none"></td></tr>
+		</table></div>
+			<?}?>
+			<?}?>
+	</div>
+</div>
+<div id="id_qry_dlg" style="display:none">
+    <div class="cls_title">搜索错题</div>
+      <form method="GET" name="search_form" action="<?=site_url('student/profile/error')?>" onsubmit="return check_exam_id(this);">
+      <input type="hidden" name="search" class="txtbox3" value="search">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">期次选择</td> 
+                <td>
+                     <select name="search_exam_pid" id="search_exam_pid" class="txtbox" onchange="fnFilterSelectExamPID(this.value)">
+                        <option value="">--请选择--</option>
+                        
+<? foreach ($exam_list as $val) { ?>
+<option value="<?=$val['exam_id']?>" <?if ($val['exam_id']==$current_exam['exam_pid']){?>selected="selected"<?}?>><? Func::echo_s($val['exam_name']); ?></option>
+<? } ?>    
+                      </select>
+                </td> 
+             </tr>
+             <tr>
+				<td class="altbg1">考试科目</td>
+				<td>
+                                     <select name="search_exam_id" id="search_exam_id" class="txtbox" onchange="fnFilterSelectSubject(this.value)">
+<option value="">[请选择]</option>
+                                        </select>
+             <tr>
+                <td class="altbg1">知识点</td>
+                <td> <select name="search_knowledge_id" id="search_knowledge_id" class="txtbox">
+                        <option value="0">--请选择--</option>
+                      </select>
+                </td>
+            </tr>
+             <tr>
+                <td class="altbg1">题型</td>
+                <td> <select name="search_qtype_id" id="search_qtype_id" class="txtbox">
+                         <option value="0">--请选择--</option>
+                      </select>
+                </td>
+            </tr>
+              <tr>
+                <td class="altbg1">难易度</td>
+                <td> <select name="search_difficulty_id" id="search_difficulty_id" class="txtbox">
+                        <option value="">--请选择--</option>
+                        <option value="1">低</option>
+                        <option value="2">中</option>
+                        <option value="3">高</option>
+                     </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value=" 查询 " name="dosubmit" class="btn" /> </td></td>
+                <td><input type="button" onclick="fnCloseDialog('id_qry_dlg')"value=" 取消" class="btn" /> </td>
+                
+            </tr>
+            
+        </table>
+    </div>
+</div>
+<?php $this->load->view('common/profile_footer');?>

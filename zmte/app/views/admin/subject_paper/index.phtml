@@ -1,0 +1,118 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {
+    if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            if ( ! confirm('确定要执行该操作么？')) {
+                return false;
+            }
+        }
+        var action = $('#batch_op').find('option[value='+op+']').attr('op');
+        form.action = action;
+        return true;
+    }
+    return false;
+}
+
+</script>
+<div id="body">
+  <div class="space">
+    <form name="frm_list" action="<?=site_url('admin/subject_paper/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+    <input type="hidden" name="exam_id" value="<?=$exam['exam_id']?>" />
+    <div class="subtitle">
+      <?php if ($priv_manage) {?>
+      <?php if ($exam['has_tested']) {?>
+      	<a href="javascript:void(0);" class="menu" style="color:#999;text-decoration:line-through;" title="该期次科目已经被考生考过 或者 正在被考中,因此无法操作">添加试卷</a>
+      <?php }  else {?>
+      <a class="menu" href="<?=site_url('admin/subject_paper/add/'.$exam['exam_id'])?>">添加试卷</a>
+      <?php } ?>
+      <?php } ?>
+     	备选试卷列表
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="10" class="altbg2" style="text-align: center;color:blue;">
+          考试期次：<?=$exam['p_exam_name']?>
+          --->
+          科目：<?=$exam['subject_name']?>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="70">ID</td>
+        <td width="80">学科</td>
+        <td>试卷名称</td>
+        <td width="260">试题数量</td>
+        <td width="150">难易度</td>
+        <td width="130">试卷状态</td>
+        <td width="280">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?php if ($priv_manage) {?><input type="checkbox" name="ids[]" value="<?=$val['id']?>" /><?php } ?><?=$val['id']?></td>
+        <td><?=$val['subject_name']?></td>
+        <td><?=$val['paper_name']?></td>
+        <td>
+          <?=$val['ques_num']?>[
+          <?php foreach(C('qtype') as $k=>$v):?><?=$k?',':''?><?=$v?>:<?=isset($val['qtype_ques_num'][$k])?$val['qtype_ques_num'][$k]:0?>
+          <?php endforeach;?>
+          ]
+        </td>
+        <td><?=$val['difficulty']?></td>
+        <td>
+          <?php if($val['is_delete']):?>
+          <font color="#ccc">删除</font>
+          <?php else:?>
+          <font>正常</font>
+          <?php endif;?>
+        </td>
+        <td>
+            <?php if($val['question_sort']):?>
+                <a href="<?=site_url('admin/paper_diy/preview_paper/'.$val['paper_id'])?>" target="_blank">预览</a>
+                <?php if($val['paper_diy']):?>
+                <a href="<?=site_url('admin/paper_diy/detail/'.$val['paper_id'])?>" target="_blank">试卷详情</a>
+            
+                <a href="<?=site_url('admin/subject_paper/update_question_info/' . $exam['exam_id'] . '/' . $val['paper_id'])?>">更新试卷信息</a>
+                <?php else:?>
+                <font style="color:#999;text-decoration:line-through;" title="你没有权限！">更新试卷信息</font>
+               <?php endif;?>
+            <?php else:?>
+                <a href="<?=site_url('admin/paper/preview/'.$val['paper_id'])?>" target="_blank">预览</a>
+                <a href="<?=site_url('admin/paper/detail/'.$val['paper_id'])?>" target="_blank">试卷详情</a>
+            <?php endif;?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+      <?php if($pagination):?>
+      <tr class="altbg1">
+        <td colspan="3">
+          <?php if ($priv_manage) {?>
+          <button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button>
+          <select name="batch_op" id="batch_op" <?php echo $exam['has_tested'] ? 'title="该期次科目已经被考生考过 或者 正在被考中,因此无法操作" style="text-decoration:line-through;color:#999;"' : '';?>>
+           <?php if ($exam['has_tested']) {?>
+           <option value="">-选择操作-</option>
+           <?php }  else {?>
+           <option value="">-选择操作-</option>
+           <option value="delete" op="<?=site_url('admin/subject_paper/batch_delete')?>">批量移除</option>
+           <?php }?>
+          </select>
+          <?php } ?>
+        </td>
+        <td colspan="10" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php endif;?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

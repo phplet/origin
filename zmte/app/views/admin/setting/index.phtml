@@ -1,0 +1,70 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(document).ready(function(){
+    $("#setting_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            site_name: "required",
+            signup_title: "required",
+            template: 'required'
+        },
+        messages: {
+            site_name: "请填写网站名称",
+            signup_title:'请填写测试报名标题',
+            template: '请选择网站模板'
+        }
+    });
+});
+
+</script>
+<div id="body">
+  <form name="setting_form" class="validate" id="setting_form" method="POST" action="<?=site_url('admin/setting/index')?>" onsubmit="return false;">
+  <div class="space">
+    <div class="subtitle">网站设置</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                网站基本信息
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">网站名称</td>
+            <td>
+              <input type="text" name="site_name" class="txtbox" value="<?=isset($setting['site_name'])?$setting['site_name']:''?>" />
+              <label for="site_name" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">测试报名标题</td>
+            <td>
+              <input type="text" name="signup_title" class="txtbox" value="<?=isset($setting['signup_title'])?$setting['signup_title']:''?>" />
+              <label for="signup_title" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">前端模板</td>
+            <td>
+              <select name="template">
+              <option value="">请选择模板</option>
+              <?php foreach($tpl_list as $tpl):?>
+              <option value="<?=$tpl['code']?>" <?=isset($setting['template'])&&$setting['template']==$tpl['code']?'selected':''?>><?=$tpl['code']?></option>
+              <?php endforeach;?>
+              </select>
+              <label for="template" class="error" style="display:none"></label>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

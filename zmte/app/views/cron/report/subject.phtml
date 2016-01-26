@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 页脚页眉信息 -->
+    <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+    <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+    <meta type="student_name" content="<?php echo $studentName; ?>"/>
+    <meta type="exam_time" content="<?php echo $examName; ?>"/>
+    <title>评估报告(<?php echo $subject_name;?>)</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    <?php static_global(array(
+						'js/jquery/jquery.js',
+		  ));
+	?>
+<script type="text/javascript">
+	$(function () {
+		//全局设置,省得每个都写
+		Highcharts.setOptions({
+			global: {
+				useUTC: false
+			},
+			credits: {
+				enabled: false	//右下角不显示LOGO
+			},
+			chart: {
+				animation:false	//关闭全部动画,使其在pdf中可以渲染到
+			},
+            title:{
+                style:{
+                    color:"#333"
+                }
+            },
+            legend:{
+                itemStyle:{
+                    color:"#333"
+                }
+            },
+			plotOptions: {
+				series: {
+					animation: false	//关闭全部动画,使其在pdf中可以渲染到
+				}
+			}
+		});
+	});
+</script>
+<style>
+hr{
+	border:none;
+	border-bottom: 1px dotted #ccc;
+}
+
+span.level{
+	width:40px;
+	height:40px;
+	display:inline-block;
+}
+span.level1{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level1.gif');
+}
+span.level2{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level2.gif');
+}
+span.level3{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level3.gif');
+}
+<? 
+// 注意，这里一定要为840px, 左、右边距为20mm
+$g_real_page_width = "840px"; 
+$g_real_page_height = 1283;
+$g_padding_left = "20mm";
+$g_padding_right = "20mm";
+?>
+.cls_root {
+    width:<?=$g_real_page_width?>;
+    padding-left:<?=$g_padding_left?>;
+    padding-right:<?=$g_padding_right?>;
+    /*background-color:#cccccc;*/
+}
+</style>
+</head>
+<body>
+<div class="ceping cls_root">
+    <h1><?php echo $studentName; ?>&nbsp;&nbsp;<?php echo $subject_name;?>测评报告</h1>
+    <p style="text-align:center;font-size:14px;margin-top:10px;"><?php echo $placeName; ?>&nbsp;<?php echo $startTime; ?>&nbsp;考试时长<?php echo $timeInterval; ?>&nbsp;考试时间：<?php echo $examStartTime; ?>-<?php echo $examEndTime; ?>&nbsp;用时<?php echo $examTimeInterval; ?></p>
+
+    <!--考试信息对比start-->
+    <?php echo $this->load->view('report/subject_module/sci');?>
+    
+    <!--三维模块start-->
+    <?php echo $this->load->view('report/subject_module/std');?>
+    
+    <!--试题分析及与之对应的评价 && 诊断及建议 start-->
+    <?php echo $this->load->view('report/subject_module/sq_ss');?>
+</div>
+<?php static_global(array(
+						'js/app/report/highcharts.js',
+));?>
+<?php echo $this->load->view('report/table_auto_pager', array('g_real_page_height' => $g_real_page_height));?>
+</body>
+</html>

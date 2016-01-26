@@ -1,0 +1,138 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(document).ready(function(){
+    $("#rule_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            period: "required",
+            class_id: "required",
+            lang:'required',
+            interview_type:'required',
+            ques_num:'required'
+        },
+        messages: {
+            period: "请选择年级段",
+            class_id: "请选择试题类型",
+            lang:'请选择语言',
+            interview_type:'请选择考点',
+            ques_num:'请填写试题数量'
+        }
+    });
+
+    $('#interview_type').change(function(){
+        set_interview_type();
+    });
+    $('input[name=lang]').click(function(){
+        toggle_interview_type();
+    });
+
+});
+
+function set_interview_type() {
+    var pid = $('#interview_type').val();
+    if (pid == '') return;
+    $.post(
+        '<?=site_url('admin/common/interview_type')?>',
+        {pid:pid},
+        function(data){
+            var str = '';            
+            for (var i=0; i<data.length; i++) {
+                str += '<input type="checkbox" name="extend_type[]" id="extend_type'+data[i]['type_id']+'" value="'+data[i]['type_id']+'" /> <label for="extend_type'+data[i]['type_id']+'">'+data[i]['type_name']+'</label>';            
+            }
+            $('#extend_types').html(str);
+        },
+        'json'
+    );
+}
+function toggle_interview_type() {
+    var is_english = $('input[name=lang]')[1].checked;
+    if (is_english == true) {
+        $('#interview_type_line').hide();
+    } else {
+        $('#interview_type_line').show();
+    }
+}
+</script>
+
+<div id="body">
+  <form name="rule_form" class="validate" id="rule_form" method="POST" action="<?=site_url('admin/interview_rule/update')?>" onsubmit="return false;">
+  <input type="hidden" name="act" value="add" />
+  <div class="space">
+    <div class="subtitle">添加面试组题规则</div> 
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                规则信息
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">规则名称</td>
+            <td>
+              <input type="text" name="rule_name" class="txtbox" value="" />
+              <label for="rule_name" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">年级段</td>
+            <td>
+              <?php foreach($periods as $k => $v):?>
+              <input type="radio" name="period" value="<?=$k?>" id="period<?=$k?>"/> <label for="period<?=$k?>"><?=$v?></label>
+              <?php endforeach;?>
+              <label for="period" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">类型</td>
+            <td>
+              <?php foreach($class_list as $v):?>
+              <input type="radio" name="class_id" value="<?=$v['class_id']?>" id="class<?=$v['class_id']?>"/> <label for="class<?=$v['class_id']?>"><?=$v['class_name']?></label>
+              <?php endforeach;?> 
+             <label for="class_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">语言</td>
+            <td>
+              <?php foreach($langs as $k => $v):?>
+              <input type="radio" name="lang" value="<?=$k?>" id="lang<?=$k?>"/> <label for="lang<?=$k?>"><?=$v?></label>
+              <?php endforeach;?> 
+              <label for="lang" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr id="interview_type_line">
+            <td class="altbg1">考点</td>
+            <td>
+              <select name="interview_type" id="interview_type">
+              <option value="">=考点=</option>
+              <?php foreach($types as $k => $v):?>
+              <?php if(empty($v['pid'])):?>
+              <option value="<?=$k?>"><?=$v['pid']?'　':''?><?=$v['type_name']?></option>
+              <?php endif;?>
+              <?php endforeach;?> 
+              </select>
+              <span id="extend_types"></span>
+             <label for="interview_type" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">题目数量</td>
+            <td>
+              <input type="text" name="ques_num" class="txtbox5" value="" />
+              <label for="ques_num" class="error" style="display:none"></label>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/header');?>

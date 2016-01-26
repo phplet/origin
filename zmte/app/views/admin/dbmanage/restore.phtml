@@ -1,0 +1,49 @@
+<?php
+/**
+  后台管理->数据库还原
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" method="post" enctype="multipart/form-data" action="<?=site_url('admin/dbmanage/restore')?>">
+  <div class="space">
+    <div class="subtitle">
+    数据库还原
+    <a class="menu" href="<?=site_url('admin/dbmanage/backup')?>">数据库备份</a>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">数据文件</td>        
+        <td>
+            <input type="file" name="db_file" id="db_file" accept=".zip,.sql" >
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value="还原 " class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	db_file : {
+	    		required : true
+	    	}
+	    },
+	    messages: {
+	    	db_file : "请选择还原数据库文件"
+	    }
+	});
+});
+</script>
+<?php $this->load->view('common/footer');?>

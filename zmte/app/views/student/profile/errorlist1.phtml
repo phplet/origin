@@ -1,0 +1,1453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>错题集</title>
+        <link rel='stylesheet' href='/zmcat/css/student/style.css' type='text/css' media='all' />
+        <link rel="stylesheet" type="text/css" href="/zmcat/css/student/cs-select.css" />
+        <link rel="stylesheet" type="text/css" href="/zmcat/css/student/cs-skin-border.css" />
+        <script type="text/javascript" src="/zmcat/sys/js/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/all.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/float-person.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/classie.js"></script>
+        <script type="text/javascript" src="/zmcat/sys/js/selectFx.js"></script>
+        <style type="text/css">
+        html {
+                font-family: 'Microsoft Yahei';
+        }
+       
+        .cls_body {
+                background: url("/zmcat/css/student/images/index/cls_bg.png");
+                padding-top: 40px;
+        }
+
+        .cls_auto {
+                margin: 0 auto;
+                width: 960px;
+                padding-left: 90px;
+        }
+
+        .cls_std_footer {
+                text-align: center;
+        }
+
+        .cls_std_header {
+                background: url("/zmcat/css/student/images/index/cls_header_bg.png") no-repeat;
+                height: 40px;
+                width: 100%;
+                margin-left: 7px;
+        }
+
+        .cls_std_main_left {
+                background: url("/zmcat/css/student/images/index/cls_left_bg.png") repeat-y;
+                width: 60px;
+                height: 920px;
+        }
+
+        .cls_std_main_right {
+                background: url("/zmcat/css/student/images/index/cls_right_bg.png") no-repeat;
+                background-position: 0px -10px;
+                min-height: 680px;
+                width: 96px;
+        }
+
+        .cls_std_main_right_one {
+                background: url("/zmcat/css/student/images/index/cls_right__one_bg.png")
+                        repeat-y;
+                height: 240px;
+        }
+
+        .cls_std_main_middle {
+                width: 794px;
+                height: 920px;
+                background: #FFFBEC;
+        }
+
+        .cls_std_footer {
+                height: 50px;
+                line-height: 50px;
+                width: 92%;
+                background: url("/zmcat/css/student/images/index/cls_footer_bg.png") no-repeat;
+                margin-left: 7px;
+        }
+
+        .cls_info_header_list {
+                margin-top: 5px;
+        }
+
+        .cls_info_header_list li {
+                float: left;
+                padding: 5px;
+                margin-left: 27px;
+        }
+
+        .cls_info_header_list li.cls_first {
+                margin-left: 0px;
+                color: #323a45;
+                font-size: 19px;
+                height: 35px;
+                width: 188px;
+                text-decoration: none;
+                text-align: center;
+        }
+        .cls_info_header_list li a.cls_current {
+                color: white;
+                background: #323a45;
+                border-radius: 5px;
+        }
+
+        .cls_info_header_list li a.cls_student_current {
+                color: white;
+                background: #323a45;
+                border-radius: 5px;
+        }
+
+        .cls_info_header_list_div {
+                margin-top: 20px;
+                *height: 40px;
+        }
+
+        .cls_info_header_list_img li {
+                float: left;
+                padding: 5px;
+                width: 30px;
+                height: 29px;
+                border-radius: 20px;
+                margin-left: 10px;
+                cursor: pointer;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_two img {
+                margin-left: 4px;
+                margin-top: 2px;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_four img {
+                margin-left: 3px;
+                margin-top: 4px;
+        }
+
+        .cls_info_header_list_img li.cls_fixed_six img {
+                margin-left: 1px;
+                margin-top: 4px;
+        }
+
+        .cls_info_header_list_img li img {
+                margin-left: 5px;
+                margin-top: 2px;
+        }
+        .cls_info_header_list_img li.cls_ml_two img{
+                margin-left: 3px;
+                margin-top: 3px;
+        }
+        .cls_info_header_list_img li.cls_ml_three img{
+                margin-left: 5px;
+                margin-top: 2px;
+        }
+
+        .cls_info_header_list_img li.cls_ml_one {
+                margin-left: 30px;
+                background: url('/zmcat/css/student/images/index/cls_header_02.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_two {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_03.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_four {
+                margin-left: 94px;
+                background: url('/zmcat/css/student/images/index/cls_header_06.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_five {
+                margin-left: 100px;
+                background: url('/zmcat/css/student/images/index/cls_header_05.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_six {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_04.png');
+        }
+
+        .cls_info_header_list_img li.cls_ml_three {
+                margin-left: 90px;
+                background: url('/zmcat/css/student/images/index/cls_header_07.png');
+        }
+
+        .cls_color_gray {
+                background: gray
+        }
+
+        .cls_std_main_right_li {
+                padding-top: 10px;
+        }
+
+        .cls_std_main_right_li li {
+                margin-left: 5px;
+                width: 25px;
+                padding: 5px;
+                border-radius: 20px;
+                padding-left: 10px;
+                margin-top: 25px;
+                cursor: pointer;
+        }
+
+        .cls_std_main_right_li li.cls_right_two {
+                margin-top: 40px;
+        }
+
+        .cls_std_main_right_li li.cls_right_four {
+                margin-top: 50px;
+        }
+
+        .cls_std_main_right_li li.cls_right_six {
+                margin-top: 50px;
+        }
+
+        .cls_std_main_right_li li.cls_right_five {
+                margin-top: 40px;
+        }
+
+        .cls_std_main_right_li li.cls_right_three {
+                margin-top: 44px;
+        }
+
+        .cls_return_index {
+                float: right;
+                margin-top: 26px;
+                margin-right: 20px;
+                font-size: 15px;
+        }
+
+        .cls_return_index a {
+                text-decoration: none;
+                color: #00a4e8;
+                font-size: 15px;
+        }
+
+        .cls_logout {
+                margin-top: 26px;
+                margin-right: 45px;
+                float: right;
+                font-size: 15px;
+        }
+
+        .cls_logout a {
+                text-decoration: none;
+                color: black;
+        }
+        .cls_info_resize_h{
+                height: 44px;
+        }
+        .cls_resize_div{
+                height:1px;
+                width:200px;
+        }
+        .cls_info_header_list_img li.cls_resize_header{
+                background-position: 0px -39px; 
+        }
+        .cls_header_li a{
+                width: 30px;
+                height: 29px;
+                float: left;
+        }
+        .cls_float_person{
+                width: 200px;
+                height: 283px;
+                position: fixed;
+                bottom: 40px;
+                right: 30px;
+                background: url('/zmcat/css/student/images/cls_float_person.png') no-repeat;
+        }
+        .cls_float_word{
+                width: 100px;
+                margin-top: 18px;
+                margin-left: 6px;
+                height: 48px;
+        }
+        .cls_hide_word{
+                margin-top: 12px;
+                margin-left: 10px;
+                cursor: pointer;
+                color: #aaa;
+        }
+        .cls_current_word{
+                color: #00aeff;
+        }
+        .cls_float_hide_person{
+                background: url(/zmcat/css/student/images/cls_float_hide_person.gif) no-repeat;
+                width: 136px;
+                height: 283px;
+                position: fixed;
+                right: 0px;
+                bottom: 40px; 
+                cursor: pointer;
+        }
+        .cls_hide{
+                display: none;
+        }
+        /* ////////////////////////////////////// */
+        #s{
+            width: 794px;
+            display:table;
+            margin-top:-40px;
+            z-index:1;
+            position:absolute;
+            top:214px;
+        }
+        #s > div {
+            display:table-cell;
+            width:188px;
+            text-align:center;
+        }
+        #s > div > div.cs-select {
+            min-width:132px;
+            max-width:132px;
+            margin-left:auto;
+            margin-right:auto;
+        }
+        @font-face {font-family: 'iconfont';
+            src: url(/zmcat/css/student/fonts/iconfont/iconfont.eot);
+            src: url(/zmcat/css/student/fonts/iconfont/iconfont.eot?#iefix) format('embedded-opentype'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.woff) format('woff'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.ttf) format('truetype'),
+                 url(/zmcat/css/student/fonts/iconfont/iconfont.svg#iconfont) format('svg');
+        }
+        
+        .iconfont {
+          font-family:"iconfont" !important;
+          font-size:16px;
+          font-style:normal;
+          -webkit-font-smoothing: antialiased;
+          -webkit-text-stroke-width: 0.2px;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        #s .cs-skin-border > span::after,
+        #s .cs-select > span::after,
+        #s .cs-skin-border .cs-selected span::after {
+            font-family: 'iconfont' !important;
+            font-size:1.0em;
+            content: '\e619';
+        }
+
+        #s .cs-skin-border > span {
+            color:white;
+            border-width:0px;
+            background:transparent;
+        }
+        #s .cs-options {border:1px solid gray;}
+
+        #s1 .cs-skin-border .cs-options li span:hover, #s1 .cs-skin-border li.cs-focus span  {background-color:#e8643e;}
+        #s2 .cs-skin-border .cs-options li span:hover, #s2 .cs-skin-border li.cs-focus span  {background-color:#e7aa3e;}
+        #s3 .cs-skin-border .cs-options li span:hover, #s3 .cs-skin-border li.cs-focus span  {background-color:#3375d0;}
+        #s4 .cs-skin-border .cs-options li span:hover, #s4 .cs-skin-border li.cs-focus span  {background-color:#e83e62;}
+
+
+        /************************/
+#id_list_margin_top {
+    height:31px;
+}
+
+#id_list {
+    width:30px;
+    margin-left:6px;
+}
+
+#id_list > div {
+    float:left;
+    margin-top:-30px;
+    color:white;
+    font-family: 'Microsoft Yahei';
+    font-weight:bold;
+    font-size:1.2em;
+    text-shadow: 0 0 0px;
+}
+
+#id_list > div:hover {
+    text-shadow: 0 0 2px white;
+    cursor:pointer;
+}
+
+#id_list > div.cls_select > div.mid{
+    cursor:default;
+    width:35px;
+}
+
+#id_list > div.cls_select:hover {
+    text-shadow: 0 0 0px;
+    cursor:default;
+}
+
+#id_list > div > div {
+}
+
+#id_list > div > div.left {
+    width:15px;
+    padding:20px 0px 35px 0px;
+    float:left;
+    height:4em;
+}
+
+#id_list > div > div.mid {
+    padding:20px 15px 35px 0px;
+    text-align:center;
+    border-radius:15px;
+    height:4em;
+    width:30px;
+    -webkit-box-shadow: 0px 0px 2px black;
+    -moz-box-shadow: 0px 0px 2px black;
+    box-shadow: 0px 0px 2px black;
+}
+
+.cls_std_main_right {
+    background-image:url(/zmcat/css/student/images/index/cls_right__one_bg.png);
+    background-repeat:repeat-y;
+}
+
+<? $mycolor_list = array('#ff9740', '#ff6161', '#57ce95', '#6fb0ad', '#8690b7', 'rgba(51, 117, 207, 1)', 'rgba(231, 62, 98, 1)');
+foreach ($mycolor_list as $key => $val) { ?>
+.l<?=$key+1?>, .e<?=$key+1?> {background-color:<?=$val?>;}
+<? } $max = count($mycolor_list); ?>
+/* .l<?=$max?>, .e<?=$max?> {height:80px} */
+
+        /* ////////////////////////////////////// */
+
+        </style>
+        <script type="text/javascript">
+        function isie7(){
+            var ua=navigator.userAgent;
+            return /msie 7/i.test(ua) ? true : false;
+        }
+
+        $(function(){
+            $(".cls_hide_word").mouseover(function(){
+                $(this).addClass("cls_current_word");
+            });
+            $(".cls_hide_word").mouseout(function(){
+                $(this).removeClass("cls_current_word");
+            });
+            $(".cls_hide_word").click(function(){
+                $(".cls_float_person").fadeOut();
+                $(".cls_float_hide_person").show();
+            });
+            $(".cls_float_hide_person").click(function(){
+                $(this).hide();
+                $(".cls_float_person").fadeIn();
+            });
+
+            var pathname = window.location.pathname;
+            var pathname_arr = pathname.split("/");
+            var nav = pathname_arr[3];
+            //无逻辑处理的提示页面
+            var pos1 = ['userinfo','mywallet','myerrorstatlist' ].join(' ').indexOf(nav);
+            //这里是需要逻辑处理的页面
+            var pos2 = ['index','mytestworklist','onlineclasslist'].join(' ').indexOf(nav);
+
+            var person = new FloatPerson();
+            person.move_left("cls_float_person", 600);
+            person.move_right("cls_float_person", 600);
+            if ((pos1 > -1) && (pos2 > -1)) {
+                // 其他页面
+                person.common();
+            }else{ 
+                if (pos1 >= 0){
+                    return (function(){
+                       ["person." +nav+"()"];
+                    }());
+                } else{
+                    if (nav == 'index'){
+                        var param = {
+                            'name': "当前登录用户姓名在这里"
+                        };
+                        param.has_course = 0;
+                        param.has_testwork = 0;
+                        person.index(param);
+                        setInterval(function(){
+                            person.index(param);
+                        },3000);
+                    }else if (nav == 'mytestworklist') {
+                        person.mytestworklist(0);
+                    } else if (nav == 'onlineclasslist'){
+                        person.onlineclasslist(0);
+                    }
+                }
+            } 
+        });
+        </script>
+    </head>
+    <body class="cls_body">
+        <div class="cls_float_person">
+            <div class="cls_float_word"> 好好学习，天天向上！ </div>
+            <div class="cls_hide_word"> 隐藏 </div>
+        </div>
+        <div class="cls_float_hide_person cls_hide"> </div>
+        <div class="cls_auto">
+            <div class="cls_std_header"></div>
+            <div class="cls_std_main clearfix">
+                <div class="cls_std_main_left cls_left"></div>
+                <div class="cls_left cls_std_main_middle">
+                    <div class="cls_info_header">
+                        <div class="cls_info_resize_h clearfix">
+                            <img src="/zmcat/css/student/images/index/cls_logo.png" class="cls_left"/>
+                            <span class="cls_logout"> <a href="/student/index/logout">退出登录</a> </span>
+                            <span class="cls_return_index">学生： <a href="/studnet/profile/index">张三</a> </span>
+                            <span class="cls_return_index"> </span>
+                        </div>
+                        <div class="cls_info_header_list_div">
+                            <ul class="cls_info_header_list clearfix">
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/qici.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/zhishidian.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/tixing.png" align="top" /></li>
+                                <li class="cls_first"><img src="/zmcat/css/student/images/index/nanyidu.png" align="top" /></li>
+                            </ul>
+                        </div>
+                        <div id="s">
+                               <div id="s1">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled selected></option>
+                                       <option value="email">风帆中学期中考试</option>
+                                       <option value="twitter">临平城东中学考试</option>
+                                       <option value="linkedin">临平城西中学考试</option>
+                                   </select>
+                               </div>
+                              <div id="s2">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled selected></option>
+                                       <option value="email">风帆中学期中考试</option>
+                                       <option value="twitter">临平城东中学考试</option>
+                                       <option value="linkedin">临平城西中学考试</option>
+                                   </select>
+                               </div>
+                               <div id="s3">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled selected></option>
+                                       <option value="email">风帆中学期中考试</option>
+                                       <option value="twitter">临平城东中学考试</option>
+                                       <option value="linkedin">临平城西中学考试</option>
+                                   </select>
+                               </div>
+                               <div id="s4">
+                                   <select class="cs-select cs-skin-border">
+                                       <option value="" disabled selected></option>
+                                       <option value="email">风帆中学期中考试</option>
+                                       <option value="twitter">临平城东中学考试</option>
+                                       <option value="linkedin">临平城西中学考试</option>
+                                   </select>
+                               </div>
+                        </div>
+                        <div style="clear:both"></div>
+                       <!--  <div class="cls_info_header_list_div">
+                           <ul class="cls_info_header_list clearfix">
+                               <li class="cls_first"> <a href="/student/profile/userinfo">个人中心</a> </li>
+                                    <li> <a href= '/student/exercise/selcourseknowledge/gradetype_id/<?=$sess['gradetype_id'];?>/subject_id/<?=$sess['subject_id']?>/'>开始学习</a></li>
+                               <li><a href="/student/exercise/selcourseknowledge">开始学习</a> </li>
+                               <li><a href="/student/course/onlineclasslist">在线课堂</a> </li>
+                               <li><a href="/student/exercise/myerrorstatlist">我的错题集</a> </li>
+                               <li><a href="/student/wallet/mywallet">我的钱包</a> </li>
+                               <li><a href="/student/testwork/mytestworklist">我的作业本</a></li>
+                           </ul>
+                       </div> -->
+                        <!-- <div class="cls_info_header_list_div">
+                            <ul class="cls_info_header_list_img clearfix">
+                                <li class="cls_header_li cls_fixed_two cls_ml_one"> <a href="/student/profile/userinfo"> </a> </li>
+                                <li class="cls_header_li cls_fixed_four cls_ml_two"> <a href="/student/exercise/selcourseknowledge"> </a> </li>
+                                <li class="cls_ml_two cls_header_li cls_ml_three"> <a href="/student/course/onlineclasslist"> </a> </li>
+                                <li class="cls_header_li cls_ml_four"> <a href="/student/exercise/myerrorstatlist"> </a> </li>
+                                <li class="cls_header_li cls_fixed_six cls_ml_five"> <a href="/student/wallet/mywallet"> </a> </li>
+                                <li class="cls_header_li cls_ml_six"> <a href="/student/order/myorderlist"> </a> </li>
+                            </ul>
+                        </div> -->
+                    </div>
+                    <div class="cls_resize_div"></div>
+
+<script type="text/javascript">
+    $(function(){
+        /*顶部导航JS效果*/
+        var nav = $(".cls_info_header_list li a");
+        nav.each(function(){
+            $(this).mouseover(function(){
+                $(this).addClass("cls_current").siblings().removeClass("cls_current");
+            });
+            $(this).mouseleave(function(){
+                $(this).removeClass("cls_current");
+            });
+            $(this).click(function(){
+                window.location.href = $(this).children("a").attr("href");
+            });
+        });
+        var url = window.location.href;
+        if (url.indexOf("profile") > 0){
+            nav.eq(0).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+        if (url.indexOf("onlineclasslist") > 0){
+            nav.eq(2).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+        if (url.indexOf("selcourseknowledge") > 0
+           || url.indexOf("do") > 0){
+            nav.eq(1).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+        if (url.indexOf("myerrorstatlist") > 0
+           || url.indexOf("exercise/view") > 0){
+            nav.eq(3).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+        if (url.indexOf("wallet") > 0){
+            nav.eq(4).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+        if (url.indexOf("mytestworklist") > 0){
+            nav.eq(5).addClass("cls_student_current").siblings().removeClass("cls_student_current");
+        }
+    });
+
+    /*学生个人中心左边导航*/
+    $(function(){
+	    $(".cls_user_left_list li a").each(function(){
+	    	if(!$(this).parent("li").hasClass("cls_current_center_li")){
+		        $(this).mouseover(function(){
+		            $(this).children("span").addClass("cls_color_lightgray");
+		        });
+		        $(this).mouseout(function(){
+		            $(this).children("span").removeClass("cls_color_lightgray");
+		        });
+	    	}
+	    });
+    });
+
+    /*字体导航下方的图片导航js*/
+    $(function(){
+        $(".cls_info_header_list_img li").each(function(){
+            $(this).mouseover(function(){
+                $(this).addClass("cls_resize_header");
+            });
+            $(this).mouseout(function(){
+                $(this).removeClass("cls_resize_header");
+            });
+            $(this).click(function(){
+                $(this).addClass("cls_resize_header").siblings().removeClass("cls_resize_header");
+            })
+        })
+
+    });
+
+(function() {
+                [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {    
+                    new SelectFx(el);
+                } );
+            })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--   /// include(common/header.phtml)  -->
+
+<style type="text/css">
+    .cls_info_line {
+    	background: url("/zmcat/css/student/images/index/cls_student_main_bg.png")
+    		repeat-y;
+    	background-position: 9px 20px;
+    	height: 780px;
+    }
+    
+    .cls_search_list {
+    	margin-top: 58px;
+    }
+    
+    .cls_search_list li {
+    	height: 37px;
+    	line-height: 37px;
+    	font-size: 14px;
+    }
+    
+    .cls_search_list li span {
+    	padding-left: 5px;
+    	padding-right: 5px;
+    }
+    
+    .cls_search_list li span a {
+    	color: #323a45;
+    }
+    .cls_knowledge_list{
+	    width:750px;
+    }    
+    .cls_knowledge_list ul {
+    	padding-left: 40px;
+    	margin-top:20px;
+    }
+    
+    .cls_knowledge_list li a {
+    	color: #323a45; 
+    	font-size:16px;
+    }
+    
+    .cls_knowledge_list li {
+    	height: 37px;
+    	line-height: 37px;
+    	padding-left: 5px;
+    }
+    .cls_white_space{
+	    white-space:nowrap;
+    }
+    em {
+    	background: #099ad1;
+    	padding: 5px;
+    	color: white;
+    	border-radius: 5px;
+    }
+    
+    .cls_ul_page {
+    	width: 660px;
+    	margin: 0 auto;
+    	height: 26px;
+    	line-height: 26px;
+    	margin-top: 16px;
+    }
+    
+    .cls_ul_page ul li {
+    	float: left;
+    	padding: 5px;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	border-radius: 6px;
+    	margin-left: 5px;
+    	cursor: pointer;
+    }
+    
+    .cls_ul_page ul li.cls_page_num {
+    	background: white;
+    	border: 1px solid #323a45;
+    	padding-top: 0px;
+    	padding-bottom: 0px;
+    	margin-top: 5px;
+    	padding-left: 8px;
+    	padding-right: 8px;
+    }
+    
+    .cls_page_bg {
+    	background: #099ad1;
+    	color: white;
+    }
+    
+    .cls_search_list li .cls_current {
+    	background: #099ad1;
+    	padding: 5px;
+    	color: white;
+    	border-radius: 5px;
+    }
+    
+    .cls_width_580 {
+    	width: 580px;
+    }
+    
+    .cls_header_search {
+    	padding: 10px;
+    	font-size: 14px;
+    	cursor: pointer;
+    	border-top-left-radius: 10px;
+    	border-top-right-radius: 10px;
+    }
+    
+    .cls_position_relative {
+    	position: relative;
+    }
+    
+    .cls_search_box {
+    	padding-left: 10px;
+    	font-size: 14px;
+    	display: none;
+    	min-height: 60px;
+    	background: white;
+    	z-index: 20;
+    	line-height: 30px;
+    	border: 1px solid #dedede;
+    }
+    
+    .cls_search_box .cls_c {
+    	margin-right: 10px;
+    }
+    
+    .cls_search_box .cls_c a {
+    	color: #323a45;
+    }
+    
+    .cls_search_span {
+    	font-size: 14px;
+    	cursor: pointer;
+    	margin-left: 10px;
+    	margin-top: 2px;
+    }
+    
+    .cls_close_x {
+    	float: right;
+    	width: 6px;
+    	height: 6px;
+    	border-radius: 10px;
+    	background: white;
+    	padding: 5px;
+    	font-size: 12px;
+    	line-height: 3px;
+    	margin-top: 2px;
+    	margin-left: 4px;
+    	text-align: center;
+    	border: 1px solid #323a45;
+    	margin-top: 8px;
+    }
+    
+    .cls_current_header {
+    	background: white;
+    	border: 1px solid #dedede;
+    	border-bottom: 0px;
+    	position: relative;
+    	z-index: 30;
+    }
+    
+    .cls_btn {
+    	cursor: pointer;
+    }
+    
+    .cls_pointer {
+    	cursor: pointer;
+    }
+    .cls_title_order{
+    	background: url("/zmcat/css/student/images/myclass/cls_title_bg_bl.png") no-repeat;
+    	height: 45px;
+    	width: 180px;
+    	text-align: center;
+    	font-size: 18px;
+    	line-height: 45px;
+    	color: #fffbec;
+    	font-weight: bold;
+    	margin-top: 30px;
+    	margin-left: 20px;
+    }
+    .cls_tc_right{
+    	margin-right: 48px;
+    	margin-top: 26px;
+    }
+    .cls_tc_right li{
+    	height: 34px;
+    	line-height: 34px;
+    	font-size: 16px;
+    	text-align: right;
+    }
+    .cls_color_346f6a{
+    	color: #346f6a;
+    	cursor: pointer;
+    }
+    .cls_color_323a45{
+    	color: #323a45;
+    }
+    .cls_resize_page{
+    	margin-left: 40px;
+    	margin-top:4px;
+    }
+    .cls_paginator{
+    	margin-right: 30px;
+    	margin-top: 46px;
+    }
+    .cls_header_resize{
+        *height: 74px;
+    }
+
+
+
+    .cls_info_header_title {
+    	height: 65px;
+    	/*width: 180px;*/
+    	/*background: url("/css/student/images/myclass/cls_info_header_title.png") no-repeat; */
+    	line-height: 69px;
+    	text-align: center;
+    	font-size: 16px;
+    }
+    
+    .cls_info_header_title_middle {
+    	height: 65px;
+    	font-weight: bold;
+    	background:
+    		url("/css/zmcat/student/images/myclass/cls_info_header_title_middle.png")
+    		repeat-x;
+    }
+    
+    .cls_info_header_title_left {
+    	width: 40px;
+    	height: 65px;
+    	background:
+    		url("/zmcat/css/student/images/myclass/cls_info_header_title_left.png")
+    		no-repeat;
+    }
+    
+    .cls_info_header_title_right {
+    	width: 38px;
+    	height: 65px;
+    	background:
+    		url("/zmat/css/student/images/myclass/cls_info_header_title_right.png")
+    		no-repeat;
+    }
+    
+    .cls_right_ul_btn {
+    	font-size: 14px;
+    	background: #00a4e8;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	border-radius: 8px;
+    	color: white;
+    	cursor: pointer;
+    }
+    
+    .cls_right_ul_btn a {
+    	color: white;
+    	text-decoration: none;
+    }
+    
+    .cls_right_ul_word {
+    	font-size: 14px;
+    	color: #ff6363;
+    	text-align: right;
+        cursor: pointer;
+    }
+    
+    .cls_right_ul {
+    	margin-top: 20px;
+    	margin-right: 30px;
+    }
+    
+    .cls_right_ul li {
+    	line-height: 40px;
+    	margin-right: 15px;
+    }
+    
+    .cls_color_black {
+    	background: #323a45;
+    }
+    
+    .cls_info_main_car {
+    	/*background: url("/zmcat/css/student/images/myclass/cls_car_bg.png") no-repeat;*/
+    	width: 745px;
+    	margin-left: 12px;
+    	padding: 1px;
+    }
+    
+    .cls_ml_35 {
+    	margin-left: 35px;
+    }
+    
+    .cls_scroll {
+    	/*height: 600px;*/
+    	margin-left: 30px;
+    }
+    
+    .cls_infor_main_table {
+    	text-align: center;
+    	width: 99%;
+    }
+    
+    .cls_infor_main_table thead tr {
+    	height: 30px;
+    	line-height: 30px;
+    	font-size: 16px;
+    	border-bottom: 2px solid #323a45;
+    }
+    
+    .cls_infor_main_table tbody tr {
+    	height: 40px;
+    	line-height: 40px;
+    	font-size: 14px;
+    }
+    
+    .cls_infor_main_table thead tr th {
+    	font-weight: bold;
+    	text-align: center;
+    }
+    
+    .cls_infor_main_table tbody tr td {
+    	text-align: center;
+    }
+    
+    .cls_infor_main_table tbody tr td a {
+    	color: white;
+    	padding: 5px;
+    	border-radius: 5px;
+    	background: #00a4e8;
+    }
+    
+    .cls_infor_main_table tbody tr:nth-of-type(odd) {
+    	background: #D4FBF5;
+    }
+    
+    .cls_infor_main_table tbody tr:nth-of-type(even) {
+    	background: white;
+    }
+    
+    .cls_myquestion_info h1 {
+    <?/*font-weight: bold;*/?>
+    	font-size: 16px;
+    	padding-right: 10px;
+    	line-height: 37px;
+    }
+    
+    .cls_myquestion_info ul li {
+    	line-height: 37px;
+    	font-size: 14px;
+    	/*padding: 6px; *//*       height: 25px;
+            line-height: 25px;*/
+    }
+    .cls_myquestion_info p span{
+        line-height: 22px;
+        *line-height: 12px;
+    }
+    label {
+    	cursor: pointer;
+    }
+    
+    .cls_myquestion_btn a {
+    	font-size: 16px;
+    	background: #57ce95;
+    	padding: 10px;
+    	margin-right: 30px;
+    	color: white;
+    	border-radius: 5px;
+    	box-shadow: 1px 2px 3px #dedede;
+    }
+    
+    
+    .cls_scrool_btn {
+    	margin-left: 6px;
+    }
+    
+    .cls_scrool_btn a{
+    	padding: 5px;
+    	background: white;
+    	border-radius: 5px;
+    	color: #323a45;
+    	border: 1px solid #323a45;
+    	margin-left: 10px;
+    }
+    .cls_li_a a{
+    	color: white;
+    	padding-left: 10px;
+    	padding-right: 10px;
+    	background: #323a45;
+    	margin-left: 10px;
+    	border-radius: 8px;
+    	font-size: 12px;
+    	height: 30px;
+    	line-height: 30px;
+    	margin-top: 4px;
+    }
+    .cls_resize_myquestion h1{
+    	line-height: 38px;
+    }
+    .cls_resize_myquestion ul{
+    	margin-top: 0px;
+    }
+    .cls_my_answer p{
+    	line-height: 38px;
+    	text-indent: 2em;
+    	padding-right: 10px;
+    }
+    .cls_overflow_scroll {
+    	height: 670px;
+    	overflow-y: scroll;
+    	overflow-x\0: hidden;
+    	background: url("/zmcat/css/student/images/myclass/cls_1_px.png");
+    }
+
+
+    .cls_color_blue{
+        color: #099ad1;
+    }
+    .cls_color_red{
+        color: #ff6161;
+    }
+    .cls_color_green {
+    	color: #57ce95;
+    }
+
+    .cls_color_lightgray{
+        color: #999999;
+    }
+
+</style>
+<script type="text/javascript">
+$(function(){
+	$(".cls_show_error").click(function(){
+		$(this).children('.cls_right').next().show().parent().siblings().children('.cls_right').next().hide();
+	});
+    
+    $(".cls_header_search").click(function(){
+        $(".cls_plus").html("+");
+        $(".cls_search_box").hide();
+        $(this).addClass("cls_current_header").siblings().removeClass("cls_current_header");
+        
+        var search = $(".cls_search_box:eq(" + $(this).index() +")");
+        var height = search.height();
+        search.show().css("bottom","1px");
+        $(".cls_change").css("bottom",height + "px");
+        $(this).find(".cls_plus").html("-");
+    });
+
+    $(window).load(function(){$(".cls_knowledge_list span").css("position","");});
+});
+
+$(function(){
+    // 查看试题
+        var scroll = $(".cls_scroll").height();
+
+        if(scroll < 670)
+        {
+            $(".cls_scroll").removeClass("cls_overflow_scroll");
+        }
+        else
+        {
+            $(".cls_scroll").addClass("cls_overflow_scroll");
+        }
+        if(isie7()){
+            $("span").removeAttr("style");
+        }
+    });
+
+var href = window.location.pathname;
+$(function(){
+    $(".cls_c").children('a').each(function(){
+        if ($(this).attr('href') == href)
+        {
+            $(this).addClass('cls_current');
+        }
+    });
+
+    $(".cls_close_time").click(function(){
+    	location.href="/errorlist?subject_id=1";
+    });
+
+    $(".cls_close_subject").click(function(){
+        location.href="/errorlist?subject_id=2";
+    });
+
+    $(".cls_close_grade").click(function(){
+        location.href="/errorlist?subject_id=3";
+    });
+
+    var a_width;
+    $(".cls_knowledge_list ul li a").each(function(){
+        $(this).addClass('cls_white_space');
+        a_width = $(this).width();
+        if (a_width > 703)
+        {
+            $(this).parent().height((parseInt(a_width/703)+1)*37);
+            $(this).removeClass('cls_white_space');
+        }
+    });
+});
+
+function fnshowblueerror(){
+	$('.cls_blue_error').show();$('.cls_red_error').hide();
+	$('.cls_b').removeClass('cls_dialog_current_btn').addClass('cls_dialog_btn');
+	$('.cls_r').removeClass('cls_dialog_btn').addClass('cls_dialog_current_btn');
+}
+function fnshowrederror(){
+	$('.cls_red_error').show();$('.cls_blue_error').hide();
+	$('.cls_r').removeClass('cls_dialog_current_btn').addClass('cls_dialog_btn');
+	$('.cls_b').removeClass('cls_dialog_btn').addClass('cls_dialog_current_btn');
+}
+</script>
+<? $error_ques_list = array();  ?>
+<div class="cls_info_main" id="id_ques_list">
+    <div class="cls_info_line clearfix">
+        <div class="cls_search_info ">
+           <div class="clearfix cls_header_resize">
+                <div class="cls_title_order cls_left">错题列表</div>
+                 <div class="cls_right">
+                    <ul class="cls_tc_right">
+                    <li class="cls_color_346f6a"><?/*<?=date('Y-m-d',$current_exam['do_time']);*/?></li>
+                    </ul>
+                </div>
+                </div>
+            <div class="cls_knowledge_list">
+                <ul>
+                    <?if ($error_ques_list){?>
+                    <?$i=0;?>
+                    <?foreach ($error_ques_list as $key =>$item){$i++;?>
+                    <li style="height:37px;width:700px;overflow:hidden;"> 
+                    <? $title = trim(strip_tags($item['title']));?>
+<a href="javascript:void(0);" onclick='$("#id_ques_content_<?=$item['ques_id']?>").show();$("#id_ques_list").hide();'><?=$i?>.
+                   <? if (mb_strlen($title, 'utf-8') > 40){echo mb_substr($title, 0, 40, 'utf-8') .'...';} else {Func::echo_s($title);}?>
+                     </li>
+                    <?}?>
+                    <?}?>
+                </ul>
+            </div>
+            <div class="cls_resize_page">
+            </div>
+        </div>
+    </div>
+</div>
+
+<?/*展示题目信息*/?>
+
+
+<? foreach ($error_ques_list as $key =>$item){?>
+<div class="cls_info_main" id="id_ques_content_<?=$item['ques_id']?>" style="display:none">
+    <div class="cls_info_line clearfix">
+        <div class="clearfix">
+            <div class="cls_left cls_title_order clearfix">错题分析
+            </div>
+            <div class="cls_right">
+                <ul class="clearfix cls_right_ul cls_scroll">
+                     <li class="clearfix cls_li_a"><a href="javascript:void(0)" onclick='$("#id_ques_list").show();$("#id_ques_content_<?=$item['ques_id'];?>").hide();'>返回错题列表</a></li>
+                    <li class="cls_right_ul_word">所属知识点：<?if ($item['knowledge_name']){?><?=trim($item['knowledge_name']);?><?}?></li>
+                   
+                </ul>
+            </div>
+        </div>
+        <div class="cls_info_main_car">
+            <div class="cls_scroll cls_myquestion">
+                <div class="cls_myquestion_info">
+                    <h1>题目：
+                     <?$qtype = C('qtype');?>
+                     <?
+			    if (isset($qtype[$item['type']]))
+			    {
+				echo '[<font class="font_4">'.$qtype[$item['type']].'</font>]';
+			    }else{
+				echo '[<font class="font_4">未知题型</font>]';
+			    }
+?>
+                    
+                    <span style="float:right;">做题时间：<?=date('Y-m-d',$current_exam['do_time']);?></span>
+                    <span><?echo $item['title'];?></span>
+                    </h1>
+                    <p></p>
+                    <!-- if 这是选择题  -->
+                    <?if (in_array($item['type'],array(1,2))){?>
+                    <? $m=0;unset($option_id_arr);?>
+                    <ul>
+                        <?foreach ($item['option'] as $k =>$v){$m++;?>
+                        <?$option_id_arr[]=$v['option_id'];?>
+                        <li class="cls_color_red">
+                            <?if($v['is_answer']){?>√<?}?><?=chr(ord('A')+$m-1)?>.<?echo $v['option_name'];?>
+                            <?if ($v['picture']){?>
+                                    <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v;?>">
+                        <?}?>
+                        </li>
+                        <?}?>
+                        
+                        <?/* <li class="cls_scrool_btn">
+                            <a href="javascript:void(0);" onclick="">查看相关微课</a>
+                            <a href="javascript:void(0)" onclick="">查看相关学习资料</a>
+                            </li>*/?>
+                        <!-- end 这是选择题 -->
+                    </ul>
+                    
+              
+                <div class="cls_my_answer">
+                    <!-- 选择题 -->
+                    <h1>题目解析：</h1>
+                    <ul>
+                        <li>正确答案：</li>
+                          <? $ques_answer=$nosub_ques_answer[$item['ques_id']];$ques_answer=explode(',',$ques_answer);?>
+
+                          <?foreach ($ques_answer as $vv){?>
+                            <?if (in_array($vv,$option_id_arr)){?>
+                            <?$b=array_search($vv,$option_id_arr)+1;?>
+                                <?if ($b){?>
+                                <?$c=chr(ord('A')+$b-1);?>
+                                <?}?>
+                            <?}?>
+                         <?}?>
+                        <li>错误答案：<?echo $c ;?></li>
+                    </ul>
+                    <?/*<ul>
+                         <?foreach ($ques_answer as $vv){?>
+                            <?if (in_array($vv,$option_id_arr)){?>
+                            <?$b=array_search($vv,$option_id_arr)+1;?>
+                                <?if ($b){?>
+                                <?$c=chr(ord('A')+$b-1);?>
+                                <?}?>
+                            <?}?>
+                         <?}?>
+                        <li> 错误分析：<?echo $c;?></li>
+                        <li style="color: red;">错误分析</li>
+                        </ul>
+                     */?>
+                </div>
+                <?}else if (in_array($item['type'],array(3))){?>
+                <div class="cls_my_answer">
+                    <h1>题目解析：</h1>
+                    <ul>
+                        <li>正确解析：<? echo $item['answer']?></li>
+                        <li>我的答案: <?echo $nosub_ques_answer[$item['ques_id']];?></li>
+                    </ul>
+                </div>
+                <?}else if (in_array($item['type'],array(9,11))){?>
+                <div class="cls_my_answer">
+                    <h1>题目解析：</h1>
+                    <ul>
+                        <li>正确解析：<?echo $item['answer'];?></li>
+                    </ul>
+                </div>
+                <?}else if (in_array($item['type'],array(5,6,12,15))){?>
+                <div class="cls_my_answer">
+                    <h1>题目解析：</h1>
+                    <ul>
+                        <?$i = 0;?>
+                        <?if ($item['match_ques_list']){?>
+                                <?foreach ($item['match_ques_list'] as $vv ){$i++;?>
+                                    <li>第《<?echo $i;?>》题答案:</strong><?echo $vv['answer'];?></li>
+                                <?}?>
+                         <?}?>
+                    </ul>
+                </div>
+                 <!-- 处理题组  -->
+                <?}else if (in_array($item['type'],array(0,4,8))){?>
+                     <?$i=0;?>
+                     <?foreach ($item['sub_ques_list'] as $k=>$v){$i++;?> 
+                     <h1>小题：
+                     <span>第<?=$i;?>题
+                     <?
+			if (isset($qtype[$item['type']]))
+			{
+			    echo '[<font class="font_4">'.$qtype[$v['type']].'</font>]';
+                        }
+                        else
+                        {
+			    echo '[<font class="font_4">未知题型</font>]';
+			}
+		    ?></span>
+                    </h1>
+                     <div class="cls_myquestion_info cls_resize_myquestion">
+                    <h1><?echo $v['title'];?></h1>
+                    <?if ($v['picture']){?>
+		        <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$v['picture']?>"></div>
+                    <?}?>
+                    <!-- if 这是选择题  -->
+                    <?if (in_array($v['type'],array(1,2))){?>
+                    <? $i=0;unset($option_id_arr);?>
+                    <ul>
+                       <? foreach ($v['option'] as $kk =>$vv){$i++;?>
+                       <? $sub_option_id_arr[]= $vv['option_id'];?>
+                       <li class="height:37px;overflow:hidden;font-size:16px">
+                            <?if($vv['is_answer']){?>√<?}?> <?=chr(ord('A')+$i-1)?>.<?echo $vv['option_name'];?>
+                           <?if ($vv['picture']){?>
+                              <div style="text-align:center;"><img src="<?=_IMG_ROOT_URL_?><?=$vv['picture'];?>"></div>
+                            <?}?>
+                        </li>
+                        <?}?>
+                        
+                        <?/* <li class="cls_scrool_btn">
+                            <a href="javascript:void(0);" onclick="">查看相关微课</a>
+                            <a href="javascript:void(0)" onclick="">查看相关学习资料</a>
+                            </li>*/?>
+                        <!-- end 这是选择题 -->
+                    </ul>
+                    </div>
+                    
+              
+                <div class="cls_my_answer">
+                    <!-- 选择题 -->
+                    <h1>题目解析：</h1>
+                    <div class="cls_my_answer">
+                        
+                         <? $sub_ques_answer=$v['ques_answer'];$sub_ques_answer_arr=explode(',',$sub_ques_answer);?>
+                        <?foreach ($sub_ques_answer_arr as $vv){?>
+                            <?if (in_array($vvv,$sub_option_id_arr)){?>
+                            <?$b=array_search($vvv,$sub_option_id_arr)+1;?>
+                                <?if ($b){?>
+                                <?$c=chr(ord('A')+$b-1);?>
+                                <?}?>
+                            <?}?>
+                         <?}?>
+                        <ul>
+                            <li>我的答案：<?echo $c;?></li>
+                        </ul>
+                    </div>
+                </div>
+                <?}else if (in_array($v['type'],array(3,8))){?>
+                <div class="cls_my_answer">
+                    <!-- 选择题 -->
+                    <h1>题目解析：</h1>
+                    <div class="cls_my_answer">
+                        <ul>
+                            <li>我的答案：<?echo $v['answer'];?></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <?}?>
+                <?}?>
+                <?}?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?}?>
+
+<!-- include(common/footer.phtml) -->
+
+
+
+	</div>
+		<div class="cls_left">
+			<div class="cls_std_main_right">
+                            <div id="id_list_margin_top">
+                            </div>
+                            <div id="id_list">
+<? $mysubject_list = array('数学', '语文', '英语', '思想与社会', '社会思想', '代数', '哲学'); 
+foreach ($mysubject_list as $key => $val) { $len = mb_strlen($val) * 2; if ($len > 6) $len = 6;?>
+                                <div  <? if ($key == 2) echo('class="cls_select"'); ?>>
+                                    <div class="left l<?=$key+1?>" style="height:<?=$len?>em;"></div>
+                                    <div class="mid e<?=$key+1?>" style="height:<?=$len?>em;"><?=$val?></div>
+                                </div>
+<? } ?>
+                            </div>
+			</div>
+			<div class="cls_std_main_right_one" style="*width:20px;"></div>
+		</div>
+	</div>
+	<div>
+		
+	</div>
+	<div class="cls_std_footer">
+		<span><a target="_blank" href="http://www.zmcat.com/index.php?about">关于学习网</a></span><span><a target="_blank" href="http://www.zmcat.com/index.php?contact">联系我们</a></span><span class="cls_copy_right">&copy; 2015 择名教育科技 浙ICP备15024677号-1</span>
+	</div>
+	<style type="text/css">
+		.cls_std_footer span{
+			line-height: 25px;
+			padding-left:10px;
+			padding-right: 10px;
+			border-right:1px solid #aaa;  
+		} 
+		.cls_resize_img_one{
+			*margin-top: 20px;
+			*margin-left: 5px;
+		}
+		.cls_resize_img_five{
+			*margin-top:10px; 
+		}
+	</style>
+</div>
+</body>
+</html>

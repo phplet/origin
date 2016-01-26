@@ -1,0 +1,32 @@
+<div id="id_jk_student_name" class="cls_jk_student_name">
+    <div class="cls_jk_student_name_title"><span style="float:left">学生姓名筛选(支持汉字/拼音/英文字母)</span><a href="###" style="float:right" id="btn_unselect_student">取消选择</a></div>
+    <?php 
+    	$pinyin_groups = array(
+							array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'),    		
+							array('I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'),    		
+							array('Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'),    		
+    	)
+	?>
+    <ul id="id_jk_tab_nav" class="cls_jk_tab_nav clearfix">
+    	<?php foreach ($pinyin_groups as $key=>$pinyin_group) {?>
+        <li class="fl_l <?php echo $key == 0 ? 'cls_jk_selected' : '';?>"><?php echo implode('', $pinyin_group);?></li>
+        <?php } ?>
+    </ul>
+    <div id="id_jk_tab_content" class="cls_jk_tab_content">
+    	<?php foreach ($pinyin_groups as $key=>$pinyin_group) {?>
+        <div class="cls_jk_tab_pannel" style="<?php echo $key == 0 ? 'display:block;' : 'display:none;';?>">
+    	<?php foreach ($pinyin_group as $pinyin) {?>
+	        <dl>
+	            <dt><?php echo $pinyin;?></dt>
+	            <?php if (!isset($pinyin_students[$pinyin])) { echo '<dd><span><a href=""></a></span></dd></dl>';continue; }?>
+	            <dd>
+		    	<?php foreach ($pinyin_students[$pinyin] as $student) {?>
+	            <span><a href="###" id="student_<?php echo $student['uid'];?>" uid="<?php echo $student['uid'];?>" py="<?php echo $student['py']?>" class="a_select_user" truename="<?php echo $student['truename'];?>" trueticket="<?php echo $student['ticket'];?>"><?php echo $student['truename'];?></a></span>
+	            <?php } ?>
+	            </dd>
+	        </dl>
+        <?php } ?>
+        </div>
+        <?php } ?>
+    </div>
+</div>

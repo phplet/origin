@@ -1,0 +1,174 @@
+<?php echo $this->load->view('common/header');?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<style>
+
+.cls_instr_item {
+	line-height: 50px;
+}
+table th {
+	text-align: right;
+	font-size: 14px;
+	width: 10%;
+}
+#address_span {
+	font-weight:bold;
+}
+.cls_footer {
+	margin: 0 auto;
+	width: 100%;
+}
+.cls_footer_pos {
+	width: auto;
+}
+</style>
+</head>
+<body>
+	<?php echo $this->load->view('common/count_down.phtml');?>
+	<div class="cls_body cls_login">
+		<?php echo $this->load->view('common/copyright_system_name.phtml');?>
+		<div class="cls_content">
+			<div class="cls_time clearfix" style="width:500px;">
+				<i class="cls_time_ico fl_l"></i>
+				<p class="cls_time_text fl_l" id="id_statusbar_clock" >正在初始化考试计时器...</p>
+			</div>
+			<table class="cls_top_content">
+				<tbody>
+					<tr class="cls_instr_item">
+						<th>考试期次：</th>
+						<td class="cls_instr_text">
+		                	<?php $count_exam = count($exams);?>
+			                <?php if (!$count_exam) {?>
+							--
+							<?php } else if ($count_exam == 1) {?>
+							<span class="cls_form_options"><?php 	echo $exams[0]['exam_name'];?></span>
+							<input type="hidden" value="<?php echo $exams[0]['exam_id'];?>" id="exam_id"/>
+							<?php } else {?>
+			                <select class="cls_form_option cls_form_options" id="exam_id">
+			                	<?php foreach ($exams as $key=>$exam)  {?>
+			                    <option    value="<?php echo $exam['exam_id'];?>"
+											<?php echo $key == 0 ? 'selected="selected"' : '';?>><?php echo $exam['exam_name'];?></option>
+			                    <?php } ?>
+			                </select><img src='/images/pointer.png'>
+							<?php }?>
+		                </td>
+						<th>考试场次：</th>
+						<td class="cls_instr_text">
+		                	<?php if (!$count_exam) {?>
+			            	--
+			            	<?php } else {?>
+			            	<?php $count_places = 0;?>
+			            	<?php foreach ($exams as $key=>$exam)  {?>
+			            	<?php
+			            			$exam_id = $exam['exam_id'];
+			            			$places = $exam['place'];
+			            			$count_places = count($places);
+			            			if (!count($places)) {
+										echo '--';
+										continue;
+									}
+			            	?>
+			            	<span id="hidden_exam_<?php echo $exam_id;?>" class="display_none hidden_exam_span place_select cls_form_options"></span>
+			            	<select exam_id="<?php echo $exam_id;?>" id="place_<?php echo $exam_id;?>" class="cls_form_option cls_form_options place_select place_id  <?php echo ($count_exam > 1 && $key == '0') ? '' : 'display_none';?>">
+			                <?php
+			                	//记录已经整在进行的考试
+			                	$doing_exams = array();
+								$now = time();
+							?>
+			            	<?php foreach ($places as $place) {
+									$place_id = $place['place_id'];
+									$place_name = $place['place_name'];
+									$start_time = $place['start_time'];
+									$end_time = $place['end_time'];
+
+									$place['start_time'] = date('Y-m-d H:i:s', $start_time);
+									$place['wait_end_seconds'] =( $start_time - $exam['wait_end_time_period']) - time();
+									$place['start_left'] = $start_time - time();
+									$place['end_time'] = date('Y-m-d H:i:s', $end_time);
+									$place['finish_time'] = date('Y-m-d H:i:s', $end_time + $exams[0]['submit_time_period']);
+
+									if ($start_time >= $now) {
+										$doing_exams[] = $place_id;
+									}
+
+									//附加其他属性
+									$place['exam_name'] = $exam['exam_name'];//考试名称
+									$place['cheat_number'] = $exam['cheat_number'];//作弊次数
+									$place['kickornot'] = $exam['kickornot'];//是否立即踢出
+									$place['introduce'] = $exam['introduce'];//考试说明
+									$place['student_notice'] = $exam['student_notice'];//考生须知
+									$place['exam_type'] = $exam['exam_type'];//
+
+									//附加考试科目
+									$subjects = isset($exam['subject'][$place_id]) ? $exam['subject'][$place_id] : array();
+									$subject_names = array();
+									$subject_ids = array();
+									foreach ($subjects as $subject) {
+										$subject_names[] = $subject['subject_name'];
+										$subject_ids[] = $subject['subject_id'];
+									}
+
+									$place['subject_name'] = implode(',', $subject_names);//考试科目
+									$place['subject_id'] = implode(',', $subject_ids);//科目ID
+									$place['exam_id'] = $exam['exam_id'];//期次id
+							?>
+			                    <option  value='<?php echo json_encode($place);?>' <?php echo (count($cookie_current_exam) && $cookie_current_exam['place_id'] == $place_id) ? 'selected="selected"' : '';?>><?php echo $place_name;?></option>
+			                <?php 	} ?>
+			                </select>
+			                <?php } ?>
+			                <?php } ?>
+			                <input type="hidden" id="hidden_place" value="" />
+						</td>
+					</tr>
+					<tr class="cls_instr_item">
+						<th>考试时间：</th>
+						<td class="cls_instr_text"><span id="timer_span">--</span></td>
+						<th>考试科目：</th>
+						<td class="cls_instr_text"><span id="subject_span">--</span></td>
+					</tr>
+					<tr class="cls_instr_item">
+						<th>地&emsp;&emsp;点：</th>
+						<td colspan="3" class="cls_instr_text"><span id="address_span">--</span>
+						</td>
+					</tr>
+					<tr class="cls_instr_item">
+						<th>注意事项：</th>
+						<td colspan="3" class="cls_instr_text">
+							<span id="notice_span" class="notice" style="line-height:20px;">--</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+<!-- 隐藏域内容 -->
+<?php foreach ($exams as $exam)  {?>
+<div id="hidden_notice_<?php echo $exam['exam_id'];?>"
+		class="display_none"><?php echo nl2br($exam['student_notice']);?></div>
+<?php } ?>
+
+<center id="tiper_box" class="display_none">
+	<p>
+		<font color="red">*<span id="tiper_text"></span></font>
+		<a href="javascript:void(0);" id="btn_go_login"><img src='/images/go_to_testing.png'></a>
+	</p>
+</center>
+<?php echo $this->load->view('common/copyright');?>
+
+</body>
+<script type="text/javascript">
+   var domain = '<?php echo C('cookie_domain');?>';
+   var exam_url = '<?php echo site_url('/exam/index/exam_url');?>';
+</script>
+<?php static_global(array('js/jquery/plugin/jquery.cookie.js'));?>
+<?php static_js(array('front/count_down.js'));?>
+<script type="text/javascript">
+   var count_exam = parseInt('<?php echo $count_exam;?>'),
+		count_places = parseInt('<?php echo $count_places;?>'),
+		login_url = '<?=site_url('exam/index/login/?ref=index');?>',
+	    end_url = '<?=site_url('exam/index/end/?ref=index');?>',
+		doing_exams = '<?php echo json_encode($doing_exams);?>',
+		current_time = '<?php echo date('Y-m-d H:i:s');?>';
+
+</script>
+<?php static_js(array('wait.js'));?>
+</html>

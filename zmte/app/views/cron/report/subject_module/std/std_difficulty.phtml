@@ -1,0 +1,48 @@
+<?php if (count($std_difficulty['data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+		$std_difficulty['fields'] = isset($std_difficulty['fields']) ? $std_difficulty['fields'] : array();
+		$std_difficulty['data'] = isset($std_difficulty['data']) ? $std_difficulty['data'] : array();
+	?>
+
+    <?php $std_difficulty_key  = 0;?>
+    <?php $count_std_difficulty_key = count($std_difficulty['data']);?>
+    <?php foreach ($std_difficulty['data'] as $q_type=>$item) {?>
+        <?php $std_difficulty_key++;?>
+        <table class="cls_row table_header indent_25" id="table_std_diff_<?echo $std_difficulty_key?>">
+            <tr>
+                <?php $first_th_width = '15';?>
+                <?php $count_data = count($std_difficulty['fields']); ?>
+                <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($std_difficulty['fields']));?>
+                <th width="<?=$first_th_width?>%">
+                <?if ($zmcat_studyplus_enabled) {?><a href="/student/index/studyplus?<?=http_build_query(array('subject_name'=>$subject_name,'questype_name'=>$q_type))?>" target="_blank"><?=$q_type;?></a><?}else{?><?=$q_type;?><?}?>
+                </th>
+                <?php foreach ($std_difficulty['fields'] as $field_name) {?>
+                    <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+                <?php } ?>
+            </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($item as $name => $val) {?>
+           <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_std_diff_<?echo $std_difficulty_key?>"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $name;?></th>
+                    <?php foreach ($std_difficulty['fields'] as $field_name) {?>
+                       <?php if ($val[$std_difficulty['fields'][0]]) {?>
+                       <td width="<?=$left_p_width?>%" <?php if ($field_name == $std_difficulty['fields'][2] && $val[$field_name] != $val[$std_difficulty['fields'][3]]) {?>style="color:<?=$val[$field_name] > $val[$std_difficulty['fields'][3]] ? 'green' : 'red'?>"<?php }?>><?php echo isset($val[$field_name]) ? $val[$field_name] : '-';?></td>
+                       <?php } else {?>
+                       <td width="<?=$left_p_width?>%">-</td>
+                       <?php }?>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+
+        <?php if ($std_difficulty_key != $count_std_difficulty_key):?>
+            <hr class="cls_row indent_25"/>
+        <?php endif;?>
+    <?php } ?>
+
+<?php } ?>

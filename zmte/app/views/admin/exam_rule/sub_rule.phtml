@@ -1,0 +1,66 @@
+<div class="knowledge_rule" <?=empty($sub_rule)?'style="display:none;"':''?>>
+<table class="subtable" border="0" cellspacing="1" cellpadding="0" style="background:#ccc">
+    <tr>
+        <td>
+            <button id="knowledge_del" class="btn2" type="button">删除</button>
+            <select name="parent_knowledge[<?=$k+1?>]" class="knowledge_parent">
+                <option value="">一级知识点</option>
+                <?php $knowledge_list_next = array();?>
+                <?php foreach($knowledge_list as $val):?>
+                <?php
+                    $pselected = ''; 
+                    if (isset($sub_rule['pid'])) {
+                        if ($sub_rule['pid'] && $val['id']==$sub_rule['pid'] OR $sub_rule['pid']==0 && $val['id']==$sub_rule['knowledge_id'])
+                        {
+                            $pselected = ' selected ';
+                            $knowledge_list_next = $val['next']; 
+                        }
+                    }  
+                ?>
+                <option value="<?=$val['id']?>"<?=$pselected?>><?=$val['knowledge_name']?>(<?=$val['ques_num']?>[<?=$val['relate_ques_num']?>])</option>
+                <?php endforeach;?>
+            </select>
+            <select name="rule_knowledge[<?=$k+1?>]" class="knowledge_child">
+                <option value="">二级知识点</option>
+                <?php foreach($knowledge_list_next as $val):?>
+                <option value="<?=$val['id']?>"<?=isset($sub_rule['knowledge_id'])&&$val['id']==$sub_rule['knowledge_id']?' selected':''?>><?=$val['knowledge_name']?>(<?=$val['ques_num']?>[<?=$val['relate_ques_num']?>])</option>
+                <?php endforeach;?>
+            </select>
+            
+            <!-- 认知过程 -->
+            <span class="know_process" <?php echo (!isset($sub_rule['know_process']) || !intval($sub_rule['know_process'])) ? 'style="display:none;"' : '';?>>
+            	认知过程：
+            <?php foreach ($know_process as $k2=>$kp) {?>
+            <input type="radio" class="input_know_process" value="<?php echo $k2;?>" <?=(isset($sub_rule['know_process'])&&$k2==$sub_rule['know_process'] || $k2=='1')?' checked="checked"':''?> name="know_process[<?=$k+1?>]" id="know_process_[<?php echo $k+1;?>]_<?php echo $k2;?>"/>
+            <label for="know_process_[<?php echo $k+1;?>]_<?php echo $k2;?>"><?php echo $kp;?></label>
+            <?php }?>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <?php $qtypes = C('qtype')?>
+            <?php $count = count($qtypes);?>
+            <?php foreach($qtypes as $qtype => $qtype_name):?>
+            <?php if ($qtype > 9) break;?>
+            <?php $qtype_offset = $qtype*3;?>
+              <table class="subtable subject_q_type_<?=$qtype?>" border="0" cellspacing="1" cellpadding="0" style="background:#ccc; width:200px; float:left; margin:10px;">
+                <tr>
+                    <td rowspan="3" width="10"><?=$qtype_name?></td>
+                    <td width="70">难:<input type="text" class="txtbox6" name="knowledge_qnum[<?=$k+1?>][]" value="<?=isset($sub_rule['nums'][$qtype_offset])?$sub_rule['nums'][$qtype_offset]:''?>"/></td>
+                    <td width="100">总数:<span class="knowledge_ques_count font_4"></span></td>
+                </tr>
+                <tr>
+                    <td>中:<input type="text" class="txtbox6" name="knowledge_qnum[<?=$k+1?>][]" value="<?=isset($sub_rule['nums'][$qtype_offset+1])?$sub_rule['nums'][$qtype_offset+1]:''?>"/></td>
+                    <td>总数:<span class="knowledge_ques_count font_4"></span></td>
+                </tr>
+                <tr>
+                    <td>易:<input type="text" class="txtbox6" name="knowledge_qnum[<?=$k+1?>][]" value="<?=isset($sub_rule['nums'][$qtype_offset+2])?$sub_rule['nums'][$qtype_offset+2]:''?>"/></td>
+                    <td>总数:<span class="knowledge_ques_count font_4"></span></td>
+                </tr>
+              </table>
+              <?php endforeach;?>
+        </td>
+    </tr>
+</table>
+</div>

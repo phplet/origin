@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 页脚页眉信息 -->
+    <meta type="document_title" content="<?=C('webconfig')['site_name']?>测评"/>
+    <meta type="create_time" content="报告生成时间 <?php echo $ctime; ?>"/>
+    <meta type="student_name" content=""/>
+    <meta type="exam_time" content="科技引领风尚，教育开拓未来！"/>
+    <title>总结报告</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    
+    <?php static_global(array(
+						'js/jquery/jquery.js',
+		  ));
+	?>
+	<?php static_global(array(
+						'js/app/report/highcharts.js',
+						'js/app/report/highcharts-more.js',
+    ));?>
+    <script type="text/javascript">
+	//全局设置,省得每个都写
+	Highcharts.setOptions({
+		global: {
+			useUTC: false
+		},
+		credits: {
+			enabled: false	//右下角不显示LOGO
+		},
+		chart: {
+			animation:false	//关闭全部动画,使其在pdf中可以渲染到
+		},
+        title:{
+            style:{
+                color:"#333"
+            }
+        },
+        legend:{
+            itemStyle:{
+                color:"#333"
+            }
+        },
+		plotOptions: {
+			series: {
+				animation: false	//关闭全部动画,使其在pdf中可以渲染到
+			}
+		}
+	});
+	</script>
+	<?
+    // 注意，这里一定要为840px, 左、右边距为20mm
+    $g_real_page_width = "840px";
+    $g_real_page_height = 1283;
+    $g_padding_left = "20mm";
+    $g_padding_right = "20mm";
+    ?>
+	<style>
+	.mokuai-text{margin:0; padding:0}
+	.font12 {font-size: 12px;}
+	.cls_root {
+        width:<?=$g_real_page_width?>;
+        padding-left:<?=$g_padding_left?>;
+        padding-right:<?=$g_padding_right?>;
+    }
+	</style>
+</head>
+<body>
+<div class="ceping cls_root">
+    <h1 class="cls_row" style="color:#323a45;">测评总结报告</h1>
+    <p style="text-align:center;font-size:18px;margin-top:10px;color:#323a45;" class="cls_row"><?php echo $studentName; ?>&nbsp;<?php if ($startTime == $endTime): ?>考试时间：<?php echo $startTime; ?><?php else: ?>考试时间：<?php echo $startTime; ?>-<?php echo $endTime; ?><?php endif ?></p>

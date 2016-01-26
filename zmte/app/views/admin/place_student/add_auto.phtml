@@ -1,0 +1,62 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script language="javascript">
+$(document).ready(function(){
+    $("#place_student").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            number: "required"
+        },
+        messages: {
+            number: "请填写要分配的人数"
+        }
+    });
+});
+
+</script>
+<div id="body">
+  <div class="space">
+    <form id="place_student" action="<?=site_url('admin/place_student/dispatch')?>" method="POST" onsubmit="return false">
+    <input type="hidden" name="place_id" value="<?=$place['place_id']?>" />
+    <div class="subtitle">
+      <a class="menu" href="<?=site_url('admin/place_student/index/'.$place['place_id'])?>">考生列表</a>
+      添加考场学生
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr><td colspan="10" class="altbg2" style="text-align: center;">
+      <a href="<?=site_url('admin/exam_place/index/'.$place['exam_pid'])?>"><?=$place['exam_name']?></a>
+      </td></tr>
+      <tr>
+        <td class="altbg1" width="15%">考场名称</td>
+        <td><?=$place['place_name']?></td>
+      </tr>
+      <tr>
+        <td class="altbg1" width="15%">场次</td>
+        <td>第 <?=$place['place_index']?> 场</td>
+      </tr>
+      <tr>
+        <td class="altbg1" width="15%">学校</td>
+        <td><?=$place['school_name']?></td>
+      </tr>
+      <tr>
+        <td class="altbg1" width="15%">地址</td>
+        <td><?=$place['address']?></td>
+      </tr>
+      <tr>
+        <td class="altbg1" width="15%">待分配人数</td>
+        <td><?=$total?> (该校还有<?=$total?>人未分配考场)</td>
+      </tr>
+      <tr>
+        <td class="altbg1" width="15%">分配人数</td>
+        <td><input type="text" name="number" /></td>
+      </tr>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

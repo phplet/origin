@@ -1,0 +1,132 @@
+<?php $this->load->view('common/header');?>
+
+<script language="javascript">
+var base_url = "<?=site_url('admin/exam_question/index2/'.$paper['paper_id'])?>";
+$(document).ready(function(){
+    $('.ques_title').find('div').dblclick(function(){
+        $(this).toggleClass('line_18');
+    });
+    $('#qtypes,#method_tactic,#knowledges,#is_original,#group_type').change(function(){
+        var value = $(this).val();
+        var valname = $(this).attr('name');
+        if (value.length) {
+            window.location = base_url + '?'+valname+'='+value;
+        } else {
+            window.location = base_url;
+        }
+    });
+});
+
+function check_form(form) {
+    if (checkbox_check('ids[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            if ( ! confirm('确定要执行该操作么？')) {
+                return false;
+            }
+        }
+        var action = $('#batch_op').find('option[value='+op+']').attr('op');
+        form.action = action;
+        return true;
+    }
+    return false;
+}
+</script>
+<div id="body">
+  <form action="<?=site_url('admin/exam_question/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+  <input type="hidden" name="paper_id" value="<?=$paper['paper_id']?>" />
+  <div class="space">
+    <div class="subtitle">
+        试卷试题管理：[<?=$paper['paper_name']?>]
+        <select name="qtype" id="qtypes">
+            <option value="">全部题型 (<?=$paper['ques_num']?>)</option>
+            <?php foreach($qtypes as $k => $v):?>
+            <option value="<?=$k?>"<?=$search['qtype']===$k?' selected':''?>><?=$v?> (<?php echo isset($paper['qtype_ques_num_arr'][$k])?$paper['qtype_ques_num_arr'][$k]:0; ?>)</option>
+            <?php endforeach;?>
+        </select>
+
+        <select name="method_tactic_id" id="method_tactic">
+            <option value="">全部方法策略 (<?=$paper['ques_num']?>)</option>
+            <?php foreach($paper['method_tactics'] as $k => $v):?>
+            <option value="<?=$v['id']?>"<?=$search['method_tactic_id']==$v['id']?' selected':''?>><?=$v['name']?> (<?=$v['num']?>)</option>
+            <?php endforeach;?>
+        </select>
+
+        <select name="kid" id="knowledges">
+            <option value="">全部知识点 (<?=$paper['ques_num']?>)</option>
+            <?php foreach($paper['knowledges'] as $k => $v):?>
+            <option value="<?=$v['id']?>"<?=$search['kid']==$v['id']?' selected':''?> style="font:bond;"><?=$v['name']?> (<?=$v['num']?>)</option>
+            <?php foreach($v['children'] as $vv):?>
+            <option value="<?=$vv['id']?>"<?=$search['kid']==$vv['id']?' selected':''?>><?=$vv['name']?> (<?=$vv['num']?>)</option>
+            <?php endforeach;?>
+            <?php endforeach;?>
+        </select>
+
+        <select name="group_type_id" id="group_type">
+            <option value="">全部信息提取方式(<?=$paper['ques_num']?>)</option>
+            <?php foreach($paper['group_types'] as $k => $v):?>
+                <option value="<?=$v['id']?>"<?=$search['group_type_id']==$v['id']?' selected':''?> style="font:bond;"><?=$v['name']?> (<?=$v['num']?>)</option>
+                <?php foreach($v['children'] as $vv):?>
+                    <option value="<?=$vv['id']?>"<?=$search['group_type_id']==$vv['id']?' selected':''?>><?=$vv['name']?> (<?=$vv['num']?>)</option>
+                <?php endforeach;?>
+
+            <?php endforeach;?>
+        </select>
+
+        <select name="is_original" id="is_original">
+          <option value="">--请选择--</option>
+          <option value="1" <?php if($search['is_original'] == 1){echo 'selected="selected"';} ?>>原创</option>
+          <option value="2" <?php if($search['is_original'] == 2){echo 'selected="selected"';} ?>>真题</option>
+        </select>
+      
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="80">&nbsp;&nbsp;ID</td>
+        <td>题目（双击展开/收缩）</td>
+        <td width="60">题型</td>
+        <td width="100">分组</td>
+        <td width="60">难易度</td>
+        <td width="150">录入时间</td>
+        <td width="150">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$val['ques_id']?></td>
+        <td title="双击展开" class="ques_title"><div class="line_18" style=""><?=$val['title']?></div></td>
+        <td>
+          <?php if($val['type']==0):?>
+          <font class="font_4">题组</font>
+          <?php else:?>
+          <?=$val['qtype']?>
+          <?php endif;?>
+        </td>
+        <td>
+          <?php if($val['group_id']):?>
+          关联组[<?=$val['group_id']?>]
+          <?php endif;?>
+        </td>
+        <td><?=$val['difficulty']?></td>
+        <td><?=$val['addtime']?></td>
+        <td>
+            <a href="<?=site_url('admin/question/preview/'.$val['ques_id'])?>" target="_blank">预览</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <?php else: ?>
+      <tr>
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+
+    </table>
+	<center><input type="button" name="dosubmit" value=" 返回 " class="btn" onclick="window.location.href='<?=site_url('/admin/paper_diy/detail2/'.$paper['paper_id'])?>';" /></center>
+ 
+  </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

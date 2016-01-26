@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+
+<?php static_css(array('register/style.css', 'treeview/treeview.css'));?>
+
+<?php static_global(array('js/jquery/jquery.js', 'js/jquery/plugin/treeview1.5.js'));?>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+        $("#left_menu").treeview();
+    });
+
+    function change_current_menu(current_menu)
+    {
+        var $current_menu = $('#menu_' + current_menu);
+        if ($current_menu.length) {
+            $('.item_menu').removeClass('filetreeActive');
+            $current_menu.addClass('filetreeActive');
+        }
+    }
+    
+</script>
+</head>
+<body id="left_body" style="overflow:hidden; overflow-y:hidden;">
+    <div class="lefttop">管理目录</div>
+    <div class="tvborder">
+        <ul id="left_menu" class="filetree">
+            <li>
+                <span class="folder">信息管理</span>
+                <ul class="filetreeitem">
+                    <li id="menu_basic" class="item_menu filetreeActive">
+                        <span class="file"></span>
+                        <a href="<?=site_url('student/teacher_download/teacher_info')?>" target="main_iframe">基本信息</a>
+                    </li>
+                    <li class="item_menu">
+                        <span class="file"></span>
+                        <a href="<?=site_url('student/teacher_download/reset_password')?>" target="main_iframe">修改密码</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="folder">报告管理</span>
+                <ul class="filetreeitem">
+                    <li class="item_menu">
+                        <span class="file"></span>
+                        <a href="<?=site_url('student/teacher_download/report')?>" target="main_iframe">考试成绩</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <span class="folder">用户管理</span>
+                <ul class="filetreeitem">
+                    <li id="menu_logout" class="item_menu">
+                        <span class="file"></span>
+                        <a href="<?=site_url('student/teacher_download/logout')?>" target="main_iframe">退出系统</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

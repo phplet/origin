@@ -1,0 +1,168 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'home'));?>
+<style type="text/css">
+.cls_profile_info {
+    float:left;
+    width:30%;
+    height:200px;
+}
+.cls_profile_info ul
+{
+}
+
+.cls_info_fullname {
+    color:black;
+    font-weight:bold;
+    font-size:1.8em;
+}
+
+.cls_info_email {
+    color:black;
+    font-weight:bold;
+    font-size:1.4em;
+}
+
+.cls_info_ticket {
+    color:darkgreen;
+    font-weight:bold;
+    font-size:1.4em;
+}
+
+.cls_info_account {
+    color:black;
+    font-size:1.6em;
+}
+
+.cls_info_yuee {
+    color: darkblue;
+    font-weight:bold;
+    font-size:1.8em;
+}
+
+.cls_info_currency {
+    color: black;
+    font-size:1.4em;
+}
+
+.cls_info_incharge {
+    font-size:1.2em;
+    text-align:center;
+}
+
+.cls_hd {
+    display:table;
+    width:100%;
+}
+
+.cls_hd_item {
+    display:table-cell;
+    width:33%;
+    text-align:center;
+}
+
+.cls_hd_item img {
+    border:1px solid lightgray;
+}
+
+.cls_security_text {
+    font-size:1.2em;
+}
+
+.cls_security_line {
+    width:500px;
+    border:1px solid gray
+}
+
+.cls_security_line_in {
+    height:20px;
+}
+
+.cls_security_tip {
+    margin:4px;
+    color:darkgray;
+}
+
+.cls_security_lastlogin {
+    margin-top:20px;
+}
+</style>
+<div id="body">
+<div class="space">
+<table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+     <tbody>
+        <tr><td style="border:none;height:10px;" colspan="3"></td></tr>
+        <tr>
+           <td width="30%">
+               <img src="<?=$uinfo['avatar_url']?>" height="100"/>
+             <br/>
+                    <a href="<?=site_url('student/profile/editpwd');?>">修改密码</a>&nbsp;&nbsp;<a href="<?=site_url('student/profile/basic');?>">更改头像</a>
+
+            </td>
+           <td>
+            <span class="cls_info_fullname"><?=$student['last_name']?><?=$student['first_name']?></span><br/>
+            <span class="cls_info_email"><?=$student['email']?></span><br/>
+            <span class="cls_info_ticket">准考证号&nbsp;&nbsp;&nbsp;<?=($student['external_account'] ? $student['external_account'] : $student['exam_ticket'])?></span>
+           </td>
+           <td style="text-align:center"><span class="cls_info_account">帐号余额: </span><span class="cls_info_yuee"><?=$student['account']?></span><span class="cls_info_currency"><?=C('virtual_currency')['fullname']?></span><br/>
+                <div class="cls_info_incharge">
+                    <? if (C('paycharge_enable')) { ?><a href="<?=site_url('student/profile/pay');?>">立即充值</a>&nbsp;&nbsp;<? } ?><a href="http://mp.weixin.qq.com/s?__biz=MzIyOTAwNjM1NA==&mid=209486456&idx=1&sn=e4aee73b16f113b7a7c3b75c9bb65d13#rd" target="_blank">免费领取</a></div>
+                    
+           </td>
+        </tr>
+        <tr><td colspan="3" class="altbg2" style="text-align: left;">
+                <span class="altbg2-bg">热门活动</span>
+                <i class="altbg2-r"></i>
+            </td>
+        </tr>
+        <tr><td colspan="3">
+        <div class="cls_hd">
+           <div class="cls_hd_item">
+            <a href="http://mp.weixin.qq.com/s?__biz=MzIyOTAwNjM1NA==&mid=209486456&idx=1&sn=e4aee73b16f113b7a7c3b75c9bb65d13#rd" target="_blank"><img src="<?=site_url('images/profile/hd1.jpg')?>"/></a>
+           </div>
+           <div class="cls_hd_item">
+            <a href="http://mp.weixin.qq.com/s?__biz=MzIyOTAwNjM1NA==&mid=209556723&idx=1&sn=4a92f2e20c2b8b975cabb71dae5b6e95#rd" target="_blank"><img src="<?=site_url('images/profile/hd2.jpg')?>"/></a>
+           </div>
+           <div class="cls_hd_item">
+            <a href="http://www.new-steps.com/?p=370" target="_blank"><img src="<?=site_url('images/profile/hd3.jpg')?>"/></a>
+           </div>
+        </div>
+        </td></tr>
+        <tr><td colspan="3" class="altbg2" style="text-align: left;">
+                <span class="altbg2-bg">帐号安全</span>
+                <i class="altbg2-r"></i>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3" style="padding:30px 60px 30px 60px">
+                <div class="cls_security_text">
+                帐号安全等级: 
+            <?if ($student['email_validate']){?>
+                <span style="color:darkgreen">高</span>
+            <? } else { ?>
+                <span style="color:red">低</span>
+            <? } ?></div><br/>
+             <div class="cls_security_line">
+            <?if ($student['email_validate']){?>
+            <div class="cls_security_line_in" style="background-color:#336633;width:100%" title="高"></div>
+            <?}else{?>
+            <div class="cls_security_line_in" style="background-color:#990000;width:60%;" title="低"></div>
+            <?}?>
+            </div>
+            <div class="cls_security_tip">
+            <? if ($student['email_validate']){?>
+            你的帐号已经绑定邮箱 <a href="javascript:void(0)" onclick="ajax_emailValidate()">重新验证邮箱</a>
+            <?}else{?>
+            <span style="color:#990000">你的邮箱尚未验证通过</a> <a href="javascript:void(0)" onclick="ajax_emailValidate()">验证邮箱</a>
+            <?}?>
+            </div>
+            <div class="cls_security_lastlogin">
+            上次登录: <?=date('Y-m-d H:i', $student['last_login'])?>
+            </div>
+           </td>
+        </tr>
+   </tbody>
+</table>
+</div>
+</div>
+
+<?php $this->load->view('common/profile_footer');?>

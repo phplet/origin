@@ -1,0 +1,498 @@
+<? $this->load->view('common/header');?>
+<?php
+// 根路径
+echo "<script>root_url = '" . rtrim(site_url(''), '/') . "';</script>";
+static_global(array('js/jquery/plugin/blockUi.js',
+                    'js/jquery/plugin/jquery.json-2.4.min.js'
+                   ));
+?>
+<script type="text/javascript">
+function fnSaveCORSInfo()
+{
+    var param = fnGetFormData('id_cors_form');
+    if ($.trim(param['cors_name']) == '')
+    {
+        alert('课程名称不可为空');
+        return;
+    }
+    var cors_tiid = parseInt(param['cors_tiid']);
+    if (isNaN(cors_tiid) || cors_tiid < 1)
+    {
+        alert('请选择培训机构');
+        return;
+    }
+    var cors_cmid = parseInt(param['cors_cmid']);
+    if (isNaN(cors_cmid) || cors_cmid < 1)
+    {
+        alert('请选择授课类型');
+        return;
+    }
+    var cors_stunumtype = parseInt(param['cors_stunumtype']);
+    if (isNaN(cors_stunumtype) || cors_stunumtype < 1)
+    {
+        alert('请选择班级类型');
+        return;
+    }
+    if (cors_cmid == 1 && cors_stunumtype != 1
+        || cors_cmid != 1 && cors_stunumtype == 1)
+    {
+        alert('授课类型和班级类型不匹配');
+        return;
+    }
+    if (param['grade_id_str'].length < 1)
+    {
+        alert('请选择年级');
+        return;
+    }
+    if (param['subject_id_str'].length < 1)
+    {
+        alert('请选择学科');
+        return;
+    }
+    if (cors_cmid > 1)
+    {
+        if (isNaN(parseInt(param['grade_id_str'])))
+        {
+            alert('授课类型不为一对一时只能选择一个年级');
+            return;
+        }
+        if (isNaN(parseInt(param['subject_id_str'])))
+        {
+            alert('授课类型不为一对一时只能选择一个学科');
+            return;
+        }
+        if (param['subject_id_str'] != $("#id_knowledge_subjectid").val())
+        {
+            alert('请选择正确的学科知识点');
+            return;
+        }
+
+        
+        if (param['kid_all'] == undefined)
+        {
+            var obj_kids = $("#knowledge_list input[name='knowledge_id[]']:checked");
+            if (obj_kids.size() < 1)
+            {
+                alert('请选择知识点');
+                return;
+            }
+
+            var know_process = eval("(" + $("#k_know_process").text() + ")");
+            var k_id_str = '';
+            var v;
+            obj_kids.each(function(){
+                if (know_process[this.value] == undefined)
+                {
+                    v = this.value + ":0";
+                }
+                else
+                {
+                    v = this.value + ":" + know_process[this.value];
+                }
+
+                if (k_id_str == '')
+                {
+                    k_id_str += v;
+                }
+                else
+                {
+                    k_id_str += ',' + v;
+                }
+            });
+            k_id_str = "{" + k_id_str + "}";
+            param["kid_knprocid_pairs"] = eval("(" + k_id_str + ")");
+        }
+    }
+    if (param['cors_flag'] == undefined)
+    {
+        alert('请选择状态');
+        return;
+    }
+    ajax_setCORS(param);
+}
+
+function fnOnCMIDChanged()
+{
+    var cors_cmid = fnGetCheckBoxValues('id_cors_form', 'cors_cmid');
+    if (cors_cmid == '1')
+    {
+        // 只选第一个
+        $("#id_cors_form input[name='cors_stunumtype']").each(function(){
+            if (this.value == '1')
+            {
+                this.checked = true;
+                $(this).parent("label").css('display', 'inline');
+            }
+            else
+            {
+                this.checked = false;
+                $(this).parent("label").css('display', 'none');
+            }
+        });
+        fnClearKnowledge();
+    }
+    else if (cors_cmid.length > 1 || cors_cmid.length == 0)
+    {
+        // 多选或没选
+        $("#id_cors_form input[name='cors_stunumtype']").removeAttr('checked');
+        $("#id_cors_form input[name='cors_stunumtype']").parent("label").css('display', 'none');
+        fnClearKnowledge();
+    }
+    else
+    {
+        // 选非第一个
+        $("#id_cors_form input[name='cors_stunumtype']").each(function(){
+            if (this.value == '1')
+            {
+                this.checked = false;
+                $(this).parent("label").css('display', 'none');
+            }
+            else
+            {
+                $(this).parent("label").css('display', 'inline');
+            }
+        });
+
+        var n = $("#id_cors_form input[name='grade_id_str']:checked").size();
+        if (n > 1)
+        {
+            var objlist = $("#id_cors_form input[name='grade_id_str']:checked");
+            for (var i = 1; i < n ; i++)
+            {
+                objlist.get(i).checked = false;
+            }
+        }
+        n = $("#id_cors_form input[name='subject_id_str']:checked").size();
+        if (n > 1)
+        {
+            var objlist = $("#id_cors_form input[name='subject_id_str']:checked");
+            for (var i = 1; i < n ; i++)
+            {
+                objlist.get(i).checked = false;
+            }
+        }
+        if (n < 1)
+        {
+            fnClearKnowledge();
+        }
+        else
+        {
+            var subject_id = $("#id_cors_form input[name='subject_id_str']:checked").get(0).value;
+            if (subject_id != $("#id_knowledge_subjectid").val())
+            {
+                fnClearKnowledge();
+            }
+        }
+    }
+}
+
+function fnOnSubjectChanged(obj)
+{
+    var cors_cmid = fnGetCheckBoxValues('id_cors_form', 'cors_cmid');
+    if (cors_cmid == '1')
+    {
+        fnClearKnowledge();
+    }
+    else
+    {
+        $("#id_cors_form input[name='subject_id_str']:checked").each(function(){
+            this.checked = false;
+        });
+        obj.checked = true;
+        if (obj.value != $("#id_knowledge_subjectid").val())
+        {
+            fnClearKnowledge();
+        }
+    }
+}
+
+function fnOnGradeChanged(obj)
+{
+    var cors_cmid = fnGetCheckBoxValues('id_cors_form', 'cors_cmid');
+    if (cors_cmid == '1')
+    {
+    }
+    else
+    {
+        $("#id_cors_form input[name='grade_id_str']:checked").each(function(){
+            this.checked = false;
+        });
+        obj.checked = true;
+    }
+}
+
+function fnSelIFrameItem()
+{
+    var param = $("#id_seltiid_iframe").get(0).contentWindow.fnSelItem();
+    if (param.length != 1)
+    {
+        alert('请选择一个培训机构');
+        return;
+    }
+    $("#id_cors_form input[name='cors_tiid']").attr('value', param[0]['ti_id']);
+    $("#id_cors_form input[name='ti_name']").attr('value', param[0]['ti_name']);
+    fnCloseDialog('id_seltiid_dlg');
+}
+
+function fnClearKnowledge()
+{
+    $("#knowledge_list").empty();
+    $("#knowledge_ids").val('');
+    $("#id_knowledge_subjectid").val('');
+}
+
+var is_question_mode = 1;//用于区分知识点选择框中的认知过程
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var knowledge_ids = [];//[<?=trim($pro['knowledge'],',')?>];
+var knowledge_know_process = [];//eval("("+'<?php echo json_encode($know_processes); ?>'+")");
+
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+
+//知识点选择弹出框
+function fnSelKnowledge()
+{
+    var cors_cmid = fnGetCheckBoxValues('id_cors_form', 'cors_cmid');
+    if (cors_cmid == '')
+    {
+        alert('请先选择授课模式');
+        return;
+    }
+    if (cors_cmid == '1')
+    {
+        alert('一对一课程不必选择知识点');
+        return;
+    }
+    if ($("#id_cors_form input[name='subject_id_str']:checked").size() < 1)
+    {
+        return;
+    }
+
+    var subject_id = $("#id_cors_form input[name='subject_id_str']:checked").get(0).value;
+
+
+    if (subject_id == 11)
+    {
+    	subject_id = '';
+    	$("span[id=subject_id_list] input[name='subject_str[]']:checked").each(function(){
+    		subject_id += ',' + $(this).val();
+    	});
+
+    	if (subject_id.length > 0)
+        {
+            subject_id = subject_id.substr(1);
+        }
+    }
+
+    if (subject_id == '')
+    {
+        alert('请选择学科');
+        return;
+    }
+
+    $("#id_knowledge_subjectid").val($("#id_cors_form input[name='subject_id_str']:checked").get(0).value);
+
+    var input_knowledge_ids = $('#knowledge_ids').val();
+    var input_know_process = $('#k_know_process').html();
+    $.post(
+        ajax_url_knowledge_select,
+        {
+            subject_id:subject_id,
+            knowledge_ids:input_knowledge_ids,
+            know_process:input_know_process,
+    	    is_question_mode:(typeof is_question_mode != 'undefined' ? is_question_mode : 0)
+	},
+        function(data){
+            var __widowWidth = $(window).width();
+            var __left = (__widowWidth - 800)/2 + 'px';
+            $.blockUI({
+                theme:true,
+                message:data,
+                themedCSS:{background:"#fff",width:"800px",left:__left,top:'10%',overflow:'auto'}
+            });
+            $(".close").click($.unblockUI);
+            $('.blockOverlay').click($.unblockUI);
+        },
+        'html'
+    );
+}
+
+//初始化知识点
+function init_knowledge()
+{
+    if ($("#id_cors_form input[name='subject_id_str']:checked").size() < 1)
+    {
+        return;
+    }
+    var subject_id = $("#id_cors_form input[name='subject_id_str']:checked").get(0).value;
+
+    if (subject_id == 11)
+    {
+    	subject_id = '';
+    	$("span[id=subject_id_list] input[name='subject_str[]']:checked").each(function(){
+            subject_id += ',' + $(this).val();
+    	});
+
+    	if (subject_id.length > 0)
+        {
+            subject_id = subject_id.substr(1);
+        }
+    }
+
+    var input_knowledge_ids = $('#knowledge_ids').val();
+    var _is_question_mode = typeof is_question_mode != 'undefined' ? is_question_mode : 0;
+    var _knowledge_know_process = typeof knowledge_know_process != 'undefined' ? knowledge_know_process : {};
+    if (input_knowledge_ids)
+    {
+        $.post(
+            ajax_url_knowledge_init,
+            {subject_id:subject_id,knowledge_ids:input_knowledge_ids},
+            function(data)
+            {
+                var str = '';
+                var know_process_cache = {};
+                for (var i=0; i<data.length; i++)
+                {
+                    var parent = data[i]['children'];
+                    str += '<div><span class="font_4" pkid="'+data[i]['id']+'">'+data[i]['knowledge_name']+'('+data[i]['ques_num']+'['+data[i]['relate_ques_num']+'])</span>：';
+                    for (j=0; j<parent.length; j++)
+                    {
+                        var checked = in_array(parent[j]['id'], knowledge_ids) ? ' checked' : '';
+                        var knowledge_id = parent[j]['id'];
+                        var know_process_str = '';
+                        if (_is_question_mode && _knowledge_know_process[knowledge_id])
+                        {
+                            var kp = _knowledge_know_process[knowledge_id]['kp'],
+                                kp_name = _knowledge_know_process[knowledge_id]['name'];
+                            if (kp > 0)
+                            {
+                                know_process_cache[knowledge_id] = kp;
+                                know_process_str = '<input type="hidden" name="know_process[' + knowledge_id + ']" value="' + kp + '"/>(认知过程：' + kp_name + ')';
+                            }
+                        }
+                        str += '<input type="checkbox" name="knowledge_id[]" id="knowledge'+parent[j]['id']+'" value="'+parent[j]['id']+'"'+checked+' /><label for="knowledge'+parent[j]['id']+'">'+parent[j]['knowledge_name']+'('+parent[j]['ques_num']+'['+parent[j]['relate_ques_num']+'])' + know_process_str + '</label>';
+                    }
+                    str += '</div><hr/>';
+                }
+
+                if (!$.isEmptyObject(know_process_cache))
+                {
+                    know_process_cache = $.toJSON(know_process_cache);
+                    str += '<div style="display:none;" id="k_know_process">' + know_process_cache + '</div>';
+                }
+
+                $('#knowledge_list').html(str);
+            },
+            'json'
+        );
+    }
+}
+
+$(function(){
+    init_knowledge();
+});
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">新增课程
+      <div class="cls_toolbar">
+        <button type="button" onclick="fnSaveCORSInfo()">保存</button>
+        <button type="button" onclick="location.href='<?=site_url('admin/course/corslist')?>'">返回列表</button>
+        <button type="button" onclick="location.reload()">重新载入</button>
+      </div>
+    </div>
+    <div id="id_cors_form">
+    <table class="maintable" id="id_cors_table" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="altbg1" width="15%">课程名称</td>
+        <td width="35%">
+          <input type="hidden" name="cors_id" value="0" class="cls_field"/>
+          <input type="text" name="cors_name" value="" class="txtbox cls_field"/>
+           <span style="color:#f00">*</span>
+        </td>
+        <td class="altbg1" width="15%">所属培训机构</td>
+        <td width="35%">
+           <input type="hidden" name="cors_tiid" value="" class="cls_field"/>
+           <input type="text" name="ti_name" value="" class="txtbox" readonly="readonly" onclick="fnShowDialog('id_seltiid_dlg')"/>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">授课模式</td>
+        <td>
+            <? foreach ($cm_list as $v) { ?>
+            <label><input type="radio" name="cors_cmid" value="<?=$v['cm_id']?>" class="cls_field" onchange="fnOnCMIDChanged()"/><? Func::echo_s($v['cm_name']); ?></label>
+            <? } ?> 
+           <span style="color:#f00">*</span>
+        </td>
+        <td class="altbg1">班级类别</td>
+        <td>
+            <? foreach ($csnt_list as $v) { ?>
+            <label style="display:none"><input type="radio" name="cors_stunumtype" value="<?=$v['csnt_id']?>" class="cls_field"/><? Func::echo_s($v['csnt_name']); if (trim($v['csnt_memo']) != '') { ?>(<? Func::echo_s($v['csnt_memo']); ?>)<? } ?></label>
+            <? } ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">年级</td>
+        <td colspan="3"><? foreach ($grade_map as $k => $v) { ?>
+        <label><input type="checkbox" name="grade_id_str" value="<?=$k?>" class="cls_field" onchange="fnOnGradeChanged(this)"/><?=$v?></label>
+        <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">学科</td>
+        <td colspan="3"><? foreach ($subject_map as $k => $v) { ?>
+        <label><input type="checkbox" name="subject_id_str" value="<?=$k?>" class="cls_field" onchange="fnOnSubjectChanged(this)"/><?=$v?></label>
+        <? } ?>
+        </td>
+      </tr>
+     <tr>
+       <td class="altbg1">考试类型</td>
+       <td colspan="3"><? foreach ($classid_map as $k => $v) { ?>
+       <label><input type="checkbox" name="class_id_str" value="<?=$k?>" class="cls_field"/><?=$v?></label>
+        <? } ?>
+       </td>
+     </tr>
+     <tr>
+       <td class="altbg1">知识点</td>
+       <td colspan="3">
+          <div style="position: absolute; top: -1000px; left: 200px;">
+	  <input type="checkbox" name="knowledge_id[]" value="" />
+	  </div>
+	  <div id="knowledge_list"></div>
+          <input type="hidden" id="id_knowledge_subjectid" value=""/>
+	  <input type="hidden" name="knowledge_ids" id="knowledge_ids" value=""/>
+          <button class="btn2" type="button" onclick="fnSelKnowledge()">点击选择</button>
+	  <label for="knowledge_id[]" class="error" style="display: none"></label>
+          <label><input type="checkbox" name="kid_all" value="1" class="cls_field"/>[全部学科]</label>
+      </td>
+     </tr>
+      <tr>
+        <td class="altbg1">网址</td>
+        <td>
+          <input type="text" name="cors_url" value="" class="txtbox cls_field"/>
+           <span style="color:#f00"></span>
+        </td>
+           <td class="altbg1">状态</td>
+           <td>
+              <label><input type="radio" name="cors_flag" class="cls_field" value="0"/>禁用</label>
+              <label><input type="radio" name="cors_flag" class="cls_field" value="<?=time()?>">待审</label>
+              <span style="color:#f00">*</span>
+           </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="id_seltiid_dlg" style="display:none;width:700px">
+<div class="cls_title">请选择培训机构</div>
+<iframe src="<?=site_url('admin/traininginstitution/seltilist')?>" id="id_seltiid_iframe" style="width:100%;border-width:0px;height:300px;" frameborder="0">
+</iframe>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="fnSelIFrameItem()">确定</button>
+<button type="button" onclick="fnCloseDialog('id_seltiid_dlg')">取消</button>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,37 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_cpuser_info" method="POST" action="<?=site_url('admin/cpuser/editpwd')?>">
+  <div class="space">
+    <div class="subtitle">修改密码</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">用户名</td>        
+        <td><?=$cpuser['admin_user']?></td>
+      </tr>
+      <tr>
+        <td class="altbg1">真实姓名</td>        
+        <td><input type="text" id="realname" name="realname" class="txtbox" value="<?=$cpuser['realname']?>"></td>
+      </tr>
+      <tr>
+        <td class="altbg1">Email</td>        
+        <td><input type="text" id="Email" name="email" class="txtbox" value="<?=$cpuser['email']?>"></td>
+      </tr>
+      <tr><td colspan="2" class="altbg2"><strong>修改密码</strong></td></tr>      
+      <tr>
+        <td class="altbg1">密码</td>        
+        <td><input type="password" name="password"  class="txtbox">&nbsp;<span class="notice">密码长度必须为6~20个字符</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">确认密码</td>        
+        <td><input type="password" name="password_confirm" class="txtbox"></td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

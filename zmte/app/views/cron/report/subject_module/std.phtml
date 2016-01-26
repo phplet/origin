@@ -1,0 +1,446 @@
+<?php
+/**
+ * 三维模块
+ */
+?>
+    <h3 class="cls_row">2.多角度、多维度的得分情况及对应的评价</h3>
+    <?php $g_key = 1;?>
+    	<h5 class="cls_row">1）	知识模块</h5>
+    	<?php /*?>
+    	<?php 
+			$std_knowledge['fields'] = isset($std_knowledge['fields']) ? $std_knowledge['fields'] : array();
+			$std_knowledge['data'] = isset($std_knowledge['data']) ? $std_knowledge['data'] : array();
+			$std_knowledge['flash_data'] = isset($std_knowledge['flash_data']) ? $std_knowledge['flash_data'] : array();
+			$std_knowledge['comment_data'] = isset($std_knowledge['comment_data']) ? $std_knowledge['comment_data'] : array();
+		?>
+		<?php if (count($std_knowledge['data'])) {?>
+        <table class="cls_row" id="table_std_k">
+        <tr>
+        	<?php $first_th_width = '15';?>
+        	<?php $count_data = count($std_knowledge['fields']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($std_knowledge['fields']));?>
+            <th width="<?=$first_th_width?>%">知识模块</th>
+            <?php foreach ($std_knowledge['fields'] as $field_name) {?>
+            <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+            <?php } ?>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($std_knowledge['data'] as $k_name=>$item) {?>
+        <?php $auto_key++;?>
+        <table class="cls_row cls_table" ref_title_id="table_std_k">
+        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+            <th width="<?=$first_th_width?>%"><?php echo $k_name;?></th>
+            <?php foreach ($std_knowledge['fields'] as $field_name) {?>
+            <td width="<?=$left_p_width?>%"><?php echo isset($item[$field_name]) ? $item[$field_name] : '--';?></td>
+            <?php } ?>
+        </tr>
+        </table>
+        <?php } ?>
+        <?php } ?>
+        <?php */?>
+        
+        <?php $flash_titles = array();?>
+        <?php if (isset($std_knowledge['flash_data']['data']) && count($std_knowledge['flash_data']['data'])) {?>
+        <?php 
+        	//flash_data
+        	$flash_data = array();
+        	foreach ($std_knowledge['flash_data']['field'] as $name)
+        	{
+        		$tmp_arr = array();
+        		foreach ($std_knowledge['flash_data']['data'] as $k_name=>$item)
+        		{
+        			$tmp_arr[] = isset($item[$name]) ? floatval($item[$name]) : 0;
+					$flash_titles[] = $k_name;
+        		}
+        		$flash_data[] = array(
+										'name' 	=> $name,
+										'data' 	=> $tmp_arr,
+				            );
+        	}
+        	$std_knowledge['flash_data']['data'] = $flash_data;
+        	$flash_titles = array_unique($flash_titles);
+        ?>
+           <div id="flash_container_std_k"  class="cls_row"></div>
+           <script type="text/javascript">
+	    	$(function () {
+	           //柱状图1
+	       		$('#flash_container_std_k').highcharts({
+		            chart: {
+		                type: 'column'
+		            },
+		            title: {
+		                text: '	知识模块柱状图'
+		            },
+		            xAxis: {
+		                categories: eval("("+'<?php echo json_encode($flash_titles); ?>'+")"),
+		    			labels: {
+		    				rotation : -45,//坐标旋转角度 为0：表示横放置
+		    				align : 'right'
+		    				/* style: {
+		    					fontSize: '13px',
+		    					fontFamily: 'Verdana, sans-serif'
+		    				} */
+		    			}			
+		            },
+		    		yAxis: {
+		    			title: {
+		    				text: ''
+		    			}
+		    		},		
+		            plotOptions : {
+		                column : {
+		    				//pointWidth: 2,	//柱子的大小(会影响到柱子的大小)
+		                    pointPadding: 0	//柱子之间的间隔(会影响到柱子的大小)
+		                }
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'middle',
+		                borderWidth: 0
+		            },
+		            series: eval("("+'<?php echo json_encode($std_knowledge['flash_data']['data']); ?>'+")")
+			           /*
+			           series: [{
+			               name: '我-总体1',
+			               data: [4, -3, 3]
+			           }, {
+			               name: '我-总体2',
+			               data: [2, 4, 1.5]
+			           }]*/
+		        });
+	        });
+	    	           
+           </script>
+       <?php } ?>
+       
+       <p class="mokuai-text cls_row">
+       <?php if (empty($std_knowledge['flash_comment'])) :?>
+                  知识点掌握全面、理解透彻，会当凌绝顶，一览众山小。
+       <?php else :?>
+              你对<?=$std_knowledge['flash_comment']?>的理解已经略有心得，想要更上一层楼，还需再接再厉。
+       <?php endif;?>
+       </p>
+       
+       <?php if (count($std_knowledge['comment_data'])) {?>
+        <table class="mb10 cls_row" id="table_std_k_c">
+        <tr>
+            <th width="15%">知识模块</th>
+            <th width="10%">得分率(%)</th>
+            <th width="25%">掌握等级</th>
+            <th width="50%">评价</th>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($std_knowledge['comment_data'] as $item) {?>
+        <?php $auto_key++;?>
+        <table class=" cls_row cls_table" ref_title_id="table_std_k_c">
+        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+            <th width="15%"><?php echo $item['name'];?></th>
+            <td width="10%"><?php echo $item['percent'];?></td>
+            <td width="25%"><?php echo str_repeat("★", $item['level']);?></td>
+            <td width="50%" style="text-align:left;"><?php echo $item['comment'];?></td>
+        </tr>
+        </table>
+        <?php } ?>
+        <?php } ?>
+    
+    <?php if ($t_subject_id > 1 && !empty($std_method_tactic['data'])) {?>
+        <h5 class="cls_row"><?php echo ++$g_key;?>）方法策略</h5>
+        <?php 
+			$std_method_tactic['fields'] = isset($std_method_tactic['fields']) ? $std_method_tactic['fields'] : array();
+			$std_method_tactic['data'] = isset($std_method_tactic['data']) ? $std_method_tactic['data'] : array();
+			$std_method_tactic['comment_data'] = isset($std_method_tactic['comment_data']) ? $std_method_tactic['comment_data'] : array();
+		?>
+		<?php /*?>
+		<?php if (count($std_method_tactic['data'])) {?>
+        <table class="mb10 cls_row" id="table_std_mt">
+        <tr>
+        	<?php $first_th_width = '15';?>
+        	<?php $count_data = count($std_method_tactic['fields']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($std_method_tactic['fields']));?>
+            <th width="<?=$first_th_width?>%">方法策略</th>
+            <?php foreach ($std_method_tactic['fields'] as $field_name) {?>
+            <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+            <?php } ?>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($std_method_tactic['data'] as $mt_name=>$item) {?>
+        <?php $auto_key++;?>
+        <table class=" cls_row cls_table" ref_title_id="table_std_mt">
+        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+            <th width="<?=$first_th_width?>%"><?php echo $mt_name;?></th>
+            <?php foreach ($std_method_tactic['fields'] as $field_name) {?>
+            <td width="<?=$left_p_width?>%"><?php echo isset($item[$field_name]) ? $item[$field_name] : '--';?></td>
+            <?php } ?>
+        </tr>
+        </table>
+        <?php } ?>
+        <?php } ?>
+        <?php */?>
+        <?php if (isset($std_method_tactic['flash_data']['data']) && count($std_method_tactic['flash_data']['data'])) {?>
+       <br/>
+       <?php $flash_titles = array();?>
+        <?php 
+        	//flash_data
+        	$flash_data = array();
+        	foreach ($std_method_tactic['flash_data']['field'] as $name)
+        	{
+        		$tmp_arr = array();
+        		foreach ($std_method_tactic['flash_data']['data'] as $mt_name=>$item)
+        		{
+        			$tmp_arr[] = isset($item[$name]) ? floatval($item[$name]) : 0;
+        			$flash_titles[] = $mt_name;
+        		}
+        		$flash_data[] = array(
+										'name' 	=> $name,
+										'data' 	=> $tmp_arr,
+				            );
+        	}
+        	$std_method_tactic['flash_data']['data'] = $flash_data;
+        	$flash_titles = array_unique($flash_titles);
+        ?>
+           <div id="flash_container_std_mt"  class="cls_row"></div>
+           <script type="text/javascript">
+	    	$(function () {
+	           //方法策略柱状图1
+	           $('#flash_container_std_mt').highcharts({
+	           chart: {
+	               type: 'column'
+	           },
+	           title: {
+	               text: '	方法策略柱状图'
+	           },
+	           xAxis: {
+	               categories: eval("("+'<?php echo json_encode($flash_titles); ?>'+")"),
+	               labels: {
+	    				rotation : -45,//坐标旋转角度 为0：表示横放置
+	    				align : 'right'
+	    				/* style: {
+	    					fontSize: '13px',
+	    					fontFamily: 'Verdana, sans-serif'
+	    				} */
+	    			}	
+	           },
+	           yAxis: {
+	    			title: {
+	    				text: ''
+	    			}
+	    		},	
+	           plotOptions : {
+	               column : {
+	       				//pointWidth: 2,	//柱子的大小(会影响到柱子的大小)
+	               pointPadding: 0	//柱子之间的间隔(会影响到柱子的大小)
+	               }
+	           },
+	           legend: {
+	               layout: 'vertical',
+	               align: 'right',
+	               verticalAlign: 'middle',
+	               borderWidth: 0
+	           },
+	           series: eval("("+'<?php echo json_encode($std_method_tactic['flash_data']['data']); ?>'+")")
+	           /*
+	           series: [{
+	               name: '我-总体1',
+	               data: [4, -3, 3]
+	           }, {
+	               name: '我-总体2',
+	               data: [2, 4, 1.5]
+	           }]*/
+	           });
+           });
+           </script>
+           
+       <p class="mokuai-text cls_row">
+       <?php if (empty($std_method_tactic['flash_comment'])) :?>
+               你对方法策略的理解使用已经游刃有余，继续努力使自己的领悟更加精进。
+       <?php else :?>
+               你对<?=$std_method_tactic['flash_comment']?>已经摸着门路，要登堂入室、举一反三还需继续努力。
+       <?php endif;?>
+       </p>
+       <?php } ?>
+       
+       <?php if (count($std_method_tactic['comment_data'])) {?>
+       <table class="mb10 cls_row" id="table_std_mt_c">
+        <tr>
+            <th width="15%">方法策略</th>
+            <th width="10%">得分率(%)</th>
+            <th width="25%">掌握等级</th>
+            <th width="50%">评价</th>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($std_method_tactic['comment_data'] as $item) {?>
+        <?php $auto_key++;?>
+        <table class=" cls_row cls_table" ref_title_id="table_std_mt_c">
+        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+            <th width="15%"><?php echo $item['name'];?></th>
+            <td width="10%"><?php echo $item['percent'];?></td>
+            <td width="25%"><?php echo str_repeat("★", $item['level']);?></td>
+            <td width="50%" style="text-align:left;"><?php echo $item['comment'];?></td>
+        </tr>
+        </table>
+        <?php } ?>
+        <?php } ?>
+    <?php } ?>
+    
+    <?php if (!empty($std_group_type['comment_data'])) {?>
+        <h5 class="cls_row"><?php echo ++$g_key;?>）信息提取方式</h5>
+        <?php 
+			$std_group_type['comment_data'] = isset($std_group_type['comment_data']) ? $std_group_type['comment_data'] : array();
+		?>
+		
+		<?php if (isset($std_group_type['flash_data']['data']) && count($std_group_type['flash_data']['data'])) {?>
+       <br/>
+       <?php $flash_titles = array();?>
+        <?php 
+        	//flash_data
+        	$flash_data = array();
+        	foreach ($std_group_type['flash_data']['field'] as $name)
+        	{
+        		$tmp_arr = array();
+        		foreach ($std_group_type['flash_data']['data'] as $gt_name=>$item)
+        		{
+        			$tmp_arr[] = isset($item[$name]) ? floatval($item[$name]) : 0;
+        			$flash_titles[] = $gt_name;
+        		}
+        		$flash_data[] = array(
+										'name' 	=> $name,
+										'data' 	=> $tmp_arr,
+				            );
+        	}
+        	$std_group_type['flash_data']['data'] = $flash_data;
+        	$flash_titles = array_unique($flash_titles);
+        ?>
+           <div id="flash_container_std_gt"  class="cls_row"></div>
+           <script type="text/javascript">
+	    	$(function () {
+	           //方法策略柱状图1
+	           $('#flash_container_std_gt').highcharts({
+	           chart: {
+	               type: 'column'
+	           },
+	           title: {
+	               text: '	信息提取方式柱状图'
+	           },
+	           xAxis: {
+	               categories: eval("("+'<?php echo json_encode($flash_titles); ?>'+")"),
+	               labels: {
+	    				rotation : -45,//坐标旋转角度 为0：表示横放置
+	    				align : 'right'
+	    				/* style: {
+	    					fontSize: '13px',
+	    					fontFamily: 'Verdana, sans-serif'
+	    				} */
+	    			}	
+	           },
+	           yAxis: {
+	    			title: {
+	    				text: ''
+	    			}
+	    		},	
+	           plotOptions : {
+	               column : {
+	       				//pointWidth: 2,	//柱子的大小(会影响到柱子的大小)
+	               pointPadding: 0	//柱子之间的间隔(会影响到柱子的大小)
+	               }
+	           },
+	           legend: {
+	               layout: 'vertical',
+	               align: 'right',
+	               verticalAlign: 'middle',
+	               borderWidth: 0
+	           },
+	           series: eval("("+'<?php echo json_encode($std_group_type['flash_data']['data']); ?>'+")")
+	           /*
+	           series: [{
+	               name: '我-总体1',
+	               data: [4, -3, 3]
+	           }, {
+	               name: '我-总体2',
+	               data: [2, 4, 1.5]
+	           }]*/
+	           });
+           });
+           </script>
+           
+       <p class="mokuai-text cls_row">
+       <?php if (empty($std_group_type['flash_comment'])) :?>
+               文章理解到位，已全面掌握各类信息提取方式，应对阅读，游刃有余。
+       <?php else :?>
+       <?=$std_group_type['flash_comment']?>把握不完全到位，信息理解还有一些偏差，再接再厉，力争上游！
+       <?php endif;?>
+       </p>
+       <?php } ?>
+       
+       <table class="mb10 cls_row" id="table_std_mt_c">
+        <tr>
+            <th width="15%">信息提取方式</th>
+            <th width="10%">得分率(%)</th>
+            <th width="25%">掌握等级</th>
+            <th width="50%">评价</th>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($std_group_type['comment_data'] as $item) {?>
+        <?php $auto_key++;?>
+        <table class=" cls_row cls_table" ref_title_id="table_std_mt_c">
+        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+            <th width="15%"><?php echo $item['name'];?></th>
+            <td width="10%"><?php echo $item['percent'];?></td>
+            <td width="25%"><?php echo str_repeat("★", $item['level']);?></td>
+            <td width="50%" style="text-align:left;"><?php echo $item['comment'];?></td>
+        </tr>
+        </table>
+        <?php } ?>
+    <?php } ?>
+    
+    <?php if (count($std_difficulty['data'])) {?>
+        <h5 class="cls_row"><?php echo ++$g_key;?>）难易度分类</h5>
+        <?php 
+			$std_difficulty['fields'] = isset($std_difficulty['fields']) ? $std_difficulty['fields'] : array();
+			$std_difficulty['data'] = isset($std_difficulty['data']) ? $std_difficulty['data'] : array();
+		?>
+		<?php $std_difficulty_key  = 0;?>
+		<?php $count_std_difficulty_key = count($std_difficulty['data']);?>
+		<?php foreach ($std_difficulty['data'] as $q_type=>$item) {?>
+		<?php $std_difficulty_key++;?>
+		<table class="cls_row" id="table_std_diff_<?echo $std_difficulty_key?>">
+        <tr>
+        	<?php $first_th_width = '15';?>
+        	<?php $count_data = count($std_difficulty['fields']); ?>
+            <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($std_difficulty['fields']));?>
+            <th width="<?=$first_th_width?>%"><?php echo $q_type;?></th>
+            <?php foreach ($std_difficulty['fields'] as $field_name) {?>
+            <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+            <?php } ?>
+        </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($item as $name=>$val) {?>
+	    <?php $auto_key++;?>
+	        <table class="cls_row cls_table" ref_title_id="table_std_diff_<?echo $std_difficulty_key?>">
+	        <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+	            <th width="<?=$first_th_width?>%"><?php echo $name;?></th>
+	            <?php foreach ($std_difficulty['fields'] as $field_name) {?>
+	            <td width="<?=$left_p_width?>%"><?php echo isset($val[$field_name]) ? $val[$field_name] : '--';?></td>
+	            <?php } ?>
+	        </tr>
+	        </table>
+        <?php } ?>
+        <?php ?>
+        <?php if ($std_difficulty_key != $count_std_difficulty_key):?>
+        	<hr class="cls_row"/>
+        <?php endif;?>
+        <?php ?>
+        <?php } ?>
+    <?php } ?>

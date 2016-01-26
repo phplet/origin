@@ -1,0 +1,25 @@
+<?php if (count($ts_contrast_difficulty['contrast_qtype'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+		$contrast_qtype = isset($ts_contrast_difficulty['contrast_qtype']) ? $ts_contrast_difficulty['contrast_qtype'] : array();
+		$new_qtype = isset($ts_contrast_difficulty['new_qtype']) ? $ts_contrast_difficulty['new_qtype'] : array();
+	?>
+
+	<?php foreach ($contrast_qtype as $vals) {?>
+	   <table class="cls_row table_header indent_25">
+	   <?php foreach ($vals as $key => $val) {?>
+            <tr>
+                <?php foreach ($val as $k => $v) {?>
+                    <<?=is_numeric($v) || empty($v) ? 'td' : 'th'?> width="25%" <?php if ($key == 1 && is_numeric($vals[2][$k]) && $v != $vals[2][$k]) {?>style="position:relative;"<?php }?>>
+                    <?=($v ? $v : '-')?><?=is_numeric($v) ? '%' : ''?>
+                    <?php if ($key == 1 && is_numeric($v) && is_numeric($vals[2][$k]) && $v != $vals[2][$k]) {?>
+    		   		     <div class="<?php if ($v > $vals[2][$k]){?>cls_sort cls_up<?php } elseif ($v < $vals[2][$k]) {?>cls_sort cls_down<?php }?>"></div>
+    		   		 <?php }?>
+                    </<?=is_numeric($v) || empty($v) ? 'td' : 'th'?>>
+                <?php }?>
+            </tr>
+        <?php }?>
+        </table>
+        <hr class="cls_row indent_25"/>
+	<?php }?>
+<?php } ?>

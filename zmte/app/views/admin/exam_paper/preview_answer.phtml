@@ -1,0 +1,178 @@
+<?php $this->load->view('common/header', array('title'=>$exam["exam_name"]));?>
+<?php $this->load->view('common/mathjax');?>
+
+<?php 
+function set_image_size($image_url, $max_width, $max_height)
+{
+    list($width, $height) = @getimagesize(__IMG_ROOT_URL__ . $image_url);
+    if ($width > $max_width)
+    {
+        $height = $height * $max_width / $width;
+        $width = $max_width;
+    }
+    else
+    {
+        if ($height > $max_height)
+        {
+            $width = $width * $max_height / $height;
+            $height = $max_height;
+        }
+    }
+    
+    return array($width, $height);
+}
+?>
+
+<style>
+body, html {background-color:#F0F0F0; line-height:7mm;}
+#body{
+	margin: 0;
+	padding:0;
+	font-family: SimSun,times new roman;
+	text-align: left;
+	font-size:10.5pt;
+	word-break:break-all;
+　　word-wrap:break-word;
+}
+
+.question_index_font {font-family: "Courier New"}
+.question_option_font {font-family: "Courier New"}
+
+.ml15 { margin-left:8mm;}
+.fl   { float:left}
+
+.paper_page {margin:0; padding:0; width:210mm; margin:0 auto; }
+.paper  {width:170mm; background-color:#FFF; padding:0 20mm 0 20mm;}
+
+.paper .paper_title {width:170mm; height:12mm; font-size:19pt; font-weight:700; text-align:center;}
+.paper .paper_info {width:170mm; height:10mm; font-size:12pt; text-align:center;}
+.paper .s_notice {width:170mm; margin-bottom:4mm;}
+.paper .s_notice .title { font-size:12pt; font-family:'黑体'; font-weight:700;}
+.paper .s_notice .notice{ font-size:10.5pt; font-family:'黑体'; text-indent:2em;}
+
+.paper .subject {width:170mm; margin-bottom:8mm; text-align:center; margin-top:8mm; font-size:16pt; font-weight:700;}
+
+.paper .q_group{width:168mm; min-height:7mm; font-weight:700;}
+
+.paper .q_info {width:auto; min-height:7mm; line-height:7mm; margin-right:4mm; margin-bottom: 2mm; margin-top:2mm;}
+.paper .q_info .q_index {min-width:4mm}
+.paper .q_info .q_answer {margin-right:2mm; max-width:94%;}
+
+input[class="answer_input"]{ width:30mm; border:none; background-color:#FFF; box-shadow:none; border-bottom:1px solid #000;}
+input[class="answer_input"]:focus{border:none; background-color:#FFF; box-shadow:none; border-bottom:1px solid #000;}
+</style>
+<script >
+$(function(){
+	$('.q_info').each(function(){
+		$(this).find('.q_index').css('height', $(this).css('height'));
+	});
+
+	$('.paper').css('min-height', $(window).height());
+});
+</script>
+<div id="body">
+    <div class="paper_page">
+    <div class="paper fl">
+        <h1 class="paper_title"><?=$exam['exam_name']?></h1>
+        <div class="paper_info">
+        <?php $diff_time = ($place['end_time'] - $place['start_time'])/60?>
+        <?=$grade[$exam['grade_id']]?>年级&emsp;考试时间<strong><?=date('Y年m月d日 H:i', $place['start_time'])?>--<?=date('H:i', $place['end_time'])?></strong>&emsp;考试时长<strong><?=$diff_time?></strong>分钟&emsp;满分<strong><?=$place['total_score']?></strong>分
+        </div>
+        <div class="s_notice">
+            <h2 class="title">考试须知：</h2>
+            <div class="notice">
+            <?=str_replace("\n", "<br/>", $exam['student_notice'])?>
+            </div>
+        </div>
+        
+        <?php foreach ($exam_paper as $paper) {?>
+        
+            <h1 class="subject fl"><?=$subject[$paper['exam']['subject_id']]?>部分</h1>
+        
+            <?php $g_index = 0; $index = 1;?>
+            <?php foreach ($paper['group'] as $qtype => $list) {?>
+                <div class="q_group fl">
+                <?=$group_index[$g_index++]?>、<?=$qtypes[$qtype]?>
+                <?php if ($qtype == 0) {?>
+                        
+                        <?php 
+                        $t_index = $index;
+                        $title = array();
+                        foreach ($list as $value) {
+                            $title[] = "第{$t_index}题{$value['total_score']}分";
+                            $t_index++;
+                        }
+                        ?>
+                                               （本大题共有<?=count($list);?>个题目，共<?=$paper['total_0']?>分。 其中<?=implode(",", $title)?>。注：每道题下的子题分值相同）
+                <?php } else {?>
+                        （本大题共有<?=count($list);?>个题目，每题<?=$paper['score'][$qtype]['score'];?>分，共<?=$paper['score'][$qtype]['total_score'];  ?>分）
+                <?php }?>
+                </div>
+                <?php foreach ($list as $item) {?>
+                    <div class="q_info fl">
+                            <?php if (in_array($qtype, array(1,2,7))) {?>
+                                <?php $option_index = "A"?>
+                                <?php $answer = ""?>
+                                <?php foreach ($item['options'] as $option) {?>
+                                    <?php if (in_array($option['option_id'], explode(',', $item['answer']))) {?>
+                                        <? $answer .= $option_index?>
+                                    <?php }?>
+                                    <?php $option_index++;?>
+                                <?php }?>
+                                <span class="q_index question_index_font fl"><?=$index++?>.<?=$answer?>〖<?=count($item['options'])?>〗</span>
+                            <?php } else if (in_array($qtype, array(3,9))) {?>
+                                <?php $answer = array();?>
+                                <?php 
+                                foreach ($item['answer'] as $val)
+                                {
+                                    $answer[] = '<input type="text" class="answer_input">';
+                                }
+                                ?>
+                                <span class="q_index question_index_font fl"><?=$index++?>.<?=implode('，', $answer)?></span>
+                            <?php } else if (in_array($qtype, array(0,4,5,6,8))){?>
+                            <span class="q_index question_index_font fl"><?=$index++?>.</span>
+                                <?php $c_index = 1?>
+                                <?php foreach ($item['children'] as $val) {?>
+                                        <?php 
+                                            $answer = '';
+                                            if (in_array($val['type'], array(1, 2)))
+                                            {
+                                                $option_index = "A";
+                                                foreach ($val['options'] as $option) 
+                                                {
+                                                    if (in_array($option['option_id'], explode(',', $val['answer']))) 
+                                                    {
+                                                        $answer .= $option_index;
+                                                    }
+                                                    
+                                                    $option_index++;
+                                                }
+                                                
+                                                $answer .= "〖" . count($val['options']). "〗";
+                                            } 
+                                            else if (in_array($val['type'], array(3))) {
+                                                foreach ($val['answer'] as $val)
+                                                {
+                                                    $answer[] = '<input type="text" class="answer_input">';
+                                                }
+                                                
+                                                $answer = implode('，', $answer);
+                                            }
+                                            else if (in_array($val['type'], array(5, 6, 8)))
+                                            {
+                                                $answer = '<input type="text" class="answer_input">';
+                                            }
+                                        ?>
+                                    <span class="q_answer fl">(<?=$c_index++?>)<?=$answer?></span>
+                                <?php }?>
+                            <?php }?>
+                    </div>
+                <?php }?>
+               <?php }?>
+           <?php }?>
+    </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

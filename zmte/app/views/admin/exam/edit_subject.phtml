@@ -1,0 +1,221 @@
+<?php $this->load->view('common/header');?>
+<?php static_global(array('js/jquery/plugin/validate/jquery.validate.min.js', 'js/jquery/plugin/validate/messages_zh.js'));?>
+<?php static_js(array('admin/exam_rule/exam_rule.js'/*, 'admin/exam_rule/exam_rule_validate.js'*/));?>
+<script>
+var subject_id = '<?=$exam['subject_id']?>';
+function toggle_qtype_score(s_id)
+{
+	if (s_id == 3)
+    {
+        $("#add_subject_qtype_score_3").show();
+    }
+    else
+    {
+    	$("#add_subject_qtype_score_3").hide();
+    }
+}
+
+function exam_subject_submit()
+{
+	var chk_qtype_score = false;
+	if (subject_id == 3)
+	{
+		chk_qtype_score = true;
+	}
+
+	$("#exam_form").validate({
+        submitHandler:function(form){
+            form.submit();
+        },
+        rules: {            
+            subject_id: "required",
+            total_score: {
+                required:true, 
+                range:[0.5,10000]
+            },
+            'qtype_score[0]':{
+                required:true, 
+                range:[0.5,1000]
+            },
+            'qtype_score[1]':{
+                required:true, 
+                range:[0.5,1000]
+            },
+            'qtype_score[2]':{
+                required:true, 
+                range:[0.5,1000]
+            },
+            'qtype_score[3]':{
+            	required:chk_qtype_score, 
+                range:[0.5,1000]
+            },
+            'qtype_score[4]':{
+                required:chk_qtype_score,
+                range:[0.5,1000]
+            },
+            'qtype_score[5]':{
+            	required:chk_qtype_score, 
+                range:[0.5,1000]
+            },
+            'qtype_score[6]':{
+            	required:chk_qtype_score, 
+                range:[0.5,1000]
+            },
+            'qtype_score[7]':{
+              required:chk_qtype_score, 
+                range:[0.5,1000]
+            },
+            'qtype_score[8]':{
+              required:chk_qtype_score, 
+                range:[0.5,1000]
+            },
+            'qtype_score[14]':{
+                required:true, 
+                range:[0.5,1000]
+            },
+            'introduce':{
+            	required:true
+            }
+        },
+        messages: {
+            subject_id: "请选择学科",
+            total_score: {required:'请填写试卷总分'},
+            'qtype_score[0]':{required:'请填写单选题分值'},
+            'qtype_score[1]':{required:'请填写不定项分值'},
+            'qtype_score[2]':{required:'请填写填空题分值'},
+            'qtype_score[3]':{required:'请填写完形填空题分值'},
+            'qtype_score[4]':{required:'请填写匹配题分值'},
+            'qtype_score[5]':{required:'请填写选词填空题分值'},
+            'qtype_score[6]':{required:'请填写翻译题分值'},
+            'qtype_score[7]':{required:'请填写阅读填空题分值'},
+            'qtype_score[8]':{required:'请填写连词成句题分值'},
+            'qtype_score[14]':{required:'请填写单选不定项题分值'},
+            'introduce':'请输入考试介绍'
+        }
+    });
+	$("#exam_form").submit();
+}
+
+$(document).ready(function(){
+	toggle_subject_type();
+    $('#subject_id').change(function(){
+    	subject_id = $(this).val();
+        toggle_subject_type();
+        toggle_qtype_score(subject_id);
+    });
+    
+    toggle_qtype_score(subject_id);
+});
+</script>
+<div id="body">
+  <form name="exam_form" class="validate" id="exam_form" method="POST" action="<?=site_url('admin/exam/update_subject')?>" onsubmit="return false;">
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <input type="hidden" name="exam_id" value="<?=$exam['exam_id']?>" />
+  <input type="hidden" name="exam_pid" value="<?=$parent['exam_id']?>" />
+  <input type="hidden" name="referer" value="<?=$referer?>" />
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>考试学科</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">
+                考试信息
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1"  width="15%">考试名称</td>
+            <td>
+              <?=$parent['exam_name']?>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考试年级</td>
+            <td>
+              <?=$parent['grade_name']?>
+              <input type="hidden" id="grade_id" value="<?php echo $parent['grade_id'];?>"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考试类型</td>
+            <td>
+              <?=$parent['class_name']?>
+              <input type="hidden" id="class_id" value="<?php echo $parent['class_id'];?>"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">学科</td>
+            <td>
+              <select name="subject_id" id="subject_id">
+              <option value="">=学科=</option>
+              <?php foreach($subjects as $k => $v):?>
+              <option value="<?=$k?>"<?=$k==$exam['subject_id']?' selected':''?>><?=$v?></option>
+              <?php endforeach;?> 
+              </select>
+              
+              <select name="subject_type" id="subject_type">
+              <?php foreach(array_filter($subject_types) as $k=>$val):?>
+              <option value="<?=$k?>" <?php echo $exam['subject_type'] != '' && $k == $exam['subject_type'] ? 'selected="selected"' : '';?>><?=$val?></option>
+              <?php endforeach;?> 
+              </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">试卷总分</td>
+            <td>
+              <input type="text" name="total_score" class="txtbox3" value="<?=$exam['total_score']?>" />
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">题型分数</td>
+            <td>
+              <div style="padding:5px;">请填写不同题型（非题组），每道试题的分值。</div>
+              <div style="padding:5px;">
+              单选题：<input type="text" name="qtype_score[0]" class="txtbox3" value="<?=$exam['qtype_score'][0]?>" /> 分/题 
+              <label for="qtype_score[0]" class="error" style="display:none"></label>
+              </div>
+              <div style="padding:5px;">不定项：<input type="text" name="qtype_score[1]" class="txtbox3" value="<?=$exam['qtype_score'][1]?>" /> 分/题
+              <label for="qtype_score[1]" class="error" style="display:none"></label>
+              </div>
+              <div style="padding:5px;">填空题：<input type="text" name="qtype_score[2]" class="txtbox3" value="<?=$exam['qtype_score'][2]?>" /> 分/题
+              <label for="qtype_score[2]" class="error" style="display:none"></label>
+              </div>
+              <span id="add_subject_qtype_score_3">
+                  <div style="padding:5px;">完形填空：<input type="text" name="qtype_score[3]" class="txtbox3" value="<?=$exam['qtype_score'][3]?>" /> 分/题
+                  <label for="qtype_score[3]" class="error" style="display:none"></label>
+                  </div>
+                  <div style="padding:5px;">匹配题：<input type="text" name="qtype_score[4]" class="txtbox3" value="<?=$exam['qtype_score'][4]?>" /> 分/题
+                  <label for="qtype_score[4]" class="error" style="display:none"></label>
+                  </div>
+                  <div style="padding:5px;">选词填空：<input type="text" name="qtype_score[5]" class="txtbox3" value="<?=$exam['qtype_score'][5]?>" /> 分/题
+                  <label for="qtype_score[5]" class="error" style="display:none"></label>
+                  </div>
+                  <div style="padding:5px;">翻译题：<input type="text" name="qtype_score[6]" class="txtbox3" value="<?=$exam['qtype_score'][6]?>" /> 分/题
+                  <label for="qtype_score[6]" class="error" style="display:none"></label>
+                  </div>
+                  <div style="padding:5px;">阅读填空题: <input type="text" name="qtype_score[7]" class="txtbox3" value="<?=$exam['qtype_score'][7]?>" /> 分/题
+                    <label for="qtype_score[7]" class="error" style="display:none"></label>
+                  </div>
+                  <div style="padding:5px;">连词成句: <input type="text" name="qtype_score[8]" class="txtbox3" value="<?=$exam['qtype_score'][8]?>" /> 分/题
+                    <label for="qtype_score[8]" class="error" style="display:none"></label>
+                  </div>
+              </span>
+              <div style="padding:5px;">单选不定项: <input type="text" name="qtype_score[13]" class="txtbox3" value="<?=$exam['qtype_score'][13]?>" /> 分/题
+                    <label for="qtype_score[13]" class="error" style="display:none"></label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">考试介绍</td>
+            <td>
+              <textarea name="introduce" style="width:600px;height:100px;"><?=$exam['introduce']?></textarea>
+              <label for="introduce" class="error" style="display:none"></label>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="button" name="dosubmit" value=" 提交 " class="btn" onclick="exam_subject_submit();"/>
+
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

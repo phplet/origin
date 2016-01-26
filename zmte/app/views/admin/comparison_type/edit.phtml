@@ -1,0 +1,107 @@
+<?php $this->load->view('common/header');?>
+<script type="text/javascript">
+var ajax_question_class_list = '<?php echo site_url('admin/question_class/ajax_class_list');?>';
+var class_id = '<?php echo $detail['class_id'];?>';
+
+$(document).ready(function(){
+	$('#grade_id').change(function(){
+		set_question_class();
+	});
+	set_question_class();
+});
+
+function set_question_class() {
+	var grade_id = $('#grade_id').val();
+	if ( ! grade_id) return;
+	$.post(
+		ajax_question_class_list,
+		{grade_id:grade_id},
+		function (data) {
+			var string = '';
+			var selected = '';
+			if (typeof(class_id) == 'undefined') class_id = '';
+			for (var i=0; i<data.length; i++) {
+				selected = class_id==data[i]['class_id'] ? ' selected ' : '';
+				string += '<option value="'+data[i]['class_id']+'"'+selected+'>'+data[i]['class_name']+'</option>'
+			}
+			$('#class_id').get(0).length = 1;
+			$('#class_id').append(string);
+		},'json'
+	);
+}
+</script>
+
+<div id="body">
+  <form name="Frm_info" method="POST" action="<?php echo site_url('admin/comparison_type/save');?>">
+  <input type="hidden" name="act" value="<?php echo $act;?>" />
+  <input type="hidden" name="id" value="<?php echo $detail['cmp_type_id'];?>" />
+  <div class="space">
+    <div class="subtitle"><?php echo $act=='add'?'添加':'编辑'?>对比信息分类</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">分类名称</td>        
+        <td><input type="text" name="type_name" class="txtbox" value="<?php echo $detail['cmp_type_name'];?>"></td>
+      </tr>
+      <tr>
+        <td class="altbg1">考试学科</td>        
+        <td>
+        	<select name="subject_id">
+        		<option value="">=请选择=</option>
+        		<?php foreach ($subjects as $key => $val):?>
+        		<option value="<?php echo $key;?>"<?php echo $key==$detail['subject_id']?' selected':'';?>><?php echo $val;?></option>
+        		<?php endforeach;?>
+        	</select>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">考试年级</td>        
+        <td>
+        	<select name="grade_id" id="grade_id">
+        		<option value="">=请选择=</option>
+        		<?php foreach ($grades as $key => $val):?>
+        		<option value="<?php echo $key;?>"<?php echo $key==$detail['grade_id']?' selected':'';?>><?php echo $val;?></option>
+        		<?php endforeach;?>
+        	</select>
+        </td>
+      </tr>      
+      <tr>
+        <td class="altbg1">考试类型</td>        
+        <td>
+        	<select name="class_id" id="class_id">
+        		<option value="">=请选择=</option>
+        		<?php foreach ($class_list as $val):?>
+        		<option value="<?php echo $val['class_id'];?>"<?php echo $val['class_id']== $detail['class_id']?' selected':'';?>><?php echo $val['class_name'];?></option>
+        		<?php endforeach;?>
+        	</select>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">分类介绍</td>        
+        <td><textarea name="introduce" style="width:600px;height:100px;"><?php echo $detail['introduce']?></textarea></td>
+      </tr>
+      <?php if ($act=='edit'): ?>
+      <tr>
+        <td class="altbg1">状态：</td>        
+        <td>
+            <?php $flag = isset($detail['cmp_type_flag']) ? $detail['cmp_type_flag'] : '1';?>
+            <?php if ($flag == '-1'): ?>
+            <b>已删除(<font color="red">*注：要恢复请到回收站中操作</font>&nbsp;&nbsp;<a href="<?php echo site_url('admin/comparison_type/index/trash').
+            '?keyword=' . (isset($detail['cmp_type_name']) ? $detail['cmp_type_name'] : '');?>">前往回收站</a>)</b>
+            <?php else: ?>
+            <input type="radio"  name="type_flag" value="0" <?php echo $flag == '0' ? 'checked="checked"' : ''; ?> id="flag_no"><label for="flag_no" style="color:red;">禁用</label>
+            &nbsp;&nbsp;
+            <input type="radio"  name="type_flag" value="1" <?php echo $flag == '1' ? 'checked="checked"' : ''; ?>  id="flag_ok"><label for="flag_ok" style="color:green;">启用</label>
+            <?php endif; ?>
+        </td>
+      </tr>    
+      <?php endif; ?>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,46 @@
+<?php if (count($clstd_difficulty['data'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+		$clstd_difficulty['fields'] = isset($clstd_difficulty['fields']) ? $clstd_difficulty['fields'] : array();
+		$clstd_difficulty['data'] = isset($clstd_difficulty['data']) ? $clstd_difficulty['data'] : array();
+	?>
+
+    <?php $clstd_difficulty_key  = 0;?>
+    <?php $count_clstd_difficulty_key = count($clstd_difficulty['data']);?>
+    <?php foreach ($clstd_difficulty['data'] as $q_type=>$item) {?>
+        <?php $clstd_difficulty_key++;?>
+        <table class="cls_row table_header indent_25" id="table_clstd_diff_<?echo $clstd_difficulty_key?>">
+            <tr>
+                <?php $first_th_width = '15';?>
+                <?php $count_data = count($clstd_difficulty['fields']); ?>
+                <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($clstd_difficulty['fields']));?>
+                <th width="<?=$first_th_width?>%"><?php echo $q_type;?></th>
+                <?php foreach ($clstd_difficulty['fields'] as $field_name) {?>
+                    <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+                <?php } ?>
+            </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($item as $name=>$val) {?>
+           <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clstd_diff_<?echo $clstd_difficulty_key?>"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $name;?></th>
+                    <?php foreach ($val as $k => $v) {?>
+                        <?php if ($val[0]) {?>
+                       <td width="<?=$left_p_width?>%" <?if ($k == 2 && $v != end($val)) {?>style="color:<?=$v > end($val) ? 'green' : 'red'?>"<?php }?>><?=$v?></td>
+                       <?php } else {?>
+                       <td width="<?=$left_p_width?>%">-</td>
+                       <?php }?>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+
+        <?php if ($clstd_difficulty_key != $count_clstd_difficulty_key):?>
+            <hr class="cls_row indent_25"/>
+        <?php endif;?>
+    <?php } ?>
+
+<?php } ?>

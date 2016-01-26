@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><?=C('webconfig/site_name')?></title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<?php static_css('index/login.css');?>
+<? static_global(array('js/jquery/jquery.js', 'js/common/common.js'));?>
+<? static_global('js/all.css', 'css'); ?>
+<? static_global('js/all.js'); ?>
+<script type="text/javascript">
+<? if ($ajaxScript = get_instance()->_ajaxScript) echo($ajaxScript); ?>
+</script>
+<script type="text/javascript">
+var siteurl = "<?=site_url()?>";
+if(self.parent.frames.length != 0) {
+	self.parent.location=document.location;
+}
+
+function fnOnLogin()
+{
+    var param = fnGetFormData('id_userlogin_dlg');
+    if (param['ticket'].length < 1)
+    {
+        alert('请输入帐号');
+        return;
+    }
+    if (param['password'].length < 1)
+    {
+        alert('请输入密码');
+        return;
+    }
+
+    ajax_login(param);
+    return false;
+}
+</script>
+<?=C('tongji_script')?>
+</head>
+<body>
+<p>&nbsp;</p><p>&nbsp;</p>
+<table id="id_userlogin_dlg" width="600" border="0" cellpadding="8" cellspacing="0" class="login_table">
+<form method="post" name="login" onsubmit="return fnOnLogin()">
+<tr>
+    <td colspan="2" class="table_title"><?=C('webconfig/site_name')?></td>
+</tr>
+<tr>
+    <td colspan="2" height="30"></td>
+</tr>
+<tr>
+    <td width="200" align="right">帐&nbsp;&nbsp;&nbsp;&nbsp;号</td>
+    <td>
+        <input class="loginInput cls_field" type="text" name="ticket" id="ticket" placeholder=" Email/准考证号/身份证号"/>
+    </td>
+</tr>
+<tr>
+    <td width="200" align="right">密&nbsp;&nbsp;&nbsp;&nbsp;码</td>
+    <td><input class="loginInput cls_field" type="password" name="password" placeholder=" 请输入登录密码"/></td>
+</tr>
+<tr>
+    <td colspan="2">
+    <input style="margin-left:150px;" type="button" class="loginButton" onclick="location.href='<?=site_url('student/register/index')?>'" value=" 注 册 " />
+     <input style="margin-left:60px" type="submit" class="loginButton" value=" 登 录 " />
+     &nbsp;&nbsp;&nbsp;&nbsp;<a href="<?=site_url('student/index/forget')?>">忘记密码？</a>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" align="center" height="50">
+        Powered by <a href="<?=site_url()?>" target="_blank"><?=C('webconfig/site_name')?></a>&nbsp;&copy;&nbsp;<?php echo date('Y');?>&nbsp;&nbsp;<?=C('version')?>
+    </td>
+</tr>
+</form>
+</table>
+</body>
+</html>

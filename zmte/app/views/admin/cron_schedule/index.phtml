@@ -1,0 +1,171 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<style>
+.display_none {
+	display:none;
+}
+ul.list{
+	background:#ddd;
+}
+ul.list li{
+	line-height:20px;
+	border-bottom:1px solid #ccc;
+	padding:5px;
+	font-size:14px;
+	list-style:none;
+}
+ul.list li span{
+	font-weight:bold;
+	padding-right:10px;
+}
+.error{
+	color:red;
+	font-weight:bold;
+}
+pre{
+	background:#eee;
+	padding:12px;
+	font-size:13px;
+	border:1px dotted #ccc;
+}
+.txtbox4{
+	width:180px;
+}
+</style>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">计划任务列表</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <th width="5%">ID</th>
+        <th>任务代码</td>
+        <th width="10%">状态</th>
+        <th width="10%">消息</th>
+        <th width="10%">添加时间</th>
+        <th width="10%">计划时间</th>
+        <th width="15%">执行时间</th>
+        <th width="10%">完成时间</th>
+        <th width="15%">操作</th>	
+      </tr>
+      <?php $schedules_names = array_keys($cron_schedules);?>
+      <?php if($list):?>
+      <?php foreach($list as $k=>$val):?>
+      <?php $sechedule = $cron_schedules[$val['job_code']];?>
+      <tr>
+        <td><?php /*?><input type="checkbox" name="ids[]" value="<?=$val['schedule_id']?>"><?php */?><?=$val['schedule_id']?></td>
+        <td><?=$val['job_code']?></td>        
+        <td><?=$status[$val['status']];?></td> 
+        <td><?=substr($val['messages'], 0, 20)?></td>
+        <td><?=strtotime($val['created_at']) > 0 ? $val['created_at'] : '--'?></td> 
+        <td><?=strtotime($val['scheduled_at']) > 0 ? $val['scheduled_at'] : '--'?></td> 
+        <td><?=strtotime($val['executed_at']) > 0 ? $val['executed_at'] : '--';?></td> 
+        <td><?=strtotime($val['finished_at']) > 0 ? $val['finished_at'] : '--';?></td> 
+        <td>          
+			<a class="expand_sechedule" code="<?=$k?>" href="###" title="计划任务 ‘<?=$sechedule['name'];?>’ 的信息">展开</a>
+        </td>
+      </tr>
+      <tr id="line_<?=$k?>" class="display_none">
+      	<td colspan="9">
+      		<ul class="list">
+      			<li><span class="error">消息:</span><pre><?=$val['messages']?></pre></li>
+      			<li><span>计划描述:</span><?php echo $sechedule['name'];?></li>
+      			<li><span>正则配置路径:</span><?php echo $sechedule['schedule']['config_path'];?></li>
+      			<li><span>执行正则:</span><?php echo $sechedule['schedule']['cron_expr'];?></li>
+      			<li><span>计划文件:</span><?php echo $sechedule['run']['filepath'] . '/' . $sechedule['run']['filename'];?></li>
+      			<li>
+      				<span>执行类名  / 方法:</span>
+      				<?php
+      					$class = $sechedule['run']['class'];
+      					$function = $sechedule['run']['function'];
+      					$params = $sechedule['run']['params'];
+      				?>
+      				<?php if ($class == '') { ?>
+      				<?php echo $function . '();'; ?>
+      				<?php } else {?>
+      				<?php echo $class . '->' . $function . '();';?>
+      				<?php } ?>
+      			</li>
+      			<li><span>参数：</span><?php print_r($params);?></li>
+      		</ul>
+      	</td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="9" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="9">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+
+  <form method="get" name="search_form" action="<?=site_url('admin/cron_schedule/index/')?>">
+    <div class="space">
+        <div class="subtitle">搜索</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">计划代码</td>
+                <td>
+                    <select name="job_code" id="select_job_code">
+	                    <option value="0">--请选择--</option>
+	                    <?php foreach ($schedules_names as $schedules_name) {?>
+	                    <option value="<?php echo $schedules_name;?>" <?php echo $search['job_code'] == $schedules_name ? 'selected="selected"' : '';?>><?php echo $cron_schedules[$schedules_name]['name'] . '(' . $schedules_name . ')';?></option>
+	                    <?php } ?>
+                  	</select>
+                 </td>
+            </tr>         
+            <tr>
+                <td class="altbg1">状态:</td>
+                <td>
+                  <select name="statu" id="select_status">
+                    <option value="0">--请选择--</option>
+                    <?php foreach ($status as $k=>$statu) {?>
+                    <option value="<?php echo $k;?>" <?php echo $search['statu'] == $k ? 'selected="selected"' : '';?>><?php echo $statu;?></option>
+                    <?php } ?>
+                  </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">时间:</td>
+                <td>
+                  	<select name="time_type" id="time_type">
+	                    <option value="0">--请选择--</option>
+	                    <?php foreach ($time_types as $k=>$time_type) {?>
+	                    <option value="<?php echo $k;?>" <?php echo $search['time_type'] == $k ? 'selected="selected"' : '';?>><?php echo $time_type;?></option>
+	                    <?php } ?>
+                  	</select>
+                  	<input type="text" id="begin_time" name="time_start" readonly="readonly" class="txtbox4" value="<?php echo $search['time_start'];?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd H:m:s'});"> - 
+                    <input type="text" id="end_time" name="time_end" class="txtbox4" value="<?php echo $search['time_end'];?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd H:m:s'});" readonly="readonly">
+                </td>
+            </tr>
+	    	<tr>
+                <td style="text-align:center" class="altbg1" colspan="2">
+                <input type="submit" value=" 搜索 " class="btn" />
+                <input type="button" value=" 重置 " class="btn" onclick="window.location.href='<?php echo site_url('admin/cron_schedule/index');?>'"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+  </form>
+</div>
+<?php static_global('js/datepicker/wdatepicker.js');?>
+<script type="text/javascript">
+  $(document).ready(function () {
+      //获取学校回调
+      $('a.expand_sechedule').click(function () {
+		 var $thiz = $(this),
+		 	 code = $thiz.attr('code');
+
+	 	 $('#line_' + code).slideToggle();
+	 	 
+		 if ($thiz.hasClass('expand')) {
+			 $thiz.removeClass('expand').html('展开');
+		 } else {
+			 $thiz.addClass('expand').html('收起');
+		 }
+	  });
+});
+</script>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

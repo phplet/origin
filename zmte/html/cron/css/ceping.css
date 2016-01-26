@@ -1,0 +1,214 @@
+/**
+reset
+start
+*/
+body,ul,li,div,p,h1,h2,h3,h4,h5{
+    padding: 0;
+    margin: 0;
+    font-family:'\5fae\8f6f\96c5\9ed1',"Microsoft YaHei" !important;
+    color: #333;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+a {
+	text-decoration:none;
+    outline:none;
+	color:inherit;
+}
+a:hover{
+	text-decoration:underline;
+}
+ul,li{
+    list-style: none;
+}
+lable, input[type="radio"], input[type="checkbox"] {
+    cursor:pointer;
+}
+/**
+reset
+end
+*/
+.ceping{
+    width: 680px;
+    margin: 0 auto;
+    padding: 20px 0;
+    font-family: '\5fae\8f6f\96c5\9ed1',"Microsoft YaHei" !important;
+}
+h1,h2{
+    text-align: center;
+}
+h2{
+    margin-top: 10px;
+}
+h3{
+    margin: 30px 0 5px;
+    font-size: 16px;
+}
+h4{
+    font-weight: normal;
+}
+h5{
+    font-size: 14px;
+    margin: 30px 0 10px;
+}
+table{
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background-color: #F1F7FD;
+}
+
+th{
+    background-color: #189BD7;
+    border-bottom: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-left: 1px solid #fff;
+    padding: 5px 12px;
+    text-align: center;
+    color: #fff;
+    font-weight: normal;
+}
+td{
+    padding: 5px 12px;
+    margin: 0;
+    border-bottom: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-left: 1px solid #fff;
+    text-align: center;
+}
+.bgc{
+    background-color: #DBEDF7;
+}
+.bgc1{
+    background: #fff;
+}
+.bgc2{
+    background: #FAEDD8;
+}
+.bgc3{
+    background: #FCE3BC;
+}
+.bgc4{
+	background: #EEE
+}
+
+.bgc_level1 {background:#dbebc2}
+.bgc_level2 {background:#f5e9a1}
+.bgc_level3 {background:#f0d9dd}
+
+/*.bgc1{
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#fff',endColorStr='#FCE3BC',gradientType='0');
+    background: -moz-linear-gradient(top, #fff, #FCE3BC);
+    background: -o-linear-gradient(top,#fff,#FCE3BC);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#FCE3BC));
+}
+.bgc2{
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#FCE3BC',endColorStr='#FCCB83',gradientType='0');
+    background: -moz-linear-gradient(top, #FCE3BC, #FCCB83);
+    background: -o-linear-gradient(top,#FCE3BC,#FCCB83);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FCE3BC), to(#FCCB83));
+}
+.bgc3{
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#FCCB83',endColorStr='#FBB03B',gradientType='0');
+    background: -moz-linear-gradient(top, #FCCB83, #FBB03B);
+    background: -o-linear-gradient(top,#FCCB83,#FBB03B);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FCCB83), to(#FBB03B));
+}*/
+
+.mokuai-item,.sanwen-item,.pingjia table ,.pingjia .center,.zhenduan h5,.zhenduan ul,.zhenduan table{
+    margin-left: 20px;
+}
+.zhenduan ul,.zhenduan table{
+    margin-left: 40px;
+    font-size: 14px;
+}
+.zhenduan li span{
+    color: #f40;
+}
+.mokuai-text{
+    font-size: 14px;
+}
+.center{
+    /*border: 1px solid #ccc;*/
+    margin-top: 10px;
+    padding-top: 10px;
+}
+.mb10{
+    margin-top: 10px;  
+}
+tspan{
+    font-weight: bold;
+    font-family: '\5fae\8f6f\96c5\9ed1',"Microsoft YaHei" !important;
+}
+.mb30{
+    margin-top: 30px;
+}
+.mokuai,.sanwei{
+    border-bottom: 5px #ccc dotted;
+    padding-bottom: 20px;
+}
+.w168{
+     width: 168px;
+ }
+#container_1_1,#container_1_2,#container_11_1,#container_11_2{
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+
+
+/*综合*/
+.pingyu{
+    margin-top: 10px;
+}
+.pingyu td{
+    text-align: left;
+    border: 1px solid #ccc;
+}
+.pingyu .w60{
+    width: 60px;
+}
+.bgcg{
+    background-color: #8EB9F0;
+}
+.bgcy{
+    background-color: #F7FCF7;
+}
+.cr{
+    color: #f40;
+}
+
+/*2015/04/09 修改*/
+
+.title_level_2 {
+    text-indent: 25px;
+}
+
+.container {
+    margin-left: 25px;
+}
+
+.table_header {
+    border-top: 1px solid #fff;
+    min-height: 35px;
+}
+
+#table_sq_ss_2 tr th{
+    height: 80px;
+}
+.cls_person_info{
+    margin-top:8px;
+    font-size:12px;
+    font-weight:bold;
+}
+.cls_person_info_p{
+    font-size:12px;
+    margin-top:8px;
+    margin-bottom:8px;
+}
+.cls_row {
+    word-spacing: 0px;
+}

@@ -1,0 +1,93 @@
+<?php
+$this->load->view('common/header');?>
+
+<?php
+$current_module_url = site_url('/admin/evaluate_rule');
+$current_module_url_c = site_url('/admin/evaluate_rule/pdf_check_c');
+$current_module_url_p = site_url('/admin/evaluate_rule/pdf_ip_c');
+?>
+<div id="body">
+
+  <div class="space">
+    <div class="subtitle"> 	PDF生成状态</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">  学生数/PDF数</td>
+
+        <td>
+
+          <?php echo $count1?>/<?php echo $count0?>
+
+        </td>
+
+
+      </tr>
+
+      <tr>
+        <td width="16%" class="altbg1">  已成功生成的PDF数</td>
+
+        <td>
+
+          <?php echo $count2?>
+
+        </td>
+
+
+      </tr>
+        <tr>
+        <td width="16%" class="altbg1">生成成功的PDF中num>1的数量</td>
+
+      <td> <?php echo $count3?></td>
+
+
+      </tr>
+
+
+    </table>
+
+
+
+      <div class="subtitle">
+     	PDF生成任务分配
+    </div>
+     <form name="frm_import" id="frm_import" method="POST" action="<?=$current_module_url_p;?>" enctype="multipart/form-data">
+  <input type="hidden" name="id" value="<?php echo $id;?>" />
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td colspan="2" style="text-align:center;" class="altbg2">
+      机器标志：<textarea rows="1" cols="25" name="proc_id"></textarea>proc_id,以英文逗号分隔
+        </td>
+      </tr>
+
+    </table>  <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </form>
+
+
+
+ <div class="subtitle">
+     	PDF生成检查
+    </div>
+     <form name="frm_import" id="frm_import" method="POST" action="<?=$current_module_url_c;?>" enctype="multipart/form-data">
+  <input type="hidden" name="id" value="<?php echo $id;?>" />
+     <center>
+            <input type="submit" value=" 提交 " class="btn" />
+        </center>
+    </form>
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+</div>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

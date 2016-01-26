@@ -1,0 +1,30 @@
+<?php static_js(array('third_party/ueditor/ueditor.parse.min.js')); ?>
+<script>
+    $(function(){
+        uParse('.preview_content', {
+            rootPath: '../'
+        })
+
+        // 有序列表兼容firefox
+        if ($('.preview_content ol').length >= 1) {
+        	$('.preview_content ol').each(function(i){
+        		var list_style = $(this).attr('style');
+
+	        	if (list_style.match(/list\-style\-type\:\s(cn|num)/) != null) {
+	        		$(this).attr('style','');
+	        	};
+        	});
+        };
+
+        // 无序列表兼容firefox
+        if ($('.preview_content ul').length >= 1) {
+            $('.preview_content ul').each(function(i){
+                var list_style = $(this).attr('style');
+
+                if (list_style.match(/list\-style\-type\:\s(dash|dot)/) != null) {
+                    $(this).attr('style','');
+                };
+            });
+        };
+    })
+</script>

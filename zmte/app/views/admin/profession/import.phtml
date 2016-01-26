@@ -1,0 +1,47 @@
+<?php 
+/**
+ * 后台管理->素质相关管理->职业管理
+ */
+$this->load->view('common/header');?>
+<?php 
+static_global(array(
+        'js/jquery/plugin/validate/jquery.validate.min.js',
+    ));
+?>
+
+<div id="body">   
+  <form id="Frm_info" name="Frm_info" method="POST" action="<?=site_url('admin/profession/save_import')?>" enctype="multipart/form-data">
+  <div class="space">
+    <div class="subtitle">导入职业</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">职业文件</td>        
+        <td>
+            <input type="file" id="profession_file" name="profession_file" class="txtbox">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<script>
+$(function(){
+	//表单验证
+	$("#Frm_info").validate({
+	    rules: {
+	    	profession_file: "required"
+	    },
+	    messages: {
+	    	profession_file: "请上传文件"
+	    }
+	});
+})
+</script>
+
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,26 @@
+<div class="cls_infor_content clearfix">
+	<div id="id_navigator" class="cls_navigator" style="position: static;">
+		<!-- 科目tip-->
+		<div class="cls_ques_tab_numb" id="id_ques_tab_numb">
+			<?php $auto_key = 0;?>
+			<?php foreach ($paper_info as $key=>$paper) { ?>
+			<?php $auto_key++;?>
+			
+        	<div class="cls_sidel_number" style="<?php echo $auto_key == 1 ? 'display:block;left:0;' : '';?>" id="subject_score_tip_<?php echo $key;?>">
+                 <span class="cls_sidel_bot"></span>
+                 <span class="cls_sidel_top"></span>
+                Δ（总分：<?php echo $paper['full_score'];?>分）
+            </div>
+            <?php } ?>
+        </div>
+
+		<!-- 科目 -->
+        <ul class="cls_ques_tab clearfix" id="left_subject_ul"></ul>
+        
+        <!-- 试题 -->
+		<div class="cls_ques_list" id="left_question_div"></div>
+	</div>
+	
+	<!-- 考题详情  start-->
+	<div class="cls_ques_right" id="question_detail_box"></div>
+</div>

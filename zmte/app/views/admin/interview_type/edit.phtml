@@ -1,0 +1,38 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/interview_type/update')?>">
+  <input type="hidden" name="type_id" value="<?=$row['type_id']?>" />
+  <div class="space">
+    <div class="subtitle">修改考点分类</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <?php if(empty($row['children'])):?>
+      <tr>
+        <td width="16%" class="altbg1">上级考点</td>
+        <td>            
+            <select name="pid">
+                <option value="0">=顶级考点=</option>
+                <?php foreach($list as $val):?>
+                <?php if(empty($val['pid'])):?>
+                <option value="<?=$val['type_id']?>"<?=$row['pid']==$val['type_id']?' selected':''?>><?=$val['type_name']?></option>
+                <?php endif;?>
+                <?php endforeach;?>
+            </select>
+        </td>
+      </tr>
+      <?php endif;?>
+      <tr>
+        <td width="16%" class="altbg1">考点名称</td>        
+        <td>
+            <input type="text" name="type_name" class="txtbox" value="<?=$row['type_name']?>">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

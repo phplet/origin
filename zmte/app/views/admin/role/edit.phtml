@@ -1,0 +1,29 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <form name="Frm_cpuser_info" method="POST" action="<?=site_url('admin/role/update')?>">
+  <input type="hidden" name="role_id" value="<?=$role['role_id']?>" />
+  <div class="space">
+    <div class="subtitle">编辑角色</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">角色名</td>        
+        <td>
+          <input type="text" name="role_name" class="txtbox" value="<?=$role['role_name']?>"><span style="color:#f00">*</span>
+        <td>
+      </tr>
+      <tr>
+        <td class="altbg1">角色名备注</td>        
+        <td>
+          <input type="text" id="remark" name="remark" class="txtbox" value="<?=$role['remark']?>">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

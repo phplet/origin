@@ -1,0 +1,28 @@
+<tr>
+    <td class="altbg1">考试类型</td>
+    <td>
+        <div style="color:#f00;padding:5px;">
+            <span>提示：首尾年级必须选择相应类型。被选择的类型必须填写难易度。难易度参考值：容易[X>60],中等[30≤X≤60],难[X<30]。</span>
+        </div>
+        <div id="class_list">
+            <?php foreach($grades as $key => $val):?>
+                <div id="grade<?=$key?>_class" <?php if(empty($relate_class[$key])):?>style="display:none;"<?php endif;?>>
+                    <?=$key>6?'　':''?><?=$val?>:
+                    <?php $class_list = isset($all_grade_class[$key])?$all_grade_class[$key]:array();?>
+                    <?php foreach($class_list as $cid => $class):?>
+                        <input type="checkbox" name="class_id[<?=$key?>][<?=$cid?>]" id="grade<?=$key?>_class<?=$cid?>" value="<?=$cid?>" <?php if(isset($relate_class[$key][$cid])):?>checked<?php endif;?>/><label for="grade<?=$key?>_class<?=$cid?>"><?=$class['class_name']?></label>
+                        <input type="text" class="txtbox5 gray_input" name="difficulty[<?=$key?>][<?=$cid?>]" value="<?=isset($relate_class[$key][$cid])?$relate_class[$key][$cid]['difficulty']:'难易度'?>"/>
+                        <?php if($key>=11 && in_array($cid,array(2,3))):?>
+                            <select name="subject_type[<?=$key?>][<?=$cid?>]">
+                                <?php foreach(array_filter($subject_types) as $k => $v):?>
+                                    <option value="<?=$k?>"<?php if(isset($relate_class[$key][$cid]) AND $relate_class[$key][$cid]['subject_type']==$k):?> selected<?php endif;?>><?=$v?></option>
+                                <?php endforeach;?>
+                            </select>
+                        <?php endif;?>
+                    <?php endforeach;?>
+                </div>
+            <?php endforeach;?>
+        </div>
+        <label for="class_id_validate" class="error" style="display:none"></label>
+    </td>
+</tr>

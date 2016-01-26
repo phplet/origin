@@ -1,0 +1,35 @@
+<?php 
+/**
+ * 后台管理->题库及分类管理->学科管理->添加学科
+ */
+$this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/subject/create')?>">
+  <div class="space">
+    <div class="subtitle">添加学科</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">学科名称</td>        
+        <td>
+            <input type="text" id="subject_name" name="subject_name" class="txtbox" value="">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">关联学科</td>        
+        <td>
+            <?php foreach ($subjectlist as $v) {?>
+            <?php if ($v['relate_subject_id'] || $v['subject_id'] == 11) { continue; }?>
+            <input type="checkbox" id="subject_id_<?=$v['subject_id']?>" name="relate_subject_id[]" <?=(in_array($v['subject_id'], $relate_subject_id)? 'checked':'')?> value="<?=$v['subject_id']?>"><label for="subject_id_<?=$v['subject_id']?>"><?=$v['subject_name']?></label>
+            <?php }?>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

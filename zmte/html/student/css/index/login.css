@@ -1,0 +1,88 @@
+html, body {
+    background: #E6EFF7;
+    font: 14px Arial, Helvetica, sans-serif;
+}
+.login_table {
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 1px 1px 3px #c5ddf2;
+    -moz-box-shadow: 1px 1px 3px #c5ddf2;
+    -webkit-box-shadow: 1px 1px 3px #c5ddf2;
+    border: 1px solid #c6daec;
+    border-radius: 5px 5px 5px 5px;
+    background: #FFFFFF;
+    color: #330000;
+}
+.table_title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #FFF;
+    background: #0099CC;
+}
+td {
+    padding: 10px;
+}
+a {
+    color: #0000FF;
+}
+.tooltip {
+    width:500px;
+    margin:20px auto;
+    text-align:center;
+    background:#fff;
+    border:1px solid #FFCC99;
+    line-height:30px;
+}
+
+#zeming_logo {
+    display: block;
+    margin: 0 auto 20px;
+    background:url(../../images/common/logo3.png) no-repeat;
+    width: 177px;
+    height: 141px;
+}
+#zeming_logo_new {
+    display: block;
+    margin: 0 auto 20px;
+    background:url(../../images/common/logo3.png) no-repeat;
+    width: 177px;
+    height: 141px;
+}
+.loginInput{
+    border: 1px solid #A6CBE7;
+    width: 200px;
+    height: 24px;
+    line-height: 24px;
+    vertical-align: middle;
+}
+.login_table .loginButton{
+    background-color: #7CB2DC;
+    background-image: none;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    width: 100px;
+    height: 32px;
+    -webkit-border-radius: 2px;
+    border-radius: 4px;
+    text-shadow: 1px 2px 2px #3780d4;
+    filter: dropshadow(color=#3780d4, offx=1, offy=2);
+    cursor: pointer;
+}
+
+
+.cls_posr a{
+    position: relative;
+    text-decoration: none;
+}
+.cls_copyright_tm {
+    font-size: 10px;
+    position: absolute;
+    top: -5px;
+    font-style: normal;
+    font-family: tahoma;
+}
+.cls_copyright_main {
+    margin-left: 16px;
+}

@@ -1,0 +1,223 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<script type="text/javascript">
+function fnRemoveCronTaskReport()
+{
+	var _rule_id = fnGetCheckBoxValues('id_removecrontaskreport_dlg', 'rule_id');
+	if (_rule_id.length < 1)
+	{
+		alert('请勾选需要移除的任务！');
+		return false;
+	}
+	if (!confirm('确定要移除已勾选的任务吗？'))
+	{
+		return false;
+	}
+
+	ajax_removeCronTaskReport(_rule_id);
+}
+
+function fnRegenerateReport()
+{
+	var _rule_id = fnGetCheckBoxValues('id_regeneratereport_dlg', 'rule_id');
+	if (_rule_id.length < 1)
+	{
+		alert('请勾选需要重新生成报告的任务！');
+		return false;
+	}
+	if (!confirm('确定要重新生成已勾选的任务报告吗？'))
+	{
+		return false;
+	}
+
+	ajax_regenerateReport(_rule_id);
+}
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">报告操作流程及命令
+      <div class="cls_toolbar">
+      <button type="button" onclick="location.reload()">刷新</button>
+       <button type="button" onclick="location.href='/admin/evaluate_rule/index'">返回评估规则列表</button>
+      </div>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td width="10%">考试期次</td>
+        <td width="90%">
+        <select name="exam_pid" onchange="location.href='/admin/report_command/index/'+$(this).val();">
+            <?php foreach ($examlist as $item) {?>
+            <?php if (in_array($item['exam_id'], $demo_exam)) { continue; }?>
+            <option value="<?=$item['exam_id']?>" <?=($exam['exam_id'] == $item['exam_id'] ? 'selected' : '')?>><?=$item['exam_name']?></option>
+            <?php }?>
+        </select>
+        </td>
+      </tr>
+    <tr class="altbg1">
+        <td width="10%">流程</td>
+        <td width="90%">操作</td>
+      </tr>
+      <tr>
+        <td width="10%">第一步：</td>
+        <td width="90%">
+        <?php if ($exam['exam_ticket_maprule']) {?>
+        <input type="button" value="重新生成考试记录" onclick="if (confirm('重新生成考试记录会重置考场考试时间，待考生记录重新生成后需要重新计算考试成绩，确定要执行吗？')){ajax_regenerateExamRecord('<?=$exam['exam_id']?>');}">
+        <?php }?>
+        
+        <?php if ($place['end_time'] > time()) {?>
+            <input type="button" value="结束所有考场考试" onclick="if (confirm('确定要结束所有考场考试吗？')){ajax_endPlaceExam('<?=$exam['exam_id']?>');}">
+        <?php } else {?>
+            <?php if ($crontaskexamresult && $paper_status) {?>
+            <input type="button" value="重新计算考试成绩" onclick="if (confirm('确定要重新生成考试成绩吗？')){ajax_regenerateExamResults('<?=$exam['exam_id']?>');}">
+            <?php } else {?>
+            <input type="button" value="计算考试成绩" onclick="if (confirm('确定要生成考试成绩吗？')){ajax_regenerateExamResults('<?=$exam['exam_id']?>');}">
+            <?php }?>
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="10%">第二步：</td>
+        <td width="90%">
+        <?php if ($cter_status > 1 && $paper_status) {?>
+        <input type="button" value="重新统计报告数据" onclick="if (confirm('确定要重新统计报告数据吗？')){ajax_regenerateSummaryReportData('<?=$exam['exam_id']?>');}">
+        <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="10%">第三步：</td>
+        <td width="90%">
+        <?php if ($ctr_status && $paper_status && $cter_status && count($ctr_status)==1) {?>
+            <?if ($cter_status==4){?>
+            <input type="button" value="重新生成报告" onclick="fnShowDialog('id_regeneratereport_dlg');">
+            <?php }?>
+            <input type="button" value="移除生成报告任务" onclick="fnShowDialog('id_removecrontaskreport_dlg');">
+        <?php }?>
+        </td>
+      </tr>
+       <tr>
+         <td width="5%">期次状态：</td>
+         <td width="95%">
+            <?if ($paper_status){?>
+                <?if (!$cter_status){?>
+                <p>1.考生记录已经生成，需计算更新考试成绩。</p><br/>
+                <?}else if ($cter_status > 0){?>
+                <p>1.考生记录已经生成。</p><br/>
+                <p>2.考试成绩已经生成。</p><br/>
+                <?}?>
+                <?if ($cter_status ==1){?>
+                    <p>3.考生成绩已生成，需统计试卷、地区及学生数据。</p><br/>
+                <?}?>
+                <?if ($cter_status== 2){?>
+                    <p>3.试卷统计数据已生成，需统计地区及学生数据</p><br/>
+                <?}?>
+                <?if ($cter_status==3){?>
+                    <p>3.试卷、地区统计数据已生成，需统计学生数据</p><br/>
+                <?}?>
+                <?if ($cter_status==4){?>
+                    <p>3.试卷，地区及学生统计数据已生成，需生成html页面</p><br/>
+                <?}?>
+                <?if ($cter_status==4  && count($ctr_status)==1 && $ctr_status[0]==1){?>
+                     <p>4.html已生成，需生成pdf页面</p><br/>
+                <?}?>
+                 <?if ($cter_status==4 && count($ctr_status)==1 && $ctr_status[0]==2){?>
+                     <p>4.html，pdf已生成。期次报告已经完成</p>
+                <?}?>
+            <?}else{?>
+                <p>1.考生考试记录未完全生成。</p><br/>
+            <?}?>
+                   
+         </td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="10%">流程说明：</td>
+        <td width="90%" colspan="2">
+        <p>第一步：如果不是机考考试，则需要将期次下考生的考试记录预先生成（生成条件为考试开始前一天到考试结束），待考试记录生成后，才能成功同步或导入计算学生成绩，否则无法导入或同步计算学生考试成绩。</p>
+        <p>第二步：待生成成绩生成完成之后会自动计算报告统计数据，如需要重新统计报告数据，则执行重新统计数据命令即可。</p>
+        <p>第三步：在评估规则列表执行生成报告选择对应模板后，评估规则已进入生成报告状态，若需要修改评估规则信息或重新生成某个评估规则报告，则执行对应命令指定需要操作的评估规则即可。</p>
+        </td>
+      </tr>
+      </tr>
+    </table>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2">PHP/SHELL命令均配置在服务器cron服务中（/etc/crontab），周一至周五的08-18点每隔2分钟执行一次命令。</td>
+      </tr>
+      <tr>
+        <td width="5%">第一步：</td>
+        <td width="95%">
+        <p>执行生成学生考试记录：php html/cron/index.php cron exam_place_student_paper init_distribution_paper（数据表：rd_cron_task_place_student_paper）</p>
+        <p>执行生成学生考试成绩：php html/cron/index.php cron exam_result get_exam_student_result（数据表：rd_cron_task_exam_result）</p>
+        <p>执行计算导入学生成绩：php html/cron/index.php cron cal_import_result calculate（数据表：tmp_table9700）</p>
+        <p>执行同步阅卷系统成绩：php html/cron/index.php cron synczmossexamresult sync（数据表：t_exam_relate, t_exam_relate_question）</p>
+        </td>
+      </tr>
+      <tr>
+        <td width="5%">第二步：</td>
+        <td width="95%">
+        <p>执行统计试卷考试信息：php html/cron/index.php cron summary summary_paper（数据表：rd_summary_paper_difficulty/group_type/knowledge/method_tactic/question）</p>
+        <p>执行统计地区考试信息：php html/cron/index.php cron summary summary_region（数据表：rd_summary_region_difficulty/group_type/knowledge/method_tactic/question/student_rank/subject）</p>
+        <p>执行统计学生考试信息：php html/cron/index.php cron summary summary_student（数据表：rd_summary_student_difficulty/group_type/knowledge/method_tactic/subject_method_tactic）</p>
+        </td>
+      </tr>
+      <tr>
+        <td width="5%">第三步：</td>
+        <td width="95%">
+        <p>执行生成HTML记录：php html/cron/index.php cron evaluate_rule general_html_record（数据表：rd_cron_task_report, rd_convert2pdf）</p>
+        <p>执行生成HTML报告：php html/cron/index.php cron evaluate_rule general_html2（数据表：rd_convert2pdf）</p>
+        <p>执行生成HTML报告：php html/cron/index.php cron evaluate_rule general_html3（数据表：rd_convert2pdf）</p>
+        <p>&nbsp;</p>
+        <p>开启PDF服务：/home/zeming/work/ZMServ/bin/ZRServ.sh</p>
+        <p>检查PDF生成情况：/home/zeming/work/cron_cpp_task/bin/cron_checkandzip --check（数据表：rd_cron_task_report, rd_evaluate_student_stat）</p>
+        <p>执行PDF压缩成ZIP：/home/zeming/work/cron_cpp_task/bin/cron_checkandzip --zip（数据表：rd_cron_task_report）</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<?php if ($evaluerulelist) {?>
+<div id="id_removecrontaskreport_dlg" style="display:none">
+    <div class="cls_title">移除生成报告任务</div>
+    <form>
+    <div class="space" style="margin:5px; width:500px;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <?php foreach ($evaluerulelist as $rule_id => $rule) {?>
+        <tr>
+            <td><input type="checkbox" name="rule_id" id="rule_id_<?=$rule_id?>" value="<?=$rule_id?>"/><label for="rule_id_<?=$rule_id?>"><?=$rule['name']?></label></td>
+        </tr>  
+        <?php }?>
+        </table>
+    </div>
+    </form>
+    <div class="cls_dialog_buttons">
+    <button type="submit" onclick="fnRemoveCronTaskReport();">确定</button>
+    <button type="button" onclick="fnCloseDialog('id_removecrontaskreport_dlg')">取消</button>
+    </div>
+</div>
+
+<div id="id_regeneratereport_dlg" style="display:none">
+    <div class="cls_title">重新生成报告</div>
+    <form>
+    <div class="space" style="margin:5px; width:500px;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <?php foreach ($evaluerulelist as $rule_id => $rule) {?>
+        <tr>
+            <td><input type="checkbox" name="rule_id" id="rule_id<?=$rule_id?>" value="<?=$rule_id?>"/><label for="rule_id<?=$rule_id?>"><?=$rule['name']?></label></td>
+        </tr>  
+        <?php }?>
+        </table>
+    </div>
+    </form>
+    <div class="cls_dialog_buttons">
+    <button type="submit" onclick="fnRegenerateReport();">确定</button>
+    <button type="button" onclick="fnCloseDialog('id_regeneratereport_dlg')">取消</button>
+    </div>
+</div>
+<?php }?>
+
+<?php $this->load->view('common/footer');?>

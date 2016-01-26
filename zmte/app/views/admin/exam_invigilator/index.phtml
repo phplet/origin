@@ -1,0 +1,307 @@
+<?php echo $this->load->view('common/header');?>
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('id[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            var notice = '';
+            if (op == 'remove') {
+              notice = '移除之后无法再恢复，';
+            }
+            if (confirm(notice + '您确定要执行该操作么？')) {
+                var action = $('#batch_op').find('option[value='+op+']').attr('op');
+
+                form.action = action;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+$(document).ready(function(){
+    set_batch_option();
+    $('.ques_title').find('div').dblclick(function(){
+        $(this).toggleClass('line_18');
+    });
+    $('#batch_op').change(function(){
+        set_batch_option();
+    });
+});
+
+function set_batch_option() {
+    var op = $('#batch_op').val();
+    if (op == 'relate') {
+        $('#batch_extend').show();
+    } else {
+        $('#batch_extend').hide();
+    }
+}
+
+</script>
+
+<?php 
+  $current_module_url = site_url('admin/exam_invigilator');
+  $is_trash = isset($search['trash']) && $search['trash'] == 1;
+  
+  $order = $search['order'];
+  if ($search['order_type'] == 'asc') {
+	$order_type_url = $order_url . '&order_type=desc&order=' . $order;
+	$order_type_str = '&nbsp;↑&nbsp;';
+  } else {
+	$order_type_url = $order_url . '&order_type=asc&order=' . $order;
+	$order_type_str = '&nbsp;↓&nbsp;';
+  }
+?>
+
+<?php $this->load->view('recycle/recycle.phtml');?>
+<div id="body">
+  <form name="frm_invigilator_list" action="<?php echo $current_module_url . '/index/';?>" method="POST" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+      	<?php if ($priv_manage) {?><a class="menu" href="<?php echo $current_module_url . '/add/?place_id=' . $search['place_id'];?>">新增监考人员</a><?php } ?>
+      	<?php $has_assigned = isset($search['has_assigned']) && $search['has_assigned'];?>
+      	
+      	 <?php if ($has_assigned) {?>
+	      	已分配监考人员列表
+       	 [<a href="<?php echo $current_module_url . '/index/?place_id=' . $search['place_id'] . '&has_assigned=0';?>" <?php echo !$is_trash ? 'style="color:red;"' : '';?>>可分配</a>]
+      	 <?php } else { ?>
+	      	可分配监考人员列表
+      	 [<a href="<?php echo $current_module_url . '/index/?place_id=' . $search['place_id'] . '&has_assigned=1';?>" <?php echo !$is_trash ? 'style="color:red;"' : '';?>>已分配</a>]
+      	 <?php }?>
+      	 [<a href="<?php echo $current_module_url . '/index?trash=1&place_id=' . $search['place_id'];?>" <?php echo $is_trash ? 'style="color:red;"' : '';?>>回收站</a>]
+      </div>  
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+           <tr>
+		        <td colspan="10" class="altbg2" style="text-align: center;">
+		          当前考试：<a href="<?=site_url('admin/exam_place/index/'.$place['exam_id'])?>"><?=$place['exam_name']?></a>
+		          --->
+		          场次：<?=$place['place_name']?>
+		    --->考试地点：<?=$place['address']?>
+		        </td>
+      	  </tr>
+          <tr class="altbg1">
+            <th width="10%"></th>
+            <th><a href="<?php echo $order == 'email' ? $order_type_url : $order_url . '&order_type=asc&order=email';?>">邮箱帐号<?php echo $order == 'email' ? $order_type_str : '';?></a></th>
+            <th width="10%"><a href="<?php echo $order == 'name' ? $order_type_url : $order_url . '&order_type=asc&order=name';?>">姓名<?php echo $order == 'name' ? $order_type_str : '';?></a></th>
+            <th width="15%"><a href="<?php echo $order == 'memo' ? $order_type_url : $order_url . '&order_type=asc&order=memo';?>">所在单位<?php echo $order == 'memo' ? $order_type_str : '';?></a></th>
+            <th width="10%"><a href="<?php echo $order == 'time' ? $order_type_url : $order_url . '&order_type=asc&order=time';?>">创建时间<?php echo $order == 'time' ? $order_type_str : '';?></a></th>
+            <th width="5%">状态</th>
+            <th width="20%">操作</th>
+          </tr>
+          <?php if (!count($list)) {?>
+          <tr>  
+              <td colspan="7" align="center">暂无记录.</td>
+          </tr>
+          <?php } else { ?>
+          <?php
+          foreach ($list as $k => $item) {
+                $email = $item['invigilator_email'];
+                $name = $item['invigilator_name'];
+                $memo = $item['invigilator_memo'];
+                $flag = $item['invigilator_flag'];
+                $ctime = $item['invigilator_addtime'];
+                $id = $item['invigilator_id'];
+          ?>
+          <tr>
+          	<?php if (!$has_assigned) {?>
+            <td><input type="checkbox" name="id[]" value="<?php echo $id;?>"></td>
+            <?php } else {?>
+            <td><img src="<?php echo __HTML_URL__;?>images/yes.gif">已分配</td>
+            <?php }?>
+            <td><?php echo $email; ?></td>
+            <td><?php echo $name; ?></td> 
+            <td><?php echo $memo; ?></td> 
+            <td><?php echo date('Y-m-d H:i:s', $ctime); ?></td> 
+            <td>
+                <?php if ($flag === '0') {?>
+                <img src="<?php echo __HTML_URL__;?>images/no.gif" title="已禁用">
+                <?php } elseif ($flag === '1') {?>
+                <img src="<?php echo __HTML_URL__;?>images/yes.gif" title="已启用">
+                <?php } else {?>
+                <font color="red">已删除</font>
+                <?php }?>
+            </td> 
+            <td>
+                <?php if ($priv_manage) {?>
+                <a href="<?php echo $current_module_url . '/edit/' . $id . '?place_id=' . $search['place_id'];?>">编辑</a> | 
+                <a href="###" i_name="<?php echo $name;?>" class="reset_password" rel="<?php echo $id;?>">重置密码</a> |  
+
+                <?php if ($flag == '0') {?>
+
+                <?php /*?><a href="<?php echo $current_module_url . '/do_action/?act=0&id=' . $id;?>" onclick="return confirm('确定要解除该 监考人员 帐号吗？');">启用</a> |<?php */?> 
+                <a href="<?php echo $current_module_url . '/do_action/?act=2&id=' . $id .'&place_id=' . $search['place_id'];?>" onclick="return confirm('该操作会导致记录被丢进回收站(可在回收站中还原), 是否继续？');">回收站</a> 
+
+                <?php } elseif($flag == '1') { ?>
+				<?php if (!$has_assigned) {?>
+				<?php $remove_id = $id;?>
+		          <a class="a_delete" rel="<?php echo $remove_id;?>" id="a_delete_<?php echo $remove_id;?>" href="###">删除</a>
+		          <div class="delete_box display_none" id="delete_box_<?php echo $remove_id;?>">
+		        			<textarea title="请输入 删除原因" placeholder="请输入 删除原因" name="note" id="txt_reason_<?php echo $remove_id;?>"></textarea>
+		        			<input type="button" value="保存" class="btn btn_submit_delete" delete_id="<?php echo $remove_id;?>" post_url="<?php echo $current_module_url . '/do_action/?act=2&id=' . $id . '&place_id=' . $search['place_id'];?>" rel="<?php echo $remove_id;?>" id="btn_submit_<?php echo $remove_id;?>" style="margin-top:4px;"/>
+		        			<input type="button" rel="<?php echo $remove_id;?>" id="btn_cancle_<?php echo $remove_id;?>" value="取消" class="btn btn_cancle_delete" />
+				  </div> 
+				  <?php } ?>
+                <?php } else {?>
+                <a href="<?php echo $current_module_url . '/do_action/?act=3&id=' . $id . '&place_id=' . $search['place_id'];?>" onclick="return confirm('确定要还原该 监考人员的帐号吗？');">还原</a>                 
+                <?php } ?>
+                <?php }?>
+            </td>
+          </tr>
+          <?php if($is_trash) {?>
+	      <?php $recycles = $item['recycle'];?>
+	      <?php if (count($recycles)) {?>
+	      <tr>
+	      	  <td colspan="8">
+	      	  		<strong>删除原因:</strong>
+	      	  		<ul class="recycle">
+	      	  			<?php foreach ($recycles as $k=>$recycle) {?>
+	      	  			<li><?php echo $k+1;?>、<?php echo $recycle['reason'] . '  <font color="red">' . $recycle['ctime'] . '</font>';?></li>
+	      	  			<?php }?>
+	      	  		</ul>
+	      	  </td>
+	      </tr>
+	      <?php }?>
+          <?php } ?>
+          <?php }?>
+          <tr class="altbg1">
+            <td colspan="2">
+              <?php if ($priv_manage) {?>
+              <button type="button" class="btn2" onclick="checkbox_checked('id[]');">全选</button>
+              <?php if($is_trash):?>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <option value="restore" op="<?=site_url('admin/exam_invigilator/do_action?act=3')?>">批量还原</option>
+               <option value="remove" op="<?=site_url('admin/exam_invigilator/batch_delete')?>">批量移除</option>
+              </select>
+              <?php else:?>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <?php /*?>
+               <option value="do" op="<?=site_url('admin/exam_invigilator/do_action?act=0')?>">批量启用</option>
+               <option value="undo" op="<?=site_url('admin/exam_invigilator/do_action?act=1')?>">批量禁用</option>
+               <?php */?>
+               <?php if ($search['place_id'] > 0) {?>
+               <option value="add" op="<?=site_url('admin/place_invigilator/insert')?>">批量添加到考场</option>
+               <?php } ?>
+               <!--<option value="delete" op="<?=site_url('admin/exam_invigilator/do_action?act=2')?>">批量删除</option>-->
+              </select>
+              <?php endif;?>
+              <?php } ?>
+            </td>
+            <td colspan="5" style="text-align:right"><?=$pagination?></td>
+          </tr> 
+          <?php  } ?>
+        </tbody>
+      </table>
+      <center>
+      	  <input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />
+      	  <?php if ($search['place_id'] > 0) {?>
+      	  <input type="button" value=" 返回到考场监考人员列表 " class="btn" onclick="window.location.href='<?php echo site_url('admin/place_invigilator/index/' . $search['place_id']);?>'" />
+      	  <?php }?>
+      </center>
+    </div>
+    <input type="hidden" name="place_id" value="<?php echo $search['place_id'];?>"/>
+  </form>
+
+   <form method="get" name="search_form" action="<?php echo $current_module_url . '/index/'?>">
+    <!--<input type="hidden" name="trash" value="<?php echo isset($search['trash']) ? $search['trash'] : '0';?>"/>-->
+    <input type="hidden" name="place_id" value="<?php echo isset($search['place_id']) ? $search['place_id'] : '';?>"/>
+    <input type="hidden" name="has_assigned" value="<?=$has_assigned?>"/>  
+    <div class="space">
+        <div class="subtitle">搜索监考人员信息</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">电子邮箱</td>
+                <td>
+                  <input type="text" class="" name="email" value="<?php echo isset($search['email']) ? $search['email'] : '';?>" placeholder="请输入 电子邮箱"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">关键字(姓名)</td>
+                <td>
+                  <input type="text" name="name" value="<?php echo isset($search['name']) ? $search['name'] : '';?>" placeholder="请输入 姓名"/>
+                </td>
+            </tr>
+            <?php /*?>
+            <tr>
+                <td class="altbg1">创建时间</td>
+                <td>
+                    <input type="text" id="begin_time" name="begin_time" class="txtbox4" value="<?php echo isset($search['begin_time']) ? $search['begin_time'] : '';?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"> - 
+                    <input type="text" id="end_time" name="end_time" class="txtbox4" value="<?php echo isset($search['end_time']) ? $search['end_time'] : '';?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});">
+                </td>
+            </tr>
+            <?php */?>
+            <?php /*if (!$is_trash) {?>
+            <tr>
+                <td class="altbg1">状态</td>
+                <td>
+                  <?php 
+                      $flags = array(
+                                      //'-1'  => '已删除', 
+                                      '0'   => '禁用',
+                                      '1'   => '启用',
+                                    );
+
+                      $search_flag = isset($search['flag']) ? $search['flag'] : array();
+
+                  ?>
+                  <?php foreach($flags as $k=>$v):?>
+                  <input type="checkbox" name="flag[]" value="<?php echo $k; ?>" id="<?php echo 'flag_' . ($k+1); ?>" <?php if(in_array($k, $search_flag)) echo ' checked';?>/> <label for="<?php echo 'flag_' . ($k+1); ?>"><?php echo $v;?></label>
+                  <?php endforeach;?> 
+                </td>
+            </tr>      
+            <?php }*/ ?>               
+        </table>
+        <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <?php if ($is_trash) {?>
+            <input type="button" value=" 返回列表页 " class="btn" onclick="window.location.href='<?php echo $current_module_url . '/index';?>'"/>
+            <?php } ?>
+        </center>
+    </div>
+  </form>
+
+</div>
+<?php static_global('js/datepicker/wdatepicker.js');?>
+<script type="text/javascript">
+  $(document).ready(function () {
+      //获取学校回调
+      var select_school_callback = function(school_id, school_name) {
+          $('#select_school_id').val(school_id);
+          $('#select_school').val(school_name);
+
+          if ($('#select_school_box').length) {
+              $('#select_school_box').fadeOut();
+          }
+      };
+
+      window.select_school_callback = select_school_callback;
+
+      //重置密码
+      $('a.reset_password').unbind('click').bind('click', function () {
+            var uid = $(this).attr('rel'),
+            	uname = $(this).attr('i_name');
+			new $.Zebra_Dialog('', {
+			    'source':  {'ajax': '<?php echo $current_module_url . '/load_reset_password/';?>' + uid},
+			    'type':     '',
+			    width: 890,
+			    'title': '修改 监考老师 (<font color="red" style="font-size:16px;">' + uname + '</font>) 的密码'
+			});
+			
+			setTimeout(function () {
+				$('div.ZebraDialog_Buttons').hide();
+			}, 500);
+	});
+    	
+	window.close_dialog = function () {$('.ZebraDialog_Button_0').click();}
+});
+</script>
+<?php echo $this->load->view('common/footer');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>

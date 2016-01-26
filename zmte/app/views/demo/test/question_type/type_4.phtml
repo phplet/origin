@@ -1,0 +1,147 @@
+<?php
+/**
+ * 试题模板（完形填空）
+ */
+?>
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+<div class="cls_danxuan" id="question_change_box_<?php echo $etp_id; ?>">
+    <div class="cls_pagetitle"  <?php echo $is_single ? 'style="display: none;margin:0;"' : '';?>>五、完形填空, 每小题<font id="q_score_<?php echo $etp_id;?>_0">--</font>分，共<?php echo count($question_list);?>题）</div>
+    <div class="cls_question_list question_box">
+<?php } ?>
+
+		<?php $global_auto_key = 0; ?>
+    	<?php foreach ($question_list as $question) {?>
+    	<?php
+    		$sub_index = 1;
+    		$auto_key = auto_count();
+    		$question_id = $question['ques_id'];
+    		$title = nl2br($question['title']);
+//     		$title = str_ireplace('<br/>', '<p></p>', $title);
+    		$picture = $question['picture'];
+		?>
+		<div class="cls_question_item undo fl" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>">
+			<div class="h4 cls_ques_question">第 <font id="q_index_<?php echo $etp_id;?>_<?php echo $question_id;?>"><?php echo $auto_key;?></font> 题 、 [<?php echo $qtype_name;?>]</div>
+			<div class="cls_ques_answer">
+			    <div class="cls_eg_cloze word_wrap fs15">
+				<?php echo $title;?>
+				<?php if($picture):?>
+			    	<br/>
+			        <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+		        <?php endif;?>
+		        </div>
+			</div>
+
+			<div class="cls_eg_cloze_right cls_margin_left_5 word_wrap">
+
+	    	<?php
+
+
+
+				foreach($question['children'] as $sub_question) {
+					$global_auto_key++;
+				    $sub_question_type = $sub_question['type'];
+				    $answer = $sub_question['answer'];
+				    $sub_ques_id = $sub_question['ques_id'];
+				    $sub_etr_id = $sub_question['etr_id'];
+				    $picture = $sub_question['picture'];
+				    $sub_title = nl2br($sub_question['title']);
+
+
+			?>
+			<?php if ($sub_question_type == '3') {?>
+			<!-- 填空 -->
+			<?php
+				$answer1 = isset($sub_question['answer']) ? $sub_question['answer'] : $sub_question['answer'];
+
+			$input = "&nbsp;<input type='text' ques_id='{$sub_ques_id}' name='answer_{$sub_ques_id}[]' class='input_answer sub_undo type_3' />";
+
+
+
+			$sub_title1 =array();
+			$sub_title1 = explode($input,$sub_question['title']);
+			$length =count($sub_title1);
+			$s_title='';
+			$i=0;
+			foreach ($sub_title1 as $key =>$val)
+			{
+			    $i++;
+			    if($i<$length)
+			        $s_title.=$val."&nbsp;<input type='text' p_ques_id='{$sub_ques_id}' name='answer_{$sub_ques_id}[]' class='input_answer sub_undo type_3'  value='$answer1[$key]'  g_k='" . $global_auto_key . "'/>";
+			    else
+			        $s_title.=$val;
+			}
+
+			$sub_title1 = nl2br($s_title);
+			?>
+
+	<!--
+			<?php $sub_title = str_ireplace("type_3'", "type_0_3' p_ques_id='" . $question_id . "' g_k='" . $global_auto_key . "'", $sub_title);?>
+			<?php $sub_title = str_ireplace('<br/>', '<p></p>', $sub_title);?>
+			  -->
+
+			<div class="cls_tiankong  question_item padding_s c_undo" etr_id="<?php echo $sub_etr_id;?>" p_id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="type_0_3_<?php echo $question_id;?>_<?php echo $global_auto_key;?>">
+
+
+			    <div class="h4 cls_ques_question cls_ques_answer "> 第 <?php echo $sub_index++;?> 题 <?php echo $sub_title1;?></div>
+
+			    <ul class="cls_ques_answer">
+			    	<?php if($picture):?>
+			    	<li>
+				        <br/>
+				        <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+			        </li>
+			        <?php endif;?>
+			    </ul>
+			</div>
+			<?php } else {?>
+
+			<!-- 单选/不定项 -->
+			<div class="question_item padding_s c_undo" p_id="question_item_<?php echo $etp_id; ?>_<?php echo $question_id;?>" id="type_0_<?php echo $sub_question_type;?>_<?php echo $question_id;?>_<?php echo $global_auto_key;?>">
+			    <div class="h4 cls_ques_question "> 第 <?php echo $sub_index++;?> 题 <?php echo $sub_title;?></div>
+			    <ul class="cls_ques_answer">
+			    	<?php if($picture):?>
+			    	<li>
+				        <br/>
+				        <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$picture?>" /></div>
+			        </li>
+			        <?php endif;?>
+
+			        <?php 	$opt_auto_key = 0;?>
+			    	<?php 	foreach($sub_question['options'] as $k => $opt):?>
+			        <?php 	$opt_auto_key++;?>
+				    <?php 	$option_id = $opt['option_id'];?>
+				    <?php 	$option_name = $opt['option_name'];?>
+					<li class="q_option">
+						<?php if ($sub_question_type == 1) { //单选?>
+
+						<input type="radio" name="answer_<?php echo $sub_ques_id;?>" g_k="<?php echo $global_auto_key;?>" p_ques_id="<?php echo $question_id;?>" ques_id="<?php echo $sub_ques_id;?>" class="type_0_1" <?php echo $answer == $option_id ? 'checked="checked"' : '';?> etr_id="<?php echo $sub_etr_id;?>" value="<?php echo $option_id;?>" id="q_option_<?php echo $option_id;?>"/>
+
+						<label for="q_option_<?php echo $option_id;?>"><?php echo format_numeric_to_letter($opt_auto_key);?>.<?=$option_name?></label>
+
+						<?php } elseif ($sub_question_type == 2) {//不定项?>
+						<?php $tmp_answer = $answer == '' ? array() : explode(',', $answer);?>
+						<input type="checkbox" name="answer_<?php echo $sub_ques_id;?>[]" g_k="<?php echo $global_auto_key;?>" p_ques_id="<?php echo $question_id;?>" ques_id="<?php echo $sub_ques_id;?>" class="type_0_2" <?php echo in_array($option_id, $tmp_answer) ? 'checked="checked"' : '';?> etr_id="<?php echo $sub_etr_id;?>" value="<?php echo $option_id;?>" id="q_option_<?php echo $option_id;?>"/>
+						<label for="q_option_<?php echo $option_id;?>"><?php echo format_numeric_to_letter($opt_auto_key);?>.<?=$option_name?></label>
+
+						<?php } else { //填空?>
+						<?=$option_name?>
+						<?php }?>
+				    	<?php if($opt['picture']):?><img src="<?=__IMG_ROOT_URL__?><?=$opt['picture']?>"/><?php endif;?>
+					</li>
+					<?php endforeach;?>
+			    </ul>
+			</div>
+			<hr/>
+			<?php } ?>
+			<?php } ?>
+
+			</div>
+
+			<div class="cls_question_tip fl tip_width"><input type="checkbox" question_index="question_index_<?php echo $etp_id; ?>_<?php echo $question_id;?>"  class="question_mark" id="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>"><label for="question_mark_<?php echo $etp_id; ?>_<?php echo $question_id;?>">标记本题<em>（一般用于模棱两可的题） </em></label></div>
+		</div>
+		<?php } ?>
+
+<?php if (!$is_single || ($is_single && $is_first)) {?>
+    </div>
+</div>
+<?php } ?>

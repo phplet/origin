@@ -1,0 +1,37 @@
+<!-- 面试结果 -->
+<h3><?php echo $GLOBALS['counter']++; ?>.面试结果</h3>
+<table class="pingyu">
+    <tr>
+        <th>评分项</td>
+        <th>总分</th>
+        <th>得分</td>
+        <th>平均得分</td>
+    </tr>
+    <?php 
+        $auto_key = 0;
+        $sum_total = 0;
+        $sum_scroe = 0;
+        $sum_avg = 0;
+    ?>
+    <?php foreach ($grade as $key => $item) {?>
+        <?php 
+            $auto_key++;
+            $sum_total += $options[$key + 1 ]['score'];
+            $sum_scroe += $item['scroe'];
+            $sum_avg += $avg_index[$item['option_index']];
+        ?>
+        <tr class="<?php echo $auto_key%2==0 ? 'bgcy' : 'bgcg';?>">
+            <td><?php echo $item['option_index'] . '.' . $options[$key + 1]['title']; ?></td>
+            <td><?php echo $options[$key + 1]['score']; ?></td>
+            <td><?php echo $item['scroe']; ?></td>
+            <td><?php echo $avg_index[$item['option_index']]; ?></td>
+        </tr>
+    <?php } ?>
+    <tr>
+        <td>总计</td>
+        <td><?php echo $sum_total; ?></td>
+        <td><?php echo $sum_scroe; ?></td>
+        <td><?php echo $sum_avg; ?></td>
+    </tr>
+</table>
+<!-- end 面试结果 -->

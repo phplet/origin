@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+	<script src="http://static.qianduanblog.com/js/jquery.ua/latest.js?20131223"></script>
+
+</head>
+<body>
+
+
+</body><script>
+	alert($.ua().isIe);
+	$("#button-1-1").click(function() {
+		var o = $.ua().ua;
+		alert(o);
+	});
+
+	$("#button-2-1").click(function() {
+		var o = $.ua("string").ua;
+		alert(o);
+	});
+
+	$("#button-3-1").click(function() {
+		var o = $.ua().platform;
+		var s = "";
+		for (var i in o) {
+			s += String(i) + "=" + String(o[i]) + "\n";
+		}
+		alert(s);
+	});
+
+	$("#button-4-1").click(function() {
+		var o = $.ua().browser;
+		var s = '';
+		for (var i in o) {
+			s += String(i) + "=" + String(o[i]) + "\n";
+		}
+		alert(s);
+	});
+
+	$("#button-5-1").click(function() {
+		var o = $.ua().engine;
+		var s = '';
+		for (var i in o) {
+			s += String(i) + "=" + String(o[i]) + "\n";
+		}
+		alert(s);
+	});
+
+	$("#button-6-5").click(function() {
+		var s = $.ua().isWebkit;
+		alert((s ? "��" : "����") + "�� webkit ��");
+	});
+
+	$("#button-6-6").click(function() {
+		var s = $.ua().isGecko;
+		alert((s ? "��" : "����") + "�� gecko ��");
+	});
+
+	$("#button-6-7").click(function() {
+		var s = $.ua().isTrident;
+		alert((s ? "��" : "����") + "�� trident ��");
+	});
+
+	$("#button-6-1").click(function() {
+		var s = $.ua().isChrome;
+		alert((s ? "��" : "����") + "ԭ��chrome�����");
+	});
+
+	$("#button-6-2").click(function() {
+		var s = $.ua().is360ee;
+		alert((s ? "��" : "����") + "360���������chrome�ں�");
+	});
+
+	$("#button-6-3").click(function() {
+		var s = $.ua().is360se;
+		alert((s ? "��" : "����") + "360��ȫ�����chrome�ں�");
+	});
+
+	$("#button-6-4").click(function() {
+		var s = $.ua().isLiebao;
+		alert((s ? "��" : "����") + "�Ա������chrome�ں�");
+	});
+
+	$("#button-6-8").click(function() {
+		var s = $.ua().isSougou;
+		alert((s ? "��" : "����") + "�ѹ������chrome�ں�");
+	});
+
+	$("#button-7-1").click(function() {
+		var s = $.ua().isIe;
+		alert((s ? "��" : "����") + "ie�����");
+	});
+
+	$("#button-7-2").click(function() {
+		var s = $.ua().ie;
+		alert("ie������汾Ϊ" + s);
+	});
+
+	$("#button-8-1").click(function() {
+		var s = $.ua().isFirefox;
+		alert((s ? "��" : "����") + "firefox�����");
+	});
+
+	$("#button-9-1").click(function() {
+		var s = $.ua().isMobile;
+		alert((s ? "��" : "����") + "�ƶ������");
+	});
+
+	$("#button-9-2").click(function() {
+		var s = $.ua().isTablet;
+		alert((s ? "��" : "����") + "ƽ�������");
+	});
+
+	$("#button-9-3").click(function() {
+		var s = $.ua().isDesktop;
+		alert((s ? "��" : "����") + "���������");
+	});
+	</script>
+
+</html>

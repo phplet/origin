@@ -1,0 +1,16 @@
+<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+<ul class="cls_row indent_25" style="font-size: 14px">
+    <li>参加考试的总体人数：<span><?php echo isset($ss_summary['total']) ? $ss_summary['total'] : '0';?>人</span></li>
+    <?php if (count($ss_summary['summary'])) {?>
+        <?php foreach ($ss_summary['summary'] as $k=>$v) {?>
+            <li><?php echo $k;?>：<span><?php echo $v;?>人</span></li>
+        <?php } ?>
+    <?php } ?>
+    <?php if (isset($ss_summary['win_percent'])) {?>
+        <?php if (!$ss_summary['is_last_rank']) {?>
+            <li><?if ($ss_summary['win_percent'] >= 60) {?>恭喜<?php } else {?>加油<?php }?>，你的测试成绩比<strong><?php echo isset($ss_summary['win_percent']) ? $ss_summary['win_percent'] : 0;?>%</strong>参加测试的学生更出色！<?php echo str_repeat("★", $ss_summary['level']);?></li>
+        <?php } else {?>
+            <li>加油，你的测试成绩比<strong>0%</strong>参加测试的学生更出色！请再接再厉！</li>
+        <?php }?>
+    <?php } ?>
+</ul>

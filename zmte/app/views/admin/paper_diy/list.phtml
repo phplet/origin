@@ -1,0 +1,131 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<?php static_global(array('js/datepicker/wdatepicker.js','js/jquery/plugin/blockUi.js'));?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+ <form name="frm_list" action="<?=site_url('admin/paper_diy/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+    <div class="space">
+        <div class="subtitle">
+            <span>手工组卷 - 试卷列表</span>
+            <a class="menu" href="<?=site_url('admin/paper_diy/add_paper')?>">添加试卷</a>
+            <a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">查询</a>
+              
+        </div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr class="altbg1">
+            <td width="5%">删?</td>
+                <td width="5%">&nbsp;&nbsp;ID</td>
+                <td>试卷名称</td>
+                <td>所属学科</td>
+                <td width="5%">试题数量</td>
+                <td width="10%">组卷时间</td>
+                <td width="10%">组卷人</td>
+                <td width="25%">操作</td>
+            </tr>
+            <?php if (count($papers) > 0): ?>
+                <?php foreach ($papers as $key => $value): ?>
+                    <tr> <td><input type="checkbox" name="ids[]" value="<?=$value['paper_id']?>" /></td>
+                        <td><?php echo $value['paper_id'] ?></td>
+                        
+                        <td><?php echo $value['paper_name'] ?></td>
+                        <td><?php echo $subject_type[$value['subject_id']] ?></td>
+                        <td><?php echo $value['ques_num'] ?></td>
+                        <td><?php echo date('Y-m-d H:i:s', $value['addtime']); ?></td>
+                        <td><?php echo $value['admin_info']['realname'] ?></td>
+                        <td>
+                            <a href="<?php echo site_url('admin/paper_diy/preview_paper/'.$value['paper_id']); ?>" target="_blank">预览</a>
+                            
+<a href="<?php echo site_url('admin/paper_diy/detail/'.$value['paper_id']); ?>" target="_blank">试卷详情</a>
+
+                          <?php if($value['has_tested']){?>
+                                <font style="color:#999;text-decoration:line-through;" title="该试卷正在考试，不能编辑！">编辑</font>
+                                <?php if ($value['is_mini_test']) {?>
+                                <a href="<?php echo site_url('admin/paper_diy/question_manage/'.$value['paper_id']); ?>">试题管理</a>
+                                <?php } else {?>
+                                <font style="color:#999;text-decoration:line-through;" title="该试卷正在考试，不能试题管理！">试题管理</a>
+                                <?php }?>
+                                <font style="color:#999;text-decoration:line-through;" title="该试卷正在考试，不能删除！">删除</font>
+                           <?php }else{?>
+                                <a href="<?php echo site_url('admin/paper_diy/edit_paper/'.$value['paper_id']); ?>">编辑</a>
+                                <a href="<?php echo site_url('admin/paper_diy/question_manage/'.$value['paper_id']); ?>">试题管理</a>
+                                <a href="<?php echo site_url('admin/paper_diy/remove_paper/'.$value['paper_id']); ?>">删除</a>
+                            <?php }?>
+                        </td>
+                    </tr>
+                <?php endforeach ?>    
+               
+            <?php else: ?>
+                <tr>
+                    <td colspan="6" style="text-align:center;">暂无数据！</td>
+                </tr>
+            <?php endif ?>
+            
+             <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="6" style="text-align:right"><?php echo $pagination; ?></td>
+      </tr>
+            <tr>
+                <td colspan="8" style="text-align:center;"><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></td>
+            </tr>
+        </table>
+    </div>
+</form>
+    <!-- ++++++++++++++++++++++++++++++ Search ++++++++++++++++++++++++++++ -->
+    <div id="id_qry_dlg" style="display:none;min-width:500px">
+                <div class="cls_title">搜索试卷</div>
+        <form method="get" name="search_form" class="validate" id="search_form" action="<?=site_url('admin/paper_diy/index')?>">
+            <div class="space" style="margin:5px">
+                <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                 
+                   
+                    <tr>
+                        <td class="altbg1" width="15%">试卷ID</td>
+                        <td>
+                        	<input type="text" value="<?php echo isset($search['paper_id']) ? $search['paper_id'] : '';?>" name="paper_id"/>
+                        	<font color="red">*注：根据试卷ID搜索时，其他条件将失效</font>
+                        </td>
+                    </tr>
+                    
+                     <tr>
+                        <td class="altbg1" width="15%">学科</td>
+                        <td>
+                   <select name="subject_id" id="subject_id" >
+                        <option value="">--请选择--</option>
+                        <?php foreach($subject_type as $key => $val): ?>
+                        <option value="<?=$key?>"
+                            <?=$key==$search['subject_id']?' selected="selected" ':''?>>
+                            <?=$val?>
+                        </option>
+                        <?php endforeach; ?>
+                      </select> 
+                   </td></tr>
+                    <tr>
+                        <td class="altbg1">录入时间</td>
+                        <td>
+                            <input type="text" id="begin_time" name="begin_time" class="txtbox4" value="<?=$search['begin_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});"> -
+                            <input type="text" id="end_time" name="end_time" class="txtbox4" value="<?=$search['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="altbg1">关键字</td>
+                        <td><input type="text" name="keyword" value="<?=$search['keyword']?>" class="txtbox" /></td>
+                    </tr>
+                </table>
+                <center>
+                    <input type="submit" value=" 搜索 " class="btn" />
+                    <input type="button" value="重置 " class="btn" onclick="window.location.href='<?php echo site_url('/admin/paper_diy/index/');?>';"/>
+                </center>
+            </div>
+        </form>
+    </div>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

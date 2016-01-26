@@ -1,0 +1,87 @@
+<?php  if (!empty($clce_learn_style['data'])) {?>
+
+    <?php $count_num = 1; ?>
+       <table class="cls_row cls_table indent_25" id="table_clce_learn_style">
+        <tr>
+	   		<th width="15%">内化环节</th>
+	   		<th width="15%">认知风格</th>
+	   		<th width="70%">术语阐释</th>
+       	</tr>
+       </table>
+	   <?php foreach ($clce_learn_style['data'] as $keys => $item): ?>
+	   <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clce_learn_style"<?php }?>>
+       	<tr <?if ($keys%2 == 1) {?>class="bgc"<?}?>>
+	   		<td width="15%"><?=$item[0]?></td>
+	   		<td width="15%"><?=$item[1]?></td>
+	   		<td width="70%" style="text-align: left;"><?=$item[2]?></td>
+       	</tr>
+       	</table>
+	   <?php endforeach;?>
+
+    <?php if ($clce_learn_style['flash_data']) {?>
+    <div class="cls_row center indent_25" id="flash_container_learn_style"></div>
+    
+    <script type="text/javascript">
+        $(function () {
+            var categories = <?=json_encode($clce_learn_style['flash_data']['fields'][0])?>;
+            var categories2 = <?=json_encode($clce_learn_style['flash_data']['fields'][1])?>;
+            $('#flash_container_learn_style').highcharts({
+            	chart: {
+                    type: 'bar',
+                    height : 400
+                },
+                title: {
+                    text: ''
+                },
+                subtitle: {
+                    text: '学习风格类型得分'
+                },
+                xAxis: [{
+                    categories: categories,
+                    reversed: false
+                }, {
+                    opposite: true,
+                    reversed: false,
+                    categories: categories2,
+                    linkedTo: 0
+                }],
+                yAxis: {
+                    title: {
+                        text: null
+                    },
+                    labels: {
+                        formatter: function(){
+                            return (Math.abs(this.value));
+                        }
+                    },
+                    min: -11,
+                    max: 11,
+                    tickInterval:1
+                },
+        
+                plotOptions: {
+                    series: {
+                        stacking: 'normal'
+                    }
+                },
+                colors: ['#4169E1','#1E90FF'],
+                tooltip: {
+                    formatter: function(){
+                        return '<b>'+ this.point.category +'</b> '+
+                            '得分: '+ Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                    }
+                },
+          	    series: eval("("+'<?=json_encode($clce_learn_style['flash_data']['data']); ?>'+")")
+            });
+        });
+    </script>
+    <?php }?>
+    
+    <?php if ($is_junior_high && $clce_learn_style['data']) {?>
+        <? $index = 1;?>
+        <?php foreach ($clce_learn_style['data'] as $item) {?>
+       	<p class="cls_row indent_25 font14">建议<?=$index?>：<?=$item[3]?></p>
+       	<?php $index++;?>
+        <?php }?>
+    <?php }?>
+<?php } ?>

@@ -1,0 +1,96 @@
+<!-- 面试结果对比柱状图 -->
+<h3><?php echo $GLOBALS['counter']++; ?>.面试结果对比柱状图</h3>
+<div class="center">
+    <div id="container" style="page-break-before:auto"></div>
+</div>
+<!-- end 面试结果对比柱状图 -->
+
+<!-- script -->
+<script type="text/javascript">
+    //全局设置,省得每个都写
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        },
+        credits: {
+            enabled: false  //右下角不显示LOGO
+        },
+        chart: {
+            animation:false //关闭全部动画,使其在pdf中可以渲染到
+        },
+        title:{
+            style:{
+                color:"#333"
+            }
+        },
+        legend:{
+            itemStyle:{
+                color:"#333"
+            }
+        },
+        plotOptions: {
+            series: {
+                animation: false    //关闭全部动画,使其在pdf中可以渲染到
+            }
+        }
+    });
+
+    <?php if (true) {?>
+        $(function(){
+            $('#container').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: '面试结果对比'
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: eval(<?php echo json_encode($option_index); ?>),
+                    labels: {
+                        rotation: -45
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '分数'
+                    }
+                },
+                tooltip: {
+                    enabled: false,
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            color: "#000",
+                            style: {
+                                fontWeight: 'bold'
+                            },
+                            formatter: function() {
+                                return this.y;
+                            }
+                        },
+                    }
+                },
+                series: [
+                {
+                    name: '总分',
+                    data: eval(<?php echo json_encode($total); ?>)
+                },
+                {
+                    name: '得分',
+                    data: eval(<?php echo json_encode($scroes); ?>)
+                }, {
+                    name: '平均',
+                    data: eval(<?php echo json_encode($avg); ?>)
+                }]
+            });
+        })
+    <?php }?>
+</script>

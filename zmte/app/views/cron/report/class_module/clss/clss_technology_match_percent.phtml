@@ -1,0 +1,26 @@
+<?php if (count($clss_technology_match_percent)) {?>
+	<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?>
+	<?php if (!isset($clss_technology_match_percent['contrast_exam_id']) || !$clss_technology_match_percent['contrast_exam_id']) {?>：<span class="cr"><?php echo ($clss_technology_match_percent['percent'] > 100 ? 100 : $clss_technology_match_percent['percent']);?>%</span><?php }?>
+	</h5>
+	<?php $count_num = 1; ?>
+	
+	<?php if ((!isset($clss_technology_match_percent['contrast_exam_id']) || !$clss_technology_match_percent['contrast_exam_id']) 
+	    && isset($clss_technology_match_percent['data'])):?>
+		<?php foreach ($clss_technology_match_percent['data'] as $keys => $item): ?>
+		   	<table class="cls_row indent_25 cls_table <?php if($count_num == 1){ echo 'table_header';} ?>" <?php if($count_num == 1): ?>id="table_clss_match_percent"<?php else: ?><?php if (!$no_paging) {?>ref_title_id="table_clss_match_percent"<?php }?><?php endif; ?>>
+		       	<tr>
+			       	<?php foreach ($item as $key => $val) {?>
+				   		<<?=is_numeric($val) ? 'td' : 'th'?> width="20%" <?php if ($keys == 1 && is_numeric($val) && $val > -1 && $val != $clss_technology_match_percent['data'][3][$key]) {?>style="color:<?=$val > $clss_technology_match_percent['data'][3][$key] ? 'green' : 'red'?>"<?php }?>>
+				   		<?php if (is_numeric($val)) {?>
+				   		<?=$val > -1 ? round($val) : '-'?>
+				   		<?php } else {?>
+				   		<?=$val?>
+				   		<?php }?>
+				   		</<?=is_numeric($val) ? 'td' : 'th'?>>
+				   	<?php }?>	           
+		       	</tr>
+		    </table>
+		    <?php $count_num++; ?>
+		<?php endforeach;?>
+	<?php endif;?>
+<?php } ?>

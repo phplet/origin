@@ -1,0 +1,119 @@
+<?php 
+$this->load->view('common/header');?>
+<script type="text/javascript">
+$(function(){
+	change_grade();
+});
+
+function change_grade()
+{
+	var exam_data = <?php echo json_encode($exam)?>;
+    var grade_id = $('#grade_id').val();
+    var exam_id = <?php echo isset($config['dec_exam_pid']) ? $config['dec_exam_pid'] : 0;?>;
+    
+    var html = '<option value="0">--请选择考试期次--</option>';
+    for(var i = 0; i < exam_data.length; i++)
+    {
+        if (grade_id > 0)
+        {
+        	if (exam_data[i]['grade_id'] == grade_id)
+            {
+                if (exam_data[i]['exam_id'] == exam_id)
+                {
+                	html += '<option value="' + exam_data[i]['exam_id'] + '" selected>' + exam_data[i]['exam_name'] + '</option>';
+                }
+                else
+                {
+                	html += '<option value="' + exam_data[i]['exam_id'] + '">' + exam_data[i]['exam_name'] + '</option>';
+                }
+            }
+        }
+        else
+        {
+        	html += '<option value="' + exam_data[i]['exam_id'] + '">' + exam_data[i]['exam_name'] + '</option>';
+        }
+    }
+    
+    $('#exam_pid').html(html);
+}
+
+function formValidate()
+{
+    var do_submit = true;
+    if (!$('#dec_name').val())
+    {
+        $('#dec_name').next().css('color','red').html('*请输入名称');
+        do_submit = false;
+    }
+    else
+    {
+    	$('#dec_name').next().html('');
+    }
+    
+    if ($('#grade_id').val() < 1)
+    {
+        $('#grade_id').next().css('color','red').html('*请选择年级');
+        do_submit = false;
+    }
+    else
+    {
+    	$('#grade_id').next().html('');
+    }
+
+    if ($('#exam_pid').val() < 1)
+    {
+        $('#exam_pid').next().css('color','red').html('*请选择考试期次');
+        do_submit = false;
+    }
+    else
+    {
+    	$('#exam_pid').next().html('');
+    }
+
+    return do_submit;
+}
+</script>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/demo_config/save_config')?>" onsubmit="return formValidate();">
+  <input type="hidden" name="dec_id" value="<?=isset($config['dec_id']) ? $config['dec_id'] : ''?>" />
+  <div class="space">
+    <div class="subtitle"><?php if (empty($config['dec_id'])) {?>新增<?php } else {?>编辑<?php }?>学科</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">名称</td>        
+        <td>
+            <input type="text" id="dec_name" name="dec_name" class="txtbox" value="<?=isset($config['dec_name']) ? $config['dec_name'] : ''?>">
+            <span></span>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">年级</td>        
+        <td>
+        <select name="grade_id" id="grade_id" onchange="change_grade();">
+        <option value="0">--请选择年级--</option>
+        <?php foreach ($grade as $garde_id => $grade_name) {?>
+            <option value="<?php echo $garde_id?>" <?php if (isset($config['dec_grade_id']) && $garde_id == $config['dec_grade_id']) {?>selected<?php }?>><?php echo $grade_name?></option>
+        <?php }?>
+        </select>
+        <span></span>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">考试期次</td>        
+        <td>
+        <select name="exam_pid" id="exam_pid">
+            <option value="0">--请选择考试期次--</option>
+        </select>
+        <span></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

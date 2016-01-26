@@ -1,0 +1,115 @@
+<!--各学科在总体1和总体2的相对位置 strat-->
+<?php if (!empty($c_subject_relative_position2)) {?>
+	<?php 
+	   $subject_relate_position = $c_subject_relative_position2;
+	
+		$show_tip = is_string($subject_relate_position);
+		$tip_content = $subject_relate_position;
+		
+		if (!$show_tip)
+		{
+	    	$subject_relate_position['subjects'] = isset($subject_relate_position['subjects']) ? $subject_relate_position['subjects'] : array();
+	    	$subject_relate_position['data'] = isset($subject_relate_position['data']) ? $subject_relate_position['data'] : array();
+	    	$subject_relate_position['summary'] = array_keys($subject_relate_position['data']);
+	    	foreach ($subject_relate_position['data'] as $key => $item)
+	    	{
+	    	    $subject_relate_position['data'][ '我VS'.$key] = $item;
+	    	    unset($subject_relate_position['data'][$key]);
+	    	}
+	    	
+	    	//加工flash数据
+	    	$ld_flash_data = array();
+	    	if (count($subject_relate_position['data']))
+	    	{
+	    		foreach ($subject_relate_position['data'] as $k=>$item)
+	    		{
+	    			$ld_flash_data[] = array('name' => $k, 'data' => array_values($item), 'pointPlacement' => 'on');
+	    		}
+	    	}
+	    	 
+	    	$subject_relate_position['data'] = $ld_flash_data;
+   
+            /** 判断学科数量 生成标题*/
+            $title = '';
+            if (count($subject_relate_position['summary']) <= 2)
+            {
+                $title = implode(' 和 ', $subject_relate_position['summary']);
+            }
+            elseif (count($subject_relate_position['summary']) > 2)
+            {
+                $lastValue = array_pop($subject_relate_position['summary']);
+                $title = implode('、', $subject_relate_position['summary'])."和".$lastValue;
+            }
+            
+            $title2 = str_replace("subject_relative_position", $title, $parent_module_name);
+    ?>
+    
+        <h3 class="cls_row"><?=$g_sort?>&nbsp;<?php echo $title2;?></h3>
+        <div class="cls_row center" id="container_ld" style="page-break-before:auto"></div>
+	<?php  } else {?>
+        <h3 class="cls_row"><?=$g_sort?>.	<?php echo $tip_content;?></h3>
+	<?php } ?>
+	
+<script type="text/javascript">
+    <?php if (!$show_tip) {?>
+    //雷达图
+    $('#container_ld').highcharts({
+        chart: {
+            polar: true,
+            type: 'line',
+            height: '400'
+        },
+        title: {
+            // text: '<?php echo $title;?> '
+            text: ''
+        },
+        plotOptions: {
+            line: {
+                enableMouseTracking: false	//关闭动画特效,使其在pdf中线条不会变粗
+            }
+        },
+        pane: {
+            size: '80%'
+        },
+        xAxis: {
+            categories: eval("("+'<?php echo json_encode($subject_relate_position['subjects']); ?>'+")"),
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+        yAxis: {
+        	title: {
+				text: ''
+			},
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0,
+            maxPadding: 0,
+            tickInterval: 0.5
+        },
+        tooltip: {
+            shared: true
+            //pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+        },
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+        colors: ['#4F81BD','#F15A24','#8CC63F','#93489B','#FBB03B','#00A99D','#4C5260','#959FB1','#90B9EA','#F7AA8E','#B9E881','#DE98E5','#F5CB8E','#67D8CE','#A0B7F2'],
+        series: eval("("+'<?php echo json_encode($subject_relate_position['data']); ?>'+")")
+        /*
+        series: [{
+            name: '在总体1的位置',
+            data: [10, 9, 8, 7, 6],
+            pointPlacement: 'on'
+        }, {
+            name: '在总体2的位置',
+            data: [5, 4, 3, 2, 1],
+            pointPlacement: 'on'
+        }]
+        */
+    });
+    <?php } ?>
+</script>
+<?php }?>

@@ -1,0 +1,178 @@
+<?php $this->load->view('common/header');?>
+<script type="text/javascript">
+  function test()
+  {
+       //	 var start_grade = parseInt($('#start_difficulty').val());
+ 	    //var end_grade = parseInt($('#end_grade').val());
+  	     var start_difficulty =$('#start_difficulty').val();
+    	  var end_difficulty = $('#end_difficulty').val();
+    	  var class_id_test = $('#class_id option:selected').val();
+    	  var grade_id_test = $('#grade_id option:selected').val();
+     //alert(end_difficulty);
+ 	   
+  	      if (isNaN(start_difficulty )  ) {
+
+    	       alert('难度系数填写错误，不是数字！');
+    	       return false;
+            }
+
+  	      else  if (isNaN(end_difficulty  )  ) {
+
+    	       alert('难度系数填写错误，不是数字！');
+    	       return false;
+            }
+          
+    	    else  if ( Number(start_difficulty)>100||Number(start_difficulty)<0)
+    	    {
+   	    	   alert('难易度填写错误，范围应为[0-100]！');
+    	       return false;
+    	    }
+    	    
+    	    else  if ( Number(end_difficulty)>100||Number(end_difficulty)<0)
+    	    {
+   	    	   alert('难易度填写错误，范围应为[0-100]！');
+    	       return false;
+    	    }
+    	    
+    	    else  if (start_difficulty!=''&&Number(start_difficulty)  > Number(end_difficulty)&&end_difficulty!='' ) {
+
+    	 	       alert('难度系数填写错误，开始区间大于结束区间！');
+    	 	       return false;
+    	         }
+
+  	      else if(grade_id_test==''&&class_id_test!=''){
+
+	    	    alert('按照题目类型检索，需要先选择年级！');
+	  	        return false;
+	      }
+	      
+  	      else if(grade_id_test==''&&start_difficulty!=''){
+
+	    	    alert('按照题目难易度检索，需要先选择年级！');
+	  	        return false;
+	      }
+
+  	   	   else if(grade_id_test==''&&end_difficulty!=''){
+
+    	   	    alert('按照题目难易度检索，需要先选择年级！');
+    	 	        return false;
+    	   }
+    	    
+            else
+            {
+                $('#search_form').submit();
+            }
+   
+ }
+  </script>
+
+<div id="body">
+  <div id="id_qry_dlg" style="display:none">
+            <div class="cls_title">搜索试题</div>
+    <form method="get" name="search_form"  id="search_form"  action="<?=site_url('admin/question/count')?>" onsubmit="return test();">
+        <div class="space" style="margin:5px">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1">题型</td>
+                    <td>
+                      <select name="qtype">
+                        <option value="">-请选择-</option>
+                        <?php foreach($types as $k => $v):?>
+                        <option value="<?=$k?>" <?=(string)$search['qtype']===(string)$k?'selected':''?>><?=$v?></option>
+                        <?php endforeach;?>
+                      </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">学科</td>
+                    <td>
+                      <select name="subject_id" id="subject_id">
+                        <option value="">--请选择--</option>
+                        <?php foreach($subjects as $key => $val): ?>
+                        <option value="<?=$key?>"<?=$key==$search['subject_id']?' selected="selected" ':''?>><?=$val?></option>
+                        <?php endforeach; ?>
+                      </select>  
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">年级</td>
+                    <td>
+                      <select name="grade_id" id="grade_id">
+                        <option value="">--请选择--</option>
+                        <?php foreach($grades as $key => $val): ?>
+                        <option value="<?=$key?>"<?=$key==$search['grade_id']?' selected="selected" ':''?>><?=$val?></option>
+                        <?php endforeach; ?>
+                      </select>
+                      <span style="color:red">(按照题目类型与难易度检索，需要先选择年级)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">题目类型</td>
+                    <td>
+                        <select name="class_id" id="class_id">
+                            <option value="">--请选择--</option>
+                            <?php foreach($classes as $key => $val): ?>
+                            <option value="<?=$val['class_id']?>"<?=$key==$search['class_id']?' selected="selected" ':''?>><?=$val['class_name']?></option>
+                            <?php endforeach; ?>
+                        </select> 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="altbg1">难易度</td>
+                    <td>
+                        <input type="text" name="start_difficulty" id ="start_difficulty"  class="txtbox4" value="<?=$search['start_difficulty']?>"/> - 
+                        <input type="text" name="end_difficulty" id = "end_difficulty"  class="txtbox4" value="<?=$search['end_difficulty']?>" />   <span style="color:red">请按难易度数值区间搜索，范围为[0-100]</span>
+                    </td>
+                </tr>      
+            </table>
+            <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <input type="button" value="重置 " class="btn" onclick="window.location.href='/admin/question/count'"/>
+            </center>
+        </div>
+    </form>
+  </div>
+  <div class="space">
+    <div class="subtitle">
+试题统计
+<span style="float:right">
+<a href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')">查询</a>
+&nbsp;&nbsp;
+</span>
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr class="altbg1">
+            <td width="10%">&nbsp;&nbsp;ID</td>
+            <td>知识点名称</td>
+            <td>认知过程</td>
+            <td>题目数量</td>
+        </tr>
+        <?php foreach ($counts as $key => $value): ?>
+            <tr>
+                <td><?php echo $value['id']; ?></td>
+                <td><?=$subjects[$value['subject_id']]?> => <?php echo $value['parent_name']; ?> => <?php echo $value['knowledge_name']; ?></td>
+                <td>
+                    <?php switch ($value['know_process']) {
+                        case 1:
+                            echo "记忆";
+                            break;
+                        case 2:
+                            echo "理解";
+                            break;
+                        case 3:
+                            echo "应用";
+                            break;
+                        default:
+                            echo "无";
+                            break;
+                    } ?>
+                </td>
+                <td>
+                    <a href="/admin/question/index/?<?echo $query_str?><?php if (!$this->input->get('subject_id')) {?>&subject_id=<?echo $value['subject_id'];?><?php }?>&knowledge_id[]=<?php echo $value['id']; ?>&knowledge_ids=<?php echo $value['id']; ?>&know_process[]=<?php echo $value['know_process'];?>" target="_blank"><?php echo $value['count']; ?></a>
+                </td>
+            </tr>
+        <?php endforeach ?>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

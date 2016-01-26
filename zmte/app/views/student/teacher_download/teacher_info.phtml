@@ -1,0 +1,61 @@
+<?php $this->load->view('common/header');?>
+
+<div id="body">
+    <div class="space">
+        <div class="subtitle">基本信息</div>
+        <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="border:none;height:10px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="altbg2" style="text-align: left;">
+                    <span class="altbg2-bg">个人信息</span>
+                    <i class="altbg2-r"></i>
+                </td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">Email</td>
+                <td><?php echo $teacher['email']; ?></td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">姓名</td>
+                <td><?php echo $teacher['name']; ?></td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">单位</td>
+                <td><?php echo $teacher['memo']; ?></td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">手机</td>
+                <td><?php echo $teacher['cellphone']; ?></td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">电话</td>
+                <td><?php echo $teacher['telephone']; ?></td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">可管理学科</td>
+                <td>
+                    <?php if (is_array($teacher_subject) && count($teacher_subject) > 0): ?>
+                        <?php foreach ($teacher_subject as $id): ?>
+                            <span><?php echo $subject[$id]; ?></span>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="16%" class="altbg1">可管理考试期次</td>
+                <td>
+                    <?php if (!empty($exams)): ?>
+                        <?php foreach ($exams as $v): ?>
+                            <p><?php echo $v['exam_name']; ?></p>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1" colspan="2" style="border-bottom:2px solid #045eab;"></td>
+            </tr>
+        </table>
+    </div>
+</div>

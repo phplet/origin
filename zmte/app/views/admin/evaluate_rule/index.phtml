@@ -1,0 +1,241 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+
+<script language="javascript">
+function check_form(form) {
+    if (checkbox_check('id[]')) {
+        var op = $('#batch_op').val();
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            var notice = '';
+            if (op == 'remove') {
+              notice = '移除之后无法再恢复，';
+            }
+            if (confirm(notice + '您确定要执行该操作么？')) {
+                var action = $('#batch_op').find('option[value='+op+']').attr('op');
+
+                form.action = action;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+$(document).ready(function(){
+    set_batch_option();
+    $('.ques_title').find('div').dblclick(function(){
+        $(this).toggleClass('line_18');
+    });
+    $('#batch_op').change(function(){
+        set_batch_option();
+    });
+});
+
+function set_batch_option() {
+    var op = $('#batch_op').val();
+    if (op == 'relate') {
+        $('#batch_extend').show();
+    } else {
+        $('#batch_extend').hide();
+    }
+}
+
+</script>
+
+<?php
+	$search = &$detail;
+    $current_module_url = site_url('/admin/evaluate_rule');
+    $is_trash = isset($search['trash']) && $search['trash'] == 1;
+?>
+
+<div id="body">
+  <form name="frm_invigilator_list" action="<?php echo $current_module_url . '/index/';?>" method="post" onsubmit="return check_form(this)">
+    <div class="space">
+      <div class="subtitle">
+      <a class="menu" href="<?php echo $current_module_url . '/add/';?>">添加评估规则</a>
+      <?php if ($has_report_command_priv) {?>
+      <a class="menu" href="/admin/report_command/index">执行生成报告相关命令</a>
+      <?php }?>
+      评估管理 [<a href="<?php echo $current_module_url . '/index?trash=0';?>" <?php echo !$is_trash ? 'style="color:red;"' : '';?>>全部</a>] [<a href="<?php echo $current_module_url . '/index?trash=1';?>" <?php echo $is_trash ? 'style="color:red;"' : '';?>>回收站</a>]</div>
+      <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+          <tr class="altbg1">
+            <th width="2%"></th>
+            <th width="2%" style="text-align:left;">ID</th>
+            <th width="15%" style="text-align:left;">规则名称</th>
+            <th width="5%" style="text-align:left;">创建者</th>
+            <th width="20%" style="text-align:left;">考试期次</th>
+            <th width="18%" style="text-align:left;">考场</th>
+            <th width="6%" style="text-align:left;">科目</th>
+            <?php /*?><th width="15%">对比等级</th><?php */?>
+            <?php /*?><th width="10%">关联一级知识点数</th><?php */?>
+            <td width="10%" style="text-align:left;"><span>添加时间</span></td>
+            <th style="text-align:left;">操作</th>
+          </tr>
+
+          <?php if (!count($list)) {?>
+          <tr>
+              <td colspan="9" align="center">暂无记录.</td>
+          </tr>
+          <?php } else { ?>
+          <?php
+          foreach ($list as $k => $item) {
+				        $id = $item['id'];
+                $name = $item['name'];
+                $admin_name = $item['admin_name'];
+                $exam_name = $item['exam_name'];
+                $place_name = $item['place_name'];
+                $subject_name = $item['subject_name'];
+                $count_knowledges = $item['count_knowledges'];
+                $task_status = $item['task_status'];
+          ?>
+          <tr>
+            <td><?php if ($priv_manage) {?><input type="checkbox" name="id[]" value="<?php echo $id;?>"><?php } ?></td>
+            <td><?php echo $id; ?></td>
+            <td><?php echo $name; ?></td>
+            <td><?php echo $admin_name; ?></td>
+            <td><?php echo $exam_name; ?></td>
+            <td><?php echo $place_name; ?></td>
+            <td><?php echo $subject_name; ?></td>
+            <?php /*?><td></td>  <?php */?>
+            <?php /*?><td><?php echo $count_knowledges; ?></td><?php */?>
+            <td><?php echo date('Y-m-d H:i',$item['addtime']); ?></td>
+            <td>
+            	<?php if ($task_status > -1) {?>
+            	<?php if ($priv_manage) {?>
+                	<a href="<?php echo $current_module_url . '/edit/' . $id;?>">查看</a> |
+                	<!-- <font style="color:#999;text-decoration:line-through;" title="该规则有关联的报告或者正在处理报告，无法操作">编辑</font> | -->
+                	<a href="<?php echo $current_module_url . '/add/' . $id;?>">复制</a>
+                    <?php if (!$is_trash) {?>
+                	   <!-- <font style="color:#999;text-decoration:line-through;" title="该规则有关联的报告或者正在处理报告，无法操作">回收站</font> | -->
+                	<?php } else {?>
+                         | <a href="<?php echo $current_module_url . '/do_action/?act=2&id=' . $id;?>" onclick="return confirm('确定要还原该 条记录吗？');">还原</a>
+                	<?php }?>
+            	<?php }?>
+            	<?php } else {?>
+                	<?php if ($priv_manage) {?>
+                        <a href="<?php echo $current_module_url . '/edit/' . $id;?>">编辑</a> |
+                        <a href="<?php echo $current_module_url . '/add/' . $id;?>">复制</a>
+                        <?php if (!$is_trash) {?>
+                            | <a href="<?php echo $current_module_url . '/do_action/?act=1&id=' . $id;?>" onclick="return confirm('该操作会导致记录被丢进回收站(可在回收站中还原), 是否继续？');">回收站</a> 
+                        <?php } else {?>
+                            | <a href="<?php echo $current_module_url . '/do_action/?act=2&id=' . $id;?>" onclick="return confirm('确定要还原该 条记录吗？');">还原</a>
+                        <?php } ?>
+                    <?php } ?>
+                <?php } ?>
+                <?php if ($priv_manage && $task_status == '-1') {?>
+                    | <a href="<?php echo $current_module_url . '/general/' . $item['id'];?>">生成报告</a>
+                <?php } else if($priv_manage && ($task_status == '0' || $task_status == '1')) {?>
+                    | <font color="red">正在处理中</font>
+                    <?php if ($item['is_exist_html']) {?>
+                    [<a class="ajax_loader" href="###" ajax="<?=site_url('admin/report/index/' . $item['id']);?>">查看生成报告</a>]
+                    <?php }?>
+                <?php } else if ($task_status == 2 || $task_status == 3) {?>
+                    | <font color="green">生成完毕</font>[
+                    <a class="ajax_loader" href="###" name="查看评估规则‘<?php echo $item['name'];?>’的生成报告" ajax="<?php echo site_url('admin/report/index/' . $item['id']);?>">查看生成报告</a>|<a class="ajax_loader" href="###" ajax="<?php echo $current_module_url . '/pdf_status/?act=2&id=' . $id;?>">PDF生成</a>]
+                <?php }?>
+                
+                <?php if ($priv_manage) {?>
+                    <?php if (!empty($item['is_exam_result'])) {?>
+                    <?php if ($task_status >= 2) {?>
+                    <br/>
+                    <?php } else {?>
+                    |
+                    <?php }?>
+                    <a href="<?php echo site_url("admin/evaluate_rule/get_exam_rank/?rule_id={$item['id']}&exam_pid={$item['exam_pid']}&subject_id={$item['subject_id']}")?>">下载排名</a>
+                    <?php }?>
+                <?php } ?>
+
+                <!-- 面试报告 -->
+                <?php if ($item['is_interview']): ?>
+                  <?php if ($item['interview_task_status'] == '-1'): ?>
+                    <a href="<?php echo $current_module_url . '/interview_general_template/' . $item['id'];?>">生成面试报告</a>
+                  <?php elseif($item['interview_task_status'] == '3'): ?>
+                    <font color="green">面试报告生成完毕</font>[
+                    <a class="ajax_loader" href="###" name="查看评估规则‘<?php echo $item['name'];?>’的生成报告" ajax="<?php echo site_url('admin/report/interview/' . $item['id']);?>">查看生成报告</a>]
+                  <?php else: ?>
+                    <font color="red">面试报告正在处理中</font>
+                  <?php endif ?>
+                <?php endif ?>
+
+                <!-- 面试报告结束 -->
+
+            </td>
+          </tr>
+          <?php } ?>
+          <tr class="altbg1">
+            <td colspan="4">
+              <?php if ($priv_manage) {?>
+              <button type="button" class="btn2" onclick="checkbox_checked('id[]');">全选</button>
+              <?php if($is_trash):?>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <option value="restore" op="<?=site_url('admin/evaluate_rule/do_action?act=2')?>">批量还原</option>
+               <option value="remove" op="<?=site_url('admin/evaluate_rule/batch_delete')?>">批量移除</option>
+              </select>
+              <?php else:?>
+              <select name="batch_op" id="batch_op">
+               <option value="">-选择操作-</option>
+               <option value="delete" op="<?=site_url('admin/evaluate_rule/do_action?act=1')?>">批量删除</option>
+              </select>
+              <?php endif;?>
+              <?php } ?>
+            </td>
+            <td colspan="5" style="text-align:right"><?=$pagination?></td>
+          </tr>
+          <?php  } ?>
+        </tbody>
+      </table>
+      <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" /></center>
+    </div>
+  </form>
+<?php /*?>
+   <form method="get" name="search_form" action="<?php echo $current_module_url . '/index/'?>">
+    <input type="hidden" name="trash" value="<?php echo isset($search['trash']) ? $search['trash'] : '0';?>"/>
+    <div class="space">
+        <div class="subtitle">搜索</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+		        <td width="16%" class="altbg1">期次：</td>
+		        <td>
+		        	<select name="exam_pid" id="select_exam_pid">
+		        		<option value="">== 选择期次 ==</option>
+		        	</select>
+		        	<label for="exam_pid" class="error"></label>
+		        </td>
+		      </tr>
+		      <tr>
+		        <td width="16%" class="altbg1">考场：</td>
+		        <td>
+		        	<select name="place_id" id="select_place_id">
+		        		<option value="">== 选择考场 ==</option>
+		        	</select>
+		        	<label for="place_id" class="error"></label>
+		        </td>
+		      </tr>
+
+		      <tr>
+		        <td width="16%" class="altbg1">学科：</td>
+		        <td>
+		        	<select name="subject_id" id="select_subject_id">
+		        		<option value="">== 选择学科 ==</option>
+		        	</select>
+		        	<label for="subject_id" class="error"></label>
+		        </td>
+		      </tr>
+        </table>
+        <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <?php if ($is_trash) {?>
+            <input type="button" value=" 返回列表页 " class="btn" onclick="window.location.href='<?php echo $current_module_url . '/index';?>'"/>
+            <?php } ?>
+        </center>
+    </div>
+  </form>
+		      <?php */?>
+
+</div>
+<?php echo $this->load->view('evaluate_rule/exam_selector.phtml');?>
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

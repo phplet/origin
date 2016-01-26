@@ -1,0 +1,72 @@
+<?php $this->load->view('common/header');?>
+<?php static_global(array('js/datepicker/wdatepicker.js'));?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+</script>
+
+<div id="body">  
+  <div class="space">
+    <div class="subtitle">管理员操作日志</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="3" class="altbg2">
+            <form name="frm_search" action="<?=site_url('admin/admin_log/index')?>" method="get">
+            筛选：
+            管理员：<select name="admin_id">
+            <option value="">=选择管理员=</option>
+            <?php foreach($cpusers as $user):?>
+            <option value="<?=$user['admin_id']?>"><?=$user['admin_user']?></option>
+            <?php endforeach;?>
+            </select>
+            时间：<input type="text" id="begin_time" name="begin_time" class="txtbox4" value="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'2013-09-01'});"> - <input type="text" id="end_time" name="end_time" class="txtbox4" value="" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'2013-09-01'});">
+            <input type="submit" value="查询" />
+            </form>
+        </td>
+        <td class="altbg2" colspan="3" style="text-align: right;padding-right:20px">
+            删除日志：
+            <a href="<?=site_url('admin/admin_log/clear_log/month')?>" onclick="return confirm('确定删除？');" style="color:red">一个月前</a>
+            <a href="<?=site_url('admin/admin_log/clear_log/week')?>" onclick="return confirm('确定删除？');" style="color:red">一个星期前</a>
+            <a href="<?=site_url('admin/admin_log/clear_log/all')?>" onclick="return confirm('确定删除？');" style="color:red">全部</a>
+
+        </td>
+      </tr>
+      <form name="frm_list" action="<?=site_url('admin/admin_log/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+      <tr class="altbg1">
+        <td width="3%">删?</td>
+        <td width="5%">ID</td>
+        <td>日志信息</td>
+        <td width="15%">管理员</td>
+        <td width="15%">操作IP</td>
+        <td width="15%">操作时间</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['id']?>"></td>
+        <td><?=$val['id']?></td>
+        <td><?=$val['log_info']?></td>
+        <td><?=$val['admin_user']?></td> 
+        <td><?=$val['ip_address']?></td> 
+        <td><?=$val['log_time']?></td>  
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="3"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="5" style="text-align:right"><?=$pagination?></td>
+      </tr>      
+      <?php else: ?>
+      <tr>
+        <td colspan="7">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交删除 " class="btn" /></center>
+  </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

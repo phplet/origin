@@ -1,0 +1,43 @@
+<?php if ($ts_knowledge['data'] || $ts_knowledge['qualified_knowledge']) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php if ($ts_knowledge['qualified_knowledge']) {?>
+    <p class="cls_row indent_25">经过前一阶段的教学，您所任教的学生在知识点—“<?=implode("“、”" ,$ts_knowledge['qualified_knowledge'])?>” 上掌握情况较好。</p>
+    <?php }?>
+    <p class="cls_row">&nbsp;</p>
+    <?php if ($ts_knowledge['data']) {?>
+        <p class="cls_row indent_25">以下知识点的掌握情况有待提高：</p>
+        <p class="cls_row">&nbsp;</p>
+        <?php foreach ($ts_knowledge['data'] as $item) {?>
+            <?php $i = 0;?>
+            <table class="cls_row cls_table indent_25">
+            <?php foreach ($item as $key => $val) {?>
+                <tr>
+                <?php 
+                $width = 100 / count($val);
+                $val = array_values($val);
+                $kk = count($val) - 2;
+                ?>
+                <?php foreach ($val as $k => $v) {?>
+                    <?php if ($i == 1 && $k == '0') {?>
+                        <th rowspan="<?=count($item)-1?>" width="<?=$width?>%"><?=$v?></th>
+                    <?php } else {?>
+                        <?php if ($i >= 1 && $k == 0){ continue;}?>
+                        <<?=($key == 0 || $k == 0) ? "th" : 'td'?> width="<?=$width?>%">
+                            <?php if (is_numeric($v)) {?>
+                                <span style="<?php if ($v < 0) {?>color:red;<?} else if ($k < $kk && $v > end($val)){?>color:green;<?php }?> font-weight: unset;"><?=abs(intval($v))?>%</span>
+                            <?php } else {?>
+                                <?=$v?>
+                            <?php }?>
+                        </<?=($key == 0 || $k == 0) ? "th" : 'td'?>>
+                    <?php }?>
+                <?php }?>
+                </tr>
+                <?php $i++;?>
+            <?php } ?>
+            </table>
+            <p class="cls_row">&nbsp;</p>
+        <?php } ?>
+    <?php } else {?>
+    <p class="cls_row indent_25">所有知识点都表现较好。</p>
+    <?php }?>
+<?php } ?>

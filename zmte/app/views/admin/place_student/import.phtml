@@ -1,0 +1,72 @@
+<?php $this->load->view('common/header');?>
+<script type="text/javascript">
+function fnValidateFrom()
+{
+	if (!$('#subject_id').val() 
+			|| $('#subject_id').val() < 1)
+	{
+		alert('请选择学科');
+		return false;
+	}
+
+	if (!$('#file').val())
+	{
+		alert('请选择文件');
+		return false;
+	}
+
+	return true;
+}
+</script>
+
+<div id="body">
+  <form name="frm_import" id="frm_import" method="POST" action="<?=site_url('admin/place_student/import_save');?>" enctype="multipart/form-data" onsubmit="return fnValidateFrom();">
+    <input type="hidden" name="exam_id" value="<?=$exam_id;?>" />
+    <div class="space">
+        <div class="subtitle">成绩导入</div>
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+                <td class="altbg1">请选择学科</td>
+                <td>
+                <select name="subject_id" id="subject_id">
+                    <option value="0">请选择学科</option>
+                    <?php if ($place_subjects) {?>
+                        <?php foreach ($place_subjects as $key => $value) { ?>
+                            <option value="<?=$value['subject_id'] ?>" ><?=$subjects[$value['subject_id']]; ?></option>
+                        <?php } ?>
+                    <?php } ?>
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">请选择文件</td>
+                <td>
+                    <input type="file" id="file" name="file" class="txtbox" />
+                    <?php if (isset($error)) { ?><span style="color:red;display: inline-block;"><?=$error?></span><?php } ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">上传说明</td>
+                <td style="padding:10px;">
+                    <p>1.支持Excel 2003、Excel 2007、Excel 2010、Excel 2013 版本</p>
+                    <p>2.最大文件上传尺寸为10Mb</p>
+                    <p>3.准考证号，学生姓名不能为空</p>
+                    <p>4.导入时如果当前行发生错误，将跳过当前行继续导入</p>
+                    <p>5.重复导入时，如果已经存在记录，将覆盖之前的记录</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">导入模板下载</td>
+                <td>
+                    <a href="<?=base_url('file/import_student_results_template.xls')?>">点击下载</a>
+                </td>
+            </tr>
+        </table>
+        <center>
+            <input type="submit" value=" 提交 " class="btn" />
+            <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+        </center>
+    </div>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

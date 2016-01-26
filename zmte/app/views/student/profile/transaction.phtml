@@ -1,0 +1,271 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'transaction'));?>
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+    $vc = C('virtual_currency');
+?>
+
+<?php static_global('css/third_party/zebra_dialog/flat/zebra_dialog.css', 'css');?>
+<?php static_global('js/third_party/zebra_dialog.js');?>
+<script>
+$(function(){
+    $('.clearfix').find('a').click(function(){
+        $(this).parent().addClass("cls_table_current").siblings().removeClass('cls_table_current');
+        var name = $(this).attr('name');
+        $('#table_'+name).show().siblings().hide();
+    });
+
+    $('a.reset_notice').unbind('click').bind('click', function () {
+    	var uname = $(this).attr('i_name'), p_id = $(this).attr('ref');
+    	new $.Zebra_Dialog('', {
+		    'source':  {'ajax': '<?php echo site_url('student/profile/p_notice');?>/'+p_id},
+		    'type':     '',
+		    width: 500,
+		    'title': '考前须知 (<font color="red" style="font-size:16px;">' + uname + '</font>) '
+		});
+
+    });
+    //重置密码
+    $('a.reset_account').unbind('click').bind('click', function () {
+          var uname = $(this).attr('i_name'),
+          product_id = $(this).attr('product_id'),
+          exam_id = $(this).attr('ref');
+
+
+    		new $.Zebra_Dialog('', {
+    		    'source':  {'ajax': '<?php echo site_url('student/exaxm/examplace');?>/' + exam_id+'/'+product_id},
+    		    'type':     '',
+    		    width: 500,
+    		    'title': '报名 (<font color="red" style="font-size:16px;">' + uname + '</font>) '
+    		});
+
+    		setTimeout(function () {
+    			$('div.ZebraDialog_Buttons').hide();
+    		}, 500);
+    });
+});
+
+
+</script>
+
+<style>
+.cls_table_btn {
+    background: url("images/register/u144.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    position: relative;
+    text-align: center;
+    width: 177px;
+}
+.cls_table_current {
+    background: url("images/register/u142.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    z-index: 20;
+}
+</style>
+
+<style type="text/css">
+.clearfix:after {
+visibility: hidden;
+display: block;
+font-size: 0;
+content: " ";
+clear: both;
+height: 0;
+}
+.clearfix { display: inline-table; }
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* End hide from IE-mac */
+.cls_left{
+    float:left;
+}
+.cls_table_btn{
+    position: relative;
+    cursor: pointer;
+    background: url("/images/register/u144.png") no-repeat;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 177px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+.cls_person_table{
+    width: 100%;
+    border: 1px solid #323a45;
+}
+.cls_person_table th{
+    border: 1px solid #323a45;
+    font-size: 14px;
+}
+.cls_person_table td{
+    border: 1px solid #323a45;
+    text-align: center;
+    font-size: 12px;
+}
+.cls_change_move_0{
+    z-index: 4;
+    right: 16px;
+}
+.cls_change_move_32{
+    z-index: 3;
+    right: 32px;
+}
+.cls_change_move_48{
+    z-index:2;
+    right:48px;
+}
+.cls_table_current{
+    z-index: 20;
+    background: url("/images/register/u142.png") no-repeat;
+}
+.cls_right{
+    float: right;
+}
+.cls_fs_14{
+    font-size: 12px;
+}
+.cls_hide{
+    display: none;
+}
+.cls_table_btn a{
+    text-decoration: none;
+    color: #666666;
+}
+.cls_img{
+    margin-right: 8px;
+    margin-top: 2px;
+}
+.cls_title_a{
+    position: relative;
+    right:18px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+    $(".cls_table_btn").click(function(){
+        $(this).addClass("cls_table_current").siblings().removeClass("cls_table_current");
+        $(".cls_person_box:eq(" + $(this).index() + ")").show().siblings().hide();
+
+
+
+        $(".cls_change_move_32").attr("style","");
+     });
+    var $i=0;
+    var h= $('.cls_table_btn').length;
+
+    $('.cls_table_btn').each(function() {
+		var $thiz = $(this);
+		$thiz.css("z-index",h+$i);
+		$thiz.css('right',$i*16+'px');
+		$i++
+
+
+	});
+
+    $(".cls_change_move_48").mouseover(function(){
+        $(".cls_change_move_32").css("zIndex","5");
+    });
+    $(".cls_change_move_48").mouseout(function(){
+        if(!$(this).hasClass("cls_table_current")){
+            $(".cls_change_move_32").css("zIndex","");
+        }
+    });
+});
+</script>
+<div id="body">
+  <div class="space">
+     <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+             <tr><td style="border:none;height:10px;"></td></tr>
+             <tr>
+                 <td colspan="4" class="altbg2" style="text-align:left;">
+        		<span class="altbg2-bg">
+        			<strong>帐号管理</strong>
+        		</span>
+          		<i class="altbg2-r"></i>
+        	 </td>
+            </tr>
+            <tr>
+                 <td class="altbg1"><?=$vc['name']?>余额</td>
+                 <td><?=$student['account']?><?=$vc['fullname']?> &nbsp; &nbsp; &nbsp; &nbsp;
+                 <? if (C('paycharge_enable')) { ?>
+                    <a href=<?php echo site_url('/student/profile/pay');?> style="color:red;text-decoration:underline">立即充值</a>
+                <? } ?>
+                 </td>
+            </tr>
+        </table>
+     <form method="get" name="search_form" action="<?=site_url('/student/profile/transaction/')?>">
+
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">交易明细</td>
+
+               <td>
+                            <input type="text" id="begin_time" name="begin_time" class="txtbox3" value="<?=$search['begin_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});"> -
+                            <input type="text" id="end_time" name="end_time" class="txtbox3" value="<?=$search['end_time']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});">
+                       <input type="submit" value=" 查询 " class="btn" /> </td>
+         <td></td>
+            </tr>
+
+
+
+        </table>
+        </form>
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+
+
+
+
+            <tr>
+        <td colspan="4" class="altbg2" style="text-align: center;">
+
+          <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1" style="color:black">
+        <td width="20%">交易时间</td>
+        <td width="20%">交易类型</td>
+        <td width="15%">交易金额</td>
+        <td width="15%">通宝余额</td>
+        <td width="10%">状态</td>
+        <td width="20%">备注</td>
+      </tr>
+      <?php if($list):?>
+      <?php $trade_type = C('trade_type');?>
+      <?php foreach($list as $val):?>
+      <tr style="color:black">
+        <td><?=date('Y-m-d H:i', $val['tr_createtime'])?></td>
+        <td><?=$trade_type[$val['tr_type']]?><?php if ($val['tr_pid']) {?>[<?=$val['p_name']?>]<?php }?></td>
+        <td><?=$val['tr_trade_amount'] > 0 ? '+' . $val['tr_trade_amount'] : $val['tr_trade_amount']?></td>
+        <td><?=$val['tr_money']?></td>
+        <td><?=$val['tr_flag'] ? '已支付' : '未支付'?></td>
+        <td><? Func::echo_s($val['tr_comment']); ?></td>
+      </tr>
+
+      <?php endforeach; ?>
+      <tr class="altbg1" style="color:black">
+        <td colspan="8" style="text-align:right"><div style="float:right"><?=$pagination?></div></td>
+      </tr>
+      <?php else: ?>
+      <tr style="color:black">
+        <td colspan="10">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+      </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/profile_footer');?>

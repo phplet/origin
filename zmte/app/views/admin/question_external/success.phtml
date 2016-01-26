@@ -1,0 +1,22 @@
+<?php $this->load->view('common/header');?>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="body" style="margin-left:auto;margin-right:auto;width:600px;height:300px;">
+  <div class="space">
+    <div class="subtitle" style="text-align:center;height:30px;">试题编辑成功</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="50">
+          <center> 
+            <input type="button" value=" 添加关联题目 " onclick="location='<?=site_url('admin/question_external/add/'.$relate_ques_id)?>'" class="btn" />
+            <input type="button" value=" 添加新题目 " onclick="location='<?=site_url('admin/question_external/add')?>'" class="btn" />
+            <input type="button" value=" 返回试题列表 " onclick="location='<?=site_url('admin/question_external/index')?>'" class="btn" />
+          </center>   
+        </td>        
+      </tr>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

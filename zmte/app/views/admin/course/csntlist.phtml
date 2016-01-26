@@ -1,0 +1,72 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveCSNT(csnt_id_str)
+{
+    if (csnt_id_str == '')
+    {
+        alert('您没有选择任何要删除的记录');
+        return;
+    }
+    if (!confirm('您确认要删除所选记录么?'))
+    {
+        return;
+    }
+    ajax_removeCSNT(csnt_id_str);
+}
+</script>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('course_setcsntinfo', false); 
+$bPrivRemove = $CI->check_power_new('course_removecsnt', false);
+$bPrivAdd = $CI->check_power_new('course_addcsntinfo', false);
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">培训课程授课人数类别列表
+        
+      <div class="cls_toolbar">
+<? if ($bPrivAdd) { ?>
+      <button type="button" onclick="fnShowDialog('<?=site_url('admin/course/addcsntinfo')?>')">新增</button>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+      <button type="button" onclick="fnRemoveCSNT(fnGetCheckBoxValues('body', 'csnt_id'))">删除</button>
+<? } ?>
+      <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" border="0" cellspacing="0" cellpadding="0" id="id_grid">
+      <tr class="cls_title">
+        <td width="20"><input type="checkbox" onchange="fnSelAll('id_grid', 'csnt_id', this.checked)"/></td>
+        <td width="40">ID</td>
+        <td width="80">名称</td>
+        <td width="200">备注</td>
+        <td width="100">操作</td>
+      </tr>
+      <? if(!empty($csnt_list)) { ?>
+      <? foreach($csnt_list as $v) { ?>
+      <tr>
+        <td><input type="checkbox" name="csnt_id" value="<?=$v['csnt_id']?>"/></td>
+        <td><?=$v['csnt_id']?></td>
+        <td><? Func::echo_s($v['csnt_name']); ?></td>
+        <td><? Func::echo_s($v['csnt_memo']); ?></td>
+        <td>
+<? if ($bPrivEdit) { ?>
+          <a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url('admin/course/setcsntinfo/' . $v['csnt_id'])?>')">编辑</a>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+          <a href="javascript:void(0)" onclick="fnRemoveCSNT('<?=$v['csnt_id']?>')">删除</a>
+<? } ?>
+        </td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

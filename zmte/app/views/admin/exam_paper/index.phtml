@@ -1,0 +1,153 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+var preview_url = '';
+var max_sort = <?=count($paper)?>;
+
+
+
+function set_preview_url() {
+   preview_url = "?exam_pid=<?=$exam['exam_id']?>&place_id=<?=$place_id?>";
+   var paper_id = '';
+   $("input[name^='paper_id']").each(function(){
+	    if ($(this).prop("checked") == true)
+	    {
+		    var subject_id = $(this).attr('subject_id');
+		    var p_id = $(this).val();
+		    paper_id += subject_id +"_"+  p_id + ",";
+	    }
+   });
+
+
+
+   paper_id = paper_id.substr(0, paper_id.length - 1);
+   if (paper_id)
+   {
+	   preview_url += "&paper_id="+paper_id;
+   }
+
+   var paper_sort = '';
+   var err = false;
+   $("input[name^='paper_sort']").each(function(){
+	    var subject_id = $(this).attr('subject_id');
+	    var sort = $(this).val();
+	    if (sort > max_sort)
+	    {
+	    	 err = true;
+	    	 return false;
+		}
+	    if( $('#subject_'+subject_id).css('display')=='block')
+	    {
+	    paper_sort += subject_id +"_"+  sort + ",";
+	    }
+   });
+
+   if (err)
+   {
+	   alert('排序数字不能大于'+max_sort);
+  	   $('#preview_paper').attr('href', 'javascript:void(0);');
+  	   $('#preview_paper_answer').attr('href', 'javascript:void(0);');
+  	   $('#preview_paper').removeAttr('target');
+	   $('#preview_paper_answer').removeAttr('target');
+  	   return;
+   }
+
+   paper_sort = paper_sort.substr(0, paper_sort.length - 1);
+   if (paper_sort)
+   {
+	   preview_url += "&paper_sort="+paper_sort;
+   }
+
+   $('#preview_paper').attr('href', '<?=site_url('/admin/exam_paper/preview/')?>/'+preview_url);
+   $('#preview_paper_answer').attr('href', '<?=site_url('/admin/exam_paper/preview_answer/')?>/'+preview_url);
+   $('#preview_paper').attr('target', '_blank');
+   $('#preview_paper_answer').attr('target', '_blank');
+}
+
+$(function(){
+	set_preview_url();
+	$("input[name^='paper_id']").click(function(){
+		var subject_id = $(this).attr('subject_id');
+	    if ($(this).prop("checked") == true)
+	    {
+
+		   $('#subject_'+subject_id).css('display','block');
+
+	    }
+	    else
+	    {
+
+	    	 $('#subject_'+subject_id).css('display','none');
+	    }
+	});
+    $('#preview_paper').click(function(){
+        if ($(this).attr('href') == 'javascript:void(0);')
+        {
+        	set_preview_url();
+        }
+    });
+    $('#preview_paper_answer').click(function(){
+        if ($(this).attr('href') == 'javascript:void(0);')
+        {
+        	set_preview_url();
+        }
+    });
+
+	$("input[name^='paper_id']").change(function(){ set_preview_url(); });
+	$("input[name^='paper_sort']").blur(function(){ set_preview_url(); });
+});
+
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+     	<?=$exam['exam_name']?> 试卷列表
+    </div>
+
+  <input type="hidden" name="place_id" value="<?php echo $place_id;?>" />
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td colspan="2" style="text-align:center;" class="altbg2">
+         考试：<a href="/admin/exam_place/index/<?=$exam['exam_id']?>"><?=$exam['exam_name']?></a>
+---> 场次：<?=$place['place_name']?> --->考试地点：<?=$place['address']?>
+        </td>
+      </tr>
+    <?php if ($paper) {?>
+        <?php foreach ($paper as $subject_id => $paper_list) {?>
+          <tr class="altbg1">
+            <td width="100" style="text-align:center;"><?=$subject[$subject_id]?></td>
+            <td>
+            <?php foreach ($paper_list as $key => $paper_id) {?>
+            <input type="checkbox" value="<?=$paper_id?>" name="paper_id[<?=$subject_id?>]" id="paper_id_<?=$paper_id?>" subject_id="<?=$subject_id?>" <?php if (!$key) { echo "checked" ;}?>> <label for="paper_id_<?=$paper_id?>"><?=$subject[$subject_id]?>试卷<?=$key+1?></label>
+            <?php }?>
+            </td>
+          </tr>
+        <?php }?>
+
+        <?php if (count($paper) > 1) {?>
+        <tr class="altbg1">
+            <td width="100" style="text-align:center;">学科顺序</td>
+            <td>
+            <?php $sort = 1;?>
+            <?php foreach ($paper as $subject_id => $paper_list) {?>
+            <span id="subject_<?=$subject_id?>" style="float:left">
+            <?=$subject[$subject_id]?>：<input type="text" class="txtbox5 " value="<?=$sort++?>" name="paper_sort[]" subject_id="<?=$subject_id?>">
+            </span>
+            <?php }?>
+            </td>
+         </tr>
+         <?php }?>
+      <?php } else { ?>
+      <tr>
+        <td colspan="2">暂无记录！</td>
+      </tr>
+      <?php }?>
+    </table>
+    <?php if ($paper) {?>
+    <center>
+    <a href="" target="_blank" id="preview_paper"><input type="button" value="试卷打印"></a>
+    <a href="" target="_blank" id="preview_paper_answer"><input type="button" value="试卷答卷参考"></a>
+    </center>
+    <?php }?>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

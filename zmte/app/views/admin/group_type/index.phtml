@@ -1,0 +1,81 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/group_type/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><?php if($parent['pid']==0):?><a class="menu" href="<?=site_url('admin/group_type/add/'.$parent['id'])?>">添加信息提取方式</a><?php endif;?>信息提取方式管理</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="8" class="altbg2" style="text-align: center;">
+       
+          <?php  if($parent['id']):?>
+          
+           <a href="<?=site_url('admin/group_type/index/')?>">一级信息提取方式</a>
+           
+            -> <a href="<?=site_url('admin/group_type/index/'.$parent['id'])?>"><?=$parent['group_type_name']?></a>
+          
+           <?php else:?>
+           
+            <a href="<?=site_url('admin/group_type/index/')?>">一级信息提取方式</a>
+           
+      
+          <?php endif;?>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="5%">删?</td>
+        <td width="15%">ID</td>
+        <td>信息提取方式名称</td>
+        <td width="10%">学科</td>
+        <td width="25%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['id']?>"></td>
+        <td><?=$val['id']?></td>
+        <td>          
+          <?=$val['group_type_name']?> 
+        </td>
+        <td><?=$val['subject_name']?></td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <a href="<?=site_url('admin/group_type/edit/'.$val['id'])?>">编辑</a>&emsp;
+          <?php } ?>
+          <?php if ($val['pid'] == 0):?>
+          <a href="<?=site_url('admin/group_type/index/'.$val['id'])?>">下级信息提取方式(<?=$val['children']?>)</a>&emsp;
+          <?php endif;?>
+          
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url('admin/group_type/delete/'.$val['id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <?php if ($priv_delete) {?>
+    <center><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></center>
+    <?php } ?>
+  </div>
+  </form>
+ 
+ </div>
+ <?php $this->load->view('common/footer');?>

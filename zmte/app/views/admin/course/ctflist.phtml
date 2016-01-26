@@ -1,0 +1,70 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveCTF(ctf_id_str)
+{
+    if (ctf_id_str == '')
+    {
+        alert('您没有选择任何要删除的记录');
+        return;
+    }
+    if (!confirm('您确认要删除所选记录么?'))
+    {
+        return;
+    }
+    ajax_removeCTF(ctf_id_str);
+}
+</script>
+<?
+$CI = &get_instance();
+$bPrivEdit = $CI->check_power_new('course_setctfinfo', false); 
+$bPrivRemove = $CI->check_power_new('course_removectf', false);
+$bPrivAdd = $CI->check_power_new('course_addctfinfo', false);
+?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">培训课程授课教师来源列表
+        
+      <div class="cls_toolbar">
+<? if ($bPrivAdd) { ?>
+      <button type="button" onclick="fnShowDialog('<?=site_url('admin/course/addctfinfo')?>')">新增</button>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+      <button type="button" onclick="fnRemoveCTF(fnGetCheckBoxValues('body', 'ctf_id'))">删除</button>
+<? } ?>
+      <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" border="0" cellspacing="0" cellpadding="0" id="id_grid">
+      <tr class="cls_title">
+        <td width="20"><input type="checkbox" onchange="fnSelAll('id_grid', 'ctf_id', this.checked)"/></td>
+        <td width="40">ID</td>
+        <td width="80">名称</td>
+        <td width="100">操作</td>
+      </tr>
+      <? if(!empty($ctf_list)) { ?>
+      <? foreach($ctf_list as $v) { ?>
+      <tr>
+        <td><input type="checkbox" name="ctf_id" value="<?=$v['ctf_id']?>"/></td>
+        <td><?=$v['ctf_id']?></td>
+        <td><? Func::echo_s($v['ctf_name']); ?></td>
+        <td>
+<? if ($bPrivEdit) { ?>
+          <a href="javascript:void(0)" onclick="fnShowDialog('<?=site_url('admin/course/setctfinfo/' . $v['ctf_id'])?>')">编辑</a>
+<? } ?>
+<? if ($bPrivRemove) { ?>
+          <a href="javascript:void(0)" onclick="fnRemoveCTF('<?=$v['ctf_id']?>')">删除</a>
+<? } ?>
+        </td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

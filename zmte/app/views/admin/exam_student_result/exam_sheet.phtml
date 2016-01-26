@@ -1,0 +1,173 @@
+<?php $this->load->view('common/header');?>
+
+<script type="text/javascript">
+function submit_all_exam_sheet()
+{
+    if (confirm('确定提交所有的答题卡吗？'))
+    {
+        $('#submit_all_sheet').attr('disabled', false);
+        $('#exam_sheet_form').submit();
+    }
+}
+</script>
+<style>
+.answer_sheet td {
+	font-size: 14px;
+}
+</style>
+<div class="space">
+	<form name="exam_sheet_form" class="validate" id="exam_sheet_form" method="POST" action="<?=site_url('/admin/exam_answer_entry/insert_student_sheet')?>">
+		<table class='maintable' border='0' cellspacing='0' cellpadding='0' width="100%">
+			<tr>
+				<td class="altbg1" width="5%">学生姓名</td>
+				<td width="15%">
+            <?php echo $student['last_name'] . $student['first_name']?>
+            <input type="hidden" value="<?php echo $student['uid']?>" name="uid" id="uid"> <input type="hidden" value="<?php echo $exam_ticket?>" name="exam_ticket" id="exam_ticket">
+			</td>
+				<td class="altbg1" width="5%">考场</td>
+				<td width="40%" id="place">
+            <?php 
+            
+            if($place_id>0)
+            {
+                foreach ( $student_place as $place )
+                {
+                    if ($place_id == $place ['place_id']) echo $place ['place_name'] . " ";
+                }
+            }
+            else
+            {
+                foreach ( $student_place as $place )
+                {
+                    
+                    echo $place ['place_name'] . " ";
+                }
+            }
+            
+            ?>
+            </td>
+				<td class="altbg1" width="5%">考试科目</td>
+				<td width="20%"><input type="hidden" value="<?php echo $exam_pid?>" name="exam_pid" id="exam_pid"> <input type="hidden" value="<?php echo $exam_info[$exam_id]['paper_id']?>" name="paper_id" id="paper_id"> <input type="hidden" value="<?php echo $exam_id?>" name="exam_id" id="exam_id"> <select name="next_exam_id" onchange="$('#exam_sheet_form').submit()">
+            <?php foreach ($place_subject as $item) {?>
+            <?php 
+                if (!in_array($item['exam_id'], $allow_exam))
+                {
+                    continue;
+                }
+            ?>
+            <option value="<?php echo $item['place_id'].'|'.$item['exam_id'] ?>" <?php echo $exam_id == $item['exam_id'] ? 'selected' : ''?>>--<?php echo $subject[$item['subject_id']]?>--</option>
+            <?php }?>
+            </select></td>
+		</tr>
+        <?php $q_index = 1;?>
+        <?php foreach ($group as $q_type => $ques) {?>
+        <tr class="answer_sheet">
+				<td><?php echo $qtypes[$q_type];?></td>
+				<td colspan='5'>
+            <?php if ($exam_id == 73 && $q_type == 2) {?>
+            <?php 
+                $t_ques = $ques[1];
+                $ques[1] = $ques[2];
+                $ques[2] = $t_ques;
+            ?>
+            <?php }?>
+            <?php if ($exam_id == 68 && $q_type == 1) {?>
+            <?php 
+                $t_ques = $ques[2];
+                $ques[2] = $ques[3];
+                $ques[3] = $t_ques;
+            ?>
+            <?php }?>
+            <?php foreach ($ques as $q) {?>
+                <?php if (in_array($q_type, array(1,2,7))) {?>
+                    <table class='maintable' border='0' cellspacing='0' cellpadding='0' style="width:<?=($q_type == 2) ? "40%" : 'auto'?>; margin-right:10px;">
+						<tr>
+							<td class="altbg1" width="50">第<?php echo $q_index++;?>题</td>
+							<td class="altbg1">
+                    <?php $option_letter = 'A';?>
+                    <?php foreach ($q['options'] as $op_index => $option) {?>
+                        <?php if ($q_type == 2) {?>
+                            <input type="checkbox" value="<?php echo $option['option_id']?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][]" id="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $op_index;?>]" <?php if (!empty($exam_answer[$q_type][$q['ques_id']]) && in_array($option['option_id'], $exam_answer[$q_type][$q['ques_id']])) echo "checked";?>>
+                            
+                        <?php } else {?>
+                            <input type="radio" value="<?php echo $option['option_id']?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>]" id="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $op_index;?>]" <?php if (!empty($exam_answer[$q_type][$q['ques_id']]) && $option['option_id'] == $exam_answer[$q_type][$q['ques_id']]) echo "checked";?>>
+                        <?php }?>
+                        <label for="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $op_index;?>]">
+                        <?php echo $option_letter;?>&emsp;
+                        </label>
+                        <?php $option_letter++;?>
+                    <?php }?>
+                    </td>
+					</tr>
+				</table>
+                <?php } else if (in_array($q_type, array(0,4,5,6,8))) {?>
+                    <table class='maintable' border='0' cellspacing='0' cellpadding='0' style="width: auto;">
+						<tr>
+							<td class="altbg1" width="50">第<?php echo $q_index++;?>题</td>
+							<td class="altbg1">
+                        <?php $child_index = 1;?>
+                        <?php foreach ($q['children'] as $child) {?>
+                            <!-- <p style="line-height: 30px; width: auto; float: left; margin-right: 20px;"> -->
+								<p style="line-height: 30px; width: auto; margin-right: 20px; float: left;">
+                                <?php echo $child_index++;?>. 
+                                
+                                <?php if (in_array($child['type'], array(1,2))) {?>
+                                
+                                    <?php $option_letter = 'A';?>
+                                    
+                                    <?php foreach ($child['options'] as $op_index => $option) {?>
+                                        <?php if ($child['type'] == 2) {?>
+                                            <input type="checkbox" value="<?php echo $option['option_id']?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>][]" id="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>][<?php echo $op_index;?>]" <?php if (!empty($exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']]) && in_array($option['option_id'], $exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']])) echo "checked";?>>
+                                        <?php } else {?>
+                                            <input type="radio" value="<?php echo $option['option_id']?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>]" id="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>][<?php echo $op_index;?>]" <?php if (!empty($exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']]) && $option['option_id'] == $exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']]) echo "checked";?>>
+                                        <?php }?>
+                                        <label for="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>][<?php echo $op_index;?>]">
+                                        <?php echo $option_letter;?>&emsp;
+                                        </label>
+                                        <?php $option_letter++;?>
+                                    <?php }?>
+                                    
+                                <?php } else if (in_array($child['type'], array(5,6,8))) {?>
+                                
+                                     <input type="text" value="<?php if (!empty($exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']])) echo $exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']]?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>]">
+                                     
+                                <?php } else if ($child['type'] == 3 && !empty($child['answer'])) {?>
+                                    <?php foreach ($child['answer'] as $key => $answer) {?>
+                                        <input type="text" value="<?php if (!empty($exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']][$key])) echo $exam_answer[$q_type][$q['ques_id']][$child['type']][$child['ques_id']][$key]?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $child['type']?>][<?php echo $child['ques_id']?>][<?php echo $key;?>]" />
+                                    <?php }?>
+                                <?php }?>
+                            </p>
+                        <?php }?>
+                    </td>
+					</tr>
+				</table>
+                <?php } else if ($q_type == 3) {?>
+                    <table class='maintable' border='0' cellspacing='0' cellpadding='0' style="width: auto;">
+						<tr>
+							<td class="altbg1" width="50">第<?php echo $q_index++;?>题</td>
+							<td class="altbg1">
+                            <?php foreach ($q['answer'] as $key => $answer) {?>
+                                <input type="text" value="<?php if (!empty($exam_answer[$q_type][$q['ques_id']][$key])) echo $exam_answer[$q_type][$q['ques_id']][$key]?>" name="answer[<?php echo $q_type?>][<?php echo $q['ques_id']?>][<?php echo $key;?>]">
+                            <?php }?>
+                            </td>
+					</tr>
+				</table>
+                <?php }?>
+            <?php }?>
+            </td>
+		</tr>
+        <?php }?>
+        <tr>
+				<td colspan="6">
+					<center><input type="submit" class="btn" value="保存当前答题卡">
+        <?php if ($is_enter_all_sheet) {?>
+        <input type="hidden" value="1" name="submit_all_sheet" id="submit_all_sheet" disabled="disabled" /> <input type="button" class="btn" value="提交所有答题卡" onclick="submit_all_exam_sheet();">
+        <?php }?>
+        </center>
+			</td>
+		</tr>
+	</table>
+</form>
+</div>
+</body>
+</html>

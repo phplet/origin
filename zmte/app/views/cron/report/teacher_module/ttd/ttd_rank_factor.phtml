@@ -1,0 +1,44 @@
+<?php if ($ttd_rank_factor['data']) {?>
+<h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php foreach ($ttd_rank_factor['data'] as $k => $item) {?>
+        <?php $width = 100 / (count(current($item)) + 1);?>
+        <table class="cls_row indent_25 cls_table">
+            <?php foreach ($item as $key => $val) {?>
+           	<tr>
+                <th width="<?=$width?>%"><?=$key?></th>
+               	<?php foreach ($val as $v) {?>
+           		<<?=!$v || is_numeric($v) ? 'td' : 'th'?> width="<?=$width?>%">
+           		<?=$v ? $v : '-'?>
+           		</<?=!$v || is_numeric($v) ? 'td' : 'th'?>>
+        	   	<?php }?>	           
+           	</tr>
+            <?php }?>
+        </table>
+        <p class="cls_row">&nbsp;</p>
+    <?php }?>
+    <?php 
+    $prev_rate = 0;
+    $text = array();
+    $end_name = end(array_keys($ttd_rank_factor['proportion']));
+    foreach ($ttd_rank_factor['proportion'] as $name => $rate) 
+    {
+        if ($prev_rate && $end_name != $name)
+        {
+            $text[] = "前{$prev_rate}%-{$rate}%为{$name}";
+        }
+        else if ($prev_rate && $end_name == $name)
+        {
+            $text[] = "后" . (100 - $prev_rate) ."%为{$name}";
+        }
+        else
+        {
+            $text[] = "前{$rate}%为{$name}";
+        }
+    
+        $prev_rate = $rate;
+    }
+    ?>
+    <?php if ($text) {?>
+    <p class="mokuai-text cls_row font12">&emsp;&emsp;注：定义学校<?=implode('，', $text)?>；排名系数代表各分数段学生平均名次。</p>
+    <?php }?>
+<?php }?>

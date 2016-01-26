@@ -1,0 +1,197 @@
+<?php $this->load->view('common/header', array('load_dialog_css' => true));?>
+<script>
+var _zmoss_exam_list = <?=json_encode($zmossexamlist2)?>;
+var _exam_list = <?=json_encode($examlist2)?>;
+var _subject = <?=json_encode($subject)?>;
+
+$(function(){
+	$('#id_exam_list').change(function(){
+		var _exam_pid = $(this).val();
+		$('#id_zmoss_exam_list').val(0);
+		
+		if (typeof _exam_list[_exam_pid] != 'undefined')
+		{
+			var _html = '';
+			var data = _exam_list[_exam_pid];
+    		
+			_html += "<tr><td>";
+		    _html += '<select name="er_examid[]">';
+			_html += '<option value="0">请选择科目</option>';
+			for (var i = 0; i < data.length; i++)
+    		{
+				_html += '<option value="'+data[i]['exam_id']+'">';
+				_html += _subject[data[i]['subject_id']];
+				_html += "</option>";
+    		}
+			_html += '</select></td><td></td><td></td></tr>';	
+
+			for (var i = 0; i < data.length; i++)
+    		{
+	    		if (i > 0)
+	    		{
+	    			$('#id_exam_subject_list').append(_html);
+		    	}
+	    		else
+	    		{
+	    			$('#id_exam_subject_list').html(_html);
+		    	}
+    		}
+		}
+	});
+
+	$('#id_zmoss_exam_list').change(function(){
+		if ($('#id_exam_list').val() < 1)
+		{
+			return false;
+		}
+		
+		var _zmoss_exam_pid = $(this).val();
+
+		var _html = '';
+		if (typeof _zmoss_exam_list[_zmoss_exam_pid] != 'undefined')
+		{
+			var data = _zmoss_exam_list[_zmoss_exam_pid];
+
+			_html = '<select name="exam_relate[]">';
+			_html += '<option value="0">请选择科目</option>';
+			for (var i = 0; i < data.length; i++)
+			{
+				_html += '<option value="'+data[i]['exam_id']+'">';
+				_html += data[i]['exam_name'];
+				_html += "</option>"
+			}
+			_html += '</select>';
+		}
+
+		$('#id_exam_subject_list tr').each(function(){
+			$(this).children('td').eq(1).html(_html);
+		});
+	});
+
+	$('#btn_copy').click(function(){
+		copyHtml();
+	});
+})
+
+function copyHtml()
+{
+	if ($('#id_exam_list').val() < 1)
+	{
+		return false;
+	}
+
+	var $thiz = $('#id_exam_subject_list');
+	$thiz.append('<tr>' + $thiz.children('tr').eq(0).html() + '</tr>');
+	$thiz.children('tr:last-child').children('td:last-child').html('<input type="button" value="删除" class="btn" onclick="removeHtml($(this));"/>');
+}
+
+function removeHtml(obj)
+{
+	obj.parent('td').parent('tr').remove();
+}
+
+function checkExamRelateForm()
+{
+	if ($('#id_exam_list').val() < 1
+		|| $('#id_zmoss_exam_list').val() < 1)
+	{
+		alert('请设置考试对应关系！');
+		return false;
+	}
+
+	var _is_submit = true;
+	/*
+	var _exam_relate = new Array();
+	$('select[name="exam_relate[]"]').each(function(i){
+		var _exam_id = parseInt($(this).val());
+		if (_exam_id > 0 && $.inArray(_exam_id, _exam_relate) > -1)
+		{
+			alert('考试对应关系只能是一对一！');
+			$(this).focus();
+			_is_submit = false;
+			return false;
+		}
+
+		_exam_relate[i] = _exam_id;
+	});
+	*/
+
+	return _is_submit;
+}
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">设置对应关系</div>
+    <form action="/admin/zmoss/saveexamrelate" method="post" onsubmit="return checkExamRelateForm();">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="25%">考试期次</td>
+        <td width="25%">对应阅卷项目</td>
+        <td width="50%"></td>
+      </tr>
+      <tr>
+        <td>
+        <?php if (isset($exam)) {?>
+        <?=$exam['exam_name']?>
+        <input type="hidden" name="er_exampid" value="<?=$exam['exam_id']?>">
+        <?php } else {?>
+        <select id="id_exam_list" name="er_exampid">
+            <option value="0">请选择测评考试期次</option>
+            <?php foreach ($examlist as $item) {?>
+                <option value="<?=$item['exam_id']?>"><?Func::echo_s($item['exam_name'])?></option>
+            <?php }?>
+        </select>
+        <?php }?>
+        </td>
+        <td>
+        <select id="id_zmoss_exam_list" name="er_zmoss_exampid">
+            <option value="0">请选择阅卷系统考试期次</option>
+            <?php foreach ($zmossexamlist as $exam_pid => $item) {?>
+                <option value="<?=$exam_pid?>" <?php if (isset($examrelate) && $examrelate['er_zmoss_examid'] == $exam_pid) {?>selected<?php }?>><?Func::echo_s($item['exam_name'])?></option>
+            <?php }?>
+        </select>
+        </td>
+        <td><input type="button" value="添加 " class="btn" id="btn_copy"/></td>
+      </tr>
+      <tbody id="id_exam_subject_list">
+      <?php if (isset($exam)) {?>
+          <?php $examtlist = array();?>
+          <?php foreach ($examrelatelist as $val) {?>
+          <tr>
+                <td>
+                <select name="er_examid[]">
+                <option value="0">请选择科目</option>
+                <?php foreach ($examlist2 as $v) {?>
+                <option value="<?=$v['exam_id']?>" <?if ($v['exam_id'] == $val['er_examid']){?>selected<?php }?>><?=$subject[$v['subject_id']]?></option>
+                <?php }?>
+                </select>
+                </td>
+                <td>
+                <select name="exam_relate[]">
+                <option value="0">请选择科目</option>
+                <?php foreach ($zmossexamlist2[$examrelate['er_zmoss_examid']] as $v) {?>
+                <option value="<?=$v['exam_id']?>" <?if ($val['er_zmoss_examid'] == $v['exam_id']) {?>selected<?php }?>><?Func::echo_s($v['exam_name'])?></option>
+                <?php }?>
+                </select>
+                </td>
+                <td>
+                <?php if (in_array($val['er_zmoss_examid'], $examtlist)) {?>
+                <input type="button" value="删除" class="btn" onclick="removeHtml($(this));"/>
+                <?php }?>
+                </td>
+          </tr>
+          <?php $examtlist[] = $val['er_zmoss_examid']?>
+          <?php }?>
+      <?php } else {?>
+      <?php }?>
+      </tbody>
+    </table>
+    <center> 
+ <input type="submit" value="确定 " class="btn" />
+  </center> 
+  </form>
+  </div>
+</div>
+
+<?php $this->load->view('common/footer', array('load_dialog_js' => true));?>

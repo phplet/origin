@@ -1,0 +1,22 @@
+
+<h4>亲爱的题库管理员：<?=$admin['email']?>，您好！</h4>
+
+<p>您于<?=date('Y-m-d H:i')?>被管理员成功导入到题库管理系统中。</p>
+<p style="font-weight:bold;">您的登陆帐号：<?php echo $admin['admin_user'];?></p>
+<p style="font-weight:bold;">您的登陆密码：<?php echo $admin['prototype_password'];?></p>
+<p>题库后台登陆地址：<?php echo site_url('admin/index/index/');?></p>
+
+<p>为了您的帐号安全，请在半个小时设置新密码；如果不是您本人授权申请，请忽略该邮件。</p>
+<p>请点击下面的链接重置登录密码。</p>
+<p>
+<a href="<?=site_url('admin/index/resetpwd/').'?code='.$hash?>" target="_blank">请点击重置登录密码。</a>
+
+<p>
+如果上述文字点击无效，请把下面网页地址复制到浏览器地址栏中打开：<a href="<?=site_url('admin/index/resetpwd/').'?code='.$hash?>" target="_blank"><?=site_url('admin/index/resetpwd/').'?code='.$hash?></a>
+</p>
+<br/>
+<br/>
+<div align="right" style="font-size:14px;">
+杭州择明教育科技<br/>
+择明，为你架起人和教育的链接！
+</div>

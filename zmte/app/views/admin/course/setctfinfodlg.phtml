@@ -1,0 +1,23 @@
+<div id="id_setctfinfo_dlg" style="width:400px">
+<div class="cls_title"><?=$ctf_info['ctf_id'] ? '编辑' : '新增'?>培训课程授课教师来源<? if ($ctf_info['ctf_id']) echo('(ID:' . $ctf_info['ctf_id'] . ')'); ?></div>
+<table class="maintable" id="id_setctfinfo_table" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="altbg1" width="40%">培训课程授课教师来源ID</td>
+    <td>
+      <input type="text" name="ctf_id" value="<?=$ctf_info['ctf_id']?>" class="cls_field txtbox" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="altbg1">培训课程授课教师来源名称</td>
+    <td>
+      <input type="text" name="ctf_name" value="<? Func::echo_s($ctf_info['ctf_name']); ?>" class="txtbox cls_field" style="width:100px"/>
+       <span style="color:#f00">*</span>
+    </td>
+  </tr>
+</table>
+<div class="cls_dialog_buttons">
+<button type="button" onclick="ajax_setCTF(<?=$ctf_id?>, fnGetFormData('id_setctfinfo_dlg'))">确定</button>
+<button type="button" onclick="fnCloseDialog('id_setctfinfo_dlg')">取消</button>
+</div>
+</div>

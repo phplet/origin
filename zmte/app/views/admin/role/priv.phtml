@@ -1,0 +1,280 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    static_js(array('common/address.js',
+                    'common/region.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    ));
+?>
+
+<style>
+.score_rank_td div {
+	line-height: 30px;
+	height: 30px;
+	padding-top: 6px;
+}
+</style>
+
+<script>
+$(function(){
+	$('.subtab').children().first().addClass("current");
+	var name = $('.subtab').children().first().find('a').attr('name');
+	$('#table_'+name).show();
+    $('.subtab').find('a').click(function(){
+        if($(this).attr('rel')=='click'){
+	        $(this).parent().addClass("current").siblings().removeClass('current');
+	        var name = $(this).attr('name');
+	        $('#table_'+name).show().siblings().hide();
+	        $('#group_tips').html('').fadeOut('slow');
+        }else{
+        	$('#group_tips').html('请先设置学科管理').fadeIn('slow');
+        }
+    });
+
+    //判断学科有没选择
+    var ischecked = false;
+    $("input[name='priv[group_subject][]']").each(function(i){
+    	if(this.checked){
+    		ischecked=true;
+    		return false;
+    	}
+	});
+	if(!ischecked){
+		$('#menu_group_question').attr('rel','noclick');
+		$('#menu_group_exam_paper').attr('rel','noclick');
+	}
+    $('#menu_group_question').mouseover(function(){
+    	var ischecked = false;
+    	$("input[name='priv[group_subject][]']").each(function(i){
+        	if(this.checked){
+        		ischecked=true;
+        		return false;
+        	}
+    	});
+    	if(ischecked){
+    		$('#menu_group_question').attr('rel','click');
+    	}else{
+    		$('#menu_group_question').attr('rel','noclick');
+    	}
+    });
+    $('#menu_group_exam_paper').mouseover(function(){
+    	var ischecked = false;
+    	$("input[name='priv[group_subject][]']").each(function(i){
+        	if(this.checked){
+        		ischecked=true;
+        		return false;
+        	}
+    	});
+    	if(ischecked){
+    		$('#menu_group_exam_paper').attr('rel','click');
+    	}else{
+    		$('#menu_group_exam_paper').attr('rel','noclick');
+    	}
+    });
+
+
+});
+</script>
+<div id="body">
+	<form name="Frm_cpuser_info" id="add_form" method="POST"
+		action="<?=site_url('admin/role/priv/'.$user['role_id'])?>">
+		<div class="space">
+			<!-- <div class="subtitle">权限设置</div> -->
+			<div>
+				&nbsp;&nbsp;
+				<span style="color: #f00; display: none;" id="group_tips"></span>
+			</div>
+			<div>
+				<ul class="subtab">
+        	<?php foreach($roles as $group): ?>
+            <li>
+						<a href="javascript://" name="<?=$group['code']?>"
+							id="menu_<?=$group['code']?>" rel='click' title=''><?=$group['label']?></a>
+					</li>
+            <?php endforeach; ?>
+        </ul>
+			</div>
+			<div>
+
+
+    <?php foreach($roles as $group): ?>
+    <?php $is_group_question = $group['code'] == 'group_question';?>
+    <?php $is_group_subject  = $group['code'] == 'group_subject';?>
+    <?php $is_group_grade  = $group['code'] == 'group_grade';?>
+    <?php $is_group_q_type  = $group['code'] == 'group_q_type';?>
+
+
+    <table class="maintable" id="table_<?=$group['code']?>" border="0"
+					cellspacing="0" cellpadding="0" style="display: none;">
+					<tr>
+						<td colspan="2" class="altbg2" style="text-align: center;">
+           <?=$group['label']?>  <input type="checkbox"
+								id="all_<?=$group['code']?>"
+								onclick="allchecked('priv[<?=$group['code']?>][]', '', this);" />
+							<label for="all_<?=$group['code']?>">全选/取消</label>
+						</td>
+					</tr>
+					<tr>
+						<td class="altbg1">
+							<table border="0">
+
+
+        <?php
+            // var_dump($user['privs']);
+//         $wp = array(
+//                 'account_transaction',
+//                 'account_transactionw',
+//                 'account_transactionp'
+//         );
+//         var_dump(array_intersect($wp, $user['privs']) );
+
+        foreach($group['priv'] as $v): ?>
+
+
+        <tr>
+
+									<td width="960px" style="border: 0px;">
+
+										<input type="checkbox" name="priv[<?=$group['code']?>][]"
+											onclick="allcheckedid('priv[<?=$v['code']?>][]', '', this);"
+											value="<?=$v['code']?>" id="all_<?=$v['code']?>"
+											<?php if(array_intersect(explode(',',$v['code']), $user['privs'])) echo 'checked';?> />
+										<label for="all_<?=$v['code']?>"><?=$v['label']?>
+         		<?php if($v['priv']):?>
+         		:
+         		<?php endif;?>
+
+         		</label>
+
+
+         		    <?php foreach($v['priv'] as $w): ?>
+
+
+
+
+         		    <input type="checkbox" name="priv[<?=$group['code']?>][]"
+											value="<?=$w['code']?>" id="priv[<?=$v['code']?>][]"
+											<?php if(array_intersect(explode(',',$w['code']), $user['privs'])) echo 'checked';?> />
+										<label for="all_priv[<?=$w['code']?>][]"><?=$w['label']?></label>
+         		    <?php endforeach;?>
+
+
+
+        	</td>
+
+								</tr>
+
+        <?php endforeach; ?>
+        </table>
+						</td>
+					</tr>
+
+      <?php if ($is_group_subject) {?>
+      <!-- 学科管理 -->
+					<tr>
+						<td class="altbg1">
+							<table border="0">
+        <?php foreach ($subject as $k=>$v):?>
+                	<td width="120px" style="border: 0px;">
+									<input type="checkbox" name="priv[group_subject][]"
+										value="<?php echo $k;?>" id="subject_list_<?php echo $k?>"
+										<?php if(in_array($k, $user['privs_subject'])) echo 'checked';?> />
+									<label for="subject_list_<?php echo $k?>"><?php echo $v;?></label>
+								</td>
+        <?php endforeach;?>
+        </table>
+						</td>
+					</tr>
+      <?php }?>
+
+            <?php if ($is_group_grade) {?>
+      <!-- 年级管理 -->
+					<tr>
+						<td class="altbg1">
+							<table border="0">
+        <?php foreach ($grade as $k=>$v):?>
+                	<td width="120px" style="border: 0px;">
+									<input type="checkbox" name="priv[group_grade][]"
+										value="<?php echo $k;?>" id="grade_list_<?php echo $k;?>"
+										<?php if(in_array($k, $user['privs_grade'])) echo 'checked';?> />
+									<label for="grade_list_<?php echo $k;?>"><?php echo $v;?></label>
+								</td>
+        <?php endforeach;?>
+        </table>
+						</td>
+					</tr>
+      <?php }?>
+
+      <?php if ($is_group_q_type) {?>
+      <!-- 题目类型管理 -->
+					<tr>
+						<td class="altbg1">
+							<table border="0">
+        <?php foreach ($q_type as $k=>$v):?>
+                	<td width="120px" style="border: 0px;">
+									<input type="checkbox" name="priv[group_q_type][]"
+										value="<?php echo $k;?>" id="q_type_list_<?php echo $k;?>"
+										<?php if(in_array($k, $user['privs_q_type'])) echo 'checked';?> />
+									<label for="q_type_list_<?php echo $k;?>"><?php echo $v;?></label>
+								</td>
+        <?php endforeach;?>
+        </table>
+						</td>
+					</tr>
+      <?php }?>
+
+      <?php if ($is_group_question) {?>
+      <!-- 题库读写权限 -->
+					<tr>
+						<td colspan="2" class="altbg2" style="text-align: center;<?php echo $is_group_question ? 'background:#eee;' : '';?>">
+							题库读写权限</td>
+					</tr>
+					<tr>
+						<td style="padding:5px 10% 5px 10%;<?php echo $is_group_question ? 'background:#FAFAFA;' : '';?>">
+        	<?php
+        		$u_action_type = $user['action_type'];
+        		$r_action_type = isset($u_action_type['question']) && isset($u_action_type['question']['r']) ? $u_action_type['question']['r'] : '1';
+        		$w_action_type = isset($u_action_type['question']) && isset($u_action_type['question']['w']) ? $u_action_type['question']['w'] : '1';
+			?>
+        	<div style="float: left; width: 40%;">
+	        	读权限：
+	        	<?php foreach ($action_type as $k=>$v) {?>
+	        	<input type="radio" value="<?php echo $k;?>"
+									name="r_action_type" id="r_action_type_<?php echo $k;?>"
+									<?php echo $k == $r_action_type ? 'checked="checked"' : '';?>>
+								<label for="r_action_type_<?php echo $k;?>"><?php echo $v;?></label>
+	        	<?php } ?>
+        	</div>
+
+							<div style="float: left; width: 40%;">
+        	写权限：
+        	<?php foreach ($action_type as $k=>$v) {?>
+        	<input type="radio" value="<?php echo $k;?>"
+									name="w_action_type" id="w_action_type_<?php echo $k;?>"
+									<?php echo $k == $w_action_type ? 'checked="checked"' : '';?>>
+								<label for="w_action_type_<?php echo $k;?>"><?php echo $v;?></label>
+        	<?php } ?>
+        	</div>
+						</td>
+					</tr>
+      <?php } ?>
+      </table>
+    <?php endforeach; ?>
+
+
+
+    </div>
+			<div id="auto_school_list">
+				<center>
+					<input type="submit" name="dosubmit" value=" 提交修改 " class="btn" />
+				</center>
+			</div>
+		</div>
+
+	</form>
+</div>
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,70 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+function moveOptions(from,to){
+    var oldname=$("#"+from+"  option:selected");
+    if(oldname.length==0){
+        return;
+    }
+    var valueOb = {};
+    $("#" + to).find("option").each(function(){
+        valueOb[String($(this).val())] = $(this);
+    });
+    
+    for( var i =0;i< oldname.length; i++){
+       if(valueOb[String($(oldname[i]).val())] == undefined){
+               $(oldname[i]).clone().appendTo($("#"+to))
+               $(oldname[i]).remove();
+       }        
+    }
+    
+}
+
+function test(){
+    var selectedComs = document . getElementById("select_exam_ids");
+    for(var i=0;i<selectedComs.length;i++){
+         selectedComs.options[i].selected = true;
+    }
+    return true;
+}
+
+</script>
+<div id="body">
+    <form name="frm_list"action="<?=site_url('admin/exam/down_examresult')?>" method="POST" onsubmit="return test()">
+    <div class="space">
+      <div class="subtitle">
+          <span>成绩下载期次</span>
+      </div>
+      <div style="align:center;">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td width="30%" colspan="2" style="text-align:center" class="altgb1">期次列表</td>
+            <td width ="text-aligin:center" class="altgb1">选择下载的期次</td>
+        </tr>
+        <tr>
+            <td style="text-align:center;  width=20%">
+                <select name="exam_list" id="exam_list" multiple="multiple" rows=10 style="width:250px;height:300px;clip:auto;">
+                <? foreach($exam_list as $val){?>
+                <option value="<?=$val['exam_id']?>" title="<?=$val['exam_name']?>"><?=$val['exam_name'];?>
+                <?}?>
+                </select>  
+            </td>
+            <td style="text-align:center;width:10%">
+                <ul>
+                <li>
+                <input type="button" value="<<<<" onclick="moveOptions('select_exam_ids','exam_list')";>
+                </li>
+                <li>
+                <input type="button" value=">>>>" onclick="moveOptions('exam_list','select_exam_ids')"></td>
+                </li>
+                </ul>
+            <td width="70%">
+                <select name="exam_ids[]" id="select_exam_ids" multiple="multiple" rows=10 style="width:250px;height:300px;">
+                </select>
+           </td>
+        </tr>
+            <tr><td></td><td style="text-align:center;"><input type="submit" name="dosubmit" value="提交"/><td><td></td></tr>
+        <table>
+    </div>
+    </form>
+</div>
+<?php $this->load->view('common/footer');?>

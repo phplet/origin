@@ -1,0 +1,72 @@
+<?php if (count($clstd_contrast_difficulty['contrast_qtype'])) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php 
+		$contrast_qtype = isset($clstd_contrast_difficulty['contrast_qtype']) ? $clstd_contrast_difficulty['contrast_qtype'] : array();
+		$max_k = count($contrast_qtype) - 1;
+		$new_qtype = isset($clstd_contrast_difficulty['new_qtype']) ? $clstd_contrast_difficulty['new_qtype'] : array();
+	?>
+    
+	<?php foreach ($contrast_qtype as $keys =>$vals) {?>
+	   <table class="cls_row table_header indent_25">
+	   <?php foreach ($vals as $key => $val) {?>
+            <tr>
+                <?php foreach ($val as $k => $v) {?>
+                    <<?=is_numeric($v) || empty($v) ? 'td' : 'th'?> width="25%" <?php if ($key == 1 && is_numeric($vals[2][$k]) && is_numeric($v) && $v != $vals[2][$k]) {?>style="position:relative;"<?php }?>>
+                    <?=(strlen($v) ? $v : '-')?><?=is_numeric($v) ? '%' : ''?>
+                    <?php if ($key == 1 && is_numeric($v) && is_numeric($vals[2][$k]) && $v != $vals[2][$k]) {?>
+    		   		     <div class="<?php if ($v > $vals[2][$k]){?>cls_sort cls_up<?php } elseif ($v < $vals[2][$k]) {?>cls_sort cls_down<?php }?>"></div>
+    		   		 <?php }?>
+                    </<?=is_numeric($v) || empty($v) ? 'td' : 'th'?>>
+                <?php }?>
+            </tr>
+        <?php }?>
+        </table>
+        <?php if ($keys != $max_k) {?>
+        <hr class="cls_row indent_25"/>
+        <?php }?>
+	<?php }?>
+	
+	<?php if ($new_qtype) {?>
+	<p class="cls_row indent_25 font12">&nbsp;</p>
+    <p class="cls_row indent_25 font12">新题型：</p>
+    <p class="cls_row indent_25 font12">&nbsp;</p>
+	<?php }?>
+	
+    <?php $std_difficulty_key  = 0;?>
+    <?php $count_std_difficulty_key = count($new_qtype['data']);?>
+    <?php foreach ($new_qtype['data'] as $q_type=>$item) {?>
+        <?php $std_difficulty_key++;?>
+        <table class="cls_row table_header indent_25" id="table_std_diff_<?echo $std_difficulty_key?>">
+            <tr>
+                <?php $first_th_width = '15';?>
+                <?php $count_data = count($new_qtype['fields']); ?>
+                <?php $left_p_width = !$count_data ? 0 : round((100-$first_th_width)/count($new_qtype['fields']));?>
+                <th width="<?=$first_th_width?>%"><?php echo $q_type;?></th>
+                <?php foreach ($new_qtype['fields'] as $field_name) {?>
+                    <th width="<?=$left_p_width?>%"><?php echo $field_name;?></th>
+                <?php } ?>
+            </tr>
+        </table>
+        
+        <?php $auto_key  = 0;?>
+        <?php foreach ($item as $name=>$val) {?>
+           <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_clstd_diff_<?echo $std_difficulty_key?>"<?php }?>>
+                <tr <?php echo $auto_key%2==0 ? 'class="bgc"' : '';?>>
+                    <th width="<?=$first_th_width?>%"><?php echo $name;?></th>
+                    <?php foreach ($val as $k => $v) {?>
+                       <?php if ($v) {?>
+                       <td width="<?=$left_p_width?>%" <?php if ($k == 2 && $v != end($val)) {?>style="color:<?=$v > end($val) ? 'green' : 'red'?>"<?php }?>><?=$v?></td>
+                       <?php } else {?>
+                       <td width="<?=$left_p_width?>%">-</td>
+                       <?php }?>
+                    <?php } ?>
+                </tr>
+            </table>
+        <?php } ?>
+
+        <?php if ($std_difficulty_key != $count_std_difficulty_key):?>
+            <hr class="cls_row indent_25"/>
+        <?php endif;?>
+    <?php } ?>
+<?php } ?>

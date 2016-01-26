@@ -1,0 +1,26 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <div class="space">
+      <div class="subtitle">
+     	下载学生成绩单
+    </div>
+    <form name="frm_import" id="frm_import" method="get" action="#" enctype="multipart/form-data">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+    <tr class="altbg1">
+        <td>选择考场</td>
+        <td class="altbg2">
+           <select name="place_id">
+             <?php foreach ($places as $v):?>
+             <option value="<?=$v['place_id']?>"><?=$v['place_name']?></option>
+             <?php endforeach;?>
+             </select>
+        </td>
+      </tr>
+    </table>  
+    <center>
+        <input type="submit" value=" 提交 " class="btn" />
+    </center>
+    </form>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

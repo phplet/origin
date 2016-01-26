@@ -1,0 +1,65 @@
+<?php
+/**
+ * 后台管理->题库及分类管理->学科列表
+ */
+$this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/subject/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><a class="menu" href="<?=site_url('admin/subject/add')?>">添加学科</a>学科管理</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="5%">删?</td>
+        <td width="15%">ID</td>
+        <td>学科名称</td>
+        <td>关联学科</td>
+        <td width="35%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['subject_id']?>"></td>
+        <td><?=$val['subject_id']?></td>
+        <td><?=$val['subject_name']?></td>
+        <td>
+        <?php $relata_subject_id = explode(',', $val['relate_subject_id'])?>
+        <?php foreach ($relata_subject_id as $v) {?>
+            <?=C('subject/'.$v)?>
+        <?php }?>
+        </td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <a href="<?=site_url('admin/subject/edit/'.$val['subject_id'])?>">编辑</a>
+          <?php } ?>
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url('admin/subject/delete/'.$val['subject_id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></center>
+  </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

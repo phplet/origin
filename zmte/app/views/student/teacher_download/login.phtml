@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+<?php if(!empty($exam['exam_id'])){ ?>
+<?=$exam['exam_name']?>
+<?php } else {?>
+<?=C('webconfig/site_name')?>
+<?php }?>
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<?php static_css('index/login.css');?>
+
+<script language="JavaScript">
+var siteurl = "<?=site_url()?>";
+if(self.parent.frames.length != 0) {
+	self.parent.location=document.location;
+}
+</script>
+</head>
+<body>
+<p>&nbsp;</p><p>&nbsp;</p>
+<table width="600" border="0" cellpadding="8" cellspacing="0" class="login_table">
+<form method="post" action="<?=site_url('student/teacher_download/login_deal')?>" name="login">
+<tr>
+    <td colspan="2" class="table_title">
+    <?php if(empty($exam['exam_id'])){?>
+        <?=C('webconfig/site_name')?>
+        <?php }else{ ?>
+        <?=$exam['exam_name']?>
+        <?php } ?>
+    <span>(教师登陆)</span>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" height="30"></td>
+</tr>
+<tr>
+    <td width="200" align="right">帐&nbsp;&nbsp;&nbsp;&nbsp;号</td>
+    <td width="*">
+        <input class="loginInput" type="text" name="ticket" id="ticket" placeholder="Email"/>
+    </td>
+</tr>
+<tr>
+    <td align="right">密&nbsp;&nbsp;&nbsp;&nbsp;码</td>
+    <td><input class="loginInput" type="password" name="password" placeholder="请输入登录密码"/></td>
+</tr>
+<tr>
+    <td></td>
+    <td>
+     <input type="submit" class="loginButton" value=" 登 录 " />
+    </td>
+</tr>
+<tr>
+    <td colspan="2" align="center" height="50">
+        Powered by <?php if(!empty($exam['exam_id'])){ ?><a href="http://www.ruida-edu.com/" target="_blank"><?=C('webconfig/rd_name')?></a><?php }else{ ?><a href="<?=site_url()?>" target="_blank"><?=C('webconfig/site_name')?></a><?php } ?>&nbsp;&copy;&nbsp;<?php echo date('Y');?>&nbsp;&nbsp;<?=C('version')?>
+    </td>
+</tr>
+</form>
+</table>
+</body>
+</html>

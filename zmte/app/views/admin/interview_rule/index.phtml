@@ -1,0 +1,55 @@
+<?php $this->load->view('common/header');?>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+    <a class="menu" href="<?=site_url('admin/interview_rule/add')?>">添加组题规则</a>
+    面试题组题规则</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="3%">ID</td>
+        <td>规则名称</td>
+        <td width="10%">年段</td>
+        <td width="10%">类型</td>
+        <td width="5%">语言</td>
+        <td width="10%">考点</td>
+        <td width="15%">录入时间</td>
+        <td width="15%">状态</td>
+        <td width="15%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><?=$val['rule_id']?></td>
+        <td><?=$val['rule_name']?></td>
+        <td><?=$val['period_name']?></td> 
+        <td><?=$val['class_name']?></td>
+        <td><?=$val['language']?></td>
+        <td><?=$val['type_name']?></td>        
+        <td><?=$val['addtime']?></td> 
+        <td><?=$val['status']==0 ?'未生成试题':'已生成试题'?></td> 
+        <td>
+          <?php if($val['status']):?>
+          <a href="<?=site_url('admin/interview_rule_question/rule/'.$val['rule_id'])?>">试题列表</a>
+          <a href="<?=site_url('admin/interview_rule/reset_rule/'.$val['rule_id'])?>" onclick="return confirm('您确定要清空试题记录么？');">清空试题</a>
+          <?php else:?>
+          <a href="<?=site_url('admin/interview_rule/edit/'.$val['rule_id'])?>">编辑</a>
+          <a href="<?=site_url('admin/interview_rule/delete/'.$val['rule_id'])?>" onclick="return confirm('您确定要删除么？');">删除</a>
+          <a href="<?=site_url('admin/interview_rule/search_question/'.$val['rule_id'])?>">匹配试题</a>
+          <?php endif;?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2">
+        </td>
+        <td colspan="7" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="9">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

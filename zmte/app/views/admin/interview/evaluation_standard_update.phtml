@@ -1,0 +1,374 @@
+<?php 
+  $this->load->view('common/header');
+  static_global(array('js/jquery/plugin/blockUi.js'));
+?>
+<style>
+#subject_option span {line-height:30px;}
+</style>
+
+<script type="text/javascript">
+  var ajax_url_exam_place = "<?php echo site_url('admin/evaluation_standard/exam_place_list'); ?>";
+  var ajax_url_evaluation_option = "<?php echo site_url('admin/evaluation_standard/evaluation_option_list'); ?>";
+
+  var select_exam_place = function(){
+    $.post(
+        ajax_url_exam_place,
+        function(data){
+            var __widowWidth = $(window).width();
+            var __left = (__widowWidth - 800)/2 + 'px';
+            $.blockUI({
+                theme:true,
+                message:data,
+                themedCSS:{background:"#fff",width:"800px",left:__left,top:'10%',overflow:'auto'}
+            });
+            $(".close").click($.unblockUI);
+            $('.blockOverlay').click($.unblockUI);
+        },
+        'html'
+    );
+  }
+
+  function select_evaluation_option(subject_id)
+  {
+    $.post(
+        ajax_url_evaluation_option,
+        {subject_id:subject_id},
+        function(data){
+            var __widowWidth = $(window).width();
+            var __left = (__widowWidth - 800)/2 + 'px';
+            $.blockUI({
+                theme:true,
+                message:data,
+                themedCSS:{background:"#fff",width:"800px",left:__left,top:'10%',overflow:'auto'}
+            });
+            $(".close").click($.unblockUI);
+            $('.blockOverlay').click($.unblockUI);
+        },
+        'html'
+    );
+  }
+
+  var checkbox_status = function(select_name){
+    var flag = false;
+    $(select_name).each(function(i){
+      if ($(this).prop("checked") == true) {
+        flag = true;
+      };
+    });
+
+    return flag;
+  }
+
+  var check_subject_weight = function()
+  {
+      var total_percent = 0;
+      var result = true; 
+      $("input[name^=subject_id]:checked").each(function(){
+    	  var weight_obj = $(this).next().next().children();
+    	  var subject_percent = weight_obj.val();
+    	  var subject_name = weight_obj.attr('subject_name');
+          if (subject_percent == '')
+          {
+              alert('请填写'+subject_name+'所占权重比');
+              weight_obj.focus();
+              result = false;
+              return result;
+    	  }
+
+          if (isNaN(subject_percent) || subject_percent <= 0 || subject_percent > 100)
+          {
+              alert('权重占比必须为0-100之间的数值');
+              weight_obj.focus();
+              result = false;
+              return result;
+    	  }
+
+          total_percent += parseFloat(subject_percent);
+      });
+
+      if (result && total_percent != 100)
+      {
+    	  alert('所有学科的权重占比总和必须等于 100');
+    	  result = false;
+      }
+
+      return result;
+  }
+
+  var check_subject_option = function()
+  {
+	  var result = true; 
+	  var tip_subject = '';
+	  $("input[name^=subject_id]:checked").each(function(){
+		    var subject_id = $(this).val();
+		    if (!checkbox_status("#subject_option_id_"+subject_id+" input[name='option_id["+subject_id+"][]']"))
+		    {
+			    var subject_name = $(this).next().next().children().attr('subject_name');
+		    	tip_subject += (tip_subject ? "、" + subject_name : subject_name);
+		    	result = false;
+			}
+	  });
+
+	  if (!result)
+	  {
+		    alert('请选择'+tip_subject+'评分项');
+	  }
+
+	  return result;
+  }
+
+  var check_level = function()
+  {
+	  var result = true;
+      $("input[name='level[]']").each(function(){
+    	    if ($(this).val() == '')
+    	    {
+    	        alert('等级名称不能为空');
+    	        $(this).focus();
+    	        result = false;
+    	        return result;
+    	    }
+      });
+
+      if (!result)
+      {
+    	   return result;
+      }
+
+      var total_percent = 0;
+      $("input[name='level_percent[]']").each(function(){
+            var percent = $(this).val();
+      	    if (percent == '')
+      	    {
+      	        alert('等级所占百分比不能为空');
+      	        $(this).focus();
+      	        result = false;
+      	        return result;
+      	    }
+
+      	   if (isNaN(percent) || percent <= 0 || percent > 100)
+           {
+              alert('等级占比必须为0-100之间的数值');
+              $(this).focus();
+              result = false;
+              return result;
+    	   }
+
+  	       total_percent += parseFloat(percent);
+      });
+
+      if (result && total_percent != 100)
+      {
+    	  alert('等级所占百分比总和必须等于 100');
+    	  result = false;
+      }
+
+      return result;
+  }
+
+  $(function(){
+    // 考试期次列表
+    $('#select_exam_place').click(function(){
+      select_exam_place();
+    });
+
+    // 前端验证
+    $('#form').bind('submit', function(){
+      // 标题
+      if ($("input[name='title']").val() == '') {
+        alert('请填写标题！');
+        return false;
+      };
+
+      // 考试期次
+      var result = checkbox_status("#form input[name='exam_id[]']");
+      if (!result) {
+        alert('请选择考试期次！');
+        return false;
+      };
+
+      //学科
+      var result = checkbox_status("#form input[name^='subject_id']");
+      if (!result) {
+        alert('请选择学科！');
+        return false;
+      };
+
+      //学科权重
+      if (!check_subject_weight())
+      {
+          return false;
+      }
+
+      // 学科对应评分项
+      if (!check_subject_option())
+      {
+          return false;
+      };
+
+      //等级及占比
+      if (!check_level())
+      {
+          return false;
+      }
+
+      // 状态
+      if ($("input[name='status']").val() == '') {
+        alert('请选择状态！');
+        return false;
+      };
+    });
+
+    $('input[name^=subject_id]').click(function(){
+        var subject_id = $(this).val();
+        if ($(this).is(":checked") == true)
+        {
+        	$(this).next().next().show();
+        	subject_option(subject_id);
+        }
+        else
+        {
+        	$(this).next().next().hide();
+        	$(this).next().next().children().val('');
+        	subject_option(subject_id, 'remove');
+        }
+    });
+    
+    $('label[name^=subject_id]').click(function(){
+        var subject_id = $(this).prev().val();
+        if ($("#" + $(this).attr('for')).is(":checked") == true)
+        {
+        	$(this).next().show();
+        	subject_option(subject_id);
+        }
+        else
+        {
+        	$(this).next().hide();
+        	$(this).next().children().val('');
+        	subject_option(subject_id, 'remove');
+        }
+    });
+
+    function subject_option(subject_id, action)
+    {
+    	var action = action || '';
+        if (action == 'remove')
+        {
+        	$('#subject_option_'+subject_id).remove();
+        }
+        else
+        {
+        	var html = $('#subject_option').html();
+            var subject_name = $('label[for="subject_id['+subject_id+']"]').html();
+
+            html += '<div id="subject_option_'+subject_id+'"><span>'+subject_name+'</span>：<span id="subject_option_id_'+subject_id+'"></span><button onclick="select_evaluation_option('+subject_id+');" class="btn2" type="button">点击选择</button></div>'; 
+
+            $('#subject_option').html(html);
+        }
+    }
+  })
+</script>
+
+<div id="body">   
+  <form name="Frm_info" id="form" method="POST" action="<?=site_url('admin/evaluation_standard/update_save')?>">
+  <div class="space">
+    <div class="subtitle">编辑评分标准</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">标题</td>        
+        <td>
+            <input type="text" name="title" class="txtbox" value="<?php echo $row['title'] ?>">
+            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">考试期次</td>        
+        <td>
+            <div id="exam_ids">
+              <?php if ($exams): ?>
+                <?php foreach ($exams as $key => $value): ?>
+                  <input type="checkbox" name="exam_id[]" id="exam<?php echo $value['exam_id'] ?>" value="<?php echo $value['exam_id'] ?>" checked />
+                  <label for="exam<?php echo $value['exam_id'] ?>"><?php echo $value['exam_name'] ?></label><br/>
+                <?php endforeach ?>
+              <?php endif ?>
+            </div>
+            <button id="select_exam_place" class="btn2" type="button">点击选择</button>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学科及权重</td>        
+        <td>
+            <?php foreach ($subject as $subject_id => $name) {?>
+            <input type="checkbox" name="subject_id[<?php echo $subject_id ?>]" id="subject_id[<?php echo $subject_id ?>]" value="<?php echo $subject_id ?>" <?php if (in_array($subject_id, $row['subject_id'])) echo "checked";?>>
+            <label for="subject_id[<?php echo $subject_id ?>]"><?php echo $name;?></label>
+            <span <?php if (!in_array($subject_id, $row['subject_id'])) {?>style="display:none"<?php }?>>
+            <input type="text" name="weight[<?php echo $subject_id ?>]" id="weight[<?php echo $subject_id ?>]" class="subject_percent" style="width: 30px;" subject_name="<?php echo $name;?>" subject_id="<?php echo $subject_id ?>" value="<?=isset($row['weight'][$subject_id]) ? $row['weight'][$subject_id] : ''?>">%
+            </span>
+            &nbsp;
+            <?php }?>
+            <strong style="padding-left:10px;color:red;">*注意：所有学科的占比总和必须等于 100</strong>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学科评分项</td>
+        <td id="subject_option">
+            <?php foreach ($options as $subject_id => $item) {?>
+            <div id="subject_option_<?=$subject_id?>">
+            <span><?php echo $subject[$subject_id]?></span>：
+            <span id="subject_option_id_<?=$subject_id?>">
+              <?php if ($item) {?>
+                <?php foreach ($item as $key => $value) { ?>
+                  <input type="checkbox" name="option_id[<?=$subject_id?>][]" id="option_<?php echo $value['id']; ?>_<?=$subject_id?>" value="<?php echo $value['id'] ?>" checked />
+                  <input type="text" class="subject_percent" name="sort[<?=$subject_id?>][]" value="<?php echo ++$key; ?>" style="width:20px;" />
+                  <label for="option_<?php echo $value['id'] ?>_<?=$subject_id?>"><?php echo $value['title']; ?></label>
+                <?php } ?>
+              <?php } ?>
+              </span>
+               <button onclick="select_evaluation_option(<?=$subject_id?>);" class="btn2" type="button">点击选择</button>
+            </div>
+            <?php }?>
+            
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">等级名称及所占比例</td>
+        <td>
+            <?php if ($row['level']) {?>
+                <?php $key = 0?>
+                <?php foreach ($row['level'] as $level => $level_percent) {?>
+                <?php echo ++$key;?>、<input type="text" name="level[]" class="subject_percent" style="width:40px;" value="<?=$level?>">-<input type="text" name="level_percent[]" class="subject_percent" style="width:30px;" value="<?=$level_percent?>">% &nbsp;
+                <?php }?>
+            <?php } else {?>
+            <?php for ($i = 1; $i < 6; $i++) {?>
+                <?php echo $i;?>、<input type="text" name="level[]" class="subject_percent" style="width:40px;">-<input type="text" name="level_percent[]" class="subject_percent" style="width:30px;">% &nbsp;
+            <?php }?>
+            <?php }?>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">状态</td>        
+        <td>
+            <input type="radio" id="radio_able" name="status" value="1" <?php if($row['status'] == 1): ?>checked="checked" <?php endif; ?>>
+            <label for="radio_able">启用</label>
+            <input type="radio" id="radio_unable" name="status" value="0" <?php if((int)$row['status'] === 0): ?>checked="checked" <?php endif; ?>>
+            <label for="radio_unable">禁用</label>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">提示</td>        
+        <td>
+          <p>1.评分项排序将按照从小到大依次排列</p>
+          <p>2.评分项排序若为空，将按照0计算</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+
+<?php $this->load->view('common/footer');?>

@@ -1,0 +1,89 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'practice'));?>
+
+<div id="body">
+  <form method="POST" action="<?=site_url('student/profile/practice_save')?>">
+  <input type="hidden" name="uid" value="<?=$uid?>">
+  <div class="space">
+    <table class="maintable" id="table_practice" border="0" cellspacing="0" cellpadding="0">
+      <tr><td style="border:none;height:10px"></td></tr>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+          	<span class="altbg2-bg">项目描述</span>
+          	<i class="altbg2-r"></i>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"  style="text-align: center;color:#f00;text-align:center;background-color:#ffffe8;border-top:none;">
+            请在参加过的项目中填写描述，每项不多于<font id="font_maxlength">100</font>字
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">考察研究</td>        
+        <td class="bg">
+            <textarea name="practice[investigate]" rows="4" cols="70" class="charleft_input"><?=isset($practice['investigate'])?$practice['investigate']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">便民环保</td>        
+        <td class="bg">
+            <textarea name="practice[environment]" rows="4" cols="70" class="charleft_input"><?=isset($practice['environment'])?$practice['environment']:''?></textarea>
+        </td>
+      </tr>
+       <tr>
+        <td class="altbg1">文娱宣传</td>        
+        <td class="bg">
+            <textarea name="practice[art]" rows="4" cols="70" class="charleft_input"><?=isset($practice['art'])?$practice['art']:''?></textarea>
+        </td>
+      </tr>
+     <tr>
+        <td class="altbg1">勤工俭学</td>        
+        <td class="bg">
+            <textarea name="practice[work]"  rows="4" cols="70" class="charleft_input"><?=isset($practice['work'])?$practice['work']:''?></textarea>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">其他</td>        
+        <td class="bg" style="border-bottom:2px solid #045eab;">
+            <textarea name="practice[other]" rows="4" cols="70" class="charleft_input"><?=isset($practice['other'])?$practice['other']:''?></textarea>
+        </td>
+      </tr>
+       <tr><td style="border:none;height:10px"></td></tr>
+    </table>
+     <center style="margin-bottom:10px;"> 
+  <?php if($uid OR $this->session->userdata('complete')):?>
+    <input type="submit" name="dosubmit"  value=" 保存修改  " class="btn" />
+  <?php else: ?>
+    <input type="button" value=" 上一步 " onclick="location='<?=site_url('student/profile/awards')?>'" class="btn" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="submit" name="dosubmit"  value=" 下一步 " class="btn" />
+  <?php endif; ?>
+  </center>
+  </div>
+  </form>
+</div>
+
+<?php 
+    static_global(array('js/common/address.js',
+                        'js/common/region.js',
+                        'js/jquery/plugin/jquery.charsleft.min.js',
+    				));
+?>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    //字数限制
+	$(".charleft_input").charsLeft({
+		maxChars: parseInt($('#font_maxlength').html()),
+		attachment: "after",
+		disableMode:true,
+		charPrefix: "还剩 ",
+		charSuffix: " 个字.",
+		attachment: "after",
+		wrapperClass: "char_left",
+		countClass: "char_count"
+	});
+  });
+</script>
+
+<?php $this->load->view('common/profile_footer');?>

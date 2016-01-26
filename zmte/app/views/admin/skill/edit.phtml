@@ -1,0 +1,35 @@
+<?php $this->load->view('common/header');?>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/skill/update')?>">
+  <input type="hidden" name="id" value="<?=$row['id']?>" />
+  <div class="space">
+    <div class="subtitle">编辑技能</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">技能名称</td>        
+        <td>
+            <input type="text" name="skill_name" class="txtbox" value="<?=$row['skill_name']?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">关联学科</td>        
+        <td>
+          <select name="subject_id">
+            <option value="0">--请选择--</option>
+            <?php foreach($subjects as $key => $val): ?>
+            <option value="<?=$key?>"<?=$key==$row['subject_id']?' selected="selected" ':''?>><?=$val?></option>
+            <?php endforeach; ?>
+          </select>  
+        </td>
+      </tr>
+
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

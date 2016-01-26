@@ -1,0 +1,73 @@
+<?php
+$this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+<style>
+#body .btn_bg {background:#a6cbe7}
+</style>
+
+<div id="body">
+<div style="height:40px; line-height:40px; ">
+    <?php foreach ($template_type_name as $key => $val) {?>
+    <input class="btn <?php if ($template_type == $key) {?>btn_bg<?php }?>" type="button" value="<?=$val?>模板管理" onclick="location.href='<?=site_url('admin/evaluate_template/index/'.$key)?>'">
+    <?php }?>
+</div>
+  <form name="frm_list" action="<?=site_url('admin/evaluate_template/delete')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle">
+    <a class="menu" href="<?=site_url('admin/evaluate_template/edit')?>">新增<?=$template_type_name[$template_type]?>模板</a>
+    <a class="menu" href="<?=site_url('/admin/evaluate_module/index')?>"><?=$template_type_name[$template_type]?>模块管理</a>
+    <?=$template_type_name[$template_type]?>模板管理 
+    </div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr class="altbg1">
+        <td width="5%">删?</td>
+        <td width="15%">ID</td>
+        <td>模板名称</td>
+        <? if ($template_type) {?>
+        <td>模板适用学科</td>
+        <?php }?>
+        <td width="35%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['template_id']?>"></td>
+        <td><?=$val['template_id']?></td>
+        <td><?=$val['template_name']?></td>
+        <? if ($template_type) {?>
+        <td>
+        <? $template_subjectid = array_filter(explode(',', $val['template_subjectid']))?>
+        <?php foreach ($template_subjectid as $s_id) {?>
+            <?php echo $subject[$s_id];?> 
+        <?php }?>
+        </td>
+        <?php }?>
+        <td>
+          <a href="<?=site_url('admin/evaluate_template/edit/'.$val['template_id'])?>">编辑</a>
+          <a href="<?=site_url('admin/evaluate_template/delete/'.$val['template_id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></td>
+        <td colspan="7" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

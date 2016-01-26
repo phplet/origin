@@ -1,0 +1,108 @@
+<div class="space">
+    <div class="subtitle">
+        <span class="menu" style="padding-top:5px;">
+            <a href="javascript://" class="close"><img src="<?=__HTML_URL__?>images/no.gif" /></a>
+        </span>
+        <span>考试期次选择</span>
+        <a href="javascript:void(0)" id="option_select_all" style="color:red;">[全选/反选]</a>
+    </div>
+    <div style="max-height:300px;_height:300px;overflow:auto;">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:0px;width:780px;">
+            <?php if($list):?>
+                <?php if (count($list) < 2): ?>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="option_id" id="exam_<?=$list[0]['id']?>" class="option" value="<?=$list[0]['id']?>" />
+                            <label for="exam_<?=$list[0]['id']?>"><?php echo $list[0]['title']; ?></label>
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach($list as $key =>$row):?>
+                        <?php if ($key%2 == 0): ?>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="option_id" id="exam_<?=$row['id']?>" class="option" value="<?=$row['id']?>" />
+                                    <label for="exam_<?=$row['id']?>"><?php echo $row['title']; ?></label>
+                                </td>
+                        <?php else: ?>
+                                <td>
+                                    <input type="checkbox" name="option_id" id="exam_<?=$row['id']?>" class="option" value="<?=$row['id']?>" />
+                                    <label for="exam_<?=$row['id']?>"><?php echo $row['title']; ?></label>
+                                </td>
+                            </tr>
+                        <?php endif ?>
+                    <?php endforeach; ?>
+                <?php endif ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2" style="text-align: center;color:#f00">暂无评分规则</td>
+                </tr>
+            <?php endif;?>
+        </table>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="background:#A6CBE7;text-align: center;color:#f00">
+                <input type="button" id="knowledge_confirm" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " class="btn close" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function(){
+
+        // 全选/反选
+        var option_select_all_off = false;
+        $('#option_select_all').click(function(){
+            if (!option_select_all_off) {
+                $('.option').prop("checked", true);
+                option_select_all_off = true;
+            } else {
+                $('.option').prop("checked", false);
+                option_select_all_off = false;
+            }
+        });
+
+        // 初始化
+        var init_option_ids = function(){
+            $('#subject_option_id_<?php echo $subject_id?>> input:checked').each(function(){
+                var option_id = $(this).val();
+                $('.option[value="' + option_id + '"]').prop("checked", true);
+            });
+        }
+
+        init_option_ids();
+
+        // 添加评分项到评分标准
+        $('#knowledge_confirm').click(function(){
+            var selected = [];
+            var checkbox = $('input:checked[name=option_id]');
+
+            for (var i=0; i<checkbox.length; i++) {
+                if (checkbox[i].checked == true) {                   
+                    var kid = checkbox[i].value;
+                    var kname = $(checkbox[i]).parent().find('label').html();
+
+                    item = [kid, kname];
+                    selected.push(item);
+                } 
+            }
+
+            if (selected.length == 0) {
+                alert('请选择评分项！');
+                return;
+            }
+
+            var string = '';
+
+            for (i=0; i<selected.length; i++) {
+                string += '<input type="checkbox" class="checkbox_options" name="option_id[<?php echo $subject_id;?>][]" id="option_' + selected[i][0] + '_<?php echo $subject_id;?>" value="' + selected[i][0] + '" checked="checked" /><input type="text" class="subject_percent" name="sort[<?php echo $subject_id;?>][]" value="'+(i+1)+'" style="width:25px;" /><label style="padding-right:10px;" for="option_' + selected[i][0] + '_<?php echo $subject_id;?>">' + selected[i][1] + '</label>';
+            }
+            
+            $('#subject_option_id_<?php echo $subject_id;?>').html(string);         
+            $.unblockUI();
+        });
+    });
+</script>

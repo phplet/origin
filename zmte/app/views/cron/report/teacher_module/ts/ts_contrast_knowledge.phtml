@@ -1,0 +1,31 @@
+<?php if ($ts_contrast_knowledge['contrast_knowledge']) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php $contrast_knowledge = $ts_contrast_knowledge['contrast_knowledge'];?>
+    <?php $tr_name = array('知识模块', '所有任教学生本次', '所有任教学生上次');?>
+    
+    <?php foreach ($contrast_knowledge as $keys => $item) {?>
+        <?php foreach ($item as $key => $value) {?>
+        <?php $width = 80 / count($value)?>
+        <? if ($key !== 2) { ?><table class="cls_row cls_table indent_25 <?php if($key === 0){ echo 'table_header';} ?>"><? } ?>
+               	<tr>
+               	    <th width="20%"><?php echo $tr_name[$key];?></th>
+               	    <?php foreach ($value as $k => $val) {?>
+               	        <?php if ($key > 0) {?>
+        		   		 <td width="<?=$width?>%" <?php if ($key == 1 && $val != $item[2][$k]) {?>style="position:relative"<?php }?>>
+        		   		 <?php echo $val;?>
+        		   		 <?php if ($key == 1 && is_numeric($val) && $val != $item[2][$k]) {?>
+        		   		     <div class="<?php if ($val > $item[2][$k]){?>cls_sort cls_up<?php } elseif ($val < $item[2][$k]) {?>cls_sort cls_down<?php }?>"></div>
+        		   		 <?php }?>
+        		   		 </td>
+        		   		 <?php } else {?>
+        		   		 <th width="<?=$width?>%"><?php echo $val;?></th>
+        		   		 <?php }?>
+        		   	<?php }?>
+               	</tr>
+                <? if ($key !== 1) { ?></table><? } ?>
+        <?php }?>
+        <?php if (!$keys) {?><p class="cls_row">&nbsp;</p><?php }?>
+    <?php }?>
+    
+    <p class="mokuai-text cls_row font12" style="padding-left:25px">注：表中数据为该知识模块下的所有试题的实际得分和期望得分的比值。若该比值小于1则说明在该知识模块上的实际得分小于期望得分，若比值大于1则说明在该知识点上的实际得分高于期望得分。</p>
+<?php }?>

@@ -1,0 +1,120 @@
+<?php $this->load->view('common/header');?>
+<?php $this->load->view('common/question_js');?>
+<?php $this->load->view('question/js/question_type');?>
+
+<script>
+var paper_diy=0;
+var is_group  = true;
+var dirName = "question/<?=$question['ques_id'] ? $question['ques_id'] : microtime(true);?>";
+</script>
+<style>
+    .height_light {
+        border:1px solid #f00;
+        padding:2px 0 2px 0;
+        margin:2px 0 2px 0;
+    }
+    .gray_input {
+        color:#ccc;
+    }
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question/update_diction')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'add'):?>
+  <input type="hidden" name="relate_group" value="<?=$relate_group?>" />
+  <input type="hidden" name="relate_ques_id" value="<?=$relate_ques_id?>" />
+  <input type="hidden" name="file_save_path" value="<?=$question['ques_id']?>">
+  <?php else:?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+    <div style="position:absolute;top:-1000px;">
+      <input type="checkbox" id="class_id_validate" name="class_id_validate" value="1" />
+    </div>
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>选词填空题干</div>
+    <table class="maintable"  border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">题目信息</td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">学科</td>
+            <td>
+              <select name="subject_id" id="subject_id">
+                <option value="">--请选择--</option>
+                <?php foreach($subjects as $key => $val): ?>
+                <?php if ($key == 3) {?>
+                <option value="<?=$key?>" selected><?=$val?></option>
+                <?php }?>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="subject_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="start_grade" id="start_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['start_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              -
+              <select name="end_grade" id="end_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['end_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="grade_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php /* 考试类型 */ ?>
+        <?php $this->load->view('question/property/exam_type'); ?>
+        <?php /* 考试方式 */ ?>
+        <?php $this->load->view('question/property/exam_way'); ?>
+        <?php /* 试题类型 */ ?>
+        <?php $this->load->view('question/property/question_type'); ?>
+        <tr>
+            <td class="altbg1">标签</td>
+            <td>
+             <?php foreach ($q_tags as $key => $item) {?>
+             <?php $checked = ($key == $question['tags']) ? 'checked="checked"' : '';?>
+             <INPUT type="radio" name="q_tag" id="q_tag<?=$key?>" value="<?=$key?>" <?=$checked?> />
+             <?=$item?>&emsp;
+             <?php }?>
+             <SCRIPT type="text/javascript">
+          	     if ($('input:radio[name=q_tag]:checked').val() == null)
+          	     {
+            	     $('#q_tag1').attr('checked',true);
+                 }
+             </SCRIPT>
+            </td>
+        </tr>
+        <?php $info = explode('&nbsp;<br/>&nbsp;',$question['title'])?>
+        <tr>
+            <td class="altbg1">题目</td>
+            <td>
+              <script id="question_title" name="title" type="text/plain" style="width:700px;height:320px;"><?=$info[0]?><?php if($act=='edit' && $question['picture']):?><img src="<?=__IMG_ROOT_URL__?><?=$question['picture']?>"/><?php endif;?></script>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">选词</td>
+            <td>
+              <script id="input_reference_answer" name="options" type="text/plain" style="width:700px;height:320px;"><?=isset($info[1]) ? $info[1] : ''?></script>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <center>
+    <input type="submit" id="dosubmit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

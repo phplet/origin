@@ -1,0 +1,26 @@
+<?php if (!defined('BASEPATH')) exit(); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<?php static_css('register/links.css');?>
+
+</head>
+<body>
+<div id="header">
+<?php if(!empty($exam['exam_id'])){ ?>
+  <div id="img_new"></div>
+<?php }else{ ?>
+   <div id="img"></div>
+<?php } ?>
+
+  <div id="product">
+    <center style="font-family: '\5fae\8f6f\96c5\9ed1','Microsoft YaHei' ;">
+    <p><?=C('webconfig')['site_name']?>测评</p>
+      <p style="font-weight: normal;font-size: 18px;">(教师入口)</p>
+    </center>
+  </div>
+</div>
+</body>
+</html>

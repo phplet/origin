@@ -1,0 +1,28 @@
+<?php echo $header;?>
+
+<Row ss:AutoFitHeight="0">
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品ID</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品名称 </Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品类型 </Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">交易次数</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">产品定价</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">交易金额</Data></Cell>
+</Row>
+<?php
+if ($list) {
+$vc = C('virtual_currency');
+foreach ($list as $k => $v) { ?>
+<Row ss:AutoFitHeight="0">
+   <Cell><Data ss:Type="String"><?=$v['p_id'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['p_name'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['pc_name'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['tr_num'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=$v['p_price']?> / <?=$v['p_price_pushcourse']?> <?=$vc['name']?></Data></Cell>
+   <Cell><Data ss:Type="String"><?=bcsub(0, $v['tr_sum'], 0)?> <?=$vc['name']?></Data></Cell>
+</Row>
+<?php
+}
+}
+?>
+<?php
+echo $footer;?>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>评估报告(<?php echo $subject_name;?>)</title>
+    <?php static_global('css/app/report/ceping.css', 'css');?>
+    <?php static_global(array(
+						'js/jquery/jquery.js',
+		  ));
+	?>
+<style>
+hr{
+	border:none;
+	border-bottom: 1px dotted #ccc;
+}
+
+span.level{
+	width:40px;
+	height:40px;
+	display:inline-block;
+}
+span.level1{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level1.gif');
+}
+span.level2{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level2.gif');
+}
+span.level3{
+	background: url('<?php echo __GLOBAL_HTML_URL__;?>/images/zeming/report/ico/level3.gif');
+}
+</style>
+</head>
+<body>
+<div class="ceping">
+   <h1>测评报告</h1>
+    <h2 style="color:red;">测试科目：<?php echo $subject_name;?>&nbsp;&nbsp;&nbsp;&nbsp;满分：<?php echo round($full_score);?>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green;">实际得分：<?php echo round($test_score);?></span></h2>
+    <!--试题分析及与之对应的评价 && 诊断及建议 start-->
+    <?php echo $this->load->view('../demo/report/subject_module/sq_ss');?>
+</div>
+</body>
+</html>

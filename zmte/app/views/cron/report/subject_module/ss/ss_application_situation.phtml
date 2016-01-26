@@ -1,0 +1,113 @@
+<?php
+/**
+ * 诊断及建议 --强弱点分布情况
+ */
+?>
+<?php if (count($ss_application_situation['application_situation'])) {?>
+<?php 
+$application_situation = $ss_application_situation['application_situation'];
+$percent= $ss_application_situation['application_situation_percent'];
+$knowledges = $ss_application_situation['knowledges'];
+
+$kp_name = array('记忆', '理解', '应用');
+
+$contrast_data = array();
+if (isset($ss_application_situation['contrast_data']))
+{
+    $contrast_data = $ss_application_situation['contrast_data'];
+    unset($ss_application_situation['contrast_data']);
+}
+?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+        <?php if ($contrast_data) {?>
+            <?php foreach ($contrast_data as $item) {?>
+            <table class="cls_row table_header indent_25">
+                <?php foreach ($item as $key => $val) {?>
+                <tr>
+                    <?php foreach ($val as $k => $v) {?>
+                    <<?=is_numeric($v) ? 'td' : 'th'?> width="25%" <?php if(is_numeric($v) && $key == 1 && $v > -1 && $item[2][$k] > -1 && $v != $item[2][$k]) {?>style="position:relative;"<?php }?>>
+                    <?php if (!$key && !$k) {?>
+                         <?php 
+                         $kp = array();
+                         
+                         for ($i = 1; $i < 3; $i++)
+                         {
+                             for ($j = 1; $j <= 3; $j++)
+                             {
+                                 if ($item[$i][$j] > -1)
+                                 {
+                                     $kp[$j] = $kp_name[$j-1];
+                                 }
+                             }
+                         }
+                         
+                         ksort($kp);
+                         $kp = array_unique($kp);
+                         ?>
+                        <?if ($zmcat_studyplus_enabled) {?><a href="/student/index/studyplus?k_zmtekid=<?=$knowledges[$v]?>&<?=http_build_query(array('kp_name'=>implode(',', $kp)))?>" target="_blank"><?=$v?></a><?}else{?><?=$v?><?}?>
+                    <?php } else {?>
+                        <?php if ($v > -1) {?>
+                        <?=$v?>
+                        <?php } else {?>
+                        -
+                        <?php }?>
+                    <?php }?>
+                    <?php if (is_numeric($v) && $key == 1 && $v > -1 && $item[2][$k] > -1 && $v != $item[2][$k]) {?>
+				   	<div class="<?php if ($v > $item[2][$k]){?>cls_sort cls_up<?php } else {?>cls_sort cls_down<?php }?>"></div>
+        		   	<?php }?>
+                    </<?=is_numeric($v) ? 'td' : 'th'?>>
+                    <?php }?>
+                </tr>
+                <?php }?>
+            </table>
+            <p class="cls_row">&nbsp;</p>
+            <?php }?>
+        <?php }?>
+        <?php if ($application_situation) {?>
+        <?php if ($contrast_data) {?>
+        <p class="cls_row indent_25 font12">新知识点强弱分布：</p>
+        <p class="cls_row indent_25 font12">&nbsp;</p>
+        <?php }?>
+        <table class="cls_row table_header table_sq_ss indent_25" id="table_ss_application_situation_2">
+            <tr>
+                <th class="w168" width="30%">知识点\认知过程</th>
+                <th width="10%">记忆</th>
+                <th width="10%">理解</th>
+                <th width="10%">应用</th>
+                <th width="40%">评语</th>
+            </tr>
+        </table>
+        <?php }?>
+        
+        <?php $auto_key = 0;?>
+        <?php foreach ($application_situation as $k_name => $item) {?>
+            <?php $auto_key++;?>
+            <table class="cls_row cls_table indent_25" <?php if (!$no_paging) {?>ref_title_id="table_ss_application_situation_2"<?php }?>>
+                <?php 
+                    $tmp_percent = 0;
+                    $num = 0;
+                    $kp = array();
+                    for ($i = 1; $i <= 3; $i++)
+                    {
+                        if ($item['kp_' . $i] > 0)
+                        {
+                            $kp[] = $kp_name[$i-1];
+                            $tmp_percent += $percent[$k_name]['kp_' . $i];
+                            $num++;
+                        }
+                    }
+                    $tmp_percent = round($tmp_percent / $num);
+                ?>
+                <tr <?if ($auto_key%2==0) { ?> 
+                    class="bgc_level<?=Fn::judgmentBelongsLevel($tmp_percent)?>"<?}?>>
+                    <td class="w168" width="30%">
+                    <?if ($zmcat_studyplus_enabled) {?><a href="/student/index/studyplus?k_zmtekid=<?=$knowledges[$k_name]?>&<?=http_build_query(array('kp_name'=>implode(',', $kp)))?>" target="_blank"><?=$k_name?></a><?}else{?><?=$k_name?><?}?>
+                    </td>
+                    <td width="10%"><?php if ($item['kp_1'] > 0) {?><?=$percent[$k_name]['kp_1']?>%<?php }?></td>
+                    <td width="10%"><?php if ($item['kp_2'] > 0) {?><?=$percent[$k_name]['kp_2']?>%<?php }?></td>
+                    <td width="10%"><?php if ($item['kp_3'] > 0) {?><?=$percent[$k_name]['kp_3']?>%<?php }?></td>
+                    <td width="40%"><?php echo $item['comment'];?></td>
+                </tr>
+            </table>
+        <?php } ?>
+<?php } ?>

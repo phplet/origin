@@ -1,0 +1,122 @@
+<?php $this->load->view('common/header');?>
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnSelItem()
+{
+    var param = new Array();
+    $("#id_grid input[name='ct_id']:checked").each(function(){
+        var ctid = this.value;
+        var ctname = $("#id_tr_" + ctid + " td.ct_name").text();
+        param[param.length] = {
+                "ct_id" : ctid, 
+                "ct_name" : ctname};
+    });
+    return param;
+}
+
+function fnClearSelection()
+{
+    $("#id_grid input[name='ct_id']:checked").removeAttr('checked');
+}
+</script>
+<div id="body">
+  <div class="space">
+    <div class="subtitle">培训教师列表
+        
+      <div class="cls_toolbar">
+      <button type="button" onclick="fnShowDialog('id_qry_dlg')">查询</button>
+      <button type="button" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <table class="cls_table" border="0" cellspacing="0" cellpadding="0" id="id_grid">
+      <tr class="cls_title">
+      <td width="20"><? if ($_GET['multisel']) { ?><input type="checkbox" onchange="fnSelAll('id_grid', 'ct_id', this.checked)"/><? } ?></td>
+        <td width="40">ID</td>
+        <td width="80">名称</td>
+        <td width="160">年级</td>
+        <td width="160">学科</td>
+        <td width="100">联系方式</td>
+        <td width="40">状态</td>
+      </tr>
+      <? if(!empty($ct_list)) { ?>
+      <? foreach($ct_list as $v) { ?>
+      <tr id="id_tr_<?=$v['ct_id']?>">
+        <td><input type="<?=$_GET['multisel'] ? 'checkbox' : 'radio'?>" name="ct_id" value="<?=$v['ct_id']?>"/></td>
+        <td><?=$v['ct_id']?></td>
+        <td class="ct_name"><? Func::echo_s($v['ct_name']); ?></td>
+        <td><? foreach ($cteacher_gradeid[$v['ct_id']] as $v2) { ?>
+            &nbsp;<?=$grade_map[$v2['ctg_gradeid']]?>
+            <? } ?>
+        </td>
+        <td><? foreach ($cteacher_subjectid[$v['ct_id']] as $v2) { ?>
+            &nbsp;<?=$subject_map[$v2['cts_subjectid']]?>
+            <? } ?>
+        </td>
+        <td><? Func::echo_s($v['ct_contact']); ?></td>
+        <td><?  if ($v['ct_flag'] < 0) echo('已删'); 
+                else if ($v['ct_flag'] == '0') echo('禁用'); 
+                else if ($v['ct_flag'] == 1) echo('启用'); 
+                else if ($v['ct_flag'] > 1) echo('待审'); ?></td>
+      </tr>
+      <? } ?>
+      <? } ?>
+    </table>
+    <? $this->load->view('common/paginator', Fn::paginator($ct_list_count));?>
+  </div>
+</div>
+
+
+<div id="id_qry_dlg" style="display:none">
+<div class="cls_title">搜索教师信息</div>
+  <form method="GET" id="id_qry_form" name="search_form" action="<?=site_url('admin/cteacher/selctlist')?>">
+    <div class="space" style="margin:5px">
+        <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="altbg1">教师名称</td>
+                <td><input type="text" name="ct_name" value="<? Func::echo_s($param['ct_name']); ?>" class="txtbox"/>
+                <input type="hidden" name="multisel" value="<?=$_GET['multisel'] ? '1' : ''?>"/></td>
+            </tr>  
+            <tr>
+                <td class="altbg1">联系方式</td>
+                <td><input type="text" name="ct_contact" value="<? Func::echo_s($param['ct_contact']); ?>" class="txtbox"/></td>
+            </tr>  
+            <tr>
+                <td class="altbg1">年级</td>
+                <td>
+                    <select name="grade_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($grade_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['grade_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">学科</td>
+                <td>
+                    <select name="subject_id_str">
+                    <option value="">[不限]</option>
+                    <? foreach ($subject_map as $key =>$val) if ($key > 0) { ?>
+                    <option value="<?=$key?>" 
+<? if ($key == $param['subject_id_str']) echo('selected="selected"'); ?>
+><? Func::echo_s($val);?></option>
+                    <? } ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+  </form>
+<div class="cls_dialog_buttons">
+<button type="submit" onclick="document.getElementById('id_qry_form').submit()">确定</button>
+<button type="button" onclick="fnCloseDialog('id_qry_dlg')">取消</button>
+</div>
+</div>
+<?php $this->load->view('common/footer');?>

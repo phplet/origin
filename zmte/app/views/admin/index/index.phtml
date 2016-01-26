@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<title><?=C('webconfig/site_name')?>管理中心</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<?php //static_global('js/jquery/jquery.js');?>
+<script type="text/javascript">
+if (window.top != window.self)
+{
+    window.top.location.href = location.href;
+}
+</script>
+</head>
+<frameset rows="57px,*" border="0" frameborder="0">
+<frame frameborder="0" marginheight="0" marginwidth="0" id="header" name="header" src="<?=site_url('admin/index/top')?>" scrolling="no" noresize="noresize"></frame>
+<frameset cols="200px,*" border="0"frameborder="0">
+<frame frameborder="0"  marginheight="0" marginwidth="0" id="menu" name="menu" src="<?=site_url('admin/index/menu')?>" scrolling="auto"></frame>
+<frame frameborder="0"  marginheight="0" marginwidth="0" id="main" name="main" src="<?=site_url('admin/index/main')?>" scrolling="auto"></frame>
+</frameset>
+</frameset>
+</html>

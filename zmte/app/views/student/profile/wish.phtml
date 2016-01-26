@@ -1,0 +1,155 @@
+<?php $this->load->view('common/profile_header', array('topmenu' => 'profile', 'submenu' => 'wish'));?>
+<div id="body">
+  <form method="POST" action="<?=site_url('student/profile/wish_save')?>" onsubmit="return check_wish(this)">
+  <input type="hidden" name="uid" value="<?=$uid?>">
+  <div class="space">
+    <table class="maintable" id="table_student_wish" border="0" cellspacing="0" cellpadding="0">
+    <tr><td style="border:none;height:10px;"></td></tr>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: left;">
+            <span class="altbg2-bg">兴趣爱好</span>
+          	<i class="altbg2-r"></i>
+        </td>
+        <td colspan="2" class="altbg2" style="text-align: left;color:#666;">
+            <span style="color:#f00;position:relative;top:3px;">*</span> 发展意愿
+        </td>
+      </tr>
+      <tr>
+        <td width="12%" class="altbg1">音乐</td>
+        <td width="30%" >
+            <textarea name="student_wish[music]" rows="2" cols="40"><?=isset($student_wish['music'])?$student_wish['music']:''?></textarea>
+        </td>
+        <td  width="12%"  class="altbg1">升学途经 <span style="color:#f00">*</span></td>
+        <td>
+            <?php if ( ! isset($student_wish['upmethod'])) $student_wish['upmethod']='';?>
+            <input type="radio" name="student_wish[upmethod]" id="method_1" value="高考"<?php if($student_wish['upmethod']=='高考') echo ' checked';?>/><label for="method_1"> 高考</label>
+            <input type="radio" name="student_wish[upmethod]" id="method_2" value="自主招生"<?php if($student_wish['upmethod']=='自主招生') echo ' checked';?> /><label for="method_2"> 自主招生</label>
+            <input type="radio" name="student_wish[upmethod]" id="method_3" value="出国留学"<?php if($student_wish['upmethod']=='出国留学') echo ' checked';?> /><label for="method_3"> 出国留学</label>
+            <?php if(in_array($student_wish['upmethod'],array('高考','自主招生','出国留学',''))):?>
+            <input type="radio" name="student_wish[upmethod]" id="method_4" value="其他" /><label for="method_4"> 其他</label>
+            <input type="text" name="student_wish[upmethod_other]" id="other_method" value="" class="qt txtbox4" />
+            <?php else: ?>
+            <input type="radio" name="student_wish[upmethod]" id="method_4" value="其他" checked /><label for="method_4"> 其他</label>
+            <input type="text" name="student_wish[upmethod_other]" id="other_method" class="qt txtbox4" value="<?=$student_wish['upmethod']?>" />
+            <?php endif; ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">体育</td>
+        <td>
+            <textarea name="student_wish[sport]" rows="2" cols="40"><?=isset($student_wish['sport'])?$student_wish['sport']:''?></textarea>
+        </td>
+        <td rowspan="4" class="altbg1" style="border-bottom:2px solid #045eab;">发展意愿 <span style="color:#f00">*</span></td>
+        <td rowspan="4" style="border-bottom:2px solid #045eab;">
+            <textarea name="student_wish[wish]" rows="8" cols="45"><?=isset($student_wish['wish'])?$student_wish['wish']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">美术</td>
+        <td>
+            <textarea name="student_wish[painting]" rows="2" cols="40"><?=isset($student_wish['painting'])?$student_wish['painting']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">其他</td>
+        <td style="border-bottom:2px solid #045eab;">
+            <textarea name="student_wish[other]" rows="2" cols="40"><?=isset($student_wish['other'])?$student_wish['other']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">
+                       您目前对大学中最感兴趣的专业大类（最多三项）
+        </td>
+        <td style="border-bottom:2px solid #045eab;">
+         <?php
+                $student_wish[spec] = unserialize($student_wish['spec']);
+         ?>
+         <?php foreach ($specs as $k => $v):?>
+                <input type="checkbox" name ="student_wish[spec][]" class = "student_wish"
+                <?php if( !empty($student_wish[spec])&&in_array($k, $student_wish[spec])&&is_array($student_wish[spec])): ?>checked<?php endif;?> value="<?php echo $k;?>">
+                <?php echo $v;?>
+         <?php endforeach;?>
+        </td>
+      </tr>
+      <tr><td style="border:none;height:10px;"></td></tr>
+    </table>
+    <center style="margin-bottom:10px;">
+  <?php if($uid OR $this->session->userdata('complete')):?>
+    <input type="submit" name="dosubmit"  value=" 保存修改  " class="btn" />
+  <?php else: ?>
+    <input type="button" value=" 上一步 " onclick="location='<?=site_url('student/profile/practice')?>'" class="btn" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="submit" name="dosubmit"  value=" 下一步 " class="btn" />
+  <?php endif; ?>
+  </center>
+  </div>
+  </form>
+</div>
+
+
+<script type="text/javascript">
+    function check_wish(form) {
+        var wish = getRadio(form, 'student_wish[upmethod]');
+        var other = $('#other_method').val().trim();
+        var err = '';
+        if ( ! wish) {
+            err += "- 请选择升学途经。\n";
+        }
+        if (wish == '其他' && other == '') {
+            err += "- 请填写其他升学途经名称。\n";
+            $('#other_method').focus();
+        }
+        if ($("textarea[name*='[wish]']").val().trim() == '') {
+            err += "- 请填写发展意愿。\n";
+            //$("textarea[name*='[wish]']").focus();
+        }
+        var falg = 0;
+        $("input[name='student_wish[spec][]']:checkbox").each(function () {
+            if ($(this).prop("checked")) {
+                 falg += 1;
+            }
+        });
+        if (falg > 3) {
+        	err += "- 您目前对大学中最感兴趣的专业大类（最多三项）\n";
+        }
+        if (err) {
+            alert(err);
+            return false;
+        }
+        return true;
+    }
+    var other_method = '';
+    $(function(){
+        $('input:radio').click(function(){
+            if($(this).val() != '其他') {
+                if ($('#other_method').val())
+                    other_method = $('#other_method').val();
+                $('#other_method').val('');
+            }
+        });
+        $('input:radio').last().click(function(){
+            if (other_method) {
+                $('#other_method').val(other_method);
+            }
+        });
+        $('#other_method').focus(function(){
+            $('input:radio').last().click();
+        });
+    });
+
+    function get_inputs(type, name, parent) {
+        if(parent) {
+            var objs=parent.getElementsByTagName(type);
+        } else {
+            var objs=document.getElementsByTagName(type);
+        }
+        var result = [];
+        for (var i=0; i<objs.length; i++) {
+            if (objs[i].name == name) {
+                result.push(objs[i]);
+            }
+        }
+        return result;
+    }
+</script>
+<?php $this->load->view('common/exam_footer');?>

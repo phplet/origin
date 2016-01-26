@@ -1,0 +1,67 @@
+<?php $this->load->view('common/header');?>
+<script language="javascript">
+function check_form(form) {                      
+    if (checkbox_check('ids[]')) {
+        return confirm('确定要删除么？');
+    }
+    return false;
+} 
+
+</script>
+
+<div id="body">
+  <form name="frm_list" action="<?=site_url('admin/skill/delete_batch')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle"><a class="menu" href="<?=site_url('admin/skill/add')?>">添加技能</a>技能管理</div>  
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="8" class="altbg2" style="text-align: center;">
+        学科筛选：
+        <a href="<?=site_url('admin/skill/index/')?>"<?=$subject_id==0?' style="color:#f00"':''?>>全部学科</a>
+        <?php foreach($subjects as $k => $v):?>
+        <a href="<?=site_url('admin/skill/index/'.$k)?>"<?=$subject_id==$k?' style="color:#f00"':''?>><?=$v?></a>
+        <?php endforeach;?>
+        </td>
+      </tr>
+      <tr class="altbg1">
+        <td width="5%">删?</td>
+        <td width="15%">ID</td>
+        <td>技能名称</td>
+        <td width="15%">关联学科</td>
+        <td width="35%">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr>
+        <td><input type="checkbox" name="ids[]" value="<?=$val['id']?>"></td>
+        <td><?=$val['id']?></td>
+        <td><?=$val['skill_name']?></td>
+        <td><?=$val['subject_name']?></td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <a href="<?=site_url('admin/skill/edit/'.$val['id'])?>">编辑</a>
+          <?php } ?>
+          <?php if ($priv_delete) {?>
+          <a href="<?=site_url('admin/skill/delete/'.$val['id'])?>" onclick="return confirm('确定要删除么？');">删除</a>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="2"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="7" style="text-align:right"></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <?php if ($priv_delete) {?>
+    <center><input type="submit" name="dosubmit" value=" 批量删除 " class="btn" /></center>
+    <?php } ?>
+  </div>
+  </form>
+
+</div>
+<?php $this->load->view('common/footer');?>

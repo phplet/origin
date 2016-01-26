@@ -1,0 +1,106 @@
+<?php if ($ts_difficulty['data'] || $ts_difficulty['qualified_difficulty']) {?>
+    <h5 class="cls_row title_level_2"><?=$g_sort?>.<?=$c_sort?><?=$module_name?></h5>
+    <?php if ($ts_difficulty['qualified_difficulty']) {?>
+    <?php 
+    $str = array();
+    foreach ($ts_difficulty['qualified_difficulty'] as $qtype_name => $val) {
+        $str[] = $qtype_name . implode('、', $val) . '难度';
+    }
+    ?>
+    <p class="cls_row indent_25">经过前一阶段的教学，您所任教的学生在<?=implode('，', $str)?>上掌握情况较好。</p>
+    <?php }?>
+    <p class="cls_row">&nbsp;</p>
+    <?php if ($ts_difficulty['data']) {?>
+        <p class="cls_row indent_25">以下题型及难度的掌握情况有待提高：</p>
+        <p class="cls_row">&nbsp;</p>
+        <?php foreach ($ts_difficulty['data'] as $item) {?>
+            <table class="cls_row cls_table indent_25">
+            <?php foreach ($item as $key => $val) {?>
+                <tr>
+                <?php 
+                $width = 100 / count($val);
+                $kk = count($val) - 2;
+                ?>
+                <?php foreach ($val as $k => $v) {?>
+                <<?=($key == 0 || $k == 0) ? "th" : 'td'?> width="<?=$width?>%">
+                <?php if (is_numeric($v)) {?>
+                <span style="<?php if ($v < 0) {?>color:red;<?} else if ($k < $kk && $v > end($val)){?>color:green;<?php }?> font-weight: unset;"><?=abs(intval($v))?>%</span>
+                <?php } else {?>
+                <?=$v?>
+                <?php }?>
+                </<?=($key == 0 || $k == 0) ? "th" : 'td'?>>
+                <?php }?>
+                </tr>
+            <?php } ?>
+            </table>
+            <p class="cls_row">&nbsp;</p>
+        <?php } ?>
+        <p class="mokuai-text cls_row font12 indent_25">注：表格中的百分数均为得分率。</p>
+    <?php } else {?>
+    <p class="cls_row indent_25">所有题型及难度都表现较好。</p>
+    <?php }?>
+    
+    <?php if ($ts_difficulty['summary_date']) {?>
+        <?php 
+        $width = 80 / count($ts_difficulty['summary_date'][0]);
+        $is_all = 4 == COUNT($ts_difficulty['summary_date']);
+        $td_str = '';
+        ?>
+        <?php ?>
+        <p class="cls_row">&nbsp;</p>
+        <p class="cls_row indent_25">难易度得分率总结：</p>
+        <p class="cls_row">&nbsp;</p>
+        <table class="cls_row cls_table indent_25">
+            <tr>
+            <th width="20%">难易度</th>
+            <?php foreach ($ts_difficulty['summary_date'][0] as $v) {?>
+                <th width="<?=$width?>%"><?=$v?></th>
+                <?php 
+                if (!$is_all) {
+                    $td_str .= '<td width="'. $width .'%">-</td>';
+                }
+                ?>
+            <?php ?>
+            <?php }?>
+            </tr>
+            <tr>
+            <th width="20%">低</th>
+            <?php if (isset($ts_difficulty['summary_date']['low'])) {?>
+                <?php foreach ($ts_difficulty['summary_date']['low'] as $k => $v) {?>
+                    <td width="<?=$width?>%">
+                    <span style="<?php if (is_numeric($k) && $v < end($ts_difficulty['summary_date']['low'])) {?>color:red;<?} else if (is_numeric($k) && $v > end($ts_difficulty['summary_date']['low'])){?>color:green;<?php }?> font-weight: unset;"><?=abs($v)?>%</span>
+                    </td>
+                <?php }?>
+            <?php } else {?>
+                <?=$td_str?>
+            <?php }?>
+            </tr>
+            
+            <tr>
+            <th width="20%">中</th>
+            <?php if (isset($ts_difficulty['summary_date']['mid'])) {?>
+                <?php foreach ($ts_difficulty['summary_date']['mid'] as $k => $v) {?>
+                    <td width="<?=$width?>%">
+                    <span style="<?php if (is_numeric($k) && $v < end($ts_difficulty['summary_date']['mid'])) {?>color:red;<?} else if (is_numeric($k) && $v > end($ts_difficulty['summary_date']['mid'])){?>color:green;<?php }?> font-weight: unset;"><?=abs($v)?>%</span>
+                    </td>
+                <?php }?>
+            <?php } else {?>
+                <?=$td_str?>
+            <?php }?>
+            </tr>
+            
+            <tr>
+            <th width="20%">高</th>
+            <?php if (isset($ts_difficulty['summary_date']['high'])) {?>
+                <?php foreach ($ts_difficulty['summary_date']['high'] as $k => $v) {?>
+                    <td width="<?=$width?>%">
+                    <span style="<?php if (is_numeric($k) && $v < end($ts_difficulty['summary_date']['high'])) {?>color:red;<?} else if (is_numeric($k) && $v > end($ts_difficulty['summary_date']['high'])){?>color:green;<?php }?> font-weight: unset;"><?=abs($v)?>%</span>
+                    </td>
+                <?php }?>
+            <?php } else {?>
+                <?=$td_str?>
+            <?php }?>
+            </tr>
+        </table>
+    <?php }?>
+<?php } ?>

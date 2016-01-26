@@ -1,0 +1,98 @@
+<?php $this->load->view('common/header');?>
+
+<?php 
+    static_js(array('common/address.js', 
+                    'common/region.js'));
+?>
+
+<script language="javascript">
+$(document).ready(function(){
+	if($('#selCities option:selected').val())!=0){
+	
+	region.changed(document.Frm_info.province, 2, 'selCities');
+	}
+});
+</script>
+<div id="body">   
+  <form name="Frm_info" method="POST" action="<?=site_url('admin/school/create')?>">
+  <div class="space">
+    <div class="subtitle">添加学校</div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="16%" class="altbg1">所在地区</td>        
+        <td>
+          <select name="province" id="selProvinces" onchange="region.changed(this, 2, 'selCities')">
+            <option value="0">--请选择省--</option>
+            <?php foreach($province_list as $val): ?>
+            <option value="<?=$val['region_id']?>" <?php if(isset($detail['province'])):
+            if($val['region_id']==$detail['province']):?>selected<?php endif;endif;?>><?=$val['region_name']?></option>
+            <?php endforeach; ?>
+          </select>
+          <select name="city" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+            <option value="0">--请选择市--</option>
+                
+                 <?php 
+                 if(isset($city_list)):
+                 foreach($city_list as $val): ?>
+                    <option value="<?=$val['region_id']?>" <?=$val['region_id']==$detail['city']?' selected="selected" ':''?>><?=$val['region_name']?></option>
+                 <?php endforeach; endif;?>
+            
+          </select>
+          <select name="area" id="selAreas">
+            <option value="0">--请选择区县--</option>
+            <?php 
+            if(isset($area_list)):
+            foreach($area_list as $val): ?>
+                    <option value="<?=$val['region_id']?>" <?=$val['region_id']==$detail['area']?' selected="selected" ':''?>><?=$val['region_name']?></option>
+             <?php endforeach; 
+             endif;
+             ?>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学校年段</td>        
+        <td>
+            <?php foreach($grade_periods as $key => $val): ?>
+            <input type="checkbox" name="grade_period[]" value="<?=$key?>" 
+            <?php
+             if(isset($detail['grade_period'])):
+             ?>
+             <?=strpos($detail['grade_period'],(string)$key)!==false ? 'checked':''?>
+            <?php 
+            endif;
+            ?>
+      
+            /> <?=$val?>
+            <?php endforeach; ?>       
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">学校名称</td>        
+        <td>
+            <input type="text" id="school_name" name="school_name" class="txtbox" value="<?=isset($detail['school_name'])?$detail['school_name']:''?>">
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">办学性质</td>   
+        <td>
+            <input type="radio" name="school_property" value="0" <?php if($detail['school_property']==0) echo 'checked';?> /> 公办
+            <input type="radio" name="school_property" value="1" <?php if($detail['school_property']==1) echo 'checked';?> /> 民办
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">是否显示</td>        
+        <td>
+            <input type="checkbox" name="status" value="1" <?php if(isset($detail['status'])&&$detail['status']==1):?> checked="checked" <?php endif;?>   >
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center> 
+    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>   
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

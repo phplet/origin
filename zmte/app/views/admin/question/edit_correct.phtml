@@ -1,0 +1,161 @@
+<?php $this->load->view('common/header');?>
+<?php $this->load->view('common/question_js');?>
+<?php $this->load->view('question/js/question_type');?>
+
+<script>
+var paper_diy=0;
+var dirName = "question/<?=$question['ques_id'] ? $question['ques_id'] : microtime(true);?>";
+var is_group  = true;
+var class_ids = [<?=trim($question['class_id'],',')?>];
+//var skill_ids = [<?=trim($question['skill'],',')?>];
+var knowledge_ids = [<?=trim($question['knowledge'],',')?>];
+
+var ajax_url_class = '<?=site_url('admin/common/question_class')?>';
+//var ajax_url_skill = '<?=site_url('admin/common/skill')?>';
+var ajax_url_knowledge = '<?=site_url('admin/common/knowledge_all')?>';
+var ajax_url_knowledge_select = '<?=site_url('admin/common/knowledge_select')?>';
+var ajax_url_knowledge_init = '<?=site_url('admin/common/knowledge_init')?>';
+
+//解决ueditor编辑器放table里在360兼容模式下显示不了。
+$(function() {
+  $('#subject_id').change(function(){
+      var subj_id = $(this).val();
+      if (subj_id == 11)
+      {
+          $('#subject_id_list').show();
+      }
+      else
+      {
+      	$('#subject_id_list').hide();
+      }
+  });
+
+	//取消对知识点的检查
+	$("#txt_knowledge_ids").rules("remove");
+
+});
+</script>
+<style>
+    .height_light {
+        border:1px solid #f00;
+        padding:2px 0 2px 0;
+        margin:2px 0 2px 0;
+    }
+    .gray_input {
+        color:#ccc;
+    }
+</style>
+<div id="body">
+  <form name="Frm_info" class="validate" id="question_form" method="POST" action="<?=site_url('admin/question/update_correct')?>" enctype="multipart/form-data" onsubmit="return false;">
+  <input type="hidden" name="act" id="act" value="<?=$act?>" />
+  <?php if($act == 'add'):?>
+  <input type="hidden" name="relate_group" value="<?=$relate_group?>" />
+  <input type="hidden" name="relate_ques_id" value="<?=$relate_ques_id?>" />
+  <input type="hidden" name="file_save_path" value="<?=$question['ques_id']?>">
+  <?php else:?>
+  <input type="hidden" name="ques_id" value="<?=$question['ques_id']?>" />
+  <?php endif;?>
+    <div style="position:absolute;top:-1000px;">
+      <input type="checkbox" id="class_id_validate" name="class_id_validate" value="1" />
+    </div>
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'?'添加':'修改'?>改错题</div>
+    <table class="maintable"  border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+            <td colspan="2" class="altbg2" style="text-align: center;">题目信息</td>
+        </tr>
+        <tr>
+            <td width="10%" class="altbg1">学科</td>
+            <td>
+              <select name="subject_id" id="subject_id">
+                <option value="">--请选择--</option>
+                <?php foreach($subjects as $key => $val): ?>
+                 <?php if ($key == 3) {?>
+                <option value="<?=$key?>" selected><?=$val?></option>
+                <?php }?>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="subject_id" class="error" style="display:none"></label>
+              <span id="subject_id_list" <?if ($question['subject_id'] != 11): ?> style="display: none;" <?php endif;?>>
+              <?php $subject_ids = explode(',', $question['subject_id_str']);?>
+              <?php foreach($all_subjects as $key => $val): ?>
+              <?php if ($key != 11):?>
+                <input type="checkbox" name="subject_str[]" value="<?=$key?>" <? echo in_array($key, $subject_ids) ? 'checked': '';?>><?=$val?>
+              <?php endif;?>
+              <?php endforeach; ?>
+              </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="start_grade" id="start_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['start_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              -
+              <select name="end_grade" id="end_grade">
+                <option value="">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$question['end_grade']==$key?' selected':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+              <label for="grade_id" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php if ($act=='edit' && trim($question['skill']) != '') {?>
+        <tr>
+            <td class="altbg1">技能</td>
+            <td>
+              <span style="color:red;">*注意：因考虑到后续将移除技能项，请将该处已勾选的技能全部去除。</span>
+              <br/>
+              <br/>
+              <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="skill_id[]" value="" /></div>
+              <span id="skill_list"></span>
+              <label for="skill_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php } ?>
+        <?php if ($act=='edit' && trim($question['knowledge']) != '') {?>
+        <tr>
+            <td class="altbg1">知识点</td>
+            <td>
+            	<span style="color:red;">*注意：因考虑到后续将题干的知识点项转到子题中，请将该处已勾选的知识点全部去除。</span>
+                <br/>
+                <br/>
+                <div style="position:absolute;top:-1000px;left:200px;"><input type="checkbox" name="knowledge_id[]" id="txt_knowledge_ids" value="" /></div>
+             	<div id="knowledge_list"></div>
+             	<input type="hidden" name="knowledge_ids" id="knowledge_ids" value="<?=trim($question['knowledge'],',')?>" />
+             	<button id="knowledge_select" class="btn2" type="button">点击选择</button>
+             	<label for="knowledge_id[]" class="error" style="display:none"></label>
+            </td>
+        </tr>
+        <?php } ?>
+        <?php /* 考试类型 */ ?>
+        <?php $this->load->view('question/property/exam_type'); ?>
+        <?php /* 考试方式 */ ?>
+        <?php $this->load->view('question/property/exam_way'); ?>
+        <?php /* 试题类型 */ ?>
+        <?php $this->load->view('question/property/question_type'); ?>
+        <tr>
+            <td class="altbg1">题目</td>
+            <td>
+              <script id="question_title" name="title" type="text/plain" style="width:700px;height:320px;"><?=$question['title']?><?php if($act=='edit' && $question['picture']):?><img src="<?=__IMG_ROOT_URL__?><?=$question['picture']?>"/><?php endif;?></script>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <center>
+    <input type="submit" id="dosubmit" name="dosubmit" value=" 提交 " class="btn" />
+    &nbsp;&nbsp;
+    <input type="button" name="back" value=" 返回 " onclick="history.go(-1);" class="btn" />
+  </center>
+  </form>
+</div>
+<?php $this->load->view('common/footer');?>

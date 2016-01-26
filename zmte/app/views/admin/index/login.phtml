@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><?=C('webconfig/site_name')?>管理中心</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<?php static_css('login.css');?>
+<SCRIPT LANGUAGE="JavaScript">
+var siteurl = "<?=site_url()?>";
+if(self.parent.frames.length != 0) {
+	self.parent.location=document.location;
+}
+</SCRIPT>
+<?php static_global('js/jquery/jquery.js');?>
+<?php static_js('common/common.js');?>
+</head>
+<body>
+<p>&nbsp;</p><p>&nbsp;</p>
+<table width="600" border="0" cellpadding="8" cellspacing="0" class="login_table">
+<form method="post" action="<?=site_url('admin/index/check_login')?>" name="login">
+<input type="hidden" name="adminlogin" value="1" />
+<input type="hidden" name="url_forward" value="">
+<tr>
+    <td colspan="2" class="table_title"><?=C('webconfig/site_name')?>管理中心</td>
+</tr>
+<tr>
+    <td colspan="2" height="50"></td>
+</tr>
+<tr>
+    <td width="200" align="right">登录名</td>
+    <td width="*">
+        <input type="text" name="admin_name" style="width:150px;" />
+    </td>
+</tr>
+<tr>
+    <td align="right">密&nbsp;&nbsp;&nbsp;&nbsp;码</td>
+    <td><input type="password" name="admin_password" style="width:150px;" /></td>
+</tr>
+<?php if (C('webconfig/seccode/adminlogin')):?>
+<tr>
+    <td align="right">验证码</td>
+    <td><div id="seccode"></div><input type="text" name="seccode" onfocus="show_seccode();" style="width:150px;" /></td>
+</tr>
+<?php endif;?>
+<tr>
+    <td></td>
+    <td><input type="submit" class="button" value=" 登 录 " /></td>
+</tr>
+<tr>
+    <td colspan="2" align="center">
+        Powered by <a href="<?=site_url()?>" target="_blank"><?=C('webconfig/site_name')?></a>&nbsp;&copy;&nbsp;<?php echo date('Y');?>&nbsp;&nbsp;<?=C('version') ?>
+    </td>
+</tr>
+</form>
+</table>
+</body>
+</html>

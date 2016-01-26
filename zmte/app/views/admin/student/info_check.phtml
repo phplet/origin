@@ -1,0 +1,131 @@
+<?$this->load->view('common/header')?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+<script>
+$(function () {
+	$("#frm_info_check").validate({
+		rules:{
+			grade_id : { 
+				min : 1 
+			},
+			school_name : { 
+				required:true
+			},
+			infos : {
+				required:true
+			}
+		},
+		messages : {
+			grade_id : {
+				min : '请选择年级'
+			},
+			school_name : {
+				required : '请选择学校'
+			},
+			infos : {
+				required: '请上传核对信息'
+			}
+		}
+	});
+});
+</script>
+
+<div id="body">
+	<?if ($act == 'add'){?>
+	<form id='frm_info_check' enctype="multipart/form-data" action="<?=site_url('admin/student/info_check')?>" method="POST" >
+	<div class="space">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+	      <td class="altbg1" colspan=2>导入要核对信息的报名表</td>
+	  </tr>
+	  <tr>
+	  	<td class="altbg1">
+		<span>年级:</span>
+		</td>
+		<td>
+		<select name="grade_id"  id="select_grade_id">
+		    <option value="0">--请选择--</option>
+			<?foreach ($grades as $key => $val){?>
+			<option value=<?echo $key?>> <?echo trim($val)?> </option>
+			<?}?>
+		</select>
+		<span style="color:#f00">*</span>
+		</td>
+	  </tr>
+	  <tr>
+	  <td class="altbg1" width="100"><span>学校名称:</span></td>
+	  <td><input class="txtbox" id="school_select" name="school_name" type="text" value="<?=$student['school_name']?>"/>
+                <input id="school_id" name="school_id" type="hidden" value="<?=$student['school_id']?>"/>
+              <span style="color:#f00">*</span><span style="color:#f00;display:none" id="_school_select"></span></td>
+	  </tr>
+	  <tr>
+	  <td class="altbg1">
+		<span>核对信息:</span>
+		</td>
+	  <td>
+		<input type="file" name="infos" id="infos" value=""/>
+          </td>
+          
+          </tr>
+            <tr>
+                <td class="altbg1">上传说明</td>
+                <td style="padding:10px;">
+                    <p>1.支持Excel 2003、Excel 2007、Excel 2010、Excel 2013 版本</p>
+                    <p>2.最大文件上传尺寸为10Mb</p>
+                    <p>3.准考证号，学生姓名不能为空</p>
+                </td>
+            </tr>
+            <tr>
+                <td class="altbg1">核对模板下载</td>
+                <td>
+                    <a href="<?php echo base_url('file/import_student.xlsx'); ?>">点击下载</a>
+                </td>
+            </tr>
+	  <tr>
+	  	<td colspan=2>
+			<center>
+			<input type="submit" value=" 提交操作 " class="btn" />
+			<input class="btn" type="button" onclick="history.go(-1);" value="返回"/>
+			</center>
+		</td>
+		</tr>
+		</table>
+	</div>
+	</form>
+	<?}else{?>
+	<div>
+		<form name="frm_info_check" action="<?=site_url('admin/student/down')?>" method="POST" >
+		<table class="maintable" border="0" cellspacing="0" cellpadding="0">
+			<tr class="altbg1">
+				<td>请点击下载反馈表</td>
+	  		</tr>
+			<tr>
+				<td>
+					<input type="submit" value="点击下载" />
+					<input type="hidden" value='<?=$name?>' name="filename" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input class="btn" type="button" onclick="history.go(-1);" value="返回继续"/>
+				</td>
+			</tr>
+			</table>
+		</form>
+	</div>
+	<?}?>
+</div>
+<?php $this->load->view('common/footer');?>
+<?php $this->load->view('student/school_selector');?>

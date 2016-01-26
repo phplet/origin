@@ -1,0 +1,20 @@
+<?php echo $header;?>
+
+<Row ss:AutoFitHeight="0">
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">准考证号</Data></Cell>
+   <Cell ss:StyleID="sTitle"><Data ss:Type="String">姓名</Data></Cell>
+</Row>
+<?php
+if ($list) {
+
+foreach ($list as $k => $v) { ?>
+<Row ss:AutoFitHeight="0">
+   <Cell><Data ss:Type="String"><?php echo $v['exam_ticket'];?></Data></Cell>
+   <Cell><Data ss:Type="String"><?php echo $v['xname'];?></Data></Cell>
+</Row>
+<?php
+}
+}
+?>
+<?php
+echo $footer;?>

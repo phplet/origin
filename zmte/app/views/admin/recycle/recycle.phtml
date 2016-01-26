@@ -1,0 +1,203 @@
+<style>
+.display_none {
+	display:none;
+}
+textarea{
+	width:300px;
+	height:60px;
+}
+.red, a.red{
+	color:red;
+}
+ul.recycle li{
+	list-style:none;
+	font-size:14px;
+	height:20px;
+	line-height:30px;
+	color:blue;
+	border-bottom:1px dotted #ccc;
+	padding-bottom:6px;
+	padding-left:20px;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+
+	
+    //删除操作
+	$('a.a_delete').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#delete_box_' + _id),
+	       	   $input = $('#txt_reason_' + _id);
+
+       	   $thiz.hide();
+       	   $box.show();
+       	   $input.focus();
+	});
+	$('input.btn_cancle_delete').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#delete_box_' + _id),
+	       	   $a = $('#a_delete_' + _id),
+	       	   $input = $('#txt_reason_' + _id);
+
+       	   $box.hide();
+       	   $input.val('');
+       	   $a.fadeIn();
+	});
+
+
+
+
+
+
+
+
+	
+	$('input.btn_submit_delete').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $input = $('#txt_reason_' + _id),
+	       	   reason = $.trim($input.val());
+
+       	   if (!reason.length) {
+           	  	alert('请填写 删除原因');
+              	$input.focus();
+           	   return false;
+       	   }
+
+       	   var post_url = $thiz.attr('post_url'),
+       	   	   id = $thiz.attr('delete_id');
+          	$.post(post_url, {
+    			id : id,
+    			reason : reason
+    		}, function(data) {
+        		var code = data.code,
+        			msg = data.msg;
+        			
+    			if (code < 0) {
+        			alert(msg);
+        			return false;
+    			}
+
+    			alert(msg);
+    			window.location.reload();
+    		}, "json");
+	});
+
+
+
+
+
+	$('a.a_original').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#original_box_' + _id),
+	       	   $input = $('#related_' + _id);
+
+ 	   $thiz.hide();
+ 	   $box.show();
+ 	   $input.focus();
+	});
+	$('input.btn_cancle_original').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#original_box_' + _id),
+	       	   $a = $('#a_original_' + _id),
+	       	   $input = $('#related_' + _id);
+
+ 	   $box.hide();
+ 	   $input.val('');
+ 	   $a.fadeIn();
+	});
+
+	
+	$('input.btn_submit_original').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $input = $('#related_' + _id),    
+		       difficulty = parseInt($input.val()) || 0,
+		     	$original = $('#is_original_' + _id),
+		       	original_v = parseInt($original.val());
+
+	    
+ 	   var post_url = $thiz.attr('post_url'),
+ 	   	   id = $thiz.attr('delete_id');
+    	$.post(post_url, {
+			id : id,
+			difficulty : difficulty,
+			original_v : original_v
+		}, function(data) {
+  		var code = data.code,
+  			msg = data.msg;
+  			
+			if (code < 0) {
+  			alert(msg);
+  			return false;
+			}
+
+			alert(msg);
+			window.location.reload();
+		}, "json");
+	});
+
+
+
+	$('a.a_check').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#check_box_' + _id),
+		       $input = $('#check_' + _id);
+ 	   $thiz.hide();
+ 	   $box.show();
+ 	  
+	});
+	$('input.btn_cancle_check').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $box = $('#check_box_' + _id),
+	       	   $a = $('#a_check_' + _id),
+	       	   $input = $('#check_' + _id);
+
+ 	   $box.hide();
+ 	   $input.val('');
+ 	   $a.fadeIn();
+	});
+
+	
+	$('input.btn_submit_check').click(function(){
+	       var $thiz = $(this),
+	       	   _id = $thiz.attr('rel'),
+	       	   $input = $('#check_' + _id),    
+		       	check = parseInt($input.val()) || 0;
+
+	    
+ 	   var post_url = $thiz.attr('post_url'),
+ 	   	   id = $thiz.attr('check_id');
+    	$.post(post_url, {
+			id : id,
+			check : check
+		
+		}, function(data) {
+  		var code = data.code,
+  			msg = data.msg;
+  			
+			if (code < 0) {
+  			alert(msg);
+  			return false;
+			}
+
+			alert(msg);
+			window.location.reload();
+		}, "json");
+	});
+
+
+
+	
+
+	
+});
+</script>

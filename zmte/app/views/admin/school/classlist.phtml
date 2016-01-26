@@ -1,0 +1,91 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/flexigrid/css/flexigrid.css', 'css'); ?>
+<?php static_global('js/flexigrid/js/flexigrid.js'); ?>
+
+<script type="text/javascript">
+$(function(){
+    fnInitGrid('#id_grid');
+});
+
+function fnRemoveSchoolClassBatch()
+{
+    var ids = fnGetCheckBoxValues('id_grid', "ids[]");
+    if (ids.length < 1)
+    {
+        alert('您没有选择任何记录');
+        return;
+    }
+
+    if (!confirm('确定删除所选记录吗？'))
+    {
+		return;
+    }
+    
+    ajax_removeClass(ids);
+}
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">
+<a class="menu" href="/admin/school/index" style="float:right">学校管理</a>
+<a class="menu no-ajax"href="<?=site_url('admin/school/editclass/' . $param['schcls_schid'])?>">添加班级</a>
+<a class="menu" href="javascript:void(0)" onclick="fnRemoveSchoolClassBatch()" style="float:right">批量删除</a>
+<a class="menu" href="javascript:void(0)" onclick="fnShowDialog('id_qry_dlg')" style="float:right">查询</a>
+
+
+学校班级管理</div>  
+    <table id="id_grid" border="0" cellspacing="0" cellpadding="0">
+      <tr class="cls_title">
+        <td width="70" class="no-ajax">删?</td>
+        <td width="200">学校名称</te>
+        <td width="200">班级名称</td>
+        <td width="150">添加时间</td>
+        <td width="150">修改时间</td>
+        <td width="200"  class="no-ajax">操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $val):?>
+      <tr class="tr_line">
+      <td class="no-ajax"><input type="checkbox" name="ids[]" value="<?=$val['schcls_id']?>"><?=$val['schcls_id']?></td>
+        <td><?=$val['school_name']?></td>
+        <td><?=$val['schcls_name']?></td>
+        <td><?=date('Y-m-d H:i:s', $val['schcls_ctime'])?></td> 
+        <td><?=date('Y-m-d H:i:s', $val['schcls_utime'])?></td>
+        <td class="no-ajax">
+          <a href="<?=site_url('admin/school/editclass/'.$val['schcls_schid'].'/'.$val['schcls_id'])?>">编辑</a>
+          <a href="javascript:void(0)"  onclick="if (confirm('确定要删除么？')) ajax_removeClass('<?=$val['schcls_id']?>');">删除</a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td class="no-ajax"><button type="button" class="btn2" onclick="checkbox_checked('ids[]');">全选</button></td>
+        <td colspan="8" style="text-align:right"><?=$pagination?></td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+
+    <div id="id_qry_dlg" style="display:none">
+            <div class="cls_title">搜索符合条件的班级</div>
+    <form method="GET" name="search_form" action="<?=site_url('admin/school/classlist/' . $param['schcls_schid'])?>">
+        <div class="space" style="margin:5px">
+            <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="altbg1">班级名称</td>
+                    <td><input type="text" name="schcls_name" value="<? Func::echo_s($param['schcls_name']); ?>" class="txtbox" /></td>
+                </tr>         
+            </table>
+            <center>
+            <input type="submit" value=" 搜索 " class="btn" />
+            <input type="button" value=" 取消 " class="btn" onclick="fnCloseDialog('id_qry_dlg')">
+            </center>
+        </div>
+    </form>
+    </div>
+</div>
+<?php $this->load->view('common/footer');?>

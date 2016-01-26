@@ -1,0 +1,396 @@
+<?php $this->load->view('common/header');?>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+</script>
+
+<?php static_global('js/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML');?>
+
+<script language="javascript">
+function check_form(form) {
+    var op = $('#'+form.id+" select").val();
+    var action =  $('#'+form.id+" select option:selected").attr('op');
+    if (checkbox_check('ids[]', form.id)) {
+        if (op == '') {
+            alert('请选择操作类型');
+            return false;
+        } else {
+            if (confirm('您确定要执行该操作么？')) {
+                form.action = action;
+                return true;
+            }
+        }
+
+    }
+    return false;
+}
+
+$(document).ready(function(){
+    $('.ques_title').find('div').dblclick(function(){
+        $(this).toggleClass('line_18');
+    });
+});
+</script>
+<style>
+body,td {
+	margin: 0px;
+#	font: 16px Tahoma,Verdana,sans-serif;
+	font: 16px Cambria;
+	text-align: left;
+}
+
+.maintable tr.bg td {
+	background:#E5E5E5;
+}
+</style>
+<div id="body">
+  <form name="frm_list" id="frm_list" action="<?=site_url('admin/question/batch_delete')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <div class="subtitle">
+    <?php if ($parent['be_tested']) {?>
+    <a class="menu" href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">添加子题</a>
+    <?php } else {?>
+    <a class="menu" href="<?=site_url('admin/question/add_blank_question/'.$parent['ques_id'])?>">添加子题</a>
+    <?php } ?>
+    阅读填空题管理
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="8" class="altbg2" style="text-align: center;">
+        	题干信息 [
+        	<?php if ($priv_manage) {?>
+        	<?php if ($parent['be_tested']) {?>
+		    <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">编辑</a>
+		    <?php } else {?>
+        	<a href="<?=site_url('admin/question/edit_blank/'.$parent['ques_id'])?>">编辑</a>
+		    <?php } ?>
+		    <?php }?>
+        	]</td>
+      </tr>
+      <tr><td colspan="8" class="altbg1">
+        <table class="subtable">
+          <tr>
+            <td width="10%" class="altbg1">学科</td>
+            <td width="30%" ><?=$parent['subject_name']?></td>
+
+            <td width="10%" class="altbg1">年级</td>
+            <td>[<?=$parent['start_grade']?>] - [<?=$parent['end_grade']?>]</td>
+          </tr>
+          <?php if (!empty($parent['skill_name']) || !empty($parent['knowledge_name'])):?>
+          <tr>
+            <?php if ($parent['skill_name'] != '') {?>
+            <td width="10%" class="altbg1">技能</td>
+            <td width="30%"><?=$parent['skill_name']?></td>
+            <?php } ?>
+            <?php if ($parent['knowledge_name'] != '') {?>
+            <td width="10%" class="altbg1">知识点</td>
+            <td <?php echo $parent['skill_name'] == '' ? 'colspan="3"' : '';?> ><?=$parent['knowledge_name']?></td>
+            <?php }?>
+          </tr>
+          <?php endif;?>
+          <?php /*if ($parent['count_subject_method_tactics']) {?>
+          <tr>
+            <td width="10%" class="altbg1">方法策略</td>
+            <td colspan="3">
+            	<?=$parent['method_tactic_name']?>
+            </td>
+          </tr>
+          <?php } */?>
+          <tr>
+            <td width="10%" class="altbg1">类型</td>
+            <td>
+                <?php foreach($parent['class_names'] as $grade_id => $arr):?>
+                <?=$grades[$grade_id]?>:<?=implode(' , ', $arr)?><br/>
+                <?php endforeach;?>
+            </td>
+          </tr>
+          <tr>
+            <td width="10%" class="altbg1">试题ID</td>
+            <td  colspan="3"><?=$parent["ques_id"]?></td>
+          </tr>
+          <tr>
+            <td width="10%" class="altbg1">题目类型(真题、原创、模拟题)</td>
+            <td colspan="3">
+                <?php if ($parent['is_original'] == 1): ?>
+                    <span>原创</span>
+                <?php elseif($parent['is_original'] == 2): ?>
+                    <span>真题</span>
+                      <?php elseif($parent['is_original'] == 3): ?>
+                    <span>模拟题</span>
+                <?php endif; ?>
+            </td>
+          </tr>
+
+          <?php if ($parent['is_original'] == 2): ?>
+            <tr>
+                <td width="10%" class="altbg1">附加信息</td>
+                <td colspan="3">
+                    <?php if (isset($parent['exam_year']) && $parent['exam_year'] > 0): ?>
+                        <p>年份: <?php echo $parent['exam_year']; ?>   </p><br/>
+                    <?php endif ?>
+                    <?php if (isset($parent['remark']) && !empty($parent['exam_year'])): ?>
+                        <p>备注: <?php echo $parent['remark']; ?></p><br/>
+                    <?php endif ?>
+                    <?php if (isset($parent['relateds']) && !empty($parent['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($parent['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+          <?php elseif ($parent['is_original'] == 1): ?>
+              <tr>
+                  <td width="10%" class="altbg1">附加信息</td>
+                  <td colspan="3">
+                      <?php if (isset($parent['related']) && !empty($parent['related'])): ?>
+                          <p>真题路径: <a href="<?php echo site_url('admin/question/preview/' . $parent['related']) ?>"><?php echo $parent['related']; ?></a></p>
+                      <?php endif; ?>
+                      <p>&nbsp;</p>
+                      <?php if (isset($parent['relateds']) && !empty($parent['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($parent['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                  </td>
+              </tr>
+
+
+                <?php elseif ($parent['is_original'] ==3): ?>
+          <tr>
+                <td width="10%" class="altbg1">附加信息</td>
+                <td colspan="3">
+                    <?php if (isset($parent['simulation']) ): ?>
+                        <p>来源: <?php echo $parent['simulation']; ?>   </p><br/>
+                    <?php endif ?>
+
+                    <?php if (isset($parent['relateds']) && !empty($parent['relateds'])): ?>
+                        <p>衍生题目: </p>
+                        <?php foreach ($parent['relateds'] as $key => $value): ?>
+                            <p>
+                                <a href="<?php echo site_url('admin/question/preview/' . $value['ques_id']) ?>"><?php echo $value['ques_id']; ?></a>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endif; ?>
+        </table>
+      </td>
+    </tr>
+
+    <!-- =========================== 题目 ============================== -->
+    <tr>
+      <td colspan="7" class="altbg2" style="text-align: center;">题目</td>
+    </tr>
+    <tr>
+      <td colspan="7">
+        <?php $info = explode('&nbsp;<br/>&nbsp;',$parent['title'])?>
+        <div style="text-align:center;"><img src="<?=__IMG_ROOT_URL__?><?=$parent['picture']?>" /></div>
+        <br/>
+        <?=$info[0]?>
+        <?php if($parent['picture']):?>
+        <?php endif;?>
+
+        <p><br/></p>
+
+        <?php
+          if (isset($list))
+          {
+            foreach ($list as $key => $val)
+            {
+              $val['answer'] = explode("\n", $val['answer']);
+
+              foreach ($val['answer'] as $k => $v)
+              {
+                echo '<span>第' . ($key+1) . '题、</span>';
+                echo '<input type="text" value="'.$v.'"/>';
+              }
+
+            }
+          }
+        ?>
+
+      </td>
+    </tr>
+
+    <!-- =========================== 附件信息 ============================== -->
+
+      <tr>
+        <td colspan="7" class="altbg2" style="text-align: center;">
+        	附加信息 [
+        		<?php if ($priv_manage) {?>
+        		<?php if ($parent['be_tested']) {?>
+			    <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">添加</a>
+			    <?php } else {?>
+        		<a href="<?=site_url('admin/question/add_blank_question/'.$parent['ques_id'])?>">添加</a>
+			    <?php } ?>
+			    <?php } ?>
+        	]</td>
+      </tr>
+      <tr class="altbg1">
+        <td>序号</td>
+        <td>试题ID</td>
+        <td>题型</td>
+        <td>录入时间</td>
+        <td>录入人员</td>
+        <td>操作</td>
+      </tr>
+      <?php if($list):?>
+      <?php foreach($list as $key => $val):?>
+      <tr>
+        <td><?php echo $key+1; ?></td>
+        <td><?php if ($priv_manage && !$parent['be_tested']) {?><input type="checkbox" name="ids[]" value="<?=$val['ques_id']?>"><?php } ?><?=$val['ques_id']?></td>
+        <td><?=$qtypes[$val['type']]?></td>
+        <td><?=$val['addtime']?></td>
+        <td><?=$val['cpuser']?></td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <?php if ($parent['be_tested']) {?>
+
+	      <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">编辑</a>
+          <?php if($priv_delete):?>
+	      <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">删除</a>
+          <?php endif;?>
+
+	      <?php } else {?>
+
+          <a href="<?=site_url('admin/question/edit_blank_question/'.$val['ques_id'])?>">编辑</a>
+
+	      <?php } ?>
+	      <?php } ?>
+
+        </td>
+      </tr>
+
+      <tr class="bg">
+        <td colspan="2">知识点</td>
+        <td colspan="5">
+            <?php echo $val['knowledge_name'];?>
+        </td>
+      </tr>
+
+      <?php endforeach; ?>
+
+      <tr class="altbg1">
+        <td colspan="7">
+          <?php if ($priv_manage) {?>
+          <button type="button" class="btn2" onclick="checkbox_checked('ids[]','frm_list');">全选</button>
+          <?php if ($parent['be_tested']) {?>
+          <select name="batch_op" style="color:#999;text-decoration:line-through;">
+           <option value="">该试题已经被考生考过 或者 正在被考,因此无法操作</option>
+          </select>
+          <?php } else {?>
+          <select name="batch_op">
+           <option value="">-选择操作-</option>
+           <?php if($priv_delete):?>
+           <option value="delete" op="<?=site_url('admin/question/batch_delete')?>">批量删除</option>
+           <?php endif;?>
+          </select>
+          <?php } ?>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php else: ?>
+      <tr>
+        <td colspan="8">暂无记录！</td>
+      </tr>
+      <?php endif; ?>
+    </table>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />&nbsp;<input type="button" name="dosubmit" value=" 返回 " class="btn"  onclick="history.go(-1);"/></center>
+  </div>
+  </form>
+
+  <?php if($list2):?>
+  <form name="frm_list2" id="frm_list2" action="<?=site_url('admin/question/batch_remove')?>" method="POST" onsubmit="return check_form(this)">
+  <div class="space">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="8" class="altbg2" style="text-align: center;">子题回收站</td>
+      </tr>
+      <tr class="altbg1">
+        <td width="8%">&nbsp;&nbsp;ID</td>
+        <td width="8%">题型</td>
+        <td width="30%">答案</td>
+        <td width="20%">信息提取方式</td>
+        <td width="15%">录入时间</td>
+        <td width="10%">录入人员</td>
+        <td width="15%">操作</td>
+      </tr>
+      <?php foreach($list2 as $val):?>
+      <tr>
+        <td><?php if ($priv_manage && !$parent['be_tested']) {?><input type="checkbox" name="ids[]" value="<?=$val['ques_id']?>"><?php } ?><?=$val['ques_id']?></td>
+        <td><?=$qtypes[$val['type']]?></td>
+        <td>
+        <?php $val['answer'] = explode("\n", $val['answer']);?>
+            <?php foreach($val['answer'] as $k => $v):?>
+            <?php if(count($val['answer'])>1):?><?=$k+1?>：<?php endif;?><?=$v?> <br/>
+        <?php endforeach;?>
+        </td>
+        <td>
+        <?php
+            $grouptype = array_filter(explode(',', $val['group_type']));
+        ?>
+         <?php foreach($group_type as $k => $gt):?>
+            <?php foreach ($gt['childlist'] as $item) {?>
+                <?php if(in_array($item['id'],$grouptype)) {?><?=$gt['group_type_name'].'=>'.$item['group_type_name']?><br/><?php }?>
+            <?php }?>
+        <?php endforeach;?>
+        </td>
+        <td><?=$val['addtime']?></td>
+        <td><?=$val['cpuser']?></td>
+        <td>
+          <?php if ($priv_manage) {?>
+          <?php if ($parent['be_tested']) {?>
+          <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">编辑</a>
+          <a href="<?=site_url('admin/question/restore/'.$val['ques_id'])?>" onclick="return confirm('您确定要还原么？');">还原</a>
+          <a href="###" style="color:#999;text-decoration:line-through;" title="该试题已经被考生考过 或者 正在被考,因此无法操作">移除</a>
+
+          <?php } else {?>
+          <a href="<?=site_url('admin/question/edit_match_question/'.$val['ques_id'])?>">编辑</a>
+          <?php if($priv_delete):?>
+          <a href="<?=site_url('admin/question/restore/'.$val['ques_id'])?>" onclick="return confirm('您确定要还原么？');">还原</a>
+          <a href="<?=site_url('admin/question/remove/'.$val['ques_id'])?>" onclick="return confirm('您确定要移除么？');">移除</a>
+          <?php endif;?>
+
+          <?php } ?>
+          <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="altbg1">
+        <td colspan="7">
+          <?php if ($priv_manage) {?>
+          <button type="button" class="btn2" onclick="checkbox_checked('ids[]','frm_list2');">全选</button>
+          <?php if ($parent['be_tested']) {?>
+          <select name="batch_op" style="color:#999;text-decoration:line-through;">
+           <option value="">该试题已经被考生考过 或者 正在被考,因此无法操作</option>
+          </select>
+          <?php } else {?>
+          <select name="batch_op">
+           <option value="">-选择操作-</option>
+           <?php if($priv_delete):?>
+           <option value="restore" op="<?=site_url('admin/question/batch_restore')?>">批量还原</option>
+           <option value="remove" op="<?=site_url('admin/question/batch_remove')?>">批量移除</option>
+           <?php endif;?>
+          </select>
+          <?php } ?>
+          <?php } ?>
+        </td>
+      </tr>
+    </table>
+    <?php if ($priv_manage) {?>
+    <center><input type="submit" name="dosubmit" value=" 提交操作 " class="btn" />&nbsp;<input type="button" name="dosubmit" value=" 返回 " class="btn"  onclick="history.go(-1);"/></center>
+    <?php } ?>
+  </div>
+  </form>
+  <?php endif;?>
+</div>
+<?php $this->load->view('common/footer');?>

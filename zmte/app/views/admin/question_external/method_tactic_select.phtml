@@ -1,0 +1,97 @@
+  <div class="space">
+  <div class="subtitle"><span class="menu" style="padding-top:5px;"><a href="javascript://" class="close"><img src="<?=__HTML_URL__?>images/no.gif" /></a></span>方法策略选择</div> 
+    <div style="max-height:300px;_height:300px;overflow:auto;">
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:0px;width:780px;">
+        <?php if($list):?>
+        <?php foreach($list as $subject_category_id=>$item):?>
+        <?php $method_tactics = $item['method_tactics'];?>
+        <?php $count_method_tactics = count($method_tactics);?>
+        <tbody id="range_parent_<?=$subject_category_id?>">
+        <tr>
+            <td colspan="3" class="altbg2" style="text-align: center;">
+                <input type="hidden" name="pid" value="<?=$subject_category_id?>" />                
+                <span class="pname font_4"><?=$item['name']?></span>
+                [<a href="javascript://" class="expand">收起</a>]
+                <input type="checkbox" name="method_tactic_parent<?=$subject_category_id?>" id="method_tactic_parent<?=$subject_category_id?>" onclick="allchecked('','range_parent_<?=$subject_category_id?>',this)" /><label for="method_tactic_parent<?=$subject_category_id?>">全选/取消</label>
+            </td>
+        </tr>
+        <?php foreach($method_tactics as $key => $val):?>
+        <?php $td_index = $key%3;?>
+        <?php if($td_index == 0):?><tr><?php endif;?>
+            <td<?php if($key+1==$count_method_tactics && $td_index<2):?> colspan="<?=(3-$td_index)?>"<?php endif;?>><input type="checkbox" name="method_tactic_ids" id="method_tactic_<?=$val['id']?>" value="<?=$val['id']?>" <?=strpos($method_tactic_ids, ','.$val['id'].',')!==false?' checked':''?>/><label for="method_tactic_<?=$val['id']?>"><?=$val['name']?></label></td>
+        <?php if($td_index==2 OR $key+1==$count_method_tactics):?></tr><?php endif;?>
+        <?php endforeach;?>
+        </tbody>
+        <?php endforeach;?>
+        <?php else:?>
+        <tr>
+            <td colspan="3" style="text-align: center;color:#f00">
+                暂无方法策略
+            </td>
+        </tr>
+        <?php endif;?>
+    </table>
+    </div>
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="background:#A6CBE7;text-align: center;color:#f00">
+                <input type="button" id="method_tactic_confirm" value=" 确定 " class="btn" />
+                <input type="button" value=" 取消 " class="btn close" />
+            </td>
+        </tr>
+    </table>
+  </div>
+  <script>
+    $(document).ready(function(){
+        $('#method_tactic_confirm').click(function(){
+            var selected = [];
+            var item = [];
+            var index = 0;
+            var checkbox = $('input:checked[name=method_tactic_ids]');
+            for (var i=0; i<checkbox.length; i++) {
+                if (checkbox[i].checked == true) {
+                    var pid = $(checkbox[i]).parent().parent().parent().find('input[name=pid]').val();
+                    var pname = $(checkbox[i]).parent().parent().parent().find('span.pname').text();                    
+                    if (typeof(selected[pid])=='undefined') {
+                        selected[pid] = [pname,[]];
+                        index = 0;
+                    }                     
+                    var kid = checkbox[i].value;
+                    var kname = $(checkbox[i]).parent().find('label').html();
+                    item = [kid,kname];
+                    selected[pid][1][index++] = item;
+                } 
+            }
+            if (selected.length == 0) {
+//                 alert('请选择方法策略');
+//                 return;
+            }
+            var string = '';
+            var method_tactic_ids = '';
+            for (pid in selected) {
+                if (pid != 'indexof') {                   
+                    var parent = selected[pid];
+                    string += '<div><span class="font_4" pkid="'+pid+'">'+parent[0]+'</span>：';
+                    for (i=0; i<parent[1].length; i++) {
+                        string += '<input type="checkbox" name="method_tactic_id[]" id="method_tactic'+parent[1][i][0]+'" value="'+parent[1][i][0]+'" checked /><label for="method_tactic'+parent[1][i][0]+'">'+parent[1][i][1]+'</label>';
+                        method_tactic_ids += (method_tactic_ids?',':'') + parent[1][i][0];
+                    }
+                    string += '</div><hr/>';
+                }                  
+            }
+            $('#method_tactic_list').html(string);
+            $('#method_tactic_ids').val(method_tactic_ids);            
+            $.unblockUI();
+        });
+        $('.expand').click(function(){
+            if ($(this).html() == '展开') {
+                $(this).html('收起');
+                $(this).parent().parent().siblings().show();
+            } else {
+                $(this).html('展开');
+                $(this).parent().parent().siblings().hide();
+            }
+            
+        });
+    });
+  </script>

@@ -1,0 +1,3598 @@
+<?php $this->load->view('common/header');?>
+
+<?php
+    // 根路径
+    echo "<script>root_url = '".rtrim(site_url(''),'/')."';</script>";
+
+    static_js(array('common/schools.js'));
+
+    static_global(array('js/jquery/plugin/validate/jquery.validate.min.js',
+    					'js/jquery/plugin/tiper.min.js',
+    					'js/jquery/plugin/jquery.form.js',
+    					'js/jquery/plugin/jquery.charsleft.min.js',
+    					'js/datepicker/wdatepicker.js'
+    ));
+?>
+<?php 
+    static_global(array('js/common/address.js', 
+        'js/common/region.js'));
+    static_js('schools.js');
+?>
+<style type="text/css">
+.score_rank_td div{
+	line-height:30px;
+	height:30px;
+	padding-top:6px;
+}
+div.cls_item_div_ul_list {
+    margin:4px 0px 0px 4px;
+    padding:4px;
+    border-width:1px 0px 1px 0px;
+    border-style:solid;
+    border-color:black;
+    height:300px;
+    overflow-y:auto;
+}
+div.cls_item_div_ul_list ul {
+    list-style-type:none;
+}
+
+div.cls_item_div_ul_list ul li {
+    float:left;
+    width:25%;
+    cursor:pointer;
+}
+</style>
+<?php
+// 初始化公共数据
+$grades        = C('grades');
+$grades_year = array();
+for ($year = date('Y'), $i = 0, $n = $student['grade_id'] - 3; $i <= $n; $i++, $year--)
+{
+    $grades_year[$year] = $year . '年';
+}
+$subject_list  = C('subject');
+$awards_levels = C('awards_level');
+?>
+<script type="text/javascript">
+$(function(){
+    $('.subtab').find('a').click(function(){
+        $(this).parent().addClass("current").siblings().removeClass('current');
+        var name = $(this).attr('name');
+        $('#table_'+name).show().siblings().hide();
+    });
+});
+
+function addItem(type)
+{
+    var string = $('#'+type).find('span').html();
+    string += '<input type="button" value="删除" onclick="delItem($(this))" />';
+    $('#'+type).parent().append('<div>'+string+'<br/></div>');
+}
+
+function delItem(obj)
+{
+    obj.parent().remove();
+}
+
+var student_other_method = '';
+var parent_other_method = '';
+$(function(){
+    $('input:radio[name^=student_wish]').click(function(){
+        if($(this).val() != '其他') {
+            if ($('#student_other_method').val())
+                student_other_method = $('#student_other_method').val();
+            $('#student_other_method').val('');
+        }
+    });
+    $('input:radio[name^=student_wish]').last().click(function(){
+        if (student_other_method) {
+            $('#student_other_method').val(student_other_method);
+        }
+    });
+    $('#student_other_method').focus(function(){
+        $('input:radio[name^=student_wish]').last().click();
+    });
+
+    $('input:radio[name^=parent_wish]').click(function(){
+        if($(this).val() != '其他') {
+            if ($('#parent_other_method').val())
+                parent_other_method = $('#parent_other_method').val();
+            $('#parent_other_method').val('');
+        }
+    });
+    $('input:radio[name^=parent_wish]').last().click(function(){
+        if (parent_other_method) {
+            $('#parent_other_method').val(parent_other_method);
+        }
+    });
+    $('#parent_other_method').focus(function(){
+        $('input:radio[name^=parent_wish]').last().click();
+    });
+});
+
+$(document).ready(function () {
+
+	 $(":radio[name='parent_wish[family_bg_qt][shenghuohuanjing]']").click(function(){
+	        var index = $(":radio[name='parent_wish[family_bg_qt][shenghuohuanjing]']").index($(this));
+	        if(index == 1) //选中第2个时，div显示
+	        {
+	            $("#pwish_shenghuohuanjing4").show();
+	           $("#pwish_shenghuohuanjing3").hide();
+	        }
+	        else //当被选中的不是第2个时，div隐藏
+	        {
+	     	   $("#pwish_shenghuohuanjing3").show();
+	           $("#pwish_shenghuohuanjing4").hide();
+	        }
+	 });
+
+
+
+	        if($('input[name="parent_wish[family_bg_qt][shenghuohuanjing]"]:checked').val()==1)
+	        {
+	        	$("#pwish_shenghuohuanjing4").hide();
+	        	$("#pwish_shenghuohuanjing3").show();
+	        }
+	        else
+	        {
+	        	$("#pwish_shenghuohuanjing3").hide();
+	        	$("#pwish_shenghuohuanjing4").show();
+	        }
+
+	//设置tiper的消失时间间隔为 5s
+	UtilTiper.message.dismissin = 3000;
+
+	//字数限制
+	$(".charleft_input").charsLeft({
+		maxChars: parseInt($('#font_maxlength').html()),
+		attachment: "after",
+		disableMode:true,
+		charPrefix: "还剩 ",
+		charSuffix: " 个字.",
+		attachment: "after",
+		wrapperClass: "char_left",
+		countClass: "char_count"
+	});
+});
+
+function fnSubmitAll()
+{
+    if (!check_basic())
+    {
+        $('#menu_basic').click();
+        return false;
+    }
+    if (!check_base())
+    {
+        $('#menu_base').click();
+        return false;
+    }
+    if (!check_award())
+    {
+        $('#menu_awards').click();
+        return false;
+    }
+<? /*
+    if (!check_student_wish())
+    {
+        $('#menu_student_wish').click();
+        return false;
+    }
+    if (!check_parent_wish())
+    {
+        $('#menu_parent_wish').click();
+        return false;
+    }
+ */ ?>
+
+    $("#id_tab_name").val('');
+    //利用ajax提交，避免表单报错后，返回会情况表单数据
+    UtilTiper.message.doing('正在提交数据...');
+    var form = $('#add_form');
+    form.ajaxSubmit({
+            url : form.attr('action'),
+            dataType : 'json',
+            timeout : 5000,
+            error: function (a, b, c){
+                alert(a + b + c);
+            },
+            success : function (responseText, statusText, xhr, form){
+                var code = responseText.code;
+                var msg = responseText.msg;
+
+                UtilTiper.message.loaded();
+                alert(msg);
+                if (code < 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    location.reload();
+                    return true;
+                }
+            }
+    });
+    return false;
+}
+
+function fnTabSubmit(str_tab)
+{
+<? if ($act == 'add') { ?>
+    return fnSubmitAll();
+<? } else  { ?>
+    if (str_tab == 'basic')
+    {
+        if (!check_basic())
+        {
+            $('#menu_basic').click();
+            return false;
+        }
+    }
+    else if (str_tab == 'base')
+    {
+        if (!check_base())
+        {
+            $('#menu_base').click();
+            return false;
+        }
+    }
+    else if (str_tab == 'awards')
+    {
+        if (!check_award())
+        {
+            $('#menu_awards').click();
+            return false;
+        }
+    }
+<? /*
+    else if (str_tab == 'practice')
+    {
+        //if (!check_student_wish())
+        //{
+        //    $('#menu_student_wish').click();
+        //    return false;
+       // }
+    }
+
+    else if (str_tab == 'wish')
+    {
+        if (!check_student_wish())
+        {
+            $('#menu_student_wish').click();
+            return false;
+        }
+    }
+    else if (str_tab == 'pwith')
+    {
+        if (!check_parent_wish())
+        {
+            $('#menu_parent_wish').click();
+            return false;
+        }
+    }
+ */ ?>
+    $("#id_tab_name").val(str_tab);
+    //利用ajax提交，避免表单报错后，返回会情况表单数据
+    UtilTiper.message.doing('正在提交数据...');
+    var form = $('#add_form');
+    form.ajaxSubmit({
+            url : form.attr('action'),
+            dataType : 'json',
+            timeout : 5000,
+            error: function (a, b, c){
+                alert(a + b + c);
+            },
+            success : function (responseText, statusText, xhr, form){
+                var code = responseText.code;
+                var msg = responseText.msg;
+
+                UtilTiper.message.loaded();
+                alert(msg);
+                if (code < 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    location.reload();
+                    return true;
+                }
+            }
+    });
+<? } ?>
+}
+
+
+/*========== 每步表单检查 ========*/
+var action = '<?php echo $act;?>';
+function get_form()
+{
+	return document.getElementById('add_form');
+}
+
+//基本信息
+function check_basic()
+{
+	var form = get_form();
+     if (action == 'add') {
+        if ( ! form.email.value) {
+            alert('请填写邮箱');
+            form.email.focus();
+            return false;
+        }
+        if ( ! form.password.value) {
+            alert('请填写密码');
+            form.password.focus();
+            return false;
+        }
+	    if (pwd = form.password.value) {
+	        //验证密码规则
+            if ('string' === typeof (passwd_msg = is_password(pwd))) {
+           	    alert(passwd_msg);
+	            form.password.focus();
+	            return false;
+            }
+	        if (form.password_confirm.value != pwd) {
+	            alert('两次密码输入不一致！');
+	            form.password_confirm.focus();
+	            return false;
+	        }
+	    }
+	    if ( ! form.last_name.value) {
+            alert('请填写姓名');
+            form.last_name.focus();
+            return false;
+        }
+	    if ( ! form.first_name.value) {
+            alert('请填写姓名');
+            form.first_name.focus();
+            return false;
+        }
+	    if ( ! form.birthday.value) {
+            alert('请填写出生日期');
+            form.birthday.focus();
+            return false;
+        }
+	    if ( ! form.idcard.value) {
+            alert('请填写身份证号码');
+            form.idcard.focus();
+            return false;
+        }
+	    if ( ! form.grade_id.value) {
+            alert('请选择年级');
+            form.grade_id.focus();
+            return false;
+        }
+        if (form.school_id_0.value == '0' || form.school_id_0.value == '')
+        {
+            alert('请选择您的所在学校！');
+            return false;
+        }
+
+<? /*
+        if (!form.mobile.value) {
+            alert('请填写手机');
+            form.mobile.focus();
+            return false;
+        }
+ */ ?>
+     }
+
+    return true;
+}
+
+function check_base()
+{
+    var form = get_form();
+
+<? /*
+    if ((jQuery("#selProvinces option").size() > 1 && form.sb_addr_provid.value == '0')
+        || (jQuery("#selCities option").size() > 1 && form.sb_addr_cityid.value == '0')
+        || (jQuery("#selAreas option").size() > 1 && form.sb_addr_areaid.value == '0'))
+    {
+        alert('请选择您的家庭地址所在省市区！');
+        return false;
+    }
+    if (!form.sb_addr_desc.value.trim())
+    {
+        alert('请填写您家庭地址！');
+        form.sb_addr_desc.focus();
+        return false;
+    }
+ */ ?>
+
+    var prov = jQuery("#selProvinces option:selected").text();
+    var city = jQuery("#selCities option:selected").text();
+    var area = jQuery("#selAreas option:selected").text();
+    if (form.sb_addr_provid.value == '0')
+    {
+        prov = '';
+    }
+    if (form.sb_addr_cityid.value == '0')
+    {
+        city = '';
+    }
+    if (form.sb_addr_areaid.value == '0')
+    {
+        area = '';
+    }
+    if (prov == city)
+    {
+        form.address.value = city + area + ' ' + form.sb_addr_desc.value;
+    }
+    else
+    {
+        form.address.value = prov + city + area + ' ' + form.sb_addr_desc.value;
+    }
+    if (form.zipcode.value.trim() != '')
+    {
+        if (!is_zipcode(form.zipcode.value.trim()))
+        {
+            alert('请填写邮编！');
+            form.zipcode.focus();
+            return false;
+        }
+    }
+
+    if (form.no_tiid.checked == false)
+    {
+        if (form.ti_name.value == '')
+        {
+            alert('请填写培训学校');
+            return false;
+        }
+        if (form.cors_name.value == '')
+        {
+            alert('请填写培训课程');
+            return false;
+        }
+        if (form.sbc_teachers.value == '')
+        {
+            alert('请填写授课老师');
+            return false;
+        }
+    }
+    return true;
+}
+
+//成绩/获奖情况
+function check_award()
+{
+    var action = '<?php echo $act;?>';
+    var form = get_form();
+
+
+    var current_grade = parseInt(form.grade_id.value);
+
+
+    var start_grade = current_grade-2 > 0 ? current_grade-2 : 1;
+    var needed_grade_num = current_grade - start_grade;
+
+
+    var needed_grades = [];
+
+    var arr_grade_id = get_inputs('select','score_rank[grade_id][]');
+    var arr_ranking  = get_inputs('input','score_rank[ranking][]');
+    var arr_totalnum = get_inputs('input','score_rank[totalnum][]');
+    var err = '';
+    var not_complete = false;
+    var ranking_err = false;
+    var outof_grade = false;
+    for (var i=0; i<arr_grade_id.length; i++) {
+        var grade_id = parseInt(arr_grade_id[i].value);
+        var ranking  = parseInt(arr_ranking[i].value);
+        var totalnum = parseInt(arr_totalnum[i].value);
+        // 都没填的跳过
+        if (!grade_id && !arr_ranking[i].value.trim() && ! arr_totalnum[i].value.trim()) {
+            continue;
+        }
+        // 填写不完整的，提示
+        if (!grade_id || isNaN(ranking) || isNaN(totalnum)) {
+            not_complete = true;
+            $(arr_grade_id[i]).parent().parent().addClass('height_light');
+            $(arr_grade_id[i]).parent().children().bind('blur',function(){
+                check_item($(this).parent().parent(), 'ranking');
+            });
+            continue;
+        }
+        // 排名比总数大的
+        if (ranking > totalnum) {
+            ranking_err = true;
+            $(arr_grade_id[i]).parent().parent().addClass('height_light');
+            $(arr_grade_id[i]).parent().children().bind('blur',function(){
+                check_item($(this).parent().parent(), 'ranking');
+            });
+            continue;
+        }
+        // 大于当前年级
+        if (grade_id > current_grade) {
+            outof_grade = true;
+            $(arr_grade_id[i]).parent().parent().addClass('height_light');
+            $(arr_grade_id[i]).parent().children().bind('blur',function(){
+                check_item($(this).parent().parent(), 'ranking');
+            });
+            continue;
+        }
+        if (grade_id >= start_grade && grade_id<=current_grade) {
+            needed_grades.push(grade_id);
+        }
+
+    }
+
+    if (not_complete === true) {
+        alert('数据没有填写完整');return false;
+
+    }
+    if (ranking_err === true) {
+   	 alert('年级排名不能比总人数大');return false;
+
+    }
+    if (outof_grade === true) {
+   	 alert('您选择的年级大于您就读的年级');return false;
+
+    }
+
+
+//     alert(needed_grades.length);
+    if ((needed_grades.length < needed_grade_num)&&(current_grade==6)&&(action !='add')) {
+    	alert('请至少填写最近2年成绩排名');return false;
+
+    }
+
+
+
+
+
+
+
+//      if (action == 'add') {
+        var srg_empty = true,
+        	sr_empty = true,
+        	srn_empty = true;
+        $('.score_rank_grade').each(function () {
+
+			if ($.trim($(this).val()) != '')
+			{
+				srg_empty = false;
+				return false;
+			}
+        });
+        $('input.score_rank').each(function () {
+        	if ($.trim($(this).val()) != '')
+			{
+				sr_empty = false;
+				return false;
+			}
+        });
+        $('input.score_rank_num').each(function () {
+        	if ($.trim($(this).val()) != '')
+			{
+				srn_empty = false;
+				return false;
+			}
+        });
+
+        if ((srg_empty || sr_empty || srn_empty)&&(current_grade==6)&&(action !='add')) {
+            alert('请至少填写最近两年成绩排名');
+            return false;
+        }
+//     }
+
+    var falg = 0;
+    $("input[name='subject_in[]']:checkbox").each(function () {
+        if ($(this).prop("checked"))
+        {
+             falg += 1;
+        }
+    });
+    if (falg > 3){
+      alert("目前已经确定参加选考科目:最多只能选三项");return false;
+    }
+
+
+
+
+    var falg1 = 0;
+    $("input[name='subject_not[]']:checkbox").each(function () {
+        if ($(this).prop("checked"))
+        {
+             falg1 += 1;
+        }
+    });
+    if (falg1 > 4){
+      alert("目前已经确定不参加选考科目:最多只能选四项");return false;
+    }
+
+
+
+
+    var xuekao_xuankao_subject_id = get_inputs('select','subject_first[subject_id][]');
+    var xuekao_xuankao_fenshu = get_inputs('input','subject_first[fenshu][]');
+    var xuekao_xuankao_shijian = get_inputs('input','subject_first[shijian][]');
+    var wanzheng=0;
+    var fenshus = [];
+    var subjects = [];
+    for (i=0; i<xuekao_xuankao_subject_id.length; i++) {
+
+        var subject_id = xuekao_xuankao_subject_id[i].value.trim();
+
+        var fenshu = xuekao_xuankao_fenshu[i].value.trim();
+
+        var shijian = xuekao_xuankao_shijian[i].value.trim();
+
+        if ( !subject_id && !fenshu && !shijian) continue;
+
+        if ( ! subject_id || ! fenshu || ! shijian) {
+            alert('第一次参加的选考科目及成绩: 不完整');return false;
+        }
+        else
+        {
+            wanzheng +=1;
+            fenshus.push(fenshu);
+
+        }
+
+    }
+
+
+    if (wanzheng > 3){
+        alert("第一次参加的选考科目及成绩:最多只能选三项");
+        return false;
+      }
+
+    var grade_id=parseInt(form.grade_id.value);
+
+    if((parseInt(grade_id)==11||parseInt(grade_id)==12)&&wanzheng==0)
+    {
+    	 alert("高二高三第一次参加的选考科目及成绩:必填一项");
+         return false;
+    }
+    var xuekao_xuankaofenshu =[100,97,94,91,88,85,82,79,76,73,70,67,64,61,58,55,52,49,46,43,40];
+
+
+    if(wanzheng>0){
+
+
+    	for (i=0; i<wanzheng; i++) {
+        	if($.inArray(parseInt(fenshus[i]),xuekao_xuankaofenshu)<0)
+        	{
+       		  alert("第一次参加的选考科目及成绩:输入成绩有误，成绩集合为:100,97,94,91,88,85,82,79,76,73,70,67,64,61,58,55,52,49,46,43,40");return false;
+        	}
+    	}
+
+
+           $("select[name='subject_first[subject_id][]']").each(function(i){$(this).attr("xh",i);});
+
+           var chongfu_subject=1;
+            $("select[name='subject_first[subject_id][]']").each(function () {
+            	var val = $(this).find('option:selected').val();
+            	var  xh = $(this).attr("xh");
+           	 $("#TbData select[name='subject_first[subject_id][]']").each(function(){
+              	  if(val==$(this).find('option:selected').val()&&val!=0&&xh!=$(this).attr("xh"))
+                  {
+                		chongfu_subject=0;
+                  }
+            })
+            });
+            if(!chongfu_subject)
+            {
+            	alert('第一次参加的选考科目:学科重复 ');return false;
+            }
+
+    }
+
+
+
+
+    var xuekao_xuankao_subject_id2 = get_inputs('select','subject_two[subject_id][]');
+    var xuekao_xuankao_fenshu2 = get_inputs('input','subject_two[fenshu][]');
+    var xuekao_xuankao_shijian2 = get_inputs('input','subject_two[shijian][]');
+    var wanzheng2=0;
+    var fenshus2=[];
+    for (i=0; i<xuekao_xuankao_subject_id2.length; i++) {
+
+        var subject_id2 = xuekao_xuankao_subject_id2[i].value.trim();
+
+        var fenshu2 = xuekao_xuankao_fenshu2[i].value.trim();
+
+        var shijian2 = xuekao_xuankao_shijian2[i].value.trim();
+
+        if ( !subject_id2 && !fenshu2 && !shijian2) continue;
+
+        if ( ! subject_id2 || ! fenshu2 || ! shijian2) {
+            alert('第二次参加的选考科目及成绩:不完整 ');return false;
+        }
+        else
+        {
+            wanzheng2 +=1;
+            fenshus2.push(fenshu2);
+        }
+
+    }
+    if (wanzheng2 > 3){
+        alert("第二次参加的选考科目及成绩:最多只能选三项");
+        return false;
+      }
+
+    if(wanzheng2>0){
+
+
+    	for (i=0; i<wanzheng2; i++) {
+        	if($.inArray(parseInt(fenshus2[i]),xuekao_xuankaofenshu)<0)
+        	{
+       		  alert("第二次参加的选考科目及成绩:输入成绩有误，成绩集合为:100,97,94,91,88,85,82,79,76,73,70,67,64,61,58,55,52,49,46,43,40");return false;
+        	}
+    	}
+
+
+           $("select[name='subject_two[subject_id][]']").each(function(i){$(this).attr("xh_1",i);});
+
+           var chongfu_subject_1=1;
+            $("select[name='subject_two[subject_id][]']").each(function () {
+            	var val_1 = $(this).find('option:selected').val();
+            	var xh_1 = $(this).attr("xh_1");
+           	 $("#TbData_1 select[name='subject_two[subject_id][]']").each(function(){
+              	  if(val_1==$(this).find('option:selected').val()&&val_1!=0&&xh_1!=$(this).attr("xh_1"))
+                  {
+                		chongfu_subject_1=0;
+                  }
+            })
+            });
+
+            if(!chongfu_subject_1)
+            {
+            	alert('第二次参加的选考科目:学科重复 ');
+            	return false;
+            }
+
+    }
+
+
+    var xuekao_xuankao_subject_id3 = get_inputs('select','subject_finish[subject_id][]');
+    var xuekao_xuankao_rank = get_inputs('select','subject_finish[rank][]');
+
+    var wanzheng3=0;
+    for (i=0; i<xuekao_xuankao_subject_id3.length; i++) {
+
+        var subject_id3 = xuekao_xuankao_subject_id3[i].value.trim();
+
+        var rank = xuekao_xuankao_rank[i].value.trim();
+
+
+        if ( !subject_id3 && !rank) continue;
+
+        if ( ! subject_id3 || ! rank ) {
+            alert('已经参加的学科科目及成绩 :不完整 ');return false;
+        }
+        else
+        {
+            wanzheng3 +=1;
+        }
+
+    }
+
+
+    if(wanzheng3>0){
+
+
+
+
+           $("select[name='subject_finish[subject_id][]']").each(function(i){$(this).attr("xh_2",i);});
+
+           var chongfu_subject_2 = 1;
+            $("select[name='subject_finish[subject_id][]']").each(function () {
+
+            	var val_2 = $(this).find('option:selected').val();
+            	var xh_2 = $(this).attr("xh_2");
+
+             	 $("#TbData_2 select[name='subject_finish[subject_id][]']").each(function(){
+
+                  	  if(val_2==$(this).find('option:selected').val()&&val_2!=0&&$(this).attr("xh_2")!=xh_2)
+                      {
+
+                    		chongfu_subject_2=0;
+
+                      }
+                 });
+
+            });
+
+
+            if(!chongfu_subject_2)
+            {
+            	alert('已经参加的学科科目及成绩 :学科重复 ');return false;
+            }
+
+    }
+
+
+
+
+    return true;
+}
+
+//学生意愿
+function check_student_wish()
+{
+	var form = get_form();
+//      if (action == 'add') {
+        var is_empty = true;
+        $('input.student_wish').each(function () {
+			if ($(this).is(':checked'))
+			{
+				is_empty = false;
+				return false;
+			}
+        });
+        if (is_empty) {
+            alert('请选择升学途径');
+            return false;
+        }
+
+        if ($.trim($('.student_wish_extend').val()) == '') {
+            alert('请填写发展意愿');
+        	$('.student_wish_extend').focus();
+            return false;
+        }
+
+        var falg = 0;
+        $("input[name='student_wish[spec][]']:checkbox").each(function () {
+
+            if ($(this).prop("checked"))
+            {
+                 falg += 1;
+            }
+        });
+
+        if (falg > 3){
+
+      	  alert('您目前对大学中最感兴趣的专业大类（最多三项）');
+        	$('.student_wish').focus();
+            return false;
+
+        }
+//      }
+
+    return true;
+}
+
+//家长意愿
+function check_parent_wish()
+{
+	var form = get_form();
+//      if (action == 'add') {
+        var pwf_is_empty = true,
+        	pwu_is_empty = true;
+        $('input.parent_wish_fbg').each(function () {
+			if ($(this).is(':checked'))
+			{
+				pwf_is_empty = false;
+				return false;
+			}
+        });
+        $('input.parent_wish_upmethod').each(function () {
+			if ($(this).is(':checked'))
+			{
+				pwu_is_empty = false;
+				return false;
+			}
+        });
+        if (pwf_is_empty) {
+            alert('请选择家庭背景');
+            return false;
+        }
+        if (pwu_is_empty) {
+            alert('请选择升学途径');
+            return false;
+        }
+
+        if ($.trim($('.parent_wish_extend').val()) == '') {
+            alert('请填写发展意愿');
+        	$('.parent_wish_extend').focus();
+            return false;
+        }
+        if ($("select[name='parent_wish[family_bg_qt][huji]']").val().trim() == '')
+        {
+
+             alert('请选择户籍性质');
+          	 $("select[name='parent_wish[family_bg_qt][huji]']").focus();
+          	 return false;
+        }
+
+
+//         alert($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:radio").val());
+//         return false;
+
+        if ($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:checked").val()== 2){
+
+        	if ($("input[name='parent_wish[family_bg_qt][jian_age]']:text").val().trim() == '')
+        	{
+                 alert('请输入监护人年龄');
+              	 $("input[name='parent_wish[family_bg_qt][jian_age]']").focus();
+              	 return false;
+        	}
+
+       	 if ($("select[name='parent_wish[family_bg_qt][jian_xueli]']").val().trim() == '')
+         {
+
+             alert('请选择监护人学历');
+          	 $("select[name='parent_wish[family_bg_qt][jian_xueli]']").focus();
+          	 return false;
+         }
+       	 if ($("select[name='parent_wish[family_bg_qt][jian_sex]']").val().trim() == '')
+         {
+       		 alert('请选择监护人性别');
+        	 $("select[name='parent_wish[family_bg_qt][jian_sex]']").focus();
+        	 return false;
+         }
+
+
+        }
+        if ($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:checked").val()== 1){
+
+        	if ($("select[name='parent_wish[family_bg_qt][fxueli]']").val().trim() == '')
+        	{
+       		 alert('请选择父亲学历');
+        	 $("select[name='parent_wish[family_bg_qt][fxueli]']").focus();
+        	 return false;
+        	}
+
+       	 if ($("select[name='parent_wish[family_bg_qt][mxueli]']").val().trim() == '')
+         {
+
+           	     alert('请选择母亲学历');
+            	 $("select[name='parent_wish[family_bg_qt][mxueli]']").focus();
+            	 return false;
+         }
+
+
+
+        }
+
+
+        if ($("input[name='parent_wish[family_bg_qt][shenghuohuanjing]']:checked").val()== 2){
+
+        	if ($("input[name='parent_wish[family_bg_qt][jian_age]']:text").val().trim() == '')
+        	{
+        	    alert('请填写监护人年龄');
+        	    $("input[name='parent_wish[family_bg_qt][jian_age]']:text").focus();
+        	     return false;
+        	}
+
+
+        }
+
+//      }
+
+    return true;
+}
+
+function get_inputs(type, name, parent) {
+    if(parent) {
+        var objs=parent.getElementsByTagName(type);
+    } else {
+        var objs=document.getElementsByTagName(type);
+    }
+    var result = [];
+    for (var i=0; i<objs.length; i++) {
+        if (objs[i].name == name) {
+            result.push(objs[i]);
+        }
+    }
+    return result;
+}
+
+$(document).ready(function () {
+	$('#password, #password_confirm').blur(function () {
+		var $thiz = $(this);
+		if ($thiz.attr('id') == 'password_confirm') {
+			if ($(this).val() != '') {
+// 				check_basic();
+			}
+		} else {
+			//验证密码规则
+            if ('string' === typeof (passwd_msg = is_password($thiz.val()))) {
+           	    alert(passwd_msg);
+              	$thiz.focus();
+	            return false;
+            }
+		}
+	});
+});
+
+//================================================================
+function fnSetTIIDNameClick()
+{
+    var ti_name = jQuery('#id_ti_name_defined').get(0).value;
+    if (ti_name.length < 1)
+    {
+        alert('请输入自定义培训机构名称(省市区与家庭住址相同)');
+        return;
+    }
+    fnSetTIIDName('', ti_name);
+}
+
+function fnSetTIIDName(ti_id, ti_name)
+{
+    if (ti_id != jQuery('#id_sbc_tiid').get(0).value)
+    {
+        jQuery('#id_sbc_corsid').get(0).value = '';
+        jQuery('#id_cors_cmid').get(0).value = '';
+        jQuery('#id_cors_name').get(0).value = '';
+    }
+    jQuery('#id_sbc_tiid').attr('value', ti_id);
+    jQuery('#id_ti_name').attr('value', ti_name);
+    fnCloseDialog('id_sbc_tiid_dlg');
+}
+
+function fnSetTIListDiv(ti_list)
+{
+    var str = '';
+    for (var i = 0; i < ti_list.length; i++)
+    {
+        str += '<li onclick="fnSetTIIDName(' + ti_list[i]['ti_id'] + ', jQuery(this).text())">' + ti_list[i]['ti_name'] + '</li>';
+    }
+<?
+    /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '这是的是安是的分服是安是但' + '</li>';
+    }
+     */
+?>
+
+    $("#id_ti_list > ul").html(str);
+}
+
+function fnSetCORSIDNameClick()
+{
+    var cors_name = jQuery('#id_cors_name_defined').get(0).value;
+    if (cors_name.length < 1)
+    {
+        alert('请输入自定义培训课程名称');
+        return;
+    }
+    var cors_cmid = jQuery('#id_cors_cmid_1').get(0).checked ? 1 : 2;
+    fnSetCORSIDName('', cors_name, cors_cmid);
+}
+
+function fnSetCORSIDName(cors_id, cors_name, cors_cmid)
+{
+    jQuery('#id_sbc_corsid').get(0).value = cors_id;
+    jQuery('#id_cors_name').get(0).value = cors_name;
+    jQuery('#id_cors_cmid').get(0).value = cors_cmid;
+    fnCloseDialog('id_sbc_corsid_dlg');
+}
+
+function fnSetCORSListDiv(cors_list)
+{
+    var str = '';
+    for (var i = 0; i < cors_list.length; i++)
+    {
+        str += '<li onclick="fnSetCORSIDName(' + cors_list[i]['cors_id'] + ', jQuery(this).text(), ' + cors_list[i]['cors_cmid'] + ')">' + cors_list[i]['cors_name'] + '</li>';
+    }
+<? /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '课程课程安是的分服是安是但' + '</li>';
+    }
+ */?>
+
+    $("#id_cors_list > ul").html(str);
+}
+
+
+function fnSetCTeacherClick()
+{
+    var cteachers = jQuery('#id_sbc_teachers_defined').get(0).value;
+    if (cteachers .length < 1)
+    {
+        alert('请输入自定义授课教师名称');
+        return;
+    }
+    fnSetCTeacher(cteachers);
+}
+
+function fnSetCTeacher(cteachers)
+{
+    jQuery('#id_sbc_teachers').get(0).value = cteachers;
+    fnCloseDialog('id_sbc_teachers_dlg');
+}
+
+function fnSetCTeacherListDiv(ct_list)
+{
+    var str = '';
+    for (var i = 0; i < ct_list.length; i++)
+    {
+        str += '<li onclick="fnSetCTeacher(jQuery(this).text())">' + ct_list[i]['ct_name'] + '</li>';
+    }
+<? /*
+    for (var i = 0; i < 100; i++)
+    {
+        str += '<li>' + '教师教师是安是但' + '</li>';
+    }
+
+ */?>
+    $("#id_cteacher_list > ul").html(str);
+}
+
+
+function fnShowDlg1()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        jQuery('#menu_basic').click();
+        return;
+    }
+
+    var ti_id = jQuery('#id_sbc_tiid').attr('value');
+    var ti_name = jQuery('#id_ti_name').attr('value');
+
+    if (ti_id == '')
+    {
+        jQuery('#id_ti_name_defined').get(0).value = ti_name;
+    }
+    fnShowDialog('id_sbc_tiid_dlg');
+}
+
+function fnShowDlg2()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        jQuery('#menu_basic').click();
+        return;
+    }
+
+    if (jQuery('#id_ti_name').attr('value').length < 1)
+    {
+        alert('请先填写培训机构');
+        return;
+    }
+    var tiid = jQuery('#id_sbc_tiid').attr('value');
+    jQuery("#id_cors_tiid").get(0).value = tiid;
+    if (tiid == '')
+    {
+        jQuery('#id_cors_list > ul').html('');
+        jQuery("#id_qry_cors_cmid").attr('disabled', 'disabled');
+        jQuery("#id_qry_cors_name").attr('disabled', 'disabled');
+        jQuery("#id_qry_cors_btn").attr('disabled', 'disabled');
+
+    }
+    else
+    {
+        jQuery("#id_qry_cors_cmid").removeAttr('disabled');
+        jQuery("#id_qry_cors_name").removeAttr('disabled');
+        jQuery("#id_qry_cors_btn").removeAttr('disabled');
+    }
+    var cors_id = jQuery("#id_sbc_corsid").attr('value');
+    if (cors_id == '')
+    {
+        jQuery("#id_cors_name_defined").get(0).value = jQuery("#id_cors_name").get(0).value;
+        if (jQuery("#id_cors_cmid").attr('value') == 1)
+        {
+            jQuery("#id_cors_cmid_1").get(0).checked =  true;
+        }
+        else
+        {
+            jQuery("#id_cors_cmid_1").get(0).checked =  false;
+        }
+    }
+    fnShowDialog('id_sbc_corsid_dlg');
+}
+
+function fnShowDlg3()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        jQuery('#menu_basic').click();
+        return;
+    }
+
+    if (jQuery('#id_ti_name').get(0).value.length < 1)
+    {
+        alert('请先填写培训机构');
+        return;
+    }
+    if (jQuery('#id_cors_name').get(0).value.length < 1)
+    {
+        alert('请先填写培训课程');
+        return;
+    }
+
+    var cors_id = jQuery('#id_sbc_corsid').get(0).value;
+    jQuery('#id_cteacher_cors_id').get(0).value = cors_id;
+    if (cors_id == '')
+    {
+        jQuery('#id_cteacher_list > ul').html('');
+        jQuery('#id_sbc_teachers_defined').get(0).value = jQuery('#id_sbc_teachers').get(0).value;
+        jQuery('#id_cteacher_cors_id').attr('disabled', 'disabled');
+        jQuery('#id_qry_cteacher_name').attr('disabled', 'disabled');
+        jQuery('#id_qry_cteacher_btn').attr('disabled', 'disabled');
+    }
+    else
+    {
+        jQuery('#id_sbc_teachers_defined').get(0).value = jQuery('#id_sbc_teachers').get(0).value;
+        jQuery('#id_cteacher_cors_id').removeAttr('disabled');
+        jQuery('#id_qry_cteacher_name').removeAttr('disabled');
+        jQuery('#id_qry_cteacher_btn').removeAttr('disabled');
+    }
+    fnShowDialog('id_sbc_teachers_dlg');
+}
+
+function fnOnCheckBoxNOTIChanged()
+{
+    var bChecked = jQuery('#id_checkbox_noti').get(0).checked;
+    if (bChecked)
+    {
+        jQuery('#id_ti_name').attr('disabled', 'disabled');
+        jQuery('#id_cors_name').attr('disabled', 'disabled');
+        jQuery('#id_sbc_teachers').attr('disabled', 'disabled');
+    }
+    else
+    {
+        jQuery('#id_ti_name').removeAttr('disabled', 'disabled');
+        jQuery('#id_cors_name').removeAttr('disabled', 'disabled');
+        jQuery('#id_sbc_teachers').removeAttr('disabled', 'disabled');
+    }
+}
+
+function fnOnDlg1Query()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        fnCloseDialog('id_sbc_tiid_dlg');
+        jQuery('#menu_basic').click();
+        return;
+    }
+    jQuery('#id_sbc_tiid_dlg_grade_id').get(0).value = form.grade_id.value;
+    ajax_baseFetchTIList(fnGetFormData('id_sbc_tiid_dlg'));
+}
+
+function fnOnDlg2Query()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        fnCloseDialog('id_sbc_corsid_dlg');
+        jQuery('#menu_basic').click();
+        return;
+    }
+    jQuery("#id_sbc_corsid_dlg_grade_id").get(0).value = form.grade_id.value;
+    ajax_baseFetchCORSList(fnGetFormData("id_sbc_corsid_dlg_qry_div"));
+}
+
+function fnOnDlg3Query()
+{
+    var form = get_form();
+    if (form.grade_id.value == 0)
+    {
+        alert('请先选择基本信息的年级');
+        fnCloseDialog('id_sbc_teachers_dlg');
+        jQuery('#menu_basic').click();
+        return;
+    }
+    jQuery("#id_sbc_teachers_dlg_grade_id").get(0).value = form.grade_id.value;
+    ajax_baseFetchCTeacherList(fnGetFormData("id_sbc_teachers_dlg_qry_div"));
+}
+
+<? if (!isset($student['sbc_uid'])) { ?>
+jQuery(document).ready(function(){
+    jQuery('#id_checkbox_noti').get(0).checked = true;
+    fnOnCheckBoxNOTIChanged();
+});
+<? } ?>
+</script>
+<div id="body">
+  <form name="Frm_cpuser_info" id="add_form" method="POST" action="<?=site_url('admin/student/update')?>" autocomplete="off" enctype="multipart/form-data">
+  <input type="hidden" id="id_tab_name" name="tab_name" value=""/>
+  <?php if($act=='edit'):?>
+  <input type="hidden" name="uid" value="<?=$student['uid']?>" />
+  <?php endif;?>
+  <input type="hidden" name="act" value="<?=$act?>" />
+  <div class="space">
+    <div class="subtitle"><?=$act=='add'? '添加':'修改'?>学生信息(<font color="red">请注意查看带 * 的必填字段 </font>)     <a class="menu" href="javascript:void(0)" onclick="location.reload()">重新载入`</a></div>
+    <div>
+        <ul class="subtab">
+            <li class="current"><a href="javascript:void(0)" name="basic" id="menu_basic">基本信息</a></li>
+            <li><a href="javascript:void(0)" name="base" id="menu_base">学习概况</a></li>
+            <?if ($student['grade_id']==6){?>
+            <li><a href="javascript:void(0)" name="awards" id="menu_awards">小升初必填</a></li>
+            <?}?>
+<?/*<li><a href="javascript:void(0)" name="practice" id="menu_practice">社会实践</a></li>
+            <li><a href="javascript:void(0)" name="student_wish" id="menu_student_wish">学生意愿</a></li>
+            <li><a href="javascript:void(0)" name="parent_wish" id="menu_parent_wish">家长意愿</a></li>*/?>
+        </ul>
+    </div>
+    <div>
+    <table class="maintable" id="table_basic" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            帐号信息
+        </td>
+      </tr>
+      <?php if($act=='add'):?>
+      <tr>
+        <td class="altbg1">Email</td>
+        <td>
+          <input type="text" id="email" name="email" value="" class="txtbox" />
+           <span style="color:#f00">*</span>
+        </td>
+        </tr>
+      <tr>
+        <td class="altbg1">密码</td>
+        <td>
+        	<input type="password" id="password" name="password" class="txtbox">
+        	<span style="color:#f00">*</span> <span class="notice">密码长度必须为6~20个字符</span>
+		</td>
+      </tr>
+      <tr>
+        <td class="altbg1">确认密码</td>
+        <td><input type="password" id="password_confirm" name="password_confirm" class="txtbox">  <span style="color:#f00">*</span></td>
+      </tr>
+      <?php else:?>
+      <tr>
+            <td width="16%" class="altbg1">Email</td>
+            <td>
+				<input value="<?=$student['email']?>" type="text" id="email" name="email" class="txtbox">
+            </td>
+        </tr>
+      <tr>
+        <td class="altbg1">准考证</td>
+        <td><?=$student['exam_ticket']?></td>
+      </tr>
+      <?php endif;?>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            个人信息
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">真实姓名</td>
+        <td>姓：<input type="text" id="last_name" name="last_name" class="txtbox5" value="<?=$student['last_name']?>" /> 名：<input type="text" id="first_name" name="first_name" class="txtbox4" value="<?=$student['first_name']?>" /> <span style="color:#f00">*</span></td>
+      </tr>
+      <tr>
+        <td class="altbg1">性别</td>
+        <td>
+            <input type="radio" name="sex" value="1" <?php if($student['sex']==1) echo 'checked';?> /> 男
+            <input type="radio" name="sex" value="2" <?php if($student['sex']==2) echo 'checked';?> /> 女
+            <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">出生日期</td>
+        <td><input type="text" id="birthday" name="birthday" class="txtbox" value="<?=$student['birthday']?>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});">  <span style="color:#f00">*</span> 格式：2013-07-16</td>
+      </tr>
+      <tr>
+        <td class="altbg1">身份证号码</td>
+        <td><input type="text" id="idcard" name="idcard" class="txtbox" value="<?=$student['idcard']?>"> <span style="color:#f00">*</span></td>
+      </tr>
+      <!--<?php /*
+        <tr>
+            <td class="altbg1">所在地</td>
+            <td>
+              <select name="province" id="selProvinces" onchange="region.changed(this, 2, 'selCities')">
+                <option value="0">--请选择省--</option>
+                <?php foreach($province_list as $val): ?>
+                <option value="<?=$val['region_id']?>" <?php if($val['region_id']==$student['province']) echo 'selected="selected"';?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+              <select name="city" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                <option value="0">--请选择市--</option>
+                <?php foreach($city_list as $val): ?>
+                <option value="<?=$val['region_id']?>" <?php if($val['region_id']==$student['city']) echo 'selected="selected"';?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+              <select name="area" id="selAreas">
+                <option value="0">--请选择区县--</option>
+                <?php foreach($area_list as $val): ?>
+                <option value="<?=$val['region_id']?>" <?php if($val['region_id']==$student['area']) echo 'selected="selected"';?>><?=$val['region_name']?></option>
+                <?php endforeach; ?>
+              </select>
+               <span style="color:#f00">*</span>
+            </td>
+        </tr>
+        */ ?>-->
+        <tr>
+            <td class="altbg1">年级</td>
+            <td>
+              <select name="grade_id" id="select_grade_id">
+                <option value="0">--请选择--</option>
+                <?php foreach($grades as $key => $val): ?>
+                <option value="<?=$key?>"<?=$key==$student['grade_id']?' selected="selected"':''?>><?=$val?></option>
+                <?php endforeach; ?>
+              </select>
+              <span style="color:#f00">*</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1" width="16%">所在学校</td>
+            <td>
+                <input class="txtbox" id="school_select" name="school_name" type="text" value="<?=$student['school_name']?>"/>
+                <input id="school_id" name="school_id_0" type="hidden" value="<?=$student['school_id']?>"/>
+              <span style="color:#f00">*</span><span style="color:#f00;display:none" id="_school_select"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">手机</td>
+            <td>
+              <input type="text" id="mobile" name="mobile" value="<?=$student['mobile']?>" class="txtbox" />
+               <span style="color:#ff0000"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">头像</td>
+            <td>
+              <?php if ($student['picture']):?>
+              <a href="<?=__IMG_ROOT_URL__?><?=$student['picture']?>" target="_blank">
+                <img src="<?=__IMG_ROOT_URL__?><?=$student['picture']?>" height="100" />
+              </a><br/>
+              <?php endif;?>
+              <input type="file" name="picture" value="" class="txtbox" />
+            </td>
+        </tr>
+        <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+                     <center>
+                             <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('basic')"/>
+			    &nbsp;&nbsp;
+<?/*<input type="button" name="" value=" 下一步 "
+    onclick="javascript:if(check_basic()){$('#menu_base').click();};" class="btn next_step" />*/?>
+			  </center>
+      	</td>
+      </tr>
+    </table>
+    <table class="maintable" id="table_base" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            家庭住址
+        </td>
+      </tr>
+        <tr>
+            <td class="altbg1">家庭地址</td>
+            <td>
+              <select name="sb_addr_provid" id="selProvinces" onchange="region.changed(this, 2, 'selCities');region.changed(document.getElementById('selCities'), 2, 'selAreas');">
+                <option value="0">--请选择省--</option>
+                <? foreach($province_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="sb_addr_cityid" id="selCities" onchange="region.changed(this, 3, 'selAreas')">
+                <option value="0">--请选择市--</option>
+                <? foreach($city_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <select name="sb_addr_areaid" id="selAreas">
+                <option value="0">--请选择区县--</option>
+                <? foreach($area_list as $val) { ?>
+                <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['sb_addr_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+                <? } ?>
+              </select>
+              <input type="text" id="sb_addr_desc" name="sb_addr_desc" value="<?=$student['sb_addr_desc']?>" class="txtbox" />
+              <input type="hidden" id="address" name="address" value="<?=$student['address']?>" class="txtbox" />
+               <span style="color:#f00"></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="altbg1">邮编</td>
+            <td>
+              <input type="text" id="zipcode" name="zipcode" value="<?=$student['zipcode']?>" class="txtbox" />
+               <span style="color:#f00"></span>
+            </td>
+        </tr>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+           课外培训 
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">参加的培训机构</td>
+        <td>
+              培训机构
+              <input type="hidden" id="id_sbc_tiid" name="sbc_tiid" value="<?=$student['sbc_tiid']?>"/>
+              <input type="text" id="id_ti_name" name="ti_name" value="<?=Func::echo_s($student['ti_name'])?>" class="txtbox" readonly="readonly" style="background:lightyellow;width:160px;" onclick="fnShowDlg1()"/>
+              培训课程
+              <input type="hidden" id="id_sbc_corsid" name="sbc_corsid" value="<?=$student['sbc_corsid']?>"/> 
+              <input type="hidden" id="id_cors_cmid" name="cors_cmid" value="<?=$student['cors_cmid']?>"/>
+              <input type="text" id="id_cors_name" name="cors_name" value="<?=Func::echo_s($student['cors_name'])?>" class="txtbox" readonly="readonly" style="background:lightyellow;width:160px;" onclick="fnShowDlg2()"/>
+              授课教师
+              <input type="text" id="id_sbc_teachers" name="sbc_teachers" value="<?=Func::echo_s($student['sbc_teachers'])?>" class="txtbox" readonly="readonly" style="background:lightyellow;width:160px;" onclick="fnShowDlg3()"/>
+
+              <label><input type="checkbox" name='no_tiid' id="id_checkbox_noti" onchange="fnOnCheckBoxNOTIChanged()" <? if ($student['no_tiid']) echo('checked="checked"'); ?> value="1"/>暂无</label>
+               <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">可接受的授课模式</td>
+        <td>
+            <? foreach ($stunumtype_list as $v) { ?>
+            <label><input type="checkbox" name="sbs_stunumtype[]" value="<?=$v['csnt_id']?>" <? if (in_array($v['csnt_id'], $student['sbs_stunumtype'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['csnt_name'])?><? if ($v['csnt_memo']) { ?>(<?=Func::echo_s($v['csnt_memo'])?>)<? } ?></label>
+            <? } ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">希望辅导难度</td>
+        <td>
+            <? foreach ($class_list as $v) { ?>
+            <label><input type="checkbox" name="sbclassid_classid[]" value="<?=$v['class_id']?>" <? if (in_array($v['class_id'], $student['sbclassid_classid'])) echo("checked='checked'"); ?>/> <?=Func::echo_s($v['class_name'])?></label>
+            <? } ?>
+           <span style="color:#f00">*</span>
+        </td>
+      </tr>
+
+        <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+                     <center>
+                             <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('base')"/>
+			    &nbsp;&nbsp; 
+<?/* <input type="button" name="" value=" 下一步 "
+    onclick="javascript:if(check_base()){$('#menu_awards').click();};" class="btn next_step" />*/?>
+			  </center>
+      	</td>
+      </tr>
+    </table>
+    
+    <table class="maintable" id="table_awards" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            请至少填写最近两年成绩排名，小升初必填
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">年级排名 <span style="color:#f00;position:relative;top:3px;"> * </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td">
+            <?php if($score_ranks): ?>
+            <?php $auto_key = 0;?>
+            <?php foreach($score_ranks as $k => $rank): ?>
+            <?php $auto_key++;?>
+            <div>
+              <span>
+                <select name="score_rank[grade_id][]" class="score_rank_grade">
+                  <option value="0">--年级--</option>
+                    <?php foreach($grades as $kk => $v): ?>
+                    <option value="<?=$kk?>"<?php if($rank['grade_id']==$kk) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+			                排名：<input type="text" name="score_rank[ranking][]" class="txtbox5 score_rank" value="<?=$rank['ranking']?>"> /
+			                人数：<input type="text" name="score_rank[totalnum][]" class="txtbox5 score_rank_num" value="<?=$rank['totalnum']?>">
+              </span>
+              <?php if ($auto_key == 1) {?>
+              <input type="button" value="添加" onclick="addItem('score_rank_div')" />
+              <?php } else { ?>
+              <input type="button" value="删除" onclick="delItem($(this))" />
+              <?php } ?>
+            </div>
+            <?php endforeach; ?>
+            <?php endif;?>
+
+            <?php for ($i = 1; $i <= 2; $i++) {?>
+            <div <?php echo $i == 1 ? 'id="score_rank_div" style="display:none;"' : '';?>>
+              <span>
+                <select name="score_rank[grade_id][]" class="score_rank_grade">
+                  <option value="0">--年级--</option>
+                    <?php foreach($grades as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="score_rank[id][]" value="" />
+			                排名：<input type="text" name="score_rank[ranking][]" class="txtbox5 score_rank" value=""> /
+			                人数：<input type="text" name="score_rank[totalnum][]" class="txtbox5 score_rank_num" value="">
+              </span>
+              <?php if ($score_ranks) {?>
+              <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+              <input type="button" style="display:none;" value="添加" onclick="addItem('score_rank_div')" />
+              <?php } else {?>
+              <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('score_rank_div')" />
+              <?php }?>
+            </div>
+            <?php  } ?>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            竞赛获奖成绩，选填
+        </td>
+      </tr>
+      <?php foreach(C('awards_type') as $type_id => $type_name):?>
+      <tr>
+        <td class="altbg1"><?=$type_name?>成绩</td>
+        <td class="score_rank_td">
+            <?php if(isset($awards_list[$type_id])):?>
+            <?php $auto_key = 0;?>
+            <?php foreach($awards_list[$type_id] as $val):?>
+            <?php $auto_key++;?>
+            <div>
+               <span>
+                 <? if ($student['grade_id'] <= 6) { ?>
+                  <input type="hidden" name="awards_subject[<?=$type_id?>][]" value="2"/> 数学
+                <? } else { ?>
+                <select name="awards_subject[<?=$type_id?>][]">
+                    <option value="0">--学科--</option>
+                    <?php foreach($subject_list as $k => $v): ?>
+                    <option value="<?=$k?>"<?php if($val['subject']==$k) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                    <?}?>
+                <select name="awards_awards[<?=$type_id?>][]">
+                    <option value="0">--奖项--</option>
+                    <?php foreach($awards_levels[$type_id] as $k => $v): ?>
+                    <option value="<?=$k?>"<?php if($val['awards']==$k) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <select name="awards_grade[<?=$type_id?>][]">
+                    <option value="0">--获奖年级--</option>
+                    <?php foreach($grades_year as $k => $v): ?>
+                    <option value="<?=$k?>"<?php if($val['grade']==$k) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="awards_ids[<?=$type_id?>][]" value="<?=$val['id']?>" />
+               </span>
+
+              <?php if ($auto_key == 1) {?>
+              <input type="button" value="添加" onclick="addItem('awards_<?=$type_id?>')" />
+              <?php } else { ?>
+              <input type="button" value="删除" onclick="delItem($(this))" />
+              <?php } ?>
+            </div>
+            <?php endforeach;?>
+            <?php endif;?>
+
+            <?php for ($i = 1; $i <= 2; $i++) {?>
+            <div <?php echo $i == 1 ? 'id="awards_' . $type_id . '" style="display:none;"' : '';?>>
+               <span>
+                 <? if ($student['grade_id'] <= 6) { ?>
+                  <input type="hidden" name="awards_subject[<?=$type_id?>][]" value="2"/> 数学
+                <? } else { ?>
+                <select name="awards_subject[<?=$type_id?>][]">
+                    <option value="0">--学科--</option>
+                    <?php foreach($subject_list as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <?}?>
+                <select name="awards_awards[<?=$type_id?>][]">
+                    <option value="0">--奖项--</option>
+                    <?php foreach($awards_levels[$type_id] as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <select name="awards_grade[<?=$type_id?>][]">
+                    <option value="0">--获奖年份--</option>
+                    <?php foreach($grades_year as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="awards_ids[<?=$type_id?>][]" value="" />
+               </span>
+               <?php if (isset($awards_list[$type_id])) {?>
+               <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+               <input type="button" style="display:none;" value="添加" onclick="addItem('awards_<?=$type_id?>')" />
+               <?php } else {?>
+               <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('awards_<?=$type_id?>')" />
+               <?php }?>
+            </div>
+            <?php } ?>
+        </td>
+      </tr>
+      <?php endforeach;?>
+      <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">其他竞赛奖项</td>
+        <td style="border-bottom:2px solid #045eab;">
+           <?php if(isset($awards_list[0])):?>
+           <?php $auto_key = 0;?>
+           <?php foreach($awards_list[0] as $val):?>
+           <?php $auto_key++;?>
+           <div>
+            <span>
+                <input type="hidden" name="awards_other[id][]" value="<?=$val['id']?>" />
+                <p class="pHonor clearfix"><span class="pHonorname fl_l">名称</span><input type="text" name="awards_other[name][]" class="txtbox2 fl_l" value="<?=$val['other_name']?>"></p>
+               <p class="clearfix"><span class="pHonorname fl_l">获奖情况</span><textarea class="fl_l" name="awards_other[desc][]" rows="3" cols="50"><?=$val['other_desc']?></textarea>
+               </p>
+            </span>
+            <?php if ($auto_key == 1) {?>
+            <input type="button" value="添加" onclick="addItem('awards_other')" />
+            <?php } else { ?>
+            <input type="button" value="删除" onclick="delItem($(this))" />
+            <?php } ?>
+           </div>
+           <?php endforeach; ?>
+           <?php endif; ?>
+
+           <?php for ($i = 1; $i <= 2; $i++) {?>
+           <div <?php echo $i == 1 ? 'id="awards_other" style="display:none;"' : '';?>>
+            <span>
+                <input type="hidden" name="awards_other[id][]" value="" />
+                <p class="pHonor clearfix"><span class="pHonorname fl_l">名称</span><input type="text" name="awards_other[name][]" class="txtbox2 fl_l" value=""></p>
+                <p class="clearfix"><span class="pHonorname fl_l">获奖情况</span><textarea class="pHonorINput" name="awards_other[desc][]" rows="3" cols="50"></textarea>
+                </p>
+            </span>
+            <?php if (isset($awards_list[0])) {?>
+            <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+            <input type="button" style="display:none;" value="添加" onclick="addItem('awards_other')" />
+            <?php } else {?>
+            <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('awards_other')" />
+            <?php }?>
+           </div>
+           <?php } ?>
+        </td>
+      </tr>
+
+      <?if (false){?>
+        <tr>
+        <td colspan="2" class="altbg3" style="text-align: left;">
+            	学考选考
+        </td>
+      </tr>
+
+            <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">是否在实验班<span style="color:#f00;position:relative;top:3px;"> * </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td">
+
+
+            <div>
+              <span>
+                <input type="radio" name ="is_in_class" value="1" <?php if($xuekao_xuankao['is_in_class']==1): ?>checked<?php endif;?>>是
+                &nbsp;
+               <input type="radio" name ="is_in_class" value="0" <?php if($xuekao_xuankao['is_in_class']==0): ?>checked<?php endif;?>>否
+              </span>
+
+            </div>
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+            <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">你参加走班教学的科目<span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td">
+
+
+            <?php
+                $subject_class = unserialize($xuekao_xuankao['subject_class']);
+            ?>
+            <div>
+              <span>
+              <?php foreach ($subjects as $k => $v):?>
+
+                <input type="checkbox" name ="subject_class[]"
+                 <?php if( !empty($subject_class)&&in_array($k, $subject_class)&&is_array($subject_class)): ?>checked<?php endif;?> value="<?php echo $k;?>"
+
+
+                 >
+                 <?php echo $v;?>
+               <?php endforeach;?>
+
+
+            </div>
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+  <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">
+
+目前已经确定参加选考科目
+
+        <span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td">
+
+
+            <?php
+                $subject_in = unserialize($xuekao_xuankao['subject_in']);
+            ?>
+            <div>
+              <span >
+              <?php foreach ($subjects as $k => $v):?>
+
+                <input type="checkbox" name ="subject_in[]"  <?php if( !empty($subject_in)&&in_array($k, $subject_in)&&is_array($subject_in)): ?>checked<?php endif;?> value="<?php echo $k;?>"><?php echo $v;?>
+               <?php endforeach;?>
+</span><span style="color:#f00;position:relative;top:3px;">
+可多选，最多选三项。可为空。</span>
+            </div>
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+  <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">
+
+
+
+目前已经确定不参加选考科目
+
+        <span style="color:#f00;position:relative;top:3px;"> </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td">
+
+
+            <?php
+                $subject_not = unserialize($xuekao_xuankao['subject_not']);
+            ?>
+            <div>
+              <span>
+              <?php foreach ($subjects as $k => $v):?>
+
+                <input type="checkbox" name ="subject_not[]"  <?php if( !empty($subject_not)&&in_array($k, $subject_not)&&is_array($subject_not)): ?>checked<?php endif;?> value="<?php echo $k;?>" ><?php echo $v;?>
+               <?php endforeach;?>
+</span>
+<span style="color:#f00;position:relative;top:3px;">
+可多选，最多选四项。可为空。</span>
+            </div>
+
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+      <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">第一次参加的选考科目及成绩<span style="color:#f00;position:relative;top:3px;">         (分数集合为【100,97,94,91,88,85,82,79,76,73,70,67,64,61,58,55,52,49,46,43,40】)</span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td" id="TbData">
+            <?php
+            $subject_first = unserialize($xuekao_xuankao[subject_first]);
+
+            if(!empty($subject_first['subject_id'])): ?>
+            <?php $auto_key = 0;
+            ?>
+            <?php foreach($subject_first['subject_id'] as $k => $rank): ?>
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>
+                <select class="ie_select" name="subject_first[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $kk => $v): ?>
+                    <option value="<?=$kk?>"<?php if($rank==$kk) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+			                分数<input type="text" name="subject_first[fenshu][]" class="txtbox5" value="<?=$subject_first['fenshu'][$k]?>">
+
+时间
+<input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});" value="<?=$subject_first['shijian'][$k]?>" class="txtbox4" name="subject_first[shijian][]" >
+
+
+              </span>
+              <?php if ($auto_key == 1) {?>
+              <input type="button" value="添加" onclick="addItem('subject_first')" />
+              <?php } else { ?>
+              <input type="button" value="删除" onclick="delItem($(this))" />
+              <?php } ?>
+            </div>
+            <?php endforeach; ?>
+            <?php endif;?>
+
+            <?php for ($i = 1; $i <= 2; $i++) {?>
+            <div <?php echo $i == 1 ? 'id="subject_first" style="display:none;"' : '';?>>
+              <span>
+                <select class="ie_select" name="subject_first[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+
+			            分数  <input type="text" name="subject_first[fenshu][]" class="txtbox5" value="">
+			           时间  <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});" value="" class="txtbox4" name="subject_first[shijian][]" >
+
+
+              </span>
+              <?php if (!empty($subject_first['subject_id'])) {?>
+              <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+              <input type="button" style="display:none;" value="添加" onclick="addItem('subject_first')" />
+              <?php } else {?>
+              <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('subject_first')" />
+              <?php }?>
+               <span style="color:#f00;position:relative;top:3px;">
+            可多选，最多三项。此项在学生为高二和高三年级的时候为必填项。</span>
+            </div>
+            <?php  } ?>
+
+
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+
+
+            <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">第二次参加的选考科目及成绩<span style="color:#f00;position:relative;top:3px;">         (分数集合为【100,97,94,91,88,85,82,79,76,73,70,67,64,61,58,55,52,49,46,43,40】) </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td" id="TbData_1">
+            <?php
+            $subject_two = unserialize($xuekao_xuankao[subject_two]);
+            if(!empty($subject_two['subject_id'])): ?>
+            <?php $auto_key = 0;
+            ?>
+            <?php foreach($subject_two[subject_id] as $k => $rank): ?>
+
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>
+                <select class="ie_select" name="subject_two[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $kk => $v): ?>
+                    <option value="<?=$kk?>"<?php if($rank==$kk) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+			                 分数<input type="text" name="subject_two[fenshu][]" class="txtbox5" value="<?=$subject_two['fenshu'][$k]?>">
+
+
+			                  时间<input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});" value="<?=$subject_two['shijian'][$k]?>" class="txtbox4" name="subject_two[shijian][]" >
+              </span>
+              <?php if ($auto_key == 1) {?>
+              <input type="button" value="添加" onclick="addItem('subject_two')" />
+              <?php } else { ?>
+              <input type="button" value="删除" onclick="delItem($(this))" />
+              <?php } ?>
+            </div>
+
+            <?php endforeach; ?>
+            <?php endif;?>
+
+            <?php for ($i = 1; $i <= 2; $i++) {?>
+            <div <?php echo $i == 1 ? 'id="subject_two" style="display:none;"' : '';?>>
+              <span>
+                <select class="ie_select" name="subject_two[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="hidden" name="subject_two[id][]" value="" />
+			               分数 <input type="text" name="subject_two[fenshu][]" class="txtbox5" value="">
+			             时间 <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-%d %h:%m:%s'});"  class="txtbox4" name="subject_two[shijian][]" >
+              </span>
+              <?php if (!empty($subject_two['subject_id'])) {?>
+              <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+              <input type="button" style="display:none;" value="添加" onclick="addItem('subject_two')" />
+              <?php } else {?>
+              <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('subject_two')" />
+              <?php }?>
+               <span style="color:#f00;position:relative;top:3px;">
+            可多选，最多三项</span>
+            </div>
+            <?php  } ?>
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+
+            <tr>
+        <td width="16%" class="altbg1" style="border-bottom:2px solid #045eab;">已经参加的学科科目及成绩<span style="color:#f00;position:relative;top:3px;">  </span></td>
+        <td style="border-bottom:2px solid #045eab;" class="score_rank_td" id="TbData_2">
+            <?php
+            $subject_finish = unserialize($xuekao_xuankao[subject_finish]);
+
+             if(!empty($subject_finish[subject_id])): ?>
+            <?php $auto_key = 0;
+
+            ?>
+            <?php foreach($subject_finish[subject_id] as $k => $rank): ?>
+            <?php
+
+            $auto_key++;?>
+            <div>
+              <span>
+                <select class="ie_select" name="subject_finish[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $kk => $v): ?>
+                    <option value="<?=$kk?>"<?php if($rank==$kk) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+
+
+                <select class="ie_select" name="subject_finish[rank][]">
+                  <option value="">--成绩等级--</option>
+                    <?php foreach($ranks as $kk => $v): ?>
+                    <option value="<?=$kk?>"<?php if($subject_finish[rank][$k]==$kk) echo ' selected="selected"';?>><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+
+              </span>
+              <?php if ($auto_key == 1) {?>
+              <input type="button" value="添加" onclick="addItem('subject_finish')" />
+              <?php } else { ?>
+              <input type="button" value="删除" onclick="delItem($(this))" />
+              <?php } ?>
+            </div>
+
+            <?php endforeach; ?>
+            <?php endif;?>
+
+            <?php for ($i = 1; $i <= 2; $i++) {?>
+            <div <?php echo $i == 1 ? 'id="subject_finish" style="display:none;"' : '';?>>
+              <span>
+                <select class="ie_select" name="subject_finish[subject_id][]">
+                  <option value="">--学科--</option>
+                    <?php foreach($subjects as $k => $v): ?>
+                    <option value="<?=$k?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+                <select class="ie_select" name="subject_finish[rank][]">
+                  <option value="">--成绩等级--</option>
+                    <?php foreach($ranks as $kk => $v): ?>
+                    <option value="<?=$kk?>"><?=$v?></option>
+                    <?php endforeach; ?>
+                </select>
+              </span>
+              <?php if (!empty($subject_finish[subject_id])) {?>
+              <input type="button" value="删除" onclick="delItem($(this))" <?php echo $i == 1 ? 'style="display:none;"' : '';?>/>
+              <input type="button" style="display:none;" value="添加" onclick="addItem('subject_finish')" />
+              <?php } else {?>
+              <input type="button" <?php if ($i == 1) {echo 'style="display:none;"';}?> value="添加" onclick="addItem('subject_finish')" />
+              <?php }?>
+            </div>
+            <?php  } ?>
+        </td>
+      </tr>
+      <tr><td style="border:none;"></td></tr>
+     <?}?>
+      <tr>
+        <td colspan="2" class="altbg3" style="text-align: left;">
+            	升学志愿
+        </td>
+      </tr>
+       <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">小升初第一志愿必填</td>
+      </tr>
+      <tr>
+       <tr>
+          <td class="altbg1">第一志愿<span style="color:#f00;position:relative;top:3px;"> * </span></td>
+           <td>
+           <input class="txtbox" id="school_select0" name="volunteer[a]" type="text" value="<?if($volunteer[a]){?><?=$volunteer[a]?><?}?>"/>
+               <input id="school_id0" name="school_id[a]" type="hidden" value="<?=$school_id[a]?>"/>
+           </td>
+      </tr>
+      <tr>
+          <td class="altbg1">第二志愿</td>
+          <td>
+              <input class="txtbox" id="school_select1" name="volunteer[b]" type="text"  value="<?if($volunteer[b]){?><?=$volunteer[b]?><?}?>"/>
+              <input id="school_id1" name="school_id[b]" type="hidden" value="<?=$school_id[b]?>"/>
+          </td>
+      </tr>
+      <tr>
+          <td class="altbg1" style="border-bottom:2px solid #045eab;">第三志愿</td>
+          <td style="border-bottom:2px solid #045eab;">
+             <input class="txtbox" id="school_select2" name="volunteer[c]" type="text"  value="<?if($volunteer[c]){?><?=$volunteer[c]?><?}?>"/>
+               <input id="school_id2" name="school_id[c]" type="hidden" value="<?=$school_id[c]?>"/>
+      </td>
+      </tr>
+      <tr><td style="border:none;"></td>
+      <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+                     <center>
+        <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('awards')"/>
+			    &nbsp;&nbsp;
+<?/*<input type="button" name="dosubmit" value=" 上一步 " onclick="$('#menu_basic').click();" class="btn prev_step" />
+&nbsp;&nbsp;
+       
+<input type="button" name="" value=" 下一步 " onclick="if (check_award()) {$('#menu_practice').click();}" class="btn next_step" />*/?>
+			  </center>
+      	</td>
+      </tr>
+    </table>
+<?/*<table class="maintable" id="table_practice" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            请在参加过的项目中填写描述，每项不多于<font id="font_maxlength">100</font>字
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">考察研究</td>
+        <td>
+            <textarea name="practice[investigate]" rows="3" cols="50" class="charleft_input"><?=isset($practice['investigate'])?$practice['investigate']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td  width="16%"  class="altbg1">便民环保</td>
+        <td>
+            <textarea name="practice[environment]" rows="3" cols="50" class="charleft_input"><?=isset($practice['environment'])?$practice['environment']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">文娱宣传</td>
+        <td>
+            <textarea name="practice[art]" rows="3" cols="50" class="charleft_input"><?=isset($practice['art'])?$practice['art']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">勤工俭学</td>
+        <td>
+            <textarea name="practice[work]"  rows="3" cols="50" class="charleft_input"><?=isset($practice['work'])?$practice['work']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">其他</td>
+        <td>
+            <textarea name="practice[other]" rows="3" cols="50" class="charleft_input"><?=isset($practice['other'])?$practice['other']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+                     <center>
+        <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('practice')"/>
+			    &nbsp;&nbsp;
+<?/* <input type="button" name="dosubmit" value=" 上一步 " onclick="$('#menu_awards').click();" class="btn prev_step" />
+			    &nbsp;&nbsp;
+            <input type="button" name="" value=" 下一步 " onclick="$('#menu_student_wish').click();" class="btn next_step" />
+			  </center>
+      	</td>
+      </tr>
+    </table>
+    <table class="maintable" id="table_student_wish" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+      <tr>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            请在有兴趣或特长的项目中填写描述，每项不多于100字
+        </td>
+        <td colspan="2" class="altbg2" style="text-align: center;">
+            <span style="color:#f00">*</span> 请填写对自己未来的发展意愿，不限于音体美，不多于200字
+        </td>
+      </tr>
+      <tr>
+        <td width="16%" class="altbg1">音乐</td>
+        <td width="30%" >
+            <textarea name="student_wish[music]" rows="3" cols="50" class="charleft_input"><?=isset($student_wish['music'])?$student_wish['music']:''?></textarea>
+        </td>
+        <td  width="16%"  class="altbg1"><span style="color:#f00">*</span>升学途径</td>
+        <td>
+            <?php if ( ! isset($student_wish['upmethod'])) $student_wish['upmethod']='';?>
+            <input type="radio" class="student_wish" name="student_wish[upmethod]" value="高考"<?php if($student_wish['upmethod']=='高考') echo ' checked';?>/> 高考
+            <input type="radio" class="student_wish" name="student_wish[upmethod]" value="自主招生"<?php if($student_wish['upmethod']=='自主招生') echo ' checked';?> /> 自主招生
+            <input type="radio" class="student_wish" name="student_wish[upmethod]" value="出国留学"<?php if($student_wish['upmethod']=='出国留学') echo ' checked';?> /> 出国留学
+            <?php if(in_array($student_wish['upmethod'],array('高考','自主招生','出国留学',''))):?>
+            <input type="radio" class="student_wish" name="student_wish[upmethod]" value="其他" /> 其他
+            <input type="input" name="student_wish[upmethod_other]" value="" id="student_other_method"/>
+            <?php else: ?>
+            <input type="radio" class="student_wish" name="student_wish[upmethod]" value="其他" checked /> 其他
+            <input type="text" name="student_wish[upmethod_other]" value="<?=$student_wish['upmethod']?>" id="student_other_method" />
+            <?php endif; ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">体育</td>
+        <td>
+            <textarea name="student_wish[sport]" rows="3" cols="50" class="charleft_input"><?=isset($student_wish['sport'])?$student_wish['sport']:''?></textarea>
+        </td>
+        <td rowspan="3" class="altbg1"><span style="color:#f00">*</span>发展意愿</td>
+        <td rowspan="3">
+            <textarea name="student_wish[wish]" class="student_wish_extend charleft_input" rows="8" cols="50"><?=isset($student_wish['wish'])?$student_wish['wish']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">美术</td>
+        <td>
+            <textarea name="student_wish[painting]" rows="3" cols="50" class="charleft_input"><?=isset($student_wish['painting'])?$student_wish['painting']:''?></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1">其他</td>
+        <td>
+            <textarea name="student_wish[other]" rows="3" cols="50" class="charleft_input"><?=isset($student_wish['other'])?$student_wish['other']:''?></textarea>
+        </td>
+      </tr>
+
+       <tr>
+        <td class="altbg1" style="border-bottom:2px solid #045eab;">
+
+您目前对大学中最感兴趣的专业大类（最多三项）
+        </td>
+        <td style="border-bottom:2px solid #045eab;">
+         <?php
+                $student_wish[spec] = unserialize($student_wish['spec']);
+            ?>
+         <?php foreach ($specs as $k => $v):?>
+
+                <input type="checkbox" class="student_wish" name ="student_wish[spec][]"
+                 <?php if( !empty($student_wish[spec])&&in_array($k, $student_wish[spec])&&is_array($student_wish[spec])): ?>checked<?php endif;?> value="<?php echo $k;?>">
+                 <?php echo $v;?>
+               <?php endforeach;?>
+
+
+        </td>
+      </tr>
+
+      <tr>
+      	<td colspan="4">
+      		 <!-- 下一步 -->
+		     <center>
+        <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('wish')"/>
+			    <input type="button" name="dosubmit" value=" 上一步 " onclick="$('#menu_practice').click();" class="btn prev_step" />
+			    &nbsp;&nbsp;
+			    <input type="button" name="" value=" 下一步 " onclick="$('#menu_parent_wish').click();" class="btn next_step" />
+			  </center>
+      	</td>
+      </tr>
+    </table>
+    <table class="maintable" id="table_parent_wish" border="0" cellspacing="0" cellpadding="0" style="display:none;">
+      <tr>
+        <td width="10%" class="altbg1" rowspan="2"><span style="color:#f00">*</span>家庭背景</td>
+        <td width="35%" rowspan="2">
+
+                 <?php
+                $parent_wish[family_bg_qt] = unserialize($parent_wish['family_bg_qt']);
+            ?>
+
+            <p>户籍性质：        <select name="parent_wish[family_bg_qt][huji]">
+                    <option value="">--请选择--</option>
+
+                    <option value="1" <?php if($parent_wish[family_bg_qt][huji]==1):?>selected<?php endif;?>>农村户口</option>
+                     <option value="2" <?php if($parent_wish[family_bg_qt][huji]==2):?>selected<?php endif;?>>城市户口</option>
+
+                </select></p>
+                 <p>&nbsp;</p>
+
+            <p>生活环境:
+            <input type="radio" name="parent_wish[family_bg_qt][shenghuohuanjing]" id="pwish_shenghuohuanjing1" value="1"<?php if(!empty($parent_wish[family_bg_qt][shenghuohuanjing])&&
+            $parent_wish[family_bg_qt][shenghuohuanjing]==1) echo ' checked';
+            else
+                echo ' checked';
+            ?>/><label for="pwish_shenghuohuanjing1"> 与父母同住</label>
+            <input type="radio" name="parent_wish[family_bg_qt][shenghuohuanjing]" id="pwish_shenghuohuanjing1" value="2"<?php if($parent_wish[family_bg_qt][shenghuohuanjing]==2) echo ' checked';?>/><label for="pwish_shenghuohuanjing1"> 与其他监护人</label>
+
+            </p>
+            <p>&nbsp;</p>
+            <p id="pwish_shenghuohuanjing3">父亲学历    <select name="parent_wish[family_bg_qt][fxueli]">
+                    <option value="">--请选择--</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][fxueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][fxueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][fxueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][fxueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][fxueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][fxueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+
+                母亲学历  <select name="parent_wish[family_bg_qt][mxueli]">
+                    <option value="">--请选择--</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][mxueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][mxueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][mxueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][mxueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][mxueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][mxueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+            </p><p>&nbsp;</p>
+            <p id="pwish_shenghuohuanjing4">监护人年龄   <input name="parent_wish[family_bg_qt][jian_age]" value="<?php echo $parent_wish[family_bg_qt][jian_age];?>" size=3>
+
+                性别<select name="parent_wish[family_bg_qt][jian_sex]">
+                    <option value="">--请选择--</option>
+                     <option value="1" <?php if($parent_wish[family_bg_qt][jian_sex]==1):?>selected<?php endif;?>>男</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_sex]==2):?>selected<?php endif;?>>女</option>
+                </select>
+
+
+
+                学历<select name="parent_wish[family_bg_qt][jian_xueli]">
+                    <option value="">--请选择--</option>
+                    <option value="1" <?php if($parent_wish[family_bg_qt][jian_xueli]==1):?>selected<?php endif;?>>小学及以下</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_xueli]==2):?>selected<?php endif;?>>初中</option>
+                    <option value="3" <?php if($parent_wish[family_bg_qt][jian_xueli]==3):?>selected<?php endif;?>>高中</option>
+                    <option value="4" <?php if($parent_wish[family_bg_qt][jian_xueli]==4):?>selected<?php endif;?>>大专</option>
+                    <option value="5" <?php if($parent_wish[family_bg_qt][jian_xueli]==5):?>selected<?php endif;?>>本科</option>
+                    <option value="2" <?php if($parent_wish[family_bg_qt][jian_xueli]==6):?>selected<?php endif;?>>研究生</option>
+                </select>
+            </p>
+
+
+
+            <?php foreach($family_bg_list as $k => $v):?>
+            <input type="checkbox" class="parent_wish_fbg" name="parent_wish[family_bg][]" value="<?=$k?>" <?php if(!empty($parent_wish['family_bg']) && strpos(','.$parent_wish['family_bg'].',', ','.$k.',')!==false) echo 'checked';?>/> <?=$v?>
+            <?php if ($k==99):?><input type="text" class="txtbox2" name="parent_wish[other_bg]" value="<?=empty($parent_wish['other_bg'])?'':$parent_wish['other_bg']?>" /><?php endif;?>
+            <br/>
+            <?php endforeach;?>
+
+
+
+
+
+        </td>
+        <td  width="10%" class="altbg1"><span style="color:#f00">*</span>升学途径</td>
+        <td>
+            <?php if ( ! isset($parent_wish['upmethod'])) $parent_wish['upmethod']='';?>
+            <input type="radio" name="parent_wish[upmethod]" class="parent_wish_upmethod" value="高考"<?php if($parent_wish['upmethod']=='高考') echo ' checked';?>/> 高考
+            <input type="radio" name="parent_wish[upmethod]" class="parent_wish_upmethod" value="自主招生"<?php if($parent_wish['upmethod']=='自主招生') echo ' checked';?> /> 自主招生
+            <input type="radio" name="parent_wish[upmethod]" class="parent_wish_upmethod" value="出国留学"<?php if($parent_wish['upmethod']=='出国留学') echo ' checked';?> /> 出国留学
+            <?php if(in_array($parent_wish['upmethod'],array('高考','自主招生','出国留学',''))):?>
+            <input type="radio" name="parent_wish[upmethod]" class="parent_wish_upmethod" value="其他" /> 其他
+            <input type="input" name="parent_wish[upmethod_other]"  value="" id="parent_other_method" />
+            <?php else: ?>
+            <input type="radio" name="parent_wish[upmethod]" class="parent_wish_upmethod" value="其他" checked /> 其他
+            <input type="text" name="parent_wish[upmethod_other]" value="<?=$parent_wish['upmethod']?>" id="parent_other_method" />
+            <?php endif; ?>
+        </td>
+      </tr>
+      <tr>
+        <td class="altbg1"><span style="color:#f00">*</span>发展意愿</td>
+        <td>
+            <textarea name="parent_wish[wish]" class="parent_wish_extend charleft_input" rows="8" cols="50"><?=isset($parent_wish['wish'])?$parent_wish['wish']:''?></textarea>
+        </td>
+      </tr>
+
+
+      <tr>
+      	<td colspan="4">
+		     <center>
+        <input type="button" value=" 保存 " class="btn"  onclick="fnTabSubmit('pwish')"/>
+		     	<input type="button" name="dosubmit" value=" 上一步 " onclick="$('#menu_student_wish').click();" class="btn prev_step" />
+			    &nbsp;&nbsp;
+			    <input type="submit" name="dosubmit" value=" 提交 " class="btn" />
+			    &nbsp;&nbsp;
+			    <input type="button" name="" value=" 返回 " onclick="history.go(-1);" class="btn" />
+			  </center>
+      	</td>
+      </tr>
+    </table>*/?>
+
+
+    </div>
+    <div id="auto_school_list"></div>
+  </div>
+
+  </form>
+</div>
+
+
+
+<div id="id_sbc_tiid_dlg" style="display:none;width:80%">
+  <div class="cls_title">选择或输入培训机构</div>
+  <div class="cls_box" style="margin:5px">
+     <div>
+    <input type="hidden" name="grade_id" value="<?=$student['grade_id']?>" class="cls_field" id="id_sbc_tiid_dlg_grade_id"/>
+      <select name="ti_typeid" class="cls_field">
+        <option value="">--请选择培训机构类型--</option>
+        <? foreach ($tit_list as $val) { ?>
+        <option value="<?=$val['tit_id']?>" <?=$val['tit_id'] == $student['ti_typeid'] ? ' selected="selected"' : ''?>><?=Func::echo_s($val['tit_name'])?></option>
+        <? } ?>
+      </select>
+      <select name="ti_provid" id="id_ti_provid" onchange="region.changed(this, 2, 'id_ti_cityid');region.changed(document.getElementById('id_ti_cityid'), 2, 'id_ti_areaid');" class="cls_field">
+      <option value="0">--请选择省--</option>
+      <? foreach($province_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_provid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <select name="ti_cityid" id="id_ti_cityid" onchange="region.changed(this, 3, 'id_ti_areaid')" class="cls_field">
+      <option value="0">--请选择市--</option>
+      <? foreach($city_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_cityid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <select name="ti_areaid" id="id_ti_areaid" class="cls_field">
+      <option value="0">--请选择区县--</option>
+      <? foreach($area_list as $val) { ?>
+      <option value="<?=$val['region_id']?>"<?=$val['region_id']==$student['ti_areaid']?' selected="selected"':''?>><?=$val['region_name']?></option>
+      <? } ?>
+    </select>
+    <input type="text" name="ti_name" class='cls_field txtbox'/> <button type="button" onclick="fnOnDlg1Query()">查询</button>
+    </div>
+    <div id="id_ti_list" class='cls_item_div_ul_list'>
+      <ul>
+      </ul>
+    </div>
+    <div style="clear:both;display:none">以上没有我要找的培训机构，自己输入<input type="text" id="id_ti_name_defined" name="ti_name_defined" value="" class="txtbox"/></div>
+  </div>
+  <div class="cls_dialog_buttons">
+<? /*    <button type="button" onclick="fnSetTIIDNameClick()">确  定</button> */ ?>
+    <button type="button" onclick="fnCloseDialog('id_sbc_tiid_dlg')">取  消</button>
+  </div>
+</div>
+
+<div id="id_sbc_corsid_dlg" style="display:none;width:80%">
+  <div class="cls_title">选择或输入培训课程</div>
+  <div class="cls_box" style="margin:5px">
+     <div id='id_sbc_corsid_dlg_qry_div'>
+    <input type="hidden" name="grade_id" value="<?=$student['grade_id']?>" class="cls_field" id="id_sbc_corsid_dlg_grade_id"/>
+      <input type="hidden" name="cors_tiid" id="id_cors_tiid" value="" class='cls_field'/>
+      <select name="cors_cmid" id="id_qry_cors_cmid" class='cls_field'>
+        <option value="">--请选择授课模式--</option>
+        <? foreach ($cm_list as $val) { ?>
+        <option value="<?=$val['cm_id']?>" <?=$val['cm_id'] == $student['cors_cmid'] ? ' selected="selected"' : ''?>><?=Func::echo_s($val['cm_name'])?></option>
+        <? } ?>
+      </select>
+    <input type="text" name="cors_name" id="id_qry_cors_name" class='cls_field txtbox'/> <button type="button" id="id_qry_cors_btn" onclick='fnOnDlg2Query()'>查询</button>
+    </div>
+    <div id="id_cors_list" class='cls_item_div_ul_list'>
+       <ul>
+       </ul>
+    </div>
+    <div style="clear:both;display:none">以上没有我要找的培训课程，自己输入<input type="text" id="id_cors_name_defined" class="txtbox"/><label><input type="checkbox" name="cors_cmid_1" id="id_cors_cmid_1"/>一对一课程</label></div>
+  </div>
+  <div class="cls_dialog_buttons">
+<? /*    <button type="button" onclick="fnSetCORSIDNameClick()">确  定</button> */ ?>
+    <button type="button" onclick="fnCloseDialog('id_sbc_corsid_dlg')">取  消</button>
+  </div>
+</div>
+
+<div id="id_sbc_teachers_dlg" style="display:none;width:80%">
+  <div class="cls_title">选择或输入授课教师</div>
+  <div class="cls_box" style="margin:5px">
+     <div id='id_sbc_teachers_dlg_qry_div'>
+    <input type="hidden" name="grade_id" value="<?=$student['grade_id']?>" class="cls_field" id="id_sbc_teachers_dlg_grade_id"/>
+    <input type="hidden" name="cors_id" id="id_cteacher_cors_id" class="cls_field"/>
+    <input type="text" name="cteacher_name" id='id_qry_cteacher_name' class='cls_field txtbox'/> <button type="button" id='id_qry_cteacher_btn' onclick='fnOnDlg3Query()'>查询</button>
+    </div>
+    <div id="id_cteacher_list" class='cls_item_div_ul_list'>
+        <ul>
+        </ul>
+    </div>
+    <div style="clear:both">以上没有我要找的授课老师, 自己输入<input type="text" id="id_sbc_teachers_defined" class="txtbox"/></div>
+  </div>
+  <div class="cls_dialog_buttons">
+    <button type="button" onclick="fnSetCTeacherClick()">确  定</button>
+    <button type="button" onclick="fnCloseDialog('id_sbc_teachers_dlg')">取  消</button>
+  </div>
+</div>
+<div id="scroll_s">
+<style type="text/css">
+table.pop_dialog_table {
+    border-collapse: collapse;
+    margin: auto;
+    table-layout: fixed;
+    background: rgba(0, 0, 0, .45);
+    border-radius: 7px;
+    background-color: #8b8b8b\9 ;
+    width: 650px;
+}
+
+table.pop_dialog_table em {
+    font-style: normal
+}
+
+td.pop_topleft, td.pop_topright, td.pop_bottomleft, td.pop_bottomright {
+    height: 10px;
+    overflow: hidden;
+    padding: 0 !important;
+    width: 10px !important
+}
+
+td.pop_content {
+    background-color: #FFF;
+    padding: 0
+}
+
+td.pop_content.morpadding_bluebg {
+    padding: 10px;
+    background-color: #d2d9e6
+}
+
+td.pop_content h2 {
+    background: #3777bc
+    border: 1px solid #005eac;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    *zoom: 1
+}
+
+td.pop_content h2 span {
+    display: block;
+    padding: 4px 10px 5px
+}
+
+td.pop_content h2 a.floatright {
+    float: right
+}
+
+td.pop_content .dialog_content {
+    background: #fff;
+    border: 1px solid #005eac;
+    border-top-width: 0
+}
+
+td.pop_content .dialog_body p {
+    color: #333
+}
+
+td.pop_content .dialog_body a, td.pop_content .dialog_body a:visited {
+    color: #005eac;
+    font-size: 12px;
+
+}
+
+td.pop_content .dialog_content.borderblue {
+    border: 1px #8598c0 solid
+}
+
+td.pop_content .dialog_body {
+    padding: 10px;
+    position: relative;
+    zoom: 1
+}
+
+td.pop_content .no_padding {
+    padding: 0
+}
+
+td.pop_content .dialog_buttons input {
+    line-height: 16px;
+    background-color: #005eac !important;
+    background-image: none !important;
+    border-color: #b8d4e8 #124680 #124680 #b8d4e8 !important;
+    border-style: solid;
+    border-width: 1px;
+    color: #fff
+}
+
+td.pop_content .dialog_buttons input.gray {
+    border: 1px solid;
+    border-color: #fff #848484 #848484 #fff !important;
+    background: #f0f0f0 !important;
+    color: #333 !important
+}
+
+td.pop_content .share_popup {
+    padding: 0
+}
+
+td.pop_content .dialog_summary {
+    background: #f2f2f2;
+    padding: 8px 10px;
+    border-bottom: 1px solid #ccc
+}
+
+td.pop_content .dialog_summary p.centertext {
+    margin: 30px;
+    text-align: center;
+    line-height: 20px
+}
+
+td.pop_content .dialog_summary ul.classlist {
+    list-style: none
+}
+
+td.pop_content .dialog_summary ul.classlist li {
+    list-style: none;
+    height: 25px;
+    line-height: 25px
+}
+
+td.pop_content .dialog_summary ul.classlist li input.floatleft {
+    background: 0;
+    float: left;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: 7px
+}
+
+td.pop_content .dialog_summary ul.classlist li .gray {
+    color: #b4b4b4
+}
+
+td.pop_content .dialog_summary.higher {
+    height: 100px;
+    padding: 10px
+}
+
+td.pop_content .dialog_buttons {
+    background: #f0f5f8;
+    padding: 8px;
+    text-align: right;
+    border-top: 1px solid #ccc
+}
+
+td.pop_content .dialog_buttons.alignleft {
+    text-align: left
+}
+
+td.pop_content .dialog_buttons input {
+    margin-left: 5px;
+    padding: 2px 15px;
+    _padding: 2px 10px
+}
+
+td.pop_content .dialog_buttons_left_msg {
+    float: left
+}
+
+td.pop_content .loading {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #f7f7f7
+}
+
+td.pop_content input, td.pop_content select {
+    vertical-align: middle
+}
+
+td.pop_content p {
+    margin-bottom: 1ex
+}
+
+.dialogtips {
+    padding: 4px;
+    background-color: #feffcf;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 370px
+}
+
+* html .dialogtips {
+    left: auto;
+    right: 0
+}
+ #school_select0{
+     /*position: relative;*/
+ }
+ #school_select1{
+     /*position: relative;*/
+ } 
+#school_select2{
+     /*position: relative;*/
+ }
+ .pop_dialog_table{
+     position: absolute;
+     z-index: 30;
+     bottom: -10px;
+ }
+.contextual_dialog .generic_dialog_popup {
+    width: 360px
+}
+
+.contextual_dialog .contextual_arrow, .contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle.gif);
+    background-repeat: no-repeat;
+    height: 12px;
+    position: relative;
+    top: 1px
+}
+
+.contextual_dialog .contextual_arrow_rev {
+    background-image: url(http://a.xnimg.cn/img/minifeed_dialog_triangle_rev.gif)
+}
+
+.contextual_dialog .contextual_arrow span, .contextual_dialog .contextual_arrow_rev span {
+    display: none
+}
+
+.contextual_dialog h2 {
+    color: #000;
+    padding-bottom: 4px
+}
+
+.contextual_dialog .contextual_dialog_content {
+    background-color: #f0f0f0;
+    border: 1px solid #b7b7b7;
+    border-bottom: 2px solid #005eac;
+    line-height: 15px;
+    padding: 8px 10px 10px
+}
+
+.contextual_dialog .dialog_buttons {
+    padding-top: 10px
+}
+
+.contextual_dialog .dialog_buttons input {
+    margin-right: 10px
+}
+
+.errorDialog td.pop_content h2 {
+    background: #ffebe8;
+    border: 0;
+    border-bottom: 1px solid #AAA;
+    color: #333
+}
+
+.errorDialog td.pop_content h2 span {
+    padding: 6px 10px 7px
+}
+
+.errorDialog td.pop_content {
+    border: 1px solid #ee7c90
+}
+
+.errorDialog td.pop_content .dialog_content {
+    border: 0
+}
+
+.errorDialog td.pop_content .dialog_content .dialog_body {
+    padding: 15px
+}
+
+ul.square_bullets {
+    color: #005eac;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: square;
+    padding-left: 20px
+}
+
+.share-intro p {
+    table-layout: fixed;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden
+}
+
+.share_popup .tabs {
+    padding-top: 15px;
+    border-bottom: 1px solid #898989
+}
+
+.share_popup .toggle_tabs {
+    list-style: none;
+    width: 360px;
+    margin: 0 auto
+}
+
+.share_popup .toggle_tabs li {
+    float: left;
+    background: #f1f1f1 url(http://a.xnimg.cn/img/toggle_tab_bg.gif) repeat-x 0 1px
+}
+
+.share_popup .toggle_tabs li a {
+    border: solid #898989;
+    border-width: 1px;
+    border-left: 0;
+    padding: 3px 15px;
+    display: block;
+    color: #333;
+    margin-bottom: -1px
+}
+
+.share_popup .toggle_tabs li a.selected {
+    color: #fff !important;
+    background: #6d84b4;
+    border-color: #005eac;
+    text-decoration: none
+}
+
+.share_popup .toggle_tabs li.first a {
+    border: 1px solid #898989
+}
+
+.share_popup .toggle_tabs li.first a.selected {
+    border-color: #005eac #5973a9
+}
+
+.share_popup .toggle_tabs li.middle a {
+    border: 1px solid #898989;
+    border-left: 0
+}
+
+.share_popup .toggle_tabs li.middle a.selected {
+    border-color: #005eac #5973a9
+}
+
+td.pop_content h2 a {
+    float: right;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a.close-button {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    padding: 6px 10px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 12px
+}
+
+td.pop_content h2 a:hover {
+    color: #fff
+}
+
+.share_popup .share_header {
+    position: relative
+}
+
+#popShare .poplogin {
+    width: 500px;
+    margin: 0 auto
+}
+
+.share_popup .title-share {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bolder;
+    background: url(http://a.xnimg.cn/img/newsfeed/share.gif) no-repeat left center
+}
+
+.share_send, .share_post {
+    background: #f7f7f7 none repeat scroll 0;
+    padding-top: 15px
+}
+
+.share-preview {
+    background: #f7f7f7
+}
+
+.share_fields {
+    padding-bottom: 10px
+}
+
+.composer_fields dt {
+    float: left;
+    margin: 0;
+    padding: 0 10px 0 20pt;
+    text-align: right;
+    width: 65px
+}
+
+.composer_fields dd {
+    float: left;
+    margin: 0 0 10px;
+    width: 300px;
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all
+}
+
+.composer_fields dd#dd_privacy_field {
+    margin: 0
+}
+
+.composer_fields textarea {
+    height: 50px;
+    margin: 0;
+    overflow: auto
+}
+
+.composer_fields label {
+    color: #666;
+    font-weight: 700;
+    padding-top: 4px;
+    display: block
+}
+
+.attachment_stage {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc
+}
+
+.s-message .share-footer {
+    display: block;
+    height: 23px;
+    line-height: 23px;
+    float: right;
+    _margin-top: 3px;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    padding-left: 0
+}
+
+.s-message .share-footer span {
+    color: #888;
+    _margin-top: 4px;
+    display: block;
+    float: left
+}
+
+.s-message a.m-editor-emo {
+    display: block;
+    width: 30px;
+    height: 23px;
+    line-height: 23px;
+    padding-left: 25px;
+    background-image: url(http://a.xnimg.cn/imgpro/minieditor/action_btn.png);
+    background-position: 0 -23px;
+    background-repeat: no-repeat;
+    outline: 0;
+    margin-bottom: -10px;
+    *margin-bottom: 0;
+    _margin-bottom: -3px;
+    float: left
+}
+
+.attachment_stage_area {
+    overflow: hidden;
+    padding: 8px 3px 7px 8px
+}
+
+.message-fields .share-title, .message-fields .share-description {
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1
+}
+
+.share-body h3 {
+    font-weight: normal
+}
+
+.share-title {
+    font-weight: 700;
+    color: #555;
+    word-wrap: break-word;
+    word-break: break-all;
+    line-height: 16px !important;
+    zoom: 1;
+    overflow: hidden
+}
+
+.music-summary {
+    margin-top: 5px
+}
+
+.share_info.share-with-pic {
+    margin-left: 115px
+}
+
+.share_thumb {
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 5px
+}
+
+.share_thumb img {
+    border: 3px solid #fff
+}
+
+.share-description {
+    line-height: 18px;
+    color: gray
+}
+
+.share-description span {
+    color: #333
+}
+
+.share-description a {
+    margin-right: 3px
+}
+
+.share_buttons {
+    text-align: center;
+    padding: 0 60px 10px 0
+}
+
+.share_buttons input {
+    margin: 0 5px
+}
+
+.share_popup div.tokenizer, .share_popup input.inputtext, .share_popup textarea {
+    width: 295px;
+    border: 1px solid #8496ba
+}
+
+.share_popup input.inputtext, .share_popup textarea {
+    padding: 5px 0 5px 3px
+}
+
+.share-popup-abstract .share-popup-figure {
+    float: left;
+    margin-right: 10px;
+    _display: inline
+}
+
+.share-popup-abstract .share-abs-title {
+    color: #005dac !important;
+    font-weight: bolder
+}
+
+.share-popup-abstract .share-abs-content {
+    color: #808080 !important
+}
+
+.share-success {
+    width: 410px;
+    padding: 10px 0
+}
+
+.share-success-tip {
+    width: 100px;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more {
+    width: 300px;
+    text-align: center;
+    font-size: 12px;
+    border-left: 1px solid #cee1ee;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle
+}
+
+.share-success-more p {
+    margin-top: 10px
+}
+
+td.pop_content .dialog_body h1.general {
+    font-size: 15px;
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.altbox {
+    color: #999;
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px #e0e0e0 solid
+}
+
+td.pop_content .dialog_body p.namefilter {
+    margin-bottom: 15px
+}
+
+td.pop_content .dialog_body p.namefilter label {
+    color: #999;
+    font-weight: 700
+}
+
+td.pop_content .dialog_body p.namefilter .inputtext {
+    width: 200px
+}
+
+td.pop_content .dialog_body #list-results .selector {
+    height: 200px;
+    margin-bottom: 15px
+}
+
+table.pop_dialog_table.w515 {
+    width: 515px
+}
+
+#univlist, #searchSchoolList, #highSchoolList {
+    position: absolute;
+    width: 606px;
+    z-index: 9999
+}
+
+#univlist_provinces {
+    border-bottom: 1px solid #005eac
+}
+
+#univlist p label {
+    font-weight: lighter;
+    color: #333
+}
+
+#univlist p .input-text {
+    width: 190px;
+    background: #fff url(http://a.xnimg.cn/imgpro/bg/cs_navtop.png?timestamp=091222) no-repeat scroll left -175px
+}
+
+#univlist_provinces td {
+    vertical-align: middle;
+    color: #808080;
+    text-align: center;
+    font-size: 13px
+}
+
+#univlist_provinces a {
+    font-size: 12px;
+    display: block;
+    text-decoration: none
+}
+
+#univlist_provinces td.activetab a {
+    background: #005eac;
+    color: #fff
+}
+
+#univlist_provinces:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_provinces {
+    *zoom: 1
+}
+
+#univlist_univs {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#univlist_univs:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#univlist_univs {
+    *zoom: 1
+}
+
+#univlist_univs li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#univlist_univs li.univ {
+    width: 112px
+}
+
+#univlist_univs li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#searchlist_school {
+    list-style: none;
+    padding: 5px 10px;
+    border: 1px solid #d8dfea;
+    background: #fff
+}
+
+#searchlist_school:after {
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden
+}
+
+#searchlist_school {
+    *zoom: 1
+}
+
+#searchlist_school li {
+    float: left;
+    width: 140px;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 23px
+}
+
+#searchlist_school li.univ {
+    width: 112px
+}
+
+#searchlist_school li a:hover {
+    background: #005eac;
+    color: #fff;
+    text-decoration: none
+}
+
+#univlist .operation a {
+    margin-right: 180px
+}
+
+#uniList {
+    width: 612px
+}
+
+.popup-wrapper {
+    border: 10px solid #d8dfea;
+    position: absolute;
+    z-index: 9999;
+    overflow: hidden
+}
+
+.popup-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: mask();
+    width: 3000px;
+    height: 3000px;
+    display: hidden
+}
+
+.popup-content {
+    border: 1px solid #005eac;
+    background: #f7f7f7;
+    padding: 6px;
+    overflow: hidden;
+    zoom: 1
+}
+
+#popup-country {
+    font: 13px sans-serif;
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    /*margin-left: -36px;*/
+}
+
+#popup-country li {
+    float: left;
+    line-height: 26px !important;
+    padding: 0 4px 0 5px;
+    background: url(http://a.xnimg.cn/img/popup_country_separator.gif) no-repeat right 50%;
+    _border: 0
+}
+
+* html #popup-country li {
+    background-position: 0 40%
+}
+
+#popup-country li a {
+    word-break: keep-all;
+    _line-height: 26px
+}
+
+#popup-country li#c_0, #popup-country li#c_13 {
+    background: 0
+}
+
+#popup-country li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-country li.active a {
+    font-weight: bold;
+    color: #000
+}
+
+#popup-country li.active a:hover {
+    text-decoration: none
+}
+
+#popup-province, #popup-province-hs,#popup-area {
+    list-style: none;
+    overflow: hidden;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 3px;
+	margin-top: 5px;
+}
+
+#popup-province li, #popup-province-hs li,#popup-area li{
+    font-size: 12px;
+    float: left;
+    padding-right:10px;
+    text-align: center;
+    _border: 0
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    height: 18px;
+    line-height: 18px
+}
+
+li.active a, li.active a {
+    background: #005eac;
+    color: #fff !important
+}
+
+#popup-province li.active a:hover, #popup-province-hs li.active a:hover, #popup-area li.active a:hover{
+    text-decoration: none
+}
+
+#popup-province li a, #popup-province-hs li a, #popup-area li a {
+    display: block;
+    cursor: pointer
+}
+
+#popup-province li#p_0_3, #popup-province li#p_0_20, #popup-province li#p_0_26, #popup-province li#p_0_9 {
+    width: 44px
+}
+
+#popup-province-hs li#hsp_0_5, #popup-province-hs li#hsp_0_8, #popup-province-hs li#hsp_0_22, #popup-province-hs li#hsp_0_25 {
+    width: 44px
+}
+
+#popup-unis, #popup-unis-hs {
+    list-style: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 200px;
+    zoom: 1;
+    border: 1px solid #c3c3c3;
+    background: #FFF;
+    padding: 10px 0 10px 10px;
+    margin: 5px 0
+}
+
+#popup-unis li, #popup-unis-hs li {
+    float: left;
+    width: 160px;
+    padding: 4px 12px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) no-repeat 0 9px
+}
+
+#popup-unis li a:hover, #popup-unis-hs li a:hover {
+    background: #005eac;
+    color: #FFF;
+    text-decoration: none;
+	cursor: pointer
+}
+
+* html #popup-unis li {
+    height: 1.3em
+}
+
+#uniList .canbutton {
+    float: right
+}
+
+.module-popupcity {
+    background-color: #fff;
+    padding: 3px 8px;
+    border: 1px solid #c3c3c3;
+    overflow: hidden;
+    zoom: 1;
+    margin: 5px 0
+}
+
+.module-popupcity li {
+    list-style: none;
+    margin-right: 5px;
+    height: 18px;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    word-break: keep-all;
+    line-height: 18px
+}
+
+.module-popupcity li.active {
+    _border: 0
+}
+
+.module-qulist {
+    background-color: #fff;
+    overflow: hidden;
+    zoom: 1;
+    padding: 3px 8px;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-qulist li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 5px;
+    float: left;
+    word-break: keep-all;
+    height: 18px;
+    line-height: 18px;
+    _border: 0
+}
+
+.module-qulist li a {
+    white-space: nowrap
+}
+
+.module-schoollist {
+    background-color: #fff;
+    height: 200px;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px #c3c3c3 solid;
+    margin-bottom: 5px
+}
+
+.module-schoollist li {
+    float: left;
+    list-style: none;
+    display: block;
+    width: 170px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    padding-left: 10px;
+    margin-right: 5px;
+    background: url(http://a.xnimg.cn/img/school_list_dot.gif) left 10px no-repeat
+}
+
+.module-schoollist li.active {
+    _border: 0
+}
+
+#scroll_s {
+    display: none;
+    position : absolute;
+    top : 550px;
+    left : 60px;
+}
+</style>
+<script type="text/javascript">
+var _school_id = '';
+$(function(){
+    //
+    $(document).on('click', 'li[id^=c_]', function(){
+        $('li[id^=c_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_1_selected  = $(this).attr('id').split('_')[1];
+        region_city(_depth_1_selected, null, null);
+    });
+    //
+    $(document).on('click', 'li[id^=p_]', function(){
+        $('li[id^=p_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_2_selected  = $(this).attr('id').split('_')[1];
+        region_area(_depth_2_selected, null);
+    });
+    $(document).on('click', 'li[id^=a_]', function(){
+        $('li[id^=a_]').removeClass('active');
+        $(this).addClass('active');
+        _depth_3_selected  = $(this).attr('id').split('_')[1];
+        _depth_2_selected  = $('li[id^=p_][class="active"]').attr('id').split('_')[1];
+        show_school(_depth_3_selected,_depth_2_selected);
+    });
+    
+    //搜索学校
+    $('#school_search_input').keyup(function(){
+        keywords = $(this).val();
+        $('li[id^=u_]').find('a').each(function(i, item) {
+            if ($(this).html().indexOf(keywords)<0)
+            {
+                $(this).parent().hide();
+            }
+            else
+            {
+                $(this).parent().show();
+            }
+        });
+    });
+    
+    //点击学校，返回id,name，关闭层
+    $(document).on('click', 'li[id^=u_]', function(){
+        var school_id = $(this).attr('id').split('_')[1];
+        $('#'+_school_id).val($(this).find('a').html());
+        $('#'+_school_id).next().val(school_id);
+        $('#scroll_s').hide();
+    });
+
+    $('input[name^="volunteer"]').blur(function(){
+        _school_id = $(this).attr('id');
+    });
+
+});
+</script>
+<table class="pop_dialog_table">
+<tbody>
+<tr>
+    <td class="pop_topleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_topright"></td>
+</tr>
+<tr>
+<td class="pop_border"></td>
+<td class="pop_content"><h2><span>选择学校</span><a style="display:none;" class="close-button" href="#nogo"
+                                                onclick="return false;">关闭</a></h2>
+
+<div class="dialog_content">
+<div class="dialog_body">
+<div id="univlist" style="position: static;">
+<div><p id="filter_univ"><label for="school_search_input">搜索 : </label><input class="input-text" id="school_search_input" name="school_search_input" type="text" autocomplete="off">
+
+</p>
+<ul id="popup-country"></ul>
+<ul id="popup-province"></ul>
+<ul id="popup-area"></ul>
+<ul id="popup-unis"></ul>
+</div>
+</div>
+</div>
+<div class="dialog_buttons"><input type="button" class=" input-submit" value="关闭" dialog="1"></div>
+</div>
+</td>
+<td class="pop_border"></td>
+</tr>
+<tr>
+    <td class="pop_bottomleft"></td>
+    <td class="pop_border"></td>
+    <td class="pop_bottomright"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+$('document').ready(function (){
+    $("#school_select0").click(function(){
+         _school_id = 'school_select0';
+        $("#scroll_s").css("display","block");
+        var school_id0 = parseInt($('#school_id0').val());
+        var school_area0 = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province0 = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country0 = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+
+        if(school_country0 > 0)
+        {
+            region_province(0,school_country0,school_province0,school_area0, null, null);
+        }
+        else
+        {
+            region_province(0,0,0,0, null, null);//初始化弹出层
+        }
+    });
+
+     $("#school_select1").click(function(){
+         _school_id = 'school_select1';
+        $("#scroll_s").css("display","block");
+        var school_id1 = parseInt($('#school_id1').val());
+        var school_area1 = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province1 = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country1 = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+
+        if(school_country1 > 0)
+        {
+            region_province(0,school_country1,school_province1,school_area1, null, null);
+        }
+        else
+        {
+            region_province(0,0,0,0,null,null);//初始化弹出层
+        }
+    });
+
+     $("#school_select2").click(function(){
+         _school_id = 'school_select2';
+        $("#scroll_s").css("display","block");
+        var school_id2 = parseInt($('#school_id2').val());
+        var school_area2 = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province2 = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country2 = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+
+        if(school_country2 > 0)
+        {
+            region_province(0,school_country2,school_province2,school_area2,null, null);
+        }
+        else
+        {
+            region_province(0,0,0,0,null,null);//初始化弹出层
+        }
+    });
+
+     $("#school_select").click(function(){
+         _school_id = 'school_select';
+        $("#scroll_s").css("display","block");
+        var school_id = parseInt($('#school_id').val());
+        var school_area = '<?php if (isset($student['area'])) echo intval($student['area']);?>';
+        var school_province = '<?php if (isset($student['area'])) echo intval($student['city']);?>';
+        var school_country = '<?php if (isset($student['area'])) echo intval($student['province']);?>';
+
+        if(school_country > 0)
+        {
+            region_province(0,school_country,school_province,school_area);
+        }
+        else
+        {
+            region_province(0,0,0,0,null,null);//初始化弹出层
+        }
+    });
+    $(".input-submit").click(function(){
+        $("#scroll_s").css("display","none");
+    });
+});
+</script>
+<?php $this->load->view('common/footer');?>

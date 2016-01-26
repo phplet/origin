@@ -1,0 +1,97 @@
+<?php $this->load->view('common/header');?>
+
+<?php static_global('js/jquery/plugin/validate/jquery.validate.min.js');?>
+
+<script>
+$(function(){
+    $('#select_exam_sheet').click(function(){
+        var exam_pid = parseInt($('#exam_pid').val());
+        if (exam_pid < 1)
+        {
+            $('label[for=exam_pid]').html('请选择考试期次');
+            return;
+        }
+        else
+        {
+        	$('label[for=exam_pid]').html('');
+        }
+
+        var exam_ticket = $('#exam_ticket').val();
+        if (!exam_ticket)
+        {
+        	$('label[for=exam_ticket]').html('请输入准考证号');
+        	return;
+        }
+        
+        if (isNaN(exam_ticket))
+        {
+        	$('label[for=exam_ticket]').html('请输入正确的准考证号');
+        	return;
+        }
+        $('label[for=exam_ticket]').html('');
+
+        if ( $('#id_exam_sheet').attr('src').length > 0)
+        {
+            var is_answer = false;
+            $("#id_exam_sheet").contents().find("input[name^='answer']:checked").each(function()
+            {
+            	is_answer = true;
+            	return;
+            });
+
+            $("#id_exam_sheet").contents().find("input[type='text'][name^='answer']").each(function()
+            {
+                if ($(this).val().length > 0)
+                {
+                	is_answer = true;
+                	return;
+                }
+            });
+
+            if (is_answer && !confirm('确定要重新加载学生考试答题卡吗？确定重新加载将导致未保存的数据丢失'))
+            {
+                return;
+            }
+        }
+
+        $('#id_exam_sheet').css('height','550px');
+        
+        var src = "<?=site_url('/admin/exam_answer_entry/exam_sheet')?>/?exam_pid=" + exam_pid +"&exam_ticket="+exam_ticket;
+        $('#id_exam_sheet').attr('src',src);
+        
+    });
+});
+</script>
+
+<div id="body">
+  <div class="space">
+    <div class="subtitle">学生考试答案录入</div> 
+    <table class="maintable" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+            <td class="altbg1" width="10%">&emsp;考试期次</td>
+            <td width="32%">
+             <select name="exam_pid" id="exam_pid">
+              <option value="0">=请选择考试期次=</option>
+              <?php foreach($exam_list as $exam) {?>
+              <option value="<?=$exam['exam_id']?>"><?=$exam['exam_name']?></option>
+              <?php }?>
+             </select>
+             <label for="exam_pid" class="error"></label>
+            </td>
+            <td class="altbg1" width="10%">&emsp;准考证号</td>
+            <td width="30%">
+             <input type="text" name="exam_ticket" id="exam_ticket" class="txtbox" style="width: 200px;">
+             <label for="exam_ticket" class="error"></label>
+            </td>
+             <td>
+             <input type="button" class="btn" value="确定" id="select_exam_sheet">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <iframe frameborder="0" id="id_exam_sheet" src="" scrolling="auto" style=" visibility: inherit; width: 100%; z-index: 1; background-color:#FFF; margin-top:-10px;">
+    </iframe>
+  </div>
+</div>
+<?php $this->load->view('common/footer');?>

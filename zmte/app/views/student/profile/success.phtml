@@ -1,0 +1,97 @@
+<?php $this->load->view('common/exam_header', array('page_title' => '注册成功'));?>
+    <style type="text/css">
+        .cls_fl_l{
+            display: inline-block;
+            float: left;;
+        }
+        .clearfix:after {content:"\200B"; display:block; height:0; clear:both; }
+        .clearfix { *zoom:1; }
+
+        .cls_msg{
+            font-family: '\5fae\8f6f\96c5\9ed1',"Microsoft YaHei";
+            padding: 80px 0 0 50px;
+            position: relative;
+        }
+        .cls_msg_success{
+            background: url("<?=__HTML_URL__?>images/register/ico.png");
+            width: 128px;
+            height: 128px;
+        }
+        .cls_smgsubtitle{
+            font-size: 24px;
+            font-weight: bold;
+            color: #559D2D;
+        }
+        .cls_msglistitem{
+            font-family: arial;
+            font-weight:bold;
+            color:darkblue;
+            font-size:1.4em;
+        }
+        .cls_smgsubinfo{
+            font-weight: bold;
+            font-size: 18px;
+            color: #ff2f2f;
+        }
+        .cls_smgsubtext{
+            font-size: 14px;
+        }
+        .cls_zeming_logo {
+            height:45px;
+            width: 183px;
+            background:url(<?=__HTML_URL__?>images/common/logo.png);
+            margin: 30px;
+        }
+        .cls_msglist{
+            font-weight: bold;
+            color: #333;
+            padding-left: 20px;
+        }
+        .cls_msgfc{
+            font-weight: bold;
+            color: #666;
+        }
+        input.btn{
+            background-color: #7CB2DC;
+            background-image: none;
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            border: none;
+            width: 100px;
+            height: 32px;
+            -webkit-border-radius: 2px;
+            border-radius: 4px;
+            text-shadow: 1px 2px 2px #3780d4;
+            filter: dropshadow(color=#3780d4, offx=1, offy=2);
+            cursor: pointer;
+
+        }
+        .cls_msg_quit{
+            margin: 10px 0 10px 130px;
+        }
+    </style>
+<div id="body">
+    <div class="space cls_msg">
+        <div class="clearfix">
+            <div class="cls_msg_success cls_fl_l"></div>
+            <div class="cls_msg_r cls_fl_l">
+                <div class="cls_smgsubtitle">注册成功</div>
+                <p class="cls_smgsubinfo"> 恭喜你！</p>
+                <p class="cls_smgsubtext">注册信息成功录入，您可以持准考证号进入测评中心报名测评!</p>
+                <ul class="cls_msglist">
+                    <li>准考证号：<span class="cls_msglistitem"><?=$exam_ticket?></span></li>
+                    <li>Email：<span class="cls_msglistitem"><?=$student['email']?></span></li>
+                </ul>
+                <p class="cls_smgsubtext">为了方便重置密码，系统已经发送邮箱验证链接到该邮箱，请马上前往查收，并进行验证。</p>
+            </div>
+          </div>
+        <?if ($student['grade_id'] == 6){?>
+        <input type="button" value=" 进入个人中心 " onclick="location='<?=site_url('student/profile/awards?dl=1')?>'" class="btn cls_msg_quit" />
+        <?}else{?>
+        <input type="button" value=" 进入个人中心 " onclick="location='<?=site_url('student/profile/index')?>'" class="btn cls_msg_quit" />
+        <?}?>
+        <input type="button" value=" 退出系统 " onclick="ajax_logout('<?=site_url('student/index/login')?>')" class="btn cls_msg_quit" />
+    </div>
+</div>
+<?php $this->load->view('common/profile_footer');?>

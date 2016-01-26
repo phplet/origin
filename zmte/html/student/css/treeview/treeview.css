@@ -1,0 +1,117 @@
+.treeview ul { 
+}
+
+.treeview, .treeview ul { 
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.treeview div.hitarea {
+	height: 15px;
+	width: 15px;
+	margin-left: -15px;
+	float: left;
+	cursor: pointer;
+}
+
+/* fix for IE6 */
+* html div.hitarea {
+	background: #fff;
+	filter: alpha(opacity=0);
+	display: inline;
+	float:none;
+}
+
+
+.treeview a.selected {
+	background-color: #eee;
+}
+
+#treecontrol { margin: 1em 0; }
+
+.treeview .hover { color: red; cursor: pointer; }
+
+/*.treeview li { background: url(treeview/tv-item.gif) 0 0 no-repeat; }
+.treeview .collapsable { background-image: url(treeview/tv-collapsable.gif); }
+.treeview .expandable { background-image: url(treeview/tv-expandable.gif); }
+.treeview .last { background-image: url(treeview/tv-item-last.gif); }
+.treeview .lastCollapsable { background-image: url(treeview/tv-collapsable-last.gif); }
+.treeview .lastExpandable { background-image: url(treeview/tv-expandable-last.gif); }*/
+
+.tvborder { background:#a3c1da; border:1px solid #999; border-top:none; margin:0 5px; padding: 2px 0px; width:94%; height:670px; overflow:hidden;}
+a:hover{
+     text-decoration:none;	
+	}
+ul.filetree{position:relative;left:8px;}
+.filetree .filetreeitem li {
+    height: 28px;
+    line-height: 28px;
+    vertical-align: middle;
+    position: relative;
+    margin-bottom: 2px;
+    background-color: #cecece;
+    border: 1px solid #c6daec;
+    border-width: 0 0 1px 1px;
+}
+.filetree .filetreeitem li a{
+    padding-left: 10px;
+    position: absolute;
+}
+.filetree .filetreeitem li a:hover{
+    color: #333;
+    font-weight: bold;
+}
+.filetree ul { 
+	padding: 0;
+	margin:0px;
+	list-style: none;
+}
+.filetree span.folder{
+    padding-left:17px;
+    height: 32px;
+    line-height: 32px;
+    vertical-align: middle;
+}
+
+.filetree span.folder {background:url(../../images/treeview/Imgmenu1_1.png) 0 0 no-repeat; font-weight:bold;color:#4C4C4C; font-size:14px; padding-top:1px;position:relative;top:2px;}
+.filetree span.file{
+    /*background:url(img/1.png) no-repeat 0 0;*/
+    position: absolute;
+    display:block;
+    width:5px;
+    height:28px;
+    background-color: #90B2CE;
+}
+.filetree .filetreeitem .filetreeActive span.file{
+    background-color: #035FAA;
+}
+.filetree .filetreeitem .filetreeActive {
+    background-color: #DCDCDC;
+    font-weight: bold;
+}
+
+.filetree span.file a{display:inline;position:relative;top:-5px;}
+div.lefttop{
+	 width:94%;
+	 height:27px;
+	 font-family:"黑体";
+	 text-align:center;
+	 font-size:16px;
+	 line-height:25px;
+	 margin-left:5px;
+	 background:url(../../images/treeview/lefttop_02_03.jpg) repeat-x;
+	 border:1px solid #999;
+	}
+/*file*/    
+div.txtbox {   
+display: block;   
+position:absolute;   
+top: 0;   
+left: 0;   
+width: 140px;   
+height: 39px;   
+font-size: 100px; /* 增大不同浏览器的可点击区域 */   
+opacity: 0; /* 实现的关键点 */   
+filter:alpha(opacity=0);/* 兼容IE */   
+}  
